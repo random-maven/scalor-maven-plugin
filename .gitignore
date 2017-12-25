@@ -1,0 +1,12 @@
+
+.project
+.settings/
+.classpath
+
+bin/
+target/
+.cache*
+
+/pom.xml.flatten
+
+test-repo/

@@ -1,0 +1,532 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.carrotgarden.a</groupId>
+        <artifactId>carrot-a</artifactId>
+        <version>0-SNAPSHOT</version>
+        <relativePath>.mvn</relativePath>
+    </parent>
+
+    <groupId>com.carrotgarden.maven</groupId>
+    <artifactId>scalor-maven-plugin</artifactId>
+    <version>${revision}</version>
+    <packaging>maven-plugin</packaging>
+
+    <url>https://github.com/random-maven/scalor-maven-plugin</url>
+    <scm>
+        <url>https://github.com/random-maven/scalor-maven-plugin</url>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>Apache-2.0</name>
+        </license>
+    </licenses>
+
+    <name>Scalor Maven Plugin</name>
+    <description>Scala compiler support</description>
+
+    <properties>
+
+        <bintray.subject>random-maven</bintray.subject>
+        <bintray.repository>maven</bintray.repository>
+
+        <release.epoch>1.0.0</release.epoch>
+        <version.maven>[3.5,3.6)</version.maven>
+        <version.scala.zinc>1.1.0-RC4</version.scala.zinc>
+
+        <!-- Supported minimum. -->
+        <version.scala211.release>2.11.5</version.scala211.release>
+        <version.scala212.release>2.12.4</version.scala212.release>
+        <version.scala213.release>TODO</version.scala213.release>
+        <version.scala.plug.macro>2.1.0</version.scala.plug.macro>
+
+        <!-- Eclipse plugin properties. -->
+        <eclipse.plugin.name>${project.groupId}.${project.artifactId}</eclipse.plugin.name>
+        <eclipse.plugin.revision>${version.scala.epoch}_${project.version}</eclipse.plugin.revision>
+        <eclipse.plugin.identity>${eclipse.plugin.name}_${eclipse.plugin.revision}</eclipse.plugin.identity>
+        <eclipse.plugin.projectConfigurator>${eclipse.plugin.name}.projectConfigurator_${eclipse.plugin.revision}</eclipse.plugin.projectConfigurator>
+        <eclipse.bundle.name>${eclipse.plugin.identity}</eclipse.bundle.name>
+        <eclipse.bundle.version>0.0.0</eclipse.bundle.version><!-- version is in the name -->
+
+    </properties>
+
+    <dependencies>
+
+        <!-- Maven. -->
+
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>${version.maven}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>${version.maven}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-compat</artifactId>
+            <version>${version.maven}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>${version.maven}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.twdata.maven</groupId>
+            <artifactId>mojo-executor</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.sonatype.plexus</groupId>
+            <artifactId>plexus-build-api</artifactId>
+            <version>0.0.7</version>
+        </dependency>
+
+        <!-- Utility. -->
+
+        <dependency>
+            <groupId>com.github.dwickern</groupId>
+            <artifactId>scala-nameof_${version.scala.epoch}</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>chill_${version.scala.epoch}</artifactId>
+            <version>0.9.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scala-lang.modules</groupId>
+            <artifactId>scala-xml_${version.scala.epoch}</artifactId>
+        </dependency>
+
+        <!-- Scala compiler. -->
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-compiler</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-reflect</artifactId>
+        </dependency>
+
+        <!-- Scala.zinc compiler. -->
+
+        <dependency>
+            <groupId>org.scala-sbt</groupId>
+            <artifactId>zinc_${version.scala.epoch}</artifactId>
+            <version>${version.scala.zinc}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scala-sbt</groupId>
+            <artifactId>compiler-bridge_${version.scala.epoch}</artifactId>
+            <version>${version.scala.zinc}</version>
+        </dependency>
+
+        <!-- Scala.js linker. -->
+
+        <dependency>
+            <groupId>org.scala-js</groupId>
+            <artifactId>scalajs-cli_${version.scala.epoch}</artifactId>
+            <version>${version.sjs.release}</version>
+        </dependency>
+
+        <!-- Eclipse access. -->
+        <!-- Note: scope=provided, uses host eclipse bundle classes. -->
+
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.platform</groupId>
+            <artifactId>org.eclipse.equinox.common</artifactId>
+            <version>3.9.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.core</artifactId>
+            <version>3.13.50</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.launching</artifactId>
+            <version>3.9.51</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.scout.sdk.deps</groupId>
+            <artifactId>org.eclipse.m2e.core</artifactId>
+            <version>1.8.2.20171007-0217</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.scout.sdk.deps</groupId>
+            <artifactId>org.eclipse.m2e.core.ui</artifactId>
+            <version>1.8.2.20171007-0217</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.platform</groupId>
+                    <artifactId>org.eclipse.swt</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.platform</groupId>
+            <artifactId>org.eclipse.ui.workbench</artifactId>
+            <version>3.110.1</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.platform</groupId>
+                    <artifactId>org.eclipse.swt</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Testing. -->
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_${version.scala.epoch}</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.pathikrit</groupId>
+            <artifactId>better-files_${version.scala.epoch}</artifactId>
+            <version>3.4.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.22.0-GA</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Note: crashes JVM due to edits in java.lang.Class. -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.powermock</groupId> -->
+        <!-- <artifactId>powermock-classloading-objenesis</artifactId> -->
+        <!-- <version>2.0.0-beta.5</version> -->
+        <!-- </dependency> -->
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-classloading-xstream</artifactId>
+            <version>2.0.0-beta.5</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- <dependency> -->
+        <!-- <groupId>org.apache.commons</groupId> -->
+        <!-- <artifactId>commons-configuration2</artifactId> -->
+        <!-- <version>2.2</version> -->
+        <!-- <scope>test</scope> -->
+        <!-- </dependency> -->
+
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+
+    </dependencies>
+
+
+    <build>
+
+        <!-- Substitute ${project} variables. -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <plugins>
+
+            <!-- Adjust for Eclipse. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Remove build-time api. -->
+                            <tasks>
+                                <delete dir="${project.build.outputDirectory}/org" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Provide manifest for Eclipse. -->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <niceManifest>true</niceManifest>
+                    <supportedProjectTypes>
+                        <type>maven-plugin</type>
+                    </supportedProjectTypes>
+                    <instructions>
+                        <Require-Bundle>
+<![CDATA[
+        org.slf4j.api,                        
+        org.eclipse.core.runtime,
+        org.eclipse.core.resources,
+        org.eclipse.m2e.core,
+        org.eclipse.m2e.jdt,
+        org.eclipse.m2e.maven.runtime,
+        org.eclipse.jdt.core,
+        org.eclipse.jdt.launching,
+        org.scala-lang.scala-library;bundle-version="$${range;[==,=+);${version.scala.epoch}}",
+        org.scala-lang.scala-reflect;bundle-version="$${range;[==,=+);${version.scala.epoch}}",
+        org.scala-lang.scala-compiler;bundle-version="$${range;[==,=+);${version.scala.epoch}}",
+        org.scala-lang.modules.scala-xml;bundle-version="$${range;[==,=+);${version.scala.xml}}",
+        org.scala-ide.sdt.core
+]]>
+                        </Require-Bundle>
+                        <Import-Package>!*</Import-Package>
+                        <Export-Package>com.carrotgarden.maven.scalor</Export-Package>
+                        <Bundle-Activator>com.carrotgarden.maven.scalor.EclipsePlugin</Bundle-Activator>
+                        <Bundle-SymbolicName>${eclipse.bundle.name};singleton:=true</Bundle-SymbolicName>
+                        <Bundle-Version>${eclipse.bundle.version}</Bundle-Version>
+                    </instructions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Adjust for Eclipse. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <!-- Use maven-bundle-plugin manifest. -->
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                    <!-- Remove build-time api. -->
+                    <!-- <excludes> -->
+                    <!-- <path>org/**</path> -->
+                    <!-- </excludes> -->
+                </configuration>
+            </plugin>
+
+            <!-- <plugin> -->
+            <!-- <groupId>net.alchim31.maven</groupId> -->
+            <!-- <artifactId>scala-maven-plugin</artifactId> -->
+            <!-- <configuration> -->
+            <!-- <target>1.8</target> -->
+            <!-- <args> -->
+            <!-- <arg>-target:jvm-1.8</arg> -->
+            <!-- </args> -->
+            <!-- </configuration> -->
+            <!-- </plugin> -->
+
+            <!-- Use scala identity. -->
+            <plugin>
+                <groupId>com.carrotgarden.maven</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <configuration>
+                    <performOverrideIdentity>true</performOverrideIdentity>
+                    <overrideArtifactId>${project.artifactId}_${version.scala.epoch}</overrideArtifactId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Generate plugin.xml descriptor. See plug-anno profile. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <configuration>
+                    <goalPrefix>scalor</goalPrefix>
+                </configuration>
+            </plugin>
+
+            <!-- Package as maven extension. -->
+            <plugin>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-component-metadata</artifactId>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>generate-metadata</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Invoke integration tests. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <configuration>
+                    <showErrors>true</showErrors>
+                    <streamLogs>true</streamLogs>
+                    <localRepositoryPath>${project.basedir}/test-repo</localRepositoryPath>
+                    <pomIncludes>test-any/pom.xml</pomIncludes>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>scalor</id>
+            <activation>
+                <file>
+                    <exists>pom-scalor.md</exists>
+                </file>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.carrotgarden.maven</groupId>
+                            <artifactId>scalor-maven-plugin_${version.scala.epoch}</artifactId>
+                            <version>1.0.20171216021040</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <!-- Disable default compiler. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                            <skipMain>true</skipMain>
+                        </configuration>
+                    </plugin>
+                    <!-- Enable alternative compiler. -->
+                    <plugin>
+                        <groupId>com.carrotgarden.maven</groupId>
+                        <artifactId>scalor-maven-plugin_${version.scala.epoch}</artifactId>
+                        <configuration>
+
+                            <!-- <autoconfLogProperties>true</autoconfLogProperties> -->
+                            <!-- <zincLogBuildClassPath>true</zincLogBuildClassPath> -->
+                            <!-- <zincLogPluginClassPath>true</zincLogPluginClassPath> -->
+
+                            <!-- <zincOptionsScalaC> -->
+                            <!-- -Xprint:all ; -->
+                            <!-- -deprecation ; -->
+                            <!-- -unchecked ; -->
+                            <!-- -feature ; -->
+                            <!-- </zincOptionsScalaC> -->
+
+                        </configuration>
+                        <dependencies>
+                            <!-- Override compiler version. -->
+                            <dependency>
+                                <groupId>org.scala-lang</groupId>
+                                <artifactId>scala-compiler</artifactId>
+                                <version>${version.scala.release}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.scala-lang</groupId>
+                                <artifactId>scala-library</artifactId>
+                                <version>${version.scala.release}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.scala-lang</groupId>
+                                <artifactId>scala-reflect</artifactId>
+                                <version>${version.scala.release}</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>auto-conf</goal>
+                                    <!-- <goal>eclipse-project</goal> -->
+                                    <!-- <goal>eclipse-settings</goal> -->
+                                    <!-- <goal>eclipse-classpath</goal> -->
+                                    <goal>register-macro</goal>
+                                    <goal>register-main</goal>
+                                    <goal>register-test</goal>
+                                    <goal>compile-macro</goal>
+                                    <goal>prepack-macro</goal>
+                                    <goal>compile-main</goal>
+                                    <goal>prepack-main</goal>
+                                    <goal>compile-test</goal>
+                                    <goal>prepack-test</goal>
+                                    <goal>link-scala-js-main</goal>
+                                    <goal>prepack-linker-main</goal>
+                                    <goal>link-scala-js-test</goal>
+                                    <goal>prepack-linker-test</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

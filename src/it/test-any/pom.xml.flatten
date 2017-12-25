@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.carrotgarden.maven</groupId>
+  <artifactId>scalor-maven-plugin-test-any</artifactId>
+  <version>0.20171211163931</version>
+  <description>scalor-maven-plugin-test-any</description>
+  <url>http://www.carrotgarden.com/scalor-maven-plugin-test-any/</url>
+  <organization>
+    <name>CarrotGarden</name>
+    <url>http://www.carrotgarden.com/</url>
+  </organization>
+  <developers>
+    <developer>
+      <name>CarrotGarden</name>
+    </developer>
+  </developers>
+  <scm>
+    <url>http://www.carrotgarden.com/scalor-maven-plugin-test-any//scalor-maven-plugin-test-any</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>2.12.4</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.scala-js</groupId>
+      <artifactId>scalajs-library_2.12</artifactId>
+      <version>0.6.21</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+</project>

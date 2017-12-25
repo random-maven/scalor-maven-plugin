@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+   <!-- Contribute M2E project configurator. -->
+   <extension
+         point="org.eclipse.m2e.core.projectConfigurators">
+        <configurator
+              id="${eclipse.plugin.projectConfigurator}"
+              class="com.carrotgarden.maven.scalor.EclipseConfigurator"
+              name="Scalor Maven Plugin / M2E Project Configurator"
+              runsAfter="org.eclipse.m2e.jdt.javaConfigurator">
+        </configurator>
+   </extension>
+   
+   <!-- Contribute "/lifecycle-mapping-metadata.xml" resource. -->
+   <extension
+        point="org.eclipse.m2e.core.lifecycleMappingMetadataSource">
+   </extension>
+      
+</plugin>

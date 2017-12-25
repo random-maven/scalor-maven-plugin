@@ -1,0 +1,118 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.carrotgarden.a</groupId>
+        <artifactId>carrot-a</artifactId>
+        <version>0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.carrotgarden.maven</groupId>
+    <artifactId>scalor-maven-plugin-test-any</artifactId>
+    <version>${revision}</version>
+    <packaging>jar</packaging>
+
+    <properties>
+
+        <!-- Some version above supported minimum. -->
+        <version.scala211.release>2.11.8</version.scala211.release>
+        <version.scala212.release>2.12.4</version.scala212.release>
+        <version.scala.plug.macro>2.1.0</version.scala.plug.macro>
+
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scala-js</groupId>
+            <artifactId>scalajs-library_${version.scala.epoch}</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>@project.artifactId@</artifactId>
+                <version>@project.version@</version>
+
+                <!-- Activate scalor life cycle. -->
+                <extensions>true</extensions>
+
+                <dependencies>
+
+                    <!-- Override compiler version. -->
+                    <dependency>
+                        <groupId>org.scala-lang</groupId>
+                        <artifactId>scala-compiler</artifactId>
+                        <version>${version.scala.release}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.scala-lang</groupId>
+                        <artifactId>scala-library</artifactId>
+                        <version>${version.scala.release}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.scala-lang</groupId>
+                        <artifactId>scala-reflect</artifactId>
+                        <version>${version.scala.release}</version>
+                    </dependency>
+
+                    <!-- Scala.js plugin. -->
+                    <dependency>
+                        <groupId>org.scala-js</groupId>
+                        <artifactId>scalajs-compiler_${version.scala.release}</artifactId>
+                        <version>${version.sjs.release}</version>
+                    </dependency>
+
+                    <!-- Scala.meta plugin. Replaces Scala.macro. -->
+                    <!-- <dependency> -->
+                    <!-- <groupId>org.scalameta</groupId> -->
+                    <!-- <artifactId>paradise_${version.scala.release}</artifactId> -->
+                    <!-- <version>${version.scala.plug.meta}</version> -->
+                    <!-- </dependency> -->
+
+                    <!-- Scala.macro plugin. Replaces Scala.meta. -->
+                    <dependency>
+                        <groupId>org.scalamacros</groupId>
+                        <artifactId>paradise_${version.scala.release}</artifactId>
+                        <version>${version.scala.plug.macro}</version>
+                    </dependency>
+
+                </dependencies>
+
+                <configuration>
+
+                    <zincCompileOrder>JavaThenScala</zincCompileOrder>
+
+                    <eclipseDetectPresent>false</eclipseDetectPresent>
+
+                    <!-- <autoconfLogProperties>true</autoconfLogProperties> -->
+
+                    <!-- <zincLogBuildClassPath>true</zincLogBuildClassPath> -->
+
+                    <!-- <zincLogPluginClassPath>true</zincLogPluginClassPath> -->
+
+                    <eclipseProjectNamePattern>${project.groupId}:${project.artifactId}</eclipseProjectNamePattern>
+
+                </configuration>
+
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
