@@ -12,7 +12,7 @@ class ClasserTest extends FunSuite {
   test( "companion" ) {
     implicit val loader = this.getClass.getClassLoader
 
-    val module = classerCompanion( classOf[ ClasserModule ] )
+    val module = trueCompanion( classOf[ ClasserModule ] )
 
     println( "module=" + module )
 

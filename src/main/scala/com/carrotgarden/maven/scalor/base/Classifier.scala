@@ -4,6 +4,8 @@ import org.apache.maven.artifact.Artifact
 import org.apache.maven.project.MavenProject
 import scala.util.Try
 
+import scala.language.implicitConversions
+
 object Classifier {
 
   type Bucket = Array[ Value ]

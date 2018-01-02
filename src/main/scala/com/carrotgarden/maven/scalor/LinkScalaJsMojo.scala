@@ -34,7 +34,7 @@ class LinkMainScalaJsMojo extends LinkAnyScalaJsMojo
   )
   var skipLinkerMain : Boolean = _
 
-  def hasSkipMojo = skipLinkerMain
+  override def hasSkipMojo = skipLinkerMain
 
 }
 
@@ -60,7 +60,7 @@ class LinkTestScalaJsMojo extends LinkAnyScalaJsMojo
   )
   var skipLinkerTest : Boolean = _
 
-  def hasSkipMojo = skipLinkerTest
+  override def hasSkipMojo = skipLinkerTest
 
 }
 
@@ -73,7 +73,7 @@ trait LinkAnyScalaJsMojo extends AbstractMojo
   with base.Mojo
   with base.Params
   with base.Logging
-  with base.Skip
+  with base.SkipMojo
   with eclipse.Build
   with scalajs.Linker
   with scalajs.Build {
@@ -125,15 +125,15 @@ trait LinkAnyScalaJsMojo extends AbstractMojo
 
   override def perform() : Unit = {
     if ( skipLinker || hasSkipMojo ) {
-      say.info( "Skipping disabled goal execution." )
+      reportSkipReason( "Skipping disabled goal execution." )
       return
     }
     if ( hasEclipse && skipLinkerEclipse ) {
-      say.info( "Skipping eclipse build invocation." )
+      reportSkipReason( "Skipping eclipse build invocation." )
       return
     }
     if ( hasIncremental ) {
-      say.info( "Skipping incremental build invocation." )
+      reportSkipReason( "Skipping incremental build invocation." )
       return
     }
     if ( linkerDetectScalajs ) {

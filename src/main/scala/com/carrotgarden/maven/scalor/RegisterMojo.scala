@@ -17,6 +17,7 @@ import A.mojo._
 import util.Folder._
 
 import com.carrotgarden.maven.tools.Description
+import java.util.Arrays
 
 @Description( """
 Register project sources for compilation scope=macro.
@@ -42,11 +43,17 @@ class RegisterMacroMojo extends RegisterAnyMojo
   var skipRegisterMacro : Boolean = _
 
   override def hasSkipMojo = skipRegisterMacro
-  override def sourceRootList = extractPropertyList( buildMacroSourceFoldersParam ).asJava
-  override def registerSourceRoot : RegistrationFunction = persistPropertyList( buildMacroSourceFoldersParam, _ )
-  override def targetRoot : String = extractProperty( buildMacroTargetParam )
-  override def registerTargetRoot : RegistrationFunction = persistProperty( buildMacroTargetParam, _ )
-  
+  override def sourceRootList =
+    extractPropertyList( buildMacroSourceFoldersParam )
+      .getOrElse( Arrays.asList( buildSourceFolders.map( _.getCanonicalPath ) : _* ) )
+  override def registerSourceRoot : RegistrationFunction =
+    persistPropertyList( buildMacroSourceFoldersParam, _ )
+  override def targetRoot : String =
+    extractProperty( buildMacroTargetParam )
+      .getOrElse( buildTargetFolder.getCanonicalPath )
+  override def registerTargetRoot : RegistrationFunction =
+    persistProperty( buildMacroTargetParam, _ )
+
 }
 
 @Description( """
@@ -113,10 +120,10 @@ class RegisterTestMojo extends RegisterAnyMojo
 
 trait RegisterAnyMojo extends AbstractMojo
   with base.Mojo
-  with base.BuildEnsure
   with base.Params
   with base.Logging
-  with base.Skip
+  with base.SkipMojo
+  with base.BuildEnsure
   with base.BuildAnySources
   with base.BuildAnyTarget
   with eclipse.Build {
@@ -192,11 +199,11 @@ trait RegisterAnyMojo extends AbstractMojo
 
   override def perform() : Unit = {
     if ( skipRegister || hasSkipMojo ) {
-      say.info( "Skipping disabled goal execution." )
+      reportSkipReason( "Skipping disabled goal execution." )
       return
     }
     if ( hasIncremental ) {
-      say.info( "Skipping incremental build invocation." )
+      reportSkipReason( "Skipping incremental build invocation." )
       return
     }
     perfromRegister()

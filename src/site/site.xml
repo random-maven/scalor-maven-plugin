@@ -37,23 +37,25 @@
 
             <item name="Goals" href="plugin-info.html" />
 
-            <item name="Register Macro" href="register-macro-mojo.html" />
-            <item name="Register Main" href="register-main-mojo.html" />
-            <item name="Register Test" href="register-test-mojo.html" />
+            <item name="eclipse-config" href="eclipse-config-mojo.html" />
 
-            <item name="Compile Macro" href="compile-macro-mojo.html" />
-            <item name="Compile Main" href="compile-main-mojo.html" />
-            <item name="Compile Test" href="compile-test-mojo.html" />
+            <item name="register-macro" href="register-macro-mojo.html" />
+            <item name="register-main" href="register-main-mojo.html" />
+            <item name="register-test" href="register-test-mojo.html" />
 
-            <item name="Prepack Macro" href="prepack-macro-mojo.html" />
-            <item name="Prepack Main" href="prepack-main-mojo.html" />
-            <item name="Prepack Test" href="prepack-test-mojo.html" />
+            <item name="compile-macro" href="compile-macro-mojo.html" />
+            <item name="compile-main" href="compile-main-mojo.html" />
+            <item name="compile-test" href="compile-test-mojo.html" />
 
-            <item name="Link Scala.js Main" href="link-scala-js-main-mojo.html" />
-            <item name="Link Scala.js Test" href="link-scala-js-test-mojo.html" />
+            <item name="prepack-macro" href="prepack-macro-mojo.html" />
+            <item name="prepack-main" href="prepack-main-mojo.html" />
+            <item name="prepack-test" href="prepack-test-mojo.html" />
 
-            <item name="Prepack Linker Main" href="prepack-linker-main-mojo.html" />
-            <item name="Prepack Linker Test" href="prepack-linker-test-mojo.html" />
+            <item name="link-scala-js-main" href="link-scala-js-main-mojo.html" />
+            <item name="link-scala-js-test" href="link-scala-js-test-mojo.html" />
+
+            <item name="prepack-linker-main" href="prepack-linker-main-mojo.html" />
+            <item name="prepack-linker-test" href="prepack-linker-test-mojo.html" />
 
             <!-- <item name="Usage" href="usage.html" /> -->
             <!-- <item name="FAQ" href="faq.html" /> -->

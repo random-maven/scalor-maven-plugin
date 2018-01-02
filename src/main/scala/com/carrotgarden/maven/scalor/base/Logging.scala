@@ -10,6 +10,7 @@ import java.io.File
  * Shared logging features.
  */
 trait Logging {
+  
   self : eclipse.Build with AbstractMojo =>
 
   def mojoName : String
@@ -29,7 +30,7 @@ trait Logging {
    * Log file list.
    */
   def reportFileList( fileList : Array[ File ] ) = {
-    fileList.sorted.foreach( file => say.info( "   " + file ) )
+    fileList.sorted.foreach( file => say.info( "   " + file.getCanonicalPath ) )
   }
 
 }

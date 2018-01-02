@@ -9,7 +9,6 @@ import java.io.File
 
 import com.carrotgarden.maven.scalor.base
 import com.carrotgarden.maven.scalor.eclipse
-import com.carrotgarden.maven.scalor.mojoexec
 
 import com.carrotgarden.maven.tools.Description
 

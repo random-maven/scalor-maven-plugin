@@ -34,7 +34,7 @@ class CompileMacroMojo extends CompileAnyMojo
   )
   var skipCompileMacro : Boolean = _
 
-  def hasSkipMojo = skipCompileMacro
+  override def hasSkipMojo = skipCompileMacro
 
 }
 
@@ -60,7 +60,7 @@ class CompileMainMojo extends CompileAnyMojo
   )
   var skipCompileMain : Boolean = _
 
-  def hasSkipMojo = skipCompileMain
+  override def hasSkipMojo = skipCompileMain
 
 }
 
@@ -86,22 +86,20 @@ class CompileTestMojo extends CompileAnyMojo
   )
   var skipCompileTest : Boolean = _
 
-  def hasSkipMojo = skipCompileTest
+  override def hasSkipMojo = skipCompileTest
 
 }
 
 /**
  * Shared compiler mojo interface.
  */
-trait CompileAnyMojo extends AbstractMojo
-  with base.Mojo
-  with base.Params
+trait CompileAnyMojo extends base.Mojo
   with base.Build
-  with base.Logging
-  with base.Skip
-  with eclipse.Build
+  with base.ParamsArtifact
+  with resolve.Maven
   with zinc.Params
-  with zinc.Compiler {
+  with zinc.Compiler
+  with zinc.Resolve {
 
   @Description( """
   Flag to skip compile execution: compile-*.
@@ -123,15 +121,15 @@ trait CompileAnyMojo extends AbstractMojo
 
   override def perform() : Unit = {
     if ( skipCompile || hasSkipMojo ) {
-      say.info( "Skipping disabled goal execution." )
+      reportSkipReason( "Skipping disabled goal execution." )
       return
     }
     if ( hasEclipse && skipCompileEclipse ) {
-      say.info( "Skipping eclipse build invocation." )
+      reportSkipReason( "Skipping eclipse build invocation." )
       return
     }
     if ( hasIncremental ) {
-      say.info( "Skipping incremental build invocation." )
+      reportSkipReason( "Skipping incremental build invocation." )
       return
     }
     zincPerformCompile()

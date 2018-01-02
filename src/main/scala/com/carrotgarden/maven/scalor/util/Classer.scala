@@ -3,32 +3,47 @@ package com.carrotgarden.maven.scalor.util
 import java.util.concurrent.Callable
 import scala.reflect.ClassTag
 
-import com.esotericsoftware.minlog.Log
 import java.io.ByteArrayOutputStream
-import com.esotericsoftware.kryo.io.Output
-import com.esotericsoftware.kryo.io.Input
 import java.io.ByteArrayInputStream
 
-import Chiller._
-
 /**
- * Class path support.
+ * Classes support.
  */
 object Classer {
 
+  val primitiveMap = Map[ Class[ _ ], Class[ _ ] ](
+    java.lang.Boolean.TYPE -> classOf[ java.lang.Boolean ],
+    java.lang.Byte.TYPE -> classOf[ java.lang.Byte ],
+    java.lang.Short.TYPE -> classOf[ java.lang.Short ],
+    java.lang.Character.TYPE -> classOf[ java.lang.Character ],
+    java.lang.Integer.TYPE -> classOf[ java.lang.Integer ],
+    java.lang.Long.TYPE -> classOf[ java.lang.Long ],
+    java.lang.Float.TYPE -> classOf[ java.lang.Float ],
+    java.lang.Double.TYPE -> classOf[ java.lang.Double ]
+  )
+
   /**
-   * Obtain companion object for a type.
+   * Convert from primitive type into wrapper type.
    */
-  def classerCompanion[ T ]( klaz : Class[ T ] )(
+  def primitiveWrap( klaz : Class[ _ ] ) = {
+    primitiveMap.getOrElse( klaz, klaz )
+  }
+
+  /**
+   * Obtain true companion object for a type.
+   * True companion extends the type.
+   */
+  def trueCompanion[ T ]( klaz : Class[ T ] )(
     implicit
     MF : Manifest[ T ], loader : ClassLoader
   ) : T =
-    classerCompanion( klaz.getName )
+    trueCompanion( klaz.getName )
 
   /**
-   * Obtain companion object for a type.
+   * Obtain true companion object for a type.
+   * True companion extends the type.
    */
-  def classerCompanion[ T ]( name : String )(
+  def trueCompanion[ T ]( name : String )(
     implicit
     MF : Manifest[ T ], loader : ClassLoader
   ) : T =
@@ -45,11 +60,13 @@ object Classer {
 
   /**
    * Obtain companion object for a type.
+   * Fake companion does not extend the type.
    */
   def fakeCompanion[ T ]( klaz : Class[ T ] ) : AnyRef = fakeCompanion( klaz.getName )
 
   /**
    * Obtain companion object for a type.
+   * Fake companion does not extend the type.
    */
   def fakeCompanion[ T ]( name : String ) : AnyRef =
     this.getClass.getClassLoader.loadClass( name + "$" ).getField( "MODULE$" ).get( null )

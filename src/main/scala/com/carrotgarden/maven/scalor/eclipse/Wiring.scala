@@ -29,7 +29,8 @@ import org.eclipse.m2e.core.ui.internal.M2EUIPluginActivator
 import org.eclipse.m2e.core.internal.MavenPluginActivator
 
 /**
- * Connect this maven plugin with host eclispe plugins.
+ * Connect this Maven plugin with host Eclipse platform
+ * in order to install its own companion Eclipse plugin.
  */
 case class Wiring(
   buildContext :    BuildContext,
@@ -53,7 +54,7 @@ case class Wiring(
     // eclipse m2e bundle loader
     val loaderM2E = buildContext.getClass.getClassLoader
 
-    // maven scalor plugin loader
+    // maven-scalor-plugin loader
     val localRealm = this.getClass.getClassLoader.asInstanceOf[ ClassRealm ]
 
     // verify existing package import
@@ -120,6 +121,10 @@ object Wiring {
     pkg : String*
   )
 
+  /**
+   * Maven/Eclipse wiring handle.
+   * Stores available Eclipse platform plugins.
+   */
   case class Handle(
     bundleM2E :       Bundle,
     localRealm :      ClassRealm,
@@ -132,7 +137,7 @@ object Wiring {
   /**
    * Find eclipse project with matching base directory.
    */
-  def projectWithPath( projectList : Array[ IProject ], baseDir : File ) : IProject = {
+  def projectWithBase( projectList : Array[ IProject ], baseDir : File ) : IProject = {
     val canonicalPath = baseDir.getCanonicalPath
     val length = projectList.length
     var index = 0

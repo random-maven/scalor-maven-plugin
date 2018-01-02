@@ -16,10 +16,10 @@ import com.carrotgarden.maven.scalor.A
  * Provide default lifecycle for scalor plugin.
  * Does not work in Eclipse / M2E.
  */
-//@Component(
-//  role = classOf[ AbstractMavenLifecycleParticipant ],
-//  hint = "scalor"
-//)
+@Component(
+  role = classOf[ AbstractMavenLifecycleParticipant ],
+  hint = "scalor"
+)
 class Lifecycle extends AbstractMavenLifecycleParticipant {
 
   /**
@@ -79,6 +79,10 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
         implicit val SP = scalor
         import A.mojo._
         // Provide default goal executions.
+
+        registerExecution( CLEAN, `clean-macro` )
+        registerExecution( CLEAN, `clean-main` )
+        registerExecution( CLEAN, `clean-test` )
 
         registerExecution( INITIALIZE, `eclipse-config` )
 

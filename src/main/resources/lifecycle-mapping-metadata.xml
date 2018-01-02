@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lifecycleMappingMetadata>
 
-    <!-- Used only by M2E, not Maven. -->
+    <!-- Used in M2E by Eclipse companion plugin, not Maven maven plugin. -->
     <pluginExecutions>
 
         <!--
@@ -18,7 +18,11 @@
                 <versionRange>[${project.version}]</versionRange>
                 <goals>
 
-                    <!-- Handle all goals but "eclipse-config". -->
+                    <!-- Eclipse companion handles all goals but "eclipse-config". -->
+
+                    <goal>clean-macro</goal>
+                    <goal>clean-main</goal>
+                    <goal>clean-test</goal>
 
                     <goal>register-macro</goal>
                     <goal>register-main</goal>

@@ -50,15 +50,15 @@ object A {
 
     final val `auto-conf` = "auto-conf"
 
+    final val `eclipse-config` = "eclipse-config"
+
+    final val `clean-macro` = "clean-macro"
+    final val `clean-main` = "clean-main"
+    final val `clean-test` = "clean-test"
+
     final val `register-macro` = "register-macro"
     final val `register-main` = "register-main"
     final val `register-test` = "register-test"
-
-    final val `eclipse-config` = "eclipse-config"
-    
-//    final val `eclipse-project` = "eclipse-project"
-//    final val `eclipse-settings` = "eclipse-settings"
-//    final val `eclipse-classpath` = "eclipse-classpath"
 
     final val `compile-macro` = "compile-macro"
     final val `compile-main` = "compile-main"

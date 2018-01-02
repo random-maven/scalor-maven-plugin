@@ -2,46 +2,25 @@ package com.carrotgarden.maven.scalor
 
 import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugins.annotations._
+import com.carrotgarden.maven.tools.Description
 
 import A.mojo._
-import com.carrotgarden.maven.scalor.util.Folder._
 
-import com.carrotgarden.maven.tools.Description
-import scala.xml.transform.RuleTransformer
-
-import xml._
-import util.Xml._
 import util.OSGI._
 import util.Error._
 import util.Params._
-import util.Chiller._
 import util.Classer._
 import util.Props._
 
 import eclipse.Wiring._
+import eclipse.Plugin
 
 import base.Params._
 
 import scala.util.Success
 import scala.util.Failure
-import org.scalaide.core.internal.project.ScalaInstallation
-import java.util.concurrent.Callable
-import org.scalaide.core.internal.project.LabeledScalaInstallation
-import org.scalaide.core.internal.project.ScalaModule
-import org.scalaide.core.IScalaProject
-import org.codehaus.plexus.classworlds.realm.ClassRealm
-import java.net.URLClassLoader
-import com.esotericsoftware.minlog.Log
-import org.scalaide.core.internal.project.ScalaInstallationLabel
-import scala.tools.nsc.settings.ScalaVersion
-import scala.tools.nsc.settings.NoScalaVersion
-import com.esotericsoftware.kryo.serializers.FieldSerializer
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable.ArrayBuffer
-import org.apache.maven.artifact.Artifact
-import org.scalaide.core.internal.project.CustomScalaInstallationLabel
-import java.net.URL
 
 import org.eclipse.m2e.core.ui.internal.UpdateMavenProjectJob
 import org.eclipse.core.resources.IProject
@@ -56,7 +35,7 @@ Install companion Eclipse plugin.
 )
 class EclipseConfigMojo extends EclipseAnyMojo
   with base.ParamsArtifact
-  with eclipse.Config {
+  with eclipse.Params {
 
   import EclipseConfigMojo._
 
@@ -66,11 +45,11 @@ class EclipseConfigMojo extends EclipseAnyMojo
     say.info( "Configuring companion Eclipse plugin:" )
     val handle = resolveHandle
 
-    val descriptorUrl = Eclipse.pluginPropertiesUrl
+    val descriptorUrl = Plugin.Config.pluginPropertiesUrl
     val descriptorProps = propertiesFrom( descriptorUrl )
 
-    val pluginId = descriptorProps.getProperty( Eclipse.key.pluginId )
-    val pluginLocation = Eclipse.location
+    val pluginId = descriptorProps.getProperty( Plugin.Config.key.pluginId )
+    val pluginLocation = Plugin.Config.location
     say.info( "   pluginId: " + pluginId )
     say.info( "   location: " + pluginLocation )
 
@@ -90,7 +69,8 @@ class EclipseConfigMojo extends EclipseAnyMojo
     if ( hasProjectUpdate ) {
       say.info( "Scheduling project update in Eclipse to invoke M2E project configurator." )
       val projectList = handle.workspace.getRoot.getProjects
-      val currentProject = projectWithPath( projectList, project.getBasedir )
+      val currentProject = projectWithBase( projectList, project.getBasedir )
+      // TODO remove dependency on m2e.core.ui
       val updateJob = new UpdateMavenProjectJob( Array[ IProject ]( currentProject ) )
       val updateName = "Project update for: " + pluginId + " @ " + project.getArtifactId
       updateJob.setName( updateName )
@@ -109,11 +89,7 @@ object EclipseConfigMojo {
 /**
  * Shared Eclipse mojo interface.
  */
-trait EclipseAnyMojo extends AbstractMojo
-  with base.Mojo
-  with base.Params
-  with base.Logging
-  with eclipse.Build {
+trait EclipseAnyMojo extends base.Mojo {
 
   @Description( """
   Flag to skip goal execution: eclipse-*.
@@ -155,15 +131,15 @@ trait EclipseAnyMojo extends AbstractMojo
 
   override def perform() : Unit = {
     if ( skipEclipse ) {
-      say.info( "Skipping disabled goal execution." )
+      reportSkipReason( "Skipping disabled goal execution." )
       return
     }
     if ( eclipseDetectPresent && !hasEclipse ) {
-      say.info( "Skipping non-eclipse build invocation." )
+      reportSkipReason( "Skipping non-eclipse build invocation." )
       return
     }
     if ( hasIncremental ) {
-      say.info( "Skipping incremental build invocation." )
+      reportSkipReason( "Skipping incremental build invocation." )
       return
     }
     reportHandle

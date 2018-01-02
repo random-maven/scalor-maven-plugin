@@ -32,10 +32,12 @@ import xsbti.compile.MiniSetup
 import xsbti.compile.PerClasspathEntryLookup
 import xsbti.compile.PreviousResult
 import xsbti.compile.ZincCompilerUtil
+import xsbti.compile.CompileOrder
 
-import com.carrotgarden.maven.scalor.base
+import com.carrotgarden.maven.scalor._
 
 import com.carrotgarden.maven.scalor.util.Folder._
+import java.net.URLClassLoader
 
 /**
  * Compiler for scope=macro.
@@ -43,7 +45,10 @@ import com.carrotgarden.maven.scalor.util.Folder._
 trait CompilerMacro extends Compiler
   with base.BuildMacro
   with ParamsMacro {
-  self : base.Build with base.Logging with base.Params =>
+
+  self : Resolve //
+  with base.Build with base.Logging with base.Params with base.ParamsDefine //
+  =>
 
   def zincBuildCache = zincCacheMacro
 }
@@ -54,7 +59,10 @@ trait CompilerMacro extends Compiler
 trait CompilerMain extends Compiler
   with base.BuildMain
   with ParamsMain {
-  self : base.Build with base.Logging with base.Params =>
+
+  self : Resolve //
+  with base.Build with base.Logging with base.Params with base.ParamsDefine //
+  =>
 
   def zincBuildCache = zincCacheMain
 }
@@ -65,7 +73,10 @@ trait CompilerMain extends Compiler
 trait CompilerTest extends Compiler
   with base.BuildTest
   with ParamsTest {
-  self : base.Logging with base.Params =>
+
+  self : Resolve //
+  with base.Build with base.Logging with base.Params with base.ParamsDefine //
+  =>
 
   def zincBuildCache = zincCacheTest
 }
@@ -74,7 +85,10 @@ trait CompilerTest extends Compiler
  * Shared compiler interface.
  */
 trait Compiler {
-  self : Params with base.Build with base.Logging with base.Params =>
+
+  self : Params with Resolve //
+  with base.Build with base.Logging with base.Params with base.ParamsDefine //
+  =>
 
   import Compiler._
 
@@ -102,11 +116,6 @@ trait Compiler {
     buildDependencyFolders ++ projectClassPath( buildDependencyScopes )
 
   /**
-   * Dependencies of this maven plugin.
-   */
-  def zincPluginClassPath : Array[ File ] = pluginClassPath()
-
-  /**
    * Verify if logging is enabled at a level.
    */
   def zincHasLog( level : Level.Value ) : Boolean = {
@@ -114,81 +123,76 @@ trait Compiler {
   }
 
   /**
-   * Setup and invoke zinc incremental compiler.
+   * Setup and invoke Zinc incremental compiler.
    */
   def zincPerformCompile() : Unit = {
 
-    // Verify compiler-bridge is present.
-    val loader = new CompilerInterface().getClass.getClassLoader
-
     // Assemble required build context.
-    val sources : Array[ File ] = zincBuildSources
-    val classPath : Array[ File ] = zincBuildClassPath
-    val cacheFile : File = zincBuildCache
-    val classesDirectory : File = zincBuildTarget
-    val pluginClassPath : Array[ File ] = zincPluginClassPath
-    val pluginDiscoveryList : Array[ File ] = zincPluginDiscoveryList( loader )
+    val buildSources : Array[ File ] =
+      zincBuildSources.map( _.getCanonicalFile )
+    val buildClassPath : Array[ File ] =
+      zincBuildClassPath.map( _.getCanonicalFile )
+    val buildCacheFile : File =
+      zincBuildCache.getCanonicalFile
+    val buildOutputFolder : File =
+      zincBuildTarget.getCanonicalFile
 
     // Ensure output locations.
-    ensureParent( cacheFile )
-    ensureParent( classesDirectory )
+    ensureParent( buildCacheFile )
+    ensureFolder( buildOutputFolder )
+
+    // Provide compiler installation.
+    val compilerInstall = resolveCustomInstall()
+    val compilerClassPath : Array[ File ] =
+      compilerInstall.zincJars.map( Module.fileFrom( _ ) ).toArray
+    val compilerPluginList : Array[ File ] =
+      compilerInstall.pluginDefineList.map( Module.fileFrom( _ ) ).toArray
+
+    // Provide compiler class loader.
+    val compilerLoader : ClassLoader = {
+      val entryList = compilerClassPath.map( _.toURI.toURL )
+      new URLClassLoader( entryList )
+    }
+
+    //    defineBridge.foreach { define =>
+    //      say.info( s" ${define}" )
+    //    }
+    //    defineCompiler.foreach { define =>
+    //      say.info( s" ${define}" )
+    //    }
+    //    definePluginList.foreach { define =>
+    //      say.info( s" ${define}" )
+    //    }
 
     // Provide user reporting.
     if ( zincLogSourcesList ) {
       say.info( "Sources list:" )
-      reportFileList( sources )
+      reportFileList( buildSources )
     }
-    if ( zincLogBuildClassPath ) {
+    if ( zincLogProjectClassPath ) {
       say.info( "Build class path:" )
-      reportFileList( classPath )
+      reportFileList( buildClassPath )
     }
-    if ( zincLogPluginClassPath ) {
-      say.info( "Plugin class path:" )
-      reportFileList( pluginClassPath )
+    if ( zincLogCompilerClassPath ) {
+      say.info( "Compiler class path:" )
+      reportFileList( compilerClassPath )
     }
-    if ( zincLogPluginDiscoveryList ) {
+    if ( zincLogCompilerPluginList ) {
       say.info( "Compiler plugin list:" )
-      reportFileList( pluginDiscoveryList )
-    }
-
-    // Locate zinc dependencies.
-    val resolve = for {
-      bridge <- resolveJar( pluginClassPath, zincRegexCompilerBridge ).right
-      library <- resolveJar( pluginClassPath, zincRegexScalaLibrary ).right
-      reflect <- resolveJar( pluginClassPath, zincRegexScalaReflect ).right
-      compiler <- resolveJar( pluginClassPath, zincRegexScalaCompiler ).right
-    } yield {
-      ( bridge, library, reflect, compiler )
-    }
-    val ( bridge, library, reflect, compiler ) = resolve match {
-      case Right( tuple ) => tuple
-      case Left( error )  => throw new RuntimeException( error )
+      reportFileList( compilerPluginList )
     }
 
     // Verify dependency version consistency.
     if ( zincVerifyVersion ) {
-      assertVersionTree( bridge, compiler )
-      assertVersionTree( bridge, library )
-      assertVersionTree( bridge, reflect )
-      assertVersionExact( compiler, library )
-      assertVersionExact( compiler, compiler )
+      Version.assertVersion( compilerInstall )
     }
 
-    // Declare scala version.
-    val version = library.version
-
-    // Describe ScalaC instance.
-    val scalaInstance = new ScalaInstance(
-      version        = version,
-      loader         = loader,
-      libraryJar     = library.file,
-      compilerJar    = compiler.file,
-      allJars        = pluginClassPath,
-      explicitActual = Some( version )
-    )
+    // Provide Zinc ScalaC instance.
+    val scalaInstance = instanceFrom( compilerLoader, compilerInstall )
+    val bridgeJar = Module.fileFrom( compilerInstall.bridge )
 
     // Provide static pre-built zinc compiler-bridge jar.
-    val provider = ZincCompilerUtil.constantBridgeProvider( scalaInstance, bridge.file )
+    val provider = ZincCompilerUtil.constantBridgeProvider( scalaInstance, bridgeJar )
 
     // Configured ScalaC instance.
     val scalaCompiler = new AnalyzingCompiler(
@@ -202,7 +206,9 @@ trait Compiler {
     // Use zinc incremental compiler.
     val incremental = new IncrementalCompilerImpl
 
-    val compilers = incremental.compilers( scalaInstance, ClasspathOptionsUtil.boot, None, scalaCompiler )
+    val compilers = incremental.compilers(
+      scalaInstance, ClasspathOptionsUtil.boot, None, scalaCompiler
+    )
 
     val lookup = new PerClasspathEntryLookup {
       override def analysis( classpathEntry : File ) : Optional[ CompileAnalysis ] = Optional.empty[ CompileAnalysis ]
@@ -255,7 +261,7 @@ trait Compiler {
     val setup = incremental.setup(
       lookup         = lookup,
       skip           = false,
-      cacheFile      = cacheFile,
+      cacheFile      = buildCacheFile,
       cache          = CompilerCache.fresh,
       incOptions     = IncOptions.of(),
       reporter       = reporter,
@@ -264,27 +270,27 @@ trait Compiler {
     )
 
     // Final compilation options.
-    val pluginOptions = pluginDiscoveryList.map( pluginStanza( _ ) ).flatten
+    val pluginOptions = compilerPluginList.flatMap( pluginStanza( _ ) )
     val scalacOptions = zincSettingsScalaC ++ pluginOptions
     val javacOptions = zincSettingsJavaC
 
     // Iterative inputs.
     val inputsPast = incremental.inputs(
-      classpath             = classPath,
-      sources               = sources,
-      classesDirectory      = classesDirectory,
+      classpath             = buildClassPath,
+      sources               = buildSources,
+      classesDirectory      = buildOutputFolder,
       scalacOptions         = scalacOptions,
       javacOptions          = javacOptions,
       maxErrors             = zincMaximumErrors,
       sourcePositionMappers = Array.empty,
-      order                 = zincCompileOrder,
+      order                 = CompileOrder.valueOf( zincCompileOrder ),
       compilers             = compilers,
       setup                 = setup,
       pr                    = incremental.emptyPreviousResult // FIXME read past state.
     )
 
     // State change analysis.
-    val analysis = AnalysisStore.getCachedStore( FileAnalysisStore.binary( cacheFile ) )
+    val analysis = AnalysisStore.getCachedStore( FileAnalysisStore.binary( buildCacheFile ) )
 
     // Iterative inputs.
     val inputsNext = {
@@ -302,7 +308,7 @@ trait Compiler {
       }
     }
 
-    say.info( "Invoking zinc compiler:" )
+    say.info( s"Invoking Zinc compiler: ${scalaInstance.version}" )
 
     // Run compiler invocation.
     val result = incremental.compile( inputsNext, logger )
@@ -314,40 +320,28 @@ trait Compiler {
 
 }
 
-object Compiler extends ProblemStringFormats {
+object Compiler {
 
-  def assertVersionTree( item1 : FileItem, item2 : FileItem ) = {
-    if ( !versionTree( item1, item2 ) ) versionFailure( item1, item2 )
-  }
-
-  def assertVersionExact( item1 : FileItem, item2 : FileItem ) = {
-    if ( !versionExact( item1, item2 ) ) versionFailure( item1, item2 )
-  }
+  import Module._
 
   /**
-   * Report version mismatch error.
-   */
-  def versionFailure( file1 : FileItem, file2 : FileItem ) {
-    throw new RuntimeException( s"Version mismatch: ${file1} vs ${file2}" );
-  }
-
-  /**
-   * Verify version tree/branch match, i.e. 2.12 is-same-as 2.12.4
-   */
-  def versionTree( item_short : FileItem, item_long : FileItem ) = {
-    item_long.version.startsWith( item_short.version )
-  }
-
-  /**
-   * Verify exact version match.
-   */
-  def versionExact( item1 : FileItem, item2 : FileItem ) = {
-    item2.version.equals( item1.version )
-  }
-
-  /**
-   * Scala compiler plugin stanza: activate plugin by jar path.
+   * Scala compiler argument: plugin stanza: activate plugin by jar path.
    */
   def pluginStanza( file : File ) = Array[ String ]( "-Xplugin", file.getCanonicalPath )
+
+  /**
+   * Convert into Zinc scala compiler installation format.
+   */
+  def instanceFrom( loader : ClassLoader, install : ScalaInstall ) : ScalaInstance = {
+    import install._
+    new ScalaInstance(
+      version        = version.unparse,
+      loader         = loader,
+      libraryJar     = fileFrom( library ),
+      compilerJar    = fileFrom( compiler ),
+      allJars        = zincJars.map( fileFrom( _ ) ).toArray,
+      explicitActual = Some( version.unparse )
+    )
+  }
 
 }

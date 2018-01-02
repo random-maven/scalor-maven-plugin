@@ -8,8 +8,24 @@ import com.carrotgarden.maven.scalor.eclipse
 /**
  * Shared mojo execution process steps.
  */
-trait Mojo {
-  self : eclipse.Build with Params with Logging with AbstractMojo =>
+trait Mojo extends AbstractMojo
+  with Params
+  with Logging
+  with Skip
+  with SkipMojo
+  with eclipse.Build {
+
+  def hasSkip : Boolean = {
+    skip
+  }
+
+  def hasSkipPackaging : Boolean = {
+    skipPackagingList.contains( project.getPackaging )
+  }
+
+  def reportSkipReason( line : String ) : Unit = {
+    if ( skipLogReason ) { say.info( line ) }
+  }
 
   /**
    * Actually perform goal execution.
@@ -19,8 +35,12 @@ trait Mojo {
   override def execute() : Unit = {
     try {
       contextReset()
-      if ( skip ) {
-        say.info( "Skipping all plugin executions." )
+      if ( hasSkip ) {
+        reportSkipReason( "Skipping plugin execution." )
+        return
+      }
+      if ( hasSkipPackaging ) {
+        reportSkipReason( s"Skipping plugin execution for packaging '${project.getPackaging}'." )
         return
       }
       perform()

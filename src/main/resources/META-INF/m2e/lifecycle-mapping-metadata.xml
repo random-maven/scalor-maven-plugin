@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lifecycleMappingMetadata>
 
-    <!-- Used only by Maven, not M2E. -->
+    <!-- Used in M2E by Maven plugin, not Eclipse companion plugin. -->
     <pluginExecutions>
 
         <!-- Install companion Eclipse plugin. -->
@@ -19,10 +19,14 @@
             </action>
         </pluginExecution>
 
-        <!-- Delegate goals to companion Eclipse plugin. -->
+        <!-- Delegate these goals to companion Eclipse plugin. -->
         <pluginExecution>
             <pluginExecutionFilter>
                 <goals>
+
+                    <goal>clean-macro</goal>
+                    <goal>clean-main</goal>
+                    <goal>clean-test</goal>
 
                     <goal>register-macro</goal>
                     <goal>register-main</goal>

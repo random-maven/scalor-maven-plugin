@@ -57,7 +57,6 @@
         <!-- Scala stack. -->
         <version.scala.epoch>2.12</version.scala.epoch>
         <version.scala.release>${version.scala.epoch}.4</version.scala.release>
-        <version.scala.eclipse>-2056646829</version.scala.eclipse><!-- scala-2.12.4 -->
         <version.scala.sbt>0.13.7</version.scala.sbt>
         <version.scala.xml>1.0.6</version.scala.xml>
         <version.scala.protobuf>0.6.7</version.scala.protobuf>
@@ -1801,6 +1800,285 @@
     </pluginRepositories>
 
     <profiles>
+
+        <!-- Scala compiler setup. -->
+        <profile>
+            <id>scalor</id>
+            <activation>
+                <file>
+                    <exists>pom-scalor.md</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- Disable default compiler. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                            <skipMain>true</skipMain>
+                        </configuration>
+                    </plugin>
+                    <!-- Enable alternative compiler. -->
+                    <plugin>
+                        <groupId>com.carrotgarden.maven</groupId>
+                        <artifactId>scalor-maven-plugin_${version.scala.epoch}</artifactId>
+                        <configuration>
+                            <zincOptionsJavaC>
+                                -target
+                                ${version.java}
+                                -encoding
+                                ${project.build.sourceEncoding}
+                                -deprecation
+                            </zincOptionsJavaC>
+                            <zincOptionsScalaC>
+                                -target:jvm-${version.java}
+                                -encoding
+                                ${project.build.sourceEncoding}
+                                -deprecation
+                                -unchecked
+                                -feature
+                            </zincOptionsScalaC>
+                            <defineBridge>
+                                <dependency>
+                                    <groupId>org.scala-sbt</groupId>
+                                    <artifactId>compiler-bridge_${version.scala.epoch}</artifactId>
+                                    <version>${version.scala.zinc}</version>
+                                </dependency>
+                            </defineBridge>
+                            <defineCompiler>
+                                <dependency>
+                                    <groupId>org.scala-lang</groupId>
+                                    <artifactId>scala-compiler</artifactId>
+                                    <version>${version.scala.release}</version>
+                                </dependency>
+                            </defineCompiler>
+                            <definePluginList>
+                            </definePluginList>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <!-- -->
+                                    <goal>clean-macro</goal>
+                                    <goal>clean-main</goal>
+                                    <goal>clean-test</goal>
+                                    <!-- -->
+                                    <goal>eclipse-config</goal>
+                                    <!-- -->
+                                    <goal>register-macro</goal>
+                                    <goal>register-main</goal>
+                                    <goal>register-test</goal>
+                                    <!-- -->
+                                    <goal>compile-macro</goal>
+                                    <goal>prepack-macro</goal>
+                                    <!-- -->
+                                    <goal>compile-main</goal>
+                                    <goal>prepack-main</goal>
+                                    <!-- -->
+                                    <goal>compile-test</goal>
+                                    <goal>prepack-test</goal>
+                                    <!-- -->
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Scala.js library project. -->
+        <profile>
+            <id>scalor-js-lib</id>
+            <activation>
+                <file>
+                    <exists>pom-scalor-js-lib.md</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- Disable default compiler. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                            <skipMain>true</skipMain>
+                        </configuration>
+                    </plugin>
+                    <!-- Enable alternative compiler. -->
+                    <plugin>
+                        <groupId>com.carrotgarden.maven</groupId>
+                        <artifactId>scalor-maven-plugin_${version.scala.epoch}</artifactId>
+                        <configuration>
+                            <zincOptionsJavaC>
+                                -target
+                                ${version.java}
+                                -encoding
+                                ${project.build.sourceEncoding}
+                                -deprecation
+                            </zincOptionsJavaC>
+                            <zincOptionsScalaC>
+                                -target:jvm-${version.java}
+                                -encoding
+                                ${project.build.sourceEncoding}
+                                -deprecation
+                                -unchecked
+                                -feature
+                                -P:scalajs:sjsDefinedByDefault
+                            </zincOptionsScalaC>
+                            <defineBridge>
+                                <dependency>
+                                    <groupId>org.scala-sbt</groupId>
+                                    <artifactId>compiler-bridge_${version.scala.epoch}</artifactId>
+                                    <version>${version.scala.zinc}</version>
+                                </dependency>
+                            </defineBridge>
+                            <defineCompiler>
+                                <dependency>
+                                    <groupId>org.scala-lang</groupId>
+                                    <artifactId>scala-compiler</artifactId>
+                                    <version>${version.scala.release}</version>
+                                </dependency>
+                            </defineCompiler>
+                            <definePluginList>
+                                <dependency>
+                                    <groupId>org.scala-js</groupId>
+                                    <artifactId>scalajs-compiler_${version.scala.release}</artifactId>
+                                    <version>${version.sjs.release}</version>
+                                </dependency>
+                            </definePluginList>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <!-- -->
+                                    <goal>clean-macro</goal>
+                                    <goal>clean-main</goal>
+                                    <goal>clean-test</goal>
+                                    <!-- -->
+                                    <goal>eclipse-config</goal>
+                                    <!-- -->
+                                    <goal>register-macro</goal>
+                                    <goal>register-main</goal>
+                                    <goal>register-test</goal>
+                                    <!-- -->
+                                    <goal>compile-macro</goal>
+                                    <goal>prepack-macro</goal>
+                                    <!-- -->
+                                    <goal>compile-main</goal>
+                                    <goal>prepack-main</goal>
+                                    <!-- -->
+                                    <goal>compile-test</goal>
+                                    <goal>prepack-test</goal>
+                                    <!-- -->
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Scala.js runtime project. -->
+        <profile>
+            <id>scalor-js-run</id>
+            <activation>
+                <file>
+                    <exists>pom-scalor-js-run.md</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- Disable default compiler. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                            <skipMain>true</skipMain>
+                        </configuration>
+                    </plugin>
+                    <!-- Enable alternative compiler. -->
+                    <plugin>
+                        <groupId>com.carrotgarden.maven</groupId>
+                        <artifactId>scalor-maven-plugin_${version.scala.epoch}</artifactId>
+                        <configuration>
+                            <zincOptionsJavaC>
+                                -target
+                                ${version.java}
+                                -encoding
+                                ${project.build.sourceEncoding}
+                                -deprecation
+                            </zincOptionsJavaC>
+                            <zincOptionsScalaC>
+                                -target:jvm-${version.java}
+                                -encoding
+                                ${project.build.sourceEncoding}
+                                -deprecation
+                                -unchecked
+                                -feature
+                                -P:scalajs:sjsDefinedByDefault
+                            </zincOptionsScalaC>
+                            <defineBridge>
+                                <dependency>
+                                    <groupId>org.scala-sbt</groupId>
+                                    <artifactId>compiler-bridge_${version.scala.epoch}</artifactId>
+                                    <version>${version.scala.zinc}</version>
+                                </dependency>
+                            </defineBridge>
+                            <defineCompiler>
+                                <dependency>
+                                    <groupId>org.scala-lang</groupId>
+                                    <artifactId>scala-compiler</artifactId>
+                                    <version>${version.scala.release}</version>
+                                </dependency>
+                            </defineCompiler>
+                            <definePluginList>
+                                <dependency>
+                                    <groupId>org.scala-js</groupId>
+                                    <artifactId>scalajs-compiler_${version.scala.release}</artifactId>
+                                    <version>${version.sjs.release}</version>
+                                </dependency>
+                            </definePluginList>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <!-- -->
+                                    <goal>clean-macro</goal>
+                                    <goal>clean-main</goal>
+                                    <goal>clean-test</goal>
+                                    <!-- -->
+                                    <goal>eclipse-config</goal>
+                                    <!-- -->
+                                    <goal>register-macro</goal>
+                                    <goal>register-main</goal>
+                                    <goal>register-test</goal>
+                                    <!-- -->
+                                    <goal>compile-macro</goal>
+                                    <goal>prepack-macro</goal>
+                                    <!-- -->
+                                    <goal>compile-main</goal>
+                                    <goal>prepack-main</goal>
+                                    <!-- -->
+                                    <goal>compile-test</goal>
+                                    <goal>prepack-test</goal>
+                                    <!-- -->
+                                    <goal>link-scala-js-main</goal>
+                                    <goal>prepack-linker-main</goal>
+                                    <!-- -->
+                                    <goal>link-scala-js-test</goal>
+                                    <goal>prepack-linker-test</goal>
+                                    <!-- -->
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
         <!-- Use custom maven plugin annotations. -->
         <profile>

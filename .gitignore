@@ -9,4 +9,7 @@ target/
 
 /pom.xml.flatten
 
+make-repo/
 test-repo/
+
+/.scalor/

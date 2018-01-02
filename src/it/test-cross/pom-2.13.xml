@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.carrotgarden.maven</groupId>
+        <artifactId>scalor-maven-plugin-test-cross</artifactId>
+        <version>${revision}</version>
+        <relativePath>./pom.xml</relativePath>
+    </parent>
+
+    <groupId>com.carrotgarden.maven</groupId>
+    <artifactId>scalor-maven-plugin-test-cross_2.13</artifactId>
+    <version>${revision}</version>
+    <packaging>jar</packaging>
+
+    <description>
+        Produce cross-scala version build for Scala 2.13.
+    </description>
+
+    <properties>
+
+        <version.scala.epoch>2.13</version.scala.epoch>
+        <version.scala.release>2.13.0</version.scala.release>
+
+    </properties>
+
+
+</project>

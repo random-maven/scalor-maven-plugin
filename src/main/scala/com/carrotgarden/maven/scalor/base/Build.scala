@@ -17,12 +17,13 @@ import java.util.HashSet
 import java.util.List
 import java.util.ArrayList
 
-import com.carrotgarden.maven.scalor.util
+import com.carrotgarden.maven.scalor._
 import com.carrotgarden.maven.tools.Description
 
 import com.carrotgarden.maven.scalor.A._
-import com.github.dwickern.macros.NameOf._
+//import com.github.dwickern.macros.NameOf._
 
+import meta.Macro._
 import util.Error._
 import util.Folder._
 
@@ -94,9 +95,10 @@ trait BuildMacroSources extends BuildAnySources {
   override def buildSourceFolders = buildMacroSourceJavaFolders ++ buildMacroSourceScalaFolders
 
   /**
-   * Internal storage parameter.
+   * Custom project property used to store registered macro source folders.
+   * Emulate 'project.getCompileSourceRoots' for scope=macro.
    */
-  def buildMacroSourceFoldersParam = "scalor.buildMacroSourceFolders"
+  def buildMacroSourceFoldersParam = "scalor.buildMacroSourceRoots"
 
 }
 
@@ -111,7 +113,11 @@ trait BuildMacroTarget extends BuildAnyTarget {
   )
   var buildMacroTargetFolder : File = _
 
-  def buildMacroTargetParam = param.of( nameOf( buildMacroTargetFolder ) )
+  /**
+   * Custom project property used to store registered macro target folder.
+   * Emulate 'project.getBuild.getOutputDirectory' for scope=macro.
+   */
+  def buildMacroTargetParam = "scalor.buildMacroOutputDirectory"
 
   override def buildTargetFolder = buildMacroTargetFolder
 
@@ -336,6 +342,7 @@ trait BuildEnsure {
 
   @Description( """
   Create source/target folders when missing.
+  Controls both Maven plugin and Eclipse companion.
   """ )
   @Parameter(
     property     = "scalor.buildEnsureFolders",
@@ -345,46 +352,67 @@ trait BuildEnsure {
 
 }
 
-object Build extends Build {
+object Build extends Build with BuildEnsure {
 
   import BuildMacro._
   import BuildMain._
   import BuildTest._
 
+  /**
+   * Build parameter names.
+   */
+
+  val paramEnsureFolders = nameOf( buildEnsureFolders )
+
+  /**
+   * Describe build paramteres for give scope.
+   * See [[org.scalaide.core.internal.project.CompileScope]]
+   */
   case class BuildParam(
-    javaSourceFolders :  String = "scalor.invalid",
-    scalaSourceFolders : String = "scalor.invalid",
-    buildTargetFolder :  String = "scalor.invalid"
+    scope :              String = "invalid",
+    javaSourceFolders :  String = "invalid",
+    scalaSourceFolders : String = "invalid",
+    buildTargetFolder :  String = "invalid"
   )
 
+  object BuildParam {
+    object attrib {
+      /**
+       * Name of custom attribute for Eclipse class path entry.
+       */
+      val scope = "scalor.scope"
+    }
+  }
+
   lazy val paramMacro = BuildParam(
+    "macro",
     nameOf( buildMacroSourceJavaFolders ),
     nameOf( buildMacroSourceScalaFolders ),
     nameOf( buildMacroTargetFolder )
   )
 
   lazy val paramMain = BuildParam(
+    "main",
     nameOf( buildMainSourceJavaFolders ),
     nameOf( buildMainSourceScalaFolders ),
     nameOf( buildMainTargetFolder )
   )
 
   lazy val paramTest = BuildParam(
+    "test",
     nameOf( buildTestSourceJavaFolders ),
     nameOf( buildTestSourceScalaFolders ),
     nameOf( buildTestTargetFolder )
   )
 
+  /**
+   * Publish parameter names for companion Eclipse plugin.
+   * Provides source/target root folders for each build scope.
+   */
   lazy val descriptorMap = Map[ String, BuildParam ](
     mojo.`register-macro` -> paramMacro,
     mojo.`register-main` -> paramMain,
     mojo.`register-test` -> paramTest,
-    //    mojo.`compile-macro` -> paramMacro,
-    //    mojo.`compile-main` -> paramMain,
-    //    mojo.`compile-test` -> paramTest,
-    //    mojo.`prepack-macro` -> paramMacro,
-    //    mojo.`prepack-main` -> paramMain,
-    //    mojo.`prepack-test` -> paramTest
     "" -> BuildParam()
   )
 

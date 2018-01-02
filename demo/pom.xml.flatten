@@ -4,8 +4,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.carrotgarden.maven</groupId>
   <artifactId>scalor-maven-plugin-demo</artifactId>
-  <version>0.20171225074454</version>
-  <description>scalor-maven-plugin-demo</description>
+  <version>0.20180102011559</version>
+  <description>Demonstration project, features:
+    * 3-scope build
+    * Scala macro compile
+    * Scala.js runtime.js linker</description>
   <url>http://www.carrotgarden.com/scalor-maven-plugin-demo/</url>
   <organization>
     <name>CarrotGarden</name>
@@ -21,16 +24,16 @@
   </scm>
   <dependencies>
     <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>2.12.4</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.scala-js</groupId>
-      <artifactId>scalajs-library_2.12</artifactId>
+      <artifactId>scalajs-library_2.11</artifactId>
       <version>0.6.21</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>2.11.12</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 </project>

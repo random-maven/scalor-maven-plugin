@@ -10,9 +10,10 @@ import com.carrotgarden.maven.tools.Description
 import com.carrotgarden.maven.scalor.util._
 
 /**
- * Eclipse build integration context.
+ * Eclipse/Maven (M2E) build integration context.
  */
 trait Build {
+  
   self : base.Params =>
 
   @Description( """
@@ -73,9 +74,6 @@ trait Build {
     def version = session.getUserProperties.getProperty( key, "" )
     /** Verify invocation from Eclipse. */
     def isPresent = version != ""
-
-    // https://github.com/eclipse/m2e-core/blob/master/org.eclipse.m2e.core/src/org/eclipse/m2e/core/internal/embedder/EclipseBuildContext.java
-    val context = "org.eclipse.m2e.core.internal.embedder.EclipseBuildContext"
   }
 
   /**

@@ -1,2 +1,0 @@
-
-activate maven profile
