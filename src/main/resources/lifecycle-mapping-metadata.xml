@@ -30,12 +30,18 @@
 
                     <goal>compile-macro</goal>
                     <goal>prepack-macro</goal>
+                    <goal>scaladoc-macro</goal>
+                    <goal>sources-macro</goal>
 
                     <goal>compile-main</goal>
                     <goal>prepack-main</goal>
+                    <goal>scaladoc-main</goal>
+                    <goal>sources-main</goal>
 
                     <goal>compile-test</goal>
                     <goal>prepack-test</goal>
+                    <goal>scaladoc-test</goal>
+                    <goal>sources-test</goal>
 
                     <goal>link-scala-js-main</goal>
                     <goal>prepack-linker-main</goal>

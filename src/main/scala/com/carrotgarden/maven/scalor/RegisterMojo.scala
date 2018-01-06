@@ -20,7 +20,7 @@ import com.carrotgarden.maven.tools.Description
 import java.util.Arrays
 
 @Description( """
-Register project sources for compilation scope=macro.
+Register Java and Scala sources for compilation scope=macro.
 """ )
 @Mojo(
   name                         = `register-macro`,
@@ -34,7 +34,7 @@ class RegisterMacroMojo extends RegisterAnyMojo
   override def mojoName = `register-macro`
 
   @Description( """
-  Flag to skip goal execution: register-macro.
+  Flag to skip goal execution: <code>register-macro</code>.
   """ )
   @Parameter(
     property     = "scalor.skipRegisterMacro", //
@@ -57,7 +57,7 @@ class RegisterMacroMojo extends RegisterAnyMojo
 }
 
 @Description( """
-Register project sources for compilation scope=main.
+Register Java and Scala sources for compilation scope=main.
 """ )
 @Mojo(
   name                         = `register-main`,
@@ -71,7 +71,7 @@ class RegisterMainMojo extends RegisterAnyMojo
   override def mojoName = `register-main`
 
   @Description( """
-  Flag to skip goal execution: register-main.
+  Flag to skip goal execution: <code>register-main</code>.
   """ )
   @Parameter(
     property     = "scalor.skipRegisterMain", //
@@ -88,7 +88,7 @@ class RegisterMainMojo extends RegisterAnyMojo
 }
 
 @Description( """
-Register project sources for compilation scope=test.
+Register Java and Scala sources for compilation scope=test.
 """ )
 @Mojo(
   name                         = `register-test`,
@@ -102,7 +102,7 @@ class RegisterTestMojo extends RegisterAnyMojo
   override def mojoName = `register-test`
 
   @Description( """
-  Flag to skip goal execution: register-test.
+  Flag to skip goal execution: <code>register-test</code>.
   """ )
   @Parameter(
     property     = "scalor.skipRegisterTest", //
@@ -131,7 +131,7 @@ trait RegisterAnyMojo extends AbstractMojo
   type RegistrationFunction = ( String => Unit )
 
   @Description( """
-  Flag to skip goal execution: register-*.
+  Flag to skip goal execution: <code>register-*</code>.
   """ )
   @Parameter(
     property     = "scalor.skipRegister", //

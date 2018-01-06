@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF8"?>
+<toolchains>
+
+    <!-- JDK toolchains -->
+    <!-- https://maven.apache.org/guides/mini/guide-using-toolchains.html -->
+
+    <toolchain>
+        <type>jdk</type>
+        <provides>
+            <version>1.8</version>
+            <vendor>oracle</vendor>
+        </provides>
+        <configuration>
+            <jdkHome>/usr/lib/jvm/java-8-oracle</jdkHome>
+        </configuration>
+    </toolchain>
+
+</toolchains>

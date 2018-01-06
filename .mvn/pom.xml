@@ -1806,7 +1806,7 @@
             <id>scalor</id>
             <activation>
                 <file>
-                    <exists>pom-scalor.md</exists>
+                    <exists>.mvn/pom-scalor.md</exists>
                 </file>
             </activation>
             <build>
@@ -1825,21 +1825,15 @@
                         <groupId>com.carrotgarden.maven</groupId>
                         <artifactId>scalor-maven-plugin_${version.scala.epoch}</artifactId>
                         <configuration>
-                            <zincOptionsJavaC>
-                                -target
-                                ${version.java}
-                                -encoding
-                                ${project.build.sourceEncoding}
-                                -deprecation
-                            </zincOptionsJavaC>
-                            <zincOptionsScalaC>
+                            <zincCompileOptions>
                                 -target:jvm-${version.java}
                                 -encoding
                                 ${project.build.sourceEncoding}
                                 -deprecation
                                 -unchecked
                                 -feature
-                            </zincOptionsScalaC>
+                                -compileorder:Mixed
+                            </zincCompileOptions>
                             <defineBridge>
                                 <dependency>
                                     <groupId>org.scala-sbt</groupId>
@@ -1893,7 +1887,7 @@
             <id>scalor-js-lib</id>
             <activation>
                 <file>
-                    <exists>pom-scalor-js-lib.md</exists>
+                    <exists>.mvn/pom-scalor-js-lib.md</exists>
                 </file>
             </activation>
             <build>
@@ -1912,22 +1906,16 @@
                         <groupId>com.carrotgarden.maven</groupId>
                         <artifactId>scalor-maven-plugin_${version.scala.epoch}</artifactId>
                         <configuration>
-                            <zincOptionsJavaC>
-                                -target
-                                ${version.java}
-                                -encoding
-                                ${project.build.sourceEncoding}
-                                -deprecation
-                            </zincOptionsJavaC>
-                            <zincOptionsScalaC>
+                            <zincCompileOptions>
                                 -target:jvm-${version.java}
                                 -encoding
                                 ${project.build.sourceEncoding}
                                 -deprecation
                                 -unchecked
                                 -feature
+                                -compileorder:Mixed
                                 -P:scalajs:sjsDefinedByDefault
-                            </zincOptionsScalaC>
+                            </zincCompileOptions>
                             <defineBridge>
                                 <dependency>
                                     <groupId>org.scala-sbt</groupId>
@@ -1986,7 +1974,7 @@
             <id>scalor-js-run</id>
             <activation>
                 <file>
-                    <exists>pom-scalor-js-run.md</exists>
+                    <exists>.mvn/pom-scalor-js-run.md</exists>
                 </file>
             </activation>
             <build>
@@ -2005,22 +1993,16 @@
                         <groupId>com.carrotgarden.maven</groupId>
                         <artifactId>scalor-maven-plugin_${version.scala.epoch}</artifactId>
                         <configuration>
-                            <zincOptionsJavaC>
-                                -target
-                                ${version.java}
-                                -encoding
-                                ${project.build.sourceEncoding}
-                                -deprecation
-                            </zincOptionsJavaC>
-                            <zincOptionsScalaC>
+                            <zincCompileOptions>
                                 -target:jvm-${version.java}
                                 -encoding
                                 ${project.build.sourceEncoding}
                                 -deprecation
                                 -unchecked
                                 -feature
+                                -compileorder:Mixed
                                 -P:scalajs:sjsDefinedByDefault
-                            </zincOptionsScalaC>
+                            </zincCompileOptions>
                             <defineBridge>
                                 <dependency>
                                     <groupId>org.scala-sbt</groupId>
@@ -2085,7 +2067,7 @@
             <id>plug-anno</id>
             <activation>
                 <file>
-                    <exists>pom-plug-anno.md</exists>
+                    <exists>.mvn/pom-plug-anno.md</exists>
                 </file>
             </activation>
             <properties>
@@ -2147,7 +2129,7 @@
             <id>scala-2.11</id>
             <activation>
                 <file>
-                    <exists>pom-scala-2.11.md</exists>
+                    <exists>.mvn/pom-scala-2.11.md</exists>
                 </file>
             </activation>
             <properties>
@@ -2163,7 +2145,7 @@
             <id>scala-2.12</id>
             <activation>
                 <file>
-                    <exists>pom-scala-2.12.md</exists>
+                    <exists>.mvn/pom-scala-2.12.md</exists>
                 </file>
             </activation>
             <properties>
@@ -2179,7 +2161,7 @@
             <id>scala-2.13</id>
             <activation>
                 <file>
-                    <exists>pom-scala-2.13.md</exists>
+                    <exists>.mvn/pom-scala-2.13.md</exists>
                 </file>
             </activation>
             <properties>
@@ -2195,7 +2177,7 @@
             <id>github-docs</id>
             <activation>
                 <file>
-                    <exists>pom-github-docs.md</exists>
+                    <exists>.mvn/pom-github-docs.md</exists>
                 </file>
             </activation>
             <build>
@@ -2235,7 +2217,7 @@
             <id>skip-test</id>
             <activation>
                 <file>
-                    <exists>pom-skip-test.md</exists>
+                    <exists>.mvn/pom-skip-test.md</exists>
                 </file>
             </activation>
             <build>
@@ -2306,7 +2288,7 @@
             <id>resolve</id>
             <activation>
                 <file>
-                    <exists>pom-resolve.md</exists>
+                    <exists>.mvn/pom-resolve.md</exists>
                 </file>
             </activation>
             <properties>
@@ -2354,7 +2336,7 @@
             <id>repo-random-scalor</id>
             <activation>
                 <file>
-                    <exists>pom-repo-random-scalor.md</exists>
+                    <exists>.mvn/pom-repo-random-scalor.md</exists>
                 </file>
             </activation>
             <repositories>
@@ -2370,7 +2352,7 @@
             <id>repo-random-maven</id>
             <activation>
                 <file>
-                    <exists>pom-repo-random-maven.md</exists>
+                    <exists>.mvn/pom-repo-random-maven.md</exists>
                 </file>
             </activation>
             <repositories>
@@ -2392,7 +2374,7 @@
             <id>distro-bintray</id>
             <activation>
                 <file>
-                    <exists>pom-distro-bintray.md</exists>
+                    <exists>.mvn/pom-distro-bintray.md</exists>
                 </file>
             </activation>
             <properties>
@@ -2435,7 +2417,7 @@
             <id>upload-bintray</id>
             <activation>
                 <file>
-                    <exists>pom-upload-bintray.md</exists>
+                    <exists>.mvn/pom-upload-bintray.md</exists>
                 </file>
             </activation>
             <properties>
@@ -2666,7 +2648,7 @@
                 <activeByDefault>false</activeByDefault>
                 <!-- https://github.com/mojohaus/flatten-maven-plugin/issues/57 -->
                 <!-- <file> -->
-                <!-- <exists>pom-service.md</exists> -->
+                <!-- <exists>.mvn/pom-service.md</exists> -->
                 <!-- </file> -->
             </activation>
 
@@ -3028,7 +3010,7 @@
             <id>no-repo</id>
             <activation>
                 <file>
-                    <exists>pom-no-repo.md</exists>
+                    <exists>.mvn/pom-no-repo.md</exists>
                 </file>
             </activation>
             <build>
@@ -3056,7 +3038,7 @@
             <id>no-install</id>
             <activation>
                 <file>
-                    <exists>pom-no-install.md</exists>
+                    <exists>.mvn/pom-no-install.md</exists>
                 </file>
             </activation>
             <build>
@@ -3077,7 +3059,7 @@
             <id>no-deploy</id>
             <activation>
                 <file>
-                    <exists>pom-no-deploy.md</exists>
+                    <exists>.mvn/pom-no-deploy.md</exists>
                 </file>
             </activation>
             <build>
@@ -3105,7 +3087,7 @@
             <id>scala-protobuf</id>
             <activation>
                 <file>
-                    <exists>pom-scala-protobuf.md</exists>
+                    <exists>.mvn/pom-scala-protobuf.md</exists>
                 </file>
             </activation>
             <properties>
@@ -3204,7 +3186,7 @@
             <id>module-package</id>
             <activation>
                 <file>
-                    <exists>pom-module-package.md</exists>
+                    <exists>.mvn/pom-module-package.md</exists>
                 </file>
             </activation>
             <properties>
@@ -3270,7 +3252,7 @@
             <id>shade-arkon</id>
             <activation>
                 <file>
-                    <exists>pom-shade.md</exists>
+                    <exists>.mvn/pom-shade.md</exists>
                 </file>
             </activation>
             <properties>
@@ -3294,7 +3276,7 @@
             <id>shade-config</id>
             <activation>
                 <file>
-                    <exists>pom-shade.md</exists>
+                    <exists>.mvn/pom-shade.md</exists>
                 </file>
                 <property>
                     <name>!shade.invoke</name><!-- see profile:shade-invoke -->
@@ -3411,7 +3393,7 @@
             <id>shade-invoke</id>
             <activation>
                 <file>
-                    <exists>pom-shade.md</exists>
+                    <exists>.mvn/pom-shade.md</exists>
                 </file>
                 <property>
                     <name>shade.invoke</name><!-- see profile:shade-config -->
@@ -3460,7 +3442,7 @@
             <id>git-clone</id>
             <activation>
                 <file>
-                    <exists>pom-git-clone.md</exists>
+                    <exists>.mvn/pom-git-clone.md</exists>
                 </file>
             </activation>
             <properties>
@@ -3565,7 +3547,7 @@
             <id>repo-typesafe-snapshots</id>
             <activation>
                 <file>
-                    <exists>pom-repo-typesafe-snapshots.md</exists>
+                    <exists>.mvn/pom-repo-typesafe-snapshots.md</exists>
                 </file>
             </activation>
             <properties>
@@ -3601,7 +3583,7 @@
             <id>repo-typesafe-releases</id>
             <activation>
                 <file>
-                    <exists>pom-repo-typesafe-releases.md</exists>
+                    <exists>.mvn/pom-repo-typesafe-releases.md</exists>
                 </file>
             </activation>
             <properties>
@@ -3637,7 +3619,7 @@
             <id>play</id>
             <activation>
                 <file>
-                    <exists>pom-play.md</exists>
+                    <exists>.mvn/pom-play.md</exists>
                 </file>
             </activation>
             <properties>
@@ -3780,7 +3762,7 @@
             <id>xform</id>
             <activation>
                 <file>
-                    <exists>pom-xform.md</exists>
+                    <exists>.mvn/pom-xform.md</exists>
                 </file>
             </activation>
             <properties>
@@ -3990,7 +3972,7 @@
             <id>xform-arkon</id>
             <activation>
                 <file>
-                    <exists>pom-xform-arkon.md</exists>
+                    <exists>.mvn/pom-xform-arkon.md</exists>
                 </file>
             </activation>
             <properties>
@@ -4034,7 +4016,7 @@
             <id>eclipse</id>
             <activation>
                 <file>
-                    <exists>pom-eclipse.md</exists>
+                    <exists>.mvn/pom-eclipse.md</exists>
                 </file>
             </activation>
             <properties>
@@ -4109,6 +4091,8 @@
                                 <format>'v'yyyyMMdd-HHmm</format>
                                 <timestampProvider>jgit</timestampProvider>
                                 <!--jgit.ignore> pom.xml </jgit.ignore -->
+                                <jgit.dirtyWorkingTree>warning</jgit.dirtyWorkingTree>
+                                <!-- <jgit.dirtyWorkingTree>warning|error|ignore</jgit.dirtyWorkingTree> -->
                             </configuration>
                         </plugin>
                         <plugin>
@@ -4229,7 +4213,7 @@
             <id>dependency-tree</id>
             <activation>
                 <file>
-                    <exists>pom-dependency-tree.md</exists>
+                    <exists>.mvn/pom-dependency-tree.md</exists>
                 </file>
             </activation>
             <properties>
@@ -4269,7 +4253,7 @@
             <id>verify</id>
             <activation>
                 <file>
-                    <exists>pom-verify.md</exists>
+                    <exists>.mvn/pom-verify.md</exists>
                 </file>
             </activation>
             <build>
@@ -4295,7 +4279,7 @@
             <id>jmh</id>
             <activation>
                 <file>
-                    <exists>pom-jmh.md</exists>
+                    <exists>.mvn/pom-jmh.md</exists>
                 </file>
             </activation>
             <dependencies>
@@ -4339,7 +4323,7 @@
             <id>scalabuff</id>
             <activation>
                 <file>
-                    <exists>pom-scalabuff.md</exists>
+                    <exists>.mvn/pom-scalabuff.md</exists>
                 </file>
             </activation>
             <properties>
@@ -4409,7 +4393,7 @@
             <id>sbe</id>
             <activation>
                 <file>
-                    <exists>pom-sbe.md</exists>
+                    <exists>.mvn/pom-sbe.md</exists>
                 </file>
             </activation>
             <properties>
@@ -4527,7 +4511,7 @@
             <id>flatbuf</id>
             <activation>
                 <file>
-                    <exists>pom-flatbuf.md</exists>
+                    <exists>.mvn/pom-flatbuf.md</exists>
                 </file>
             </activation>
             <properties>
@@ -4619,7 +4603,7 @@
             <id>protobuf</id>
             <activation>
                 <file>
-                    <exists>pom-protobuf.md</exists>
+                    <exists>.mvn/pom-protobuf.md</exists>
                 </file>
             </activation>
             <properties>
@@ -4693,7 +4677,7 @@
             <id>java-scala</id>
             <activation>
                 <file>
-                    <exists>pom-java-scala.md</exists>
+                    <exists>.mvn/pom-java-scala.md</exists>
                 </file>
             </activation>
             <properties>
@@ -4803,7 +4787,7 @@
             <activation>
                 <!-- User activation. -->
                 <file>
-                    <exists>pom-java-scala.md</exists>
+                    <exists>.mvn/pom-java-scala.md</exists>
                 </file>
                 <!-- Eclipse detection. -->
                 <property>
@@ -4857,7 +4841,7 @@
             <id>scala-js-lib</id>
             <activation>
                 <file>
-                    <exists>pom-scala-js-lib.md</exists>
+                    <exists>.mvn/pom-scala-js-lib.md</exists>
                 </file>
             </activation>
             <properties>
@@ -4905,7 +4889,7 @@
             <activation>
                 <!-- User activation. -->
                 <file>
-                    <exists>pom-scala-js-lib.md</exists>
+                    <exists>.mvn/pom-scala-js-lib.md</exists>
                 </file>
                 <!-- Eclipse detection. -->
                 <property>
@@ -4978,7 +4962,7 @@
             <id>scala-js-run</id>
             <activation>
                 <file>
-                    <exists>pom-scala-js-run.md</exists>
+                    <exists>.mvn/pom-scala-js-run.md</exists>
                 </file>
             </activation>
             <!-- Scala.js sjsir libraries use scope=provided. -->
@@ -5157,7 +5141,7 @@
             <id>ignore-symbol-file</id>
             <activation>
                 <file>
-                    <exists>pom-ignore-symbol-file.md</exists>
+                    <exists>.mvn/pom-ignore-symbol-file.md</exists>
                 </file>
             </activation>
             <build>
@@ -5185,7 +5169,7 @@
             <id>scala-meta-paradise</id>
             <activation>
                 <file>
-                    <exists>pom-scala-meta-paradise.md</exists>
+                    <exists>.mvn/pom-scala-meta-paradise.md</exists>
                 </file>
             </activation>
             <properties>
@@ -5278,7 +5262,7 @@
             <id>scala-macro-paradise</id>
             <activation>
                 <file>
-                    <exists>pom-scala-macro-paradise.md</exists>
+                    <exists>.mvn/pom-scala-macro-paradise.md</exists>
                 </file>
             </activation>
             <build>
@@ -5305,7 +5289,7 @@
             <id>sign-artifacts</id>
             <activation>
                 <file>
-                    <exists>pom-sign-artifacts.md</exists>
+                    <exists>.mvn/pom-sign-artifacts.md</exists>
                 </file>
             </activation>
             <build>
@@ -5320,6 +5304,13 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <!-- GPG 2.0 options -->
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -5332,7 +5323,7 @@
             <id>attach-sources</id>
             <activation>
                 <file>
-                    <exists>pom-attach-sources.md</exists>
+                    <exists>.mvn/pom-attach-sources.md</exists>
                 </file>
             </activation>
             <build>
@@ -5360,7 +5351,7 @@
             <id>attach-javadoc</id>
             <activation>
                 <file>
-                    <exists>pom-attach-javadoc.md</exists>
+                    <exists>.mvn/pom-attach-javadoc.md</exists>
                 </file>
             </activation>
             <build>
@@ -5450,7 +5441,7 @@
             <id>distro-public</id>
             <activation>
                 <file>
-                    <exists>pom-distro-public.md</exists>
+                    <exists>.mvn/pom-distro-public.md</exists>
                 </file>
             </activation>
             <distributionManagement>
@@ -5470,7 +5461,7 @@
             <id>distro-secret</id>
             <activation>
                 <file>
-                    <exists>pom-distro-secret.md</exists>
+                    <exists>.mvn/pom-distro-secret.md</exists>
                 </file>
             </activation>
             <distributionManagement>
@@ -5490,7 +5481,7 @@
             <id>distro-sonatype</id>
             <activation>
                 <file>
-                    <exists>pom-distro-sonatype.md</exists>
+                    <exists>.mvn/pom-distro-sonatype.md</exists>
                 </file>
             </activation>
             <distributionManagement>
@@ -5512,7 +5503,7 @@
             <id>repo-sonatype-snapshots</id>
             <activation>
                 <file>
-                    <exists>pom-repo-sonatype-snapshots.md</exists>
+                    <exists>.mvn/pom-repo-sonatype-snapshots.md</exists>
                 </file>
             </activation>
             <repositories>
@@ -5548,7 +5539,7 @@
             <id>repo-sonatype-releases</id>
             <activation>
                 <file>
-                    <exists>pom-repo-sonatype-releases.md</exists>
+                    <exists>.mvn/pom-repo-sonatype-releases.md</exists>
                 </file>
             </activation>
             <repositories>
@@ -5831,37 +5822,40 @@
 
     <reporting>
 
-        <plugins>
+        <!-- <plugins> -->
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.9</version>
-            </plugin>
+        <!-- <plugin> -->
+        <!-- <groupId>org.apache.maven.plugins</groupId> -->
+        <!-- <artifactId>maven-project-info-reports-plugin</artifactId> -->
+        <!-- <version>2.9</version> -->
+        <!-- </plugin> -->
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-                <version>2.5</version>
-            </plugin>
+        <!-- <plugin> -->
+        <!-- <groupId>org.apache.maven.plugins</groupId> -->
+        <!-- <artifactId>maven-jxr-plugin</artifactId> -->
+        <!-- <version>2.5</version> -->
+        <!-- </plugin> -->
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${version.maven.javadoc}</version>
-                <configuration>
-                    <quiet>true</quiet>
-                    <show>protected</show>
-                    <linksource>true</linksource>
-                    <windowtitle><![CDATA[${project.artifactId}-${project.version} / ${projectTimeISO}]]></windowtitle>
-                    <doctitle><![CDATA[${project.artifactId}-${project.version} / ${projectTimeISO}]]></doctitle>
-                    <header><![CDATA[<a href="${project.url}" target="_blank">${project.artifactId}</a><br>${project.version} / ${projectTimeISO}]]></header>
-                    <footer><![CDATA[<a href="${project.url}" target="_blank">${project.artifactId}</a><br>${project.version} / ${projectTimeISO}]]></footer>
-                    <bottom><![CDATA[Copyright © {inceptionYear}-{currentYear} <a href="${project.organization.url}" target="_blank">${project.organization.name}</a>. All Rights Reserved.]]></bottom>
-                </configuration>
-            </plugin>
+        <!-- <plugin> -->
+        <!-- <groupId>org.apache.maven.plugins</groupId> -->
+        <!-- <artifactId>maven-javadoc-plugin</artifactId> -->
+        <!-- <version>${version.maven.javadoc}</version> -->
+        <!-- <configuration> -->
+        <!-- <quiet>true</quiet> -->
+        <!-- <show>protected</show> -->
+        <!-- <linksource>true</linksource> -->
+        <!-- <windowtitle><![CDATA[${project.artifactId}-${project.version} / ${projectTimeISO}]]></windowtitle> -->
+        <!-- <doctitle><![CDATA[${project.artifactId}-${project.version} / ${projectTimeISO}]]></doctitle> -->
+        <!-- <header><![CDATA[<a href="${project.url}" target="_blank">${project.artifactId}</a><br>${project.version} /
+            ${projectTimeISO}]]></header> -->
+        <!-- <footer><![CDATA[<a href="${project.url}" target="_blank">${project.artifactId}</a><br>${project.version} /
+            ${projectTimeISO}]]></footer> -->
+        <!-- <bottom><![CDATA[Copyright © {inceptionYear}-{currentYear} <a href="${project.organization.url}" target="_blank">${project.organization.name}</a>.
+            All Rights Reserved.]]></bottom> -->
+        <!-- </configuration> -->
+        <!-- </plugin> -->
 
-        </plugins>
+        <!-- </plugins> -->
 
     </reporting>
 

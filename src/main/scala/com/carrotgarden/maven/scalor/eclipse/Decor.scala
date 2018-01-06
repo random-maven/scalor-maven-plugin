@@ -5,6 +5,8 @@ import org.eclipse.jface.viewers.IDecoration
 
 /**
  * Provide Eclipse UI decorations.
+ * 
+ * TODO
  */
 trait Decor {
 

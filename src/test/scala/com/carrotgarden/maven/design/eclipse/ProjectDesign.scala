@@ -8,7 +8,7 @@ import com.carrotgarden.maven.scalor._
 import com.carrotgarden.maven.tools.Description
 import com.carrotgarden.maven.scalor.base
 
-trait ProjectDesign extends base.AnyPar {
+trait ProjectDesign extends base.ParamsAny {
 
   import ProjectDesign._
   import util.Folder._

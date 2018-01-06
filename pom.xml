@@ -27,24 +27,26 @@
     </licenses>
 
     <name>Scalor Maven Plugin</name>
-    <description>Scala compiler support</description>
+    <description>Build integrator for Java, Scala, Scala.macro, Scala.js, Eclipse and Maven.</description>
 
     <properties>
 
+        <!-- Release series. -->
+        <release.epoch>1.0.0</release.epoch>
+
+        <!-- Development releases repository. -->
         <bintray.subject>random-maven</bintray.subject>
         <bintray.repository>maven</bintray.repository>
 
-        <release.epoch>1.0.0</release.epoch>
         <version.maven>[3.5,3.6)</version.maven>
         <version.scala.zinc>1.1.0-RC4</version.scala.zinc>
+        <version.scala.plug.macro>2.1.1</version.scala.plug.macro>
 
-        <!-- Supported minimum. -->
-        <version.scala211.release>2.11.5</version.scala211.release>
-        <version.scala212.release>2.12.4</version.scala212.release>
-        <version.scala213.release>TODO</version.scala213.release>
-        <version.scala.plug.macro>2.1.0</version.scala.plug.macro>
+        <!-- Eclipse platform plugins. -->
+        <version.eclipse.m2e>1.8.1</version.eclipse.m2e>
+        <version.eclipse.scala-ide>4.7.1</version.eclipse.scala-ide>
 
-        <!-- Eclipse plugin properties. -->
+        <!-- Eclipse companion plugin properties. -->
         <eclipse.plugin.name>${project.groupId}.${project.artifactId}</eclipse.plugin.name>
         <eclipse.plugin.revision>${version.scala.epoch}_${project.version}</eclipse.plugin.revision>
         <eclipse.plugin.identity>${eclipse.plugin.name}_${eclipse.plugin.revision}</eclipse.plugin.identity>
@@ -54,6 +56,10 @@
         <eclipse.bundle.version>0.0.0</eclipse.bundle.version><!-- version is in the name -->
 
     </properties>
+
+    <prerequisites>
+        <maven>3.5</maven>
+    </prerequisites>
 
     <repositories>
         <!-- Provide org.scala-ide. -->
@@ -99,13 +105,19 @@
             <version>0.0.7</version>
         </dependency>
 
-        <!-- Utility. -->
+        <dependency>
+            <groupId>org.apache.maven.reporting</groupId>
+            <artifactId>maven-reporting-api</artifactId>
+            <version>3.0</version>
+        </dependency>
 
-        <!-- <dependency> -->
-        <!-- <groupId>com.github.dwickern</groupId> -->
-        <!-- <artifactId>scala-nameof_${version.scala.epoch}</artifactId> -->
-        <!-- <scope>provided</scope>build time only -->
-        <!-- </dependency> -->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-archiver</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+
+        <!-- Utility. -->
 
         <dependency>
             <groupId>org.scala-lang.modules</groupId>
@@ -116,17 +128,7 @@
 
         <dependency>
             <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.scala-lang</groupId>
             <artifactId>scala-compiler</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-reflect</artifactId>
         </dependency>
 
         <!-- Scala.zinc compiler. -->
@@ -243,29 +245,28 @@
         <dependency><!-- scalor@random-maven -->
             <groupId>org.eclipse.m2e</groupId>
             <artifactId>org.eclipse.m2e.maven.runtime</artifactId>
-            <version>1.8.1</version>
-            <type>pom</type>
+            <version>${version.eclipse.m2e}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency><!-- scalor@random-maven -->
             <groupId>org.eclipse.m2e</groupId>
             <artifactId>org.eclipse.m2e.core</artifactId>
-            <version>1.8.1</version>
+            <version>${version.eclipse.m2e}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency><!-- scalor@random-maven -->
             <groupId>org.eclipse.m2e</groupId>
             <artifactId>org.eclipse.m2e.jdt</artifactId>
-            <version>1.8.1</version>
+            <version>${version.eclipse.m2e}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency><!-- scalor@random-maven -->
             <groupId>org.eclipse.m2e</groupId>
             <artifactId>org.eclipse.m2e.core.ui</artifactId>
-            <version>1.8.1</version>
+            <version>${version.eclipse.m2e}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -278,7 +279,7 @@
         <dependency><!-- scalor@random-maven -->
             <groupId>org.scala-ide</groupId>
             <artifactId>org.scala-ide.sdt.core</artifactId>
-            <version>4.7.1</version>
+            <version>${version.eclipse.scala-ide}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -365,6 +366,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.eclipse.m2e</groupId>
+            <artifactId>org.eclipse.m2e.tests.common</artifactId>
+            <version>${version.eclipse.m2e}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 
@@ -380,31 +388,22 @@
 
         <plugins>
 
-            <!-- Self-host build. -->
+            <!-- Self-host this project build. -->
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>scalor-maven-plugin_${version.scala.epoch}</artifactId>
                 <!-- <version>RELEASE</version> -->
-                <!-- <version>1.0.0.20180101165406</version> -->
+                <!-- <version>1.0.0.20180104034428</version> -->
                 <configuration>
 
-                    <zincOptionsJavaC>
-<![CDATA[
-                    -target
-                    1.8
-                    -encoding
-                    UTF-8
-                    -deprecation
-]]>
-
-                    </zincOptionsJavaC>
-                    <zincOptionsScalaC>
-<![CDATA[
-                    -deprecation
-                    -unchecked
-                    -feature
-]]>
-                    </zincOptionsScalaC>
+                    <zincCompileOptions>
+                        -feature ; -unchecked ; -deprecation ;
+                        -encoding ; ${project.build.sourceEncoding} ;
+                        -target:jvm-${maven.compiler.target} ;
+                        -Xmaxerrs ; 10 ;
+                        -compileorder:JavaThenScala ;
+                        -useScopesCompiler ;
+                    </zincCompileOptions>
 
                     <defineBridge>
                         <dependency>
@@ -495,7 +494,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Use scala identity for this plugin. -->
+            <!-- Use Scala epoch identity for this plugin. -->
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
@@ -522,7 +521,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Package as maven extension. -->
+            <!-- Package as Maven life cycle extension. -->
             <plugin>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-component-metadata</artifactId>
@@ -544,12 +543,59 @@
                     <showErrors>true</showErrors>
                     <streamLogs>true</streamLogs>
                     <localRepositoryPath>${project.basedir}/test-repo</localRepositoryPath>
-                    <pomIncludes>test-cross/pom.xml</pomIncludes>
+                    <pomIncludes>
+                        <include>test-cross/pom.xml</include>
+                        <include>test-m2e/pom.xml</include>
+                    </pomIncludes>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <inherited>false</inherited>
+                <configuration>
+                    <generateProjectInfo>false</generateProjectInfo>
+                    <generateReports>true</generateReports>
+                </configuration>
+                <!-- <dependencies> -->
+                <!-- <dependency> -->
+                <!-- <groupId>org.apache.maven.doxia</groupId> -->
+                <!-- <artifactId>doxia-module-markdown</artifactId> -->
+                <!-- <version>1.6</version> -->
+                <!-- </dependency> -->
+                <!-- </dependencies> -->
             </plugin>
 
         </plugins>
 
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+            </plugin>
+            <!-- <plugin> -->
+            <!-- <groupId>org.apache.maven.plugins</groupId> -->
+            <!-- <artifactId>maven-javadoc-plugin</artifactId> -->
+            <!-- <configuration> -->
+            <!-- <skip>true</skip> -->
+            <!-- </configuration> -->
+            <!-- </plugin> -->
+        </plugins>
+    </reporting>
 
 </project>

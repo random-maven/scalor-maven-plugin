@@ -23,6 +23,8 @@ import org.eclipse.core.resources.IProject
 import scala.util.Sorting
 
 import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
+import java.util.Arrays
+import org.eclipse.core.resources.IResource
 
 /**
  * Re-order eclipse .project file and .classpath file entries.
@@ -32,6 +34,7 @@ trait Order {
   self : Logging with Maven =>
 
   import Order._
+  import IResource._
 
   /**
    *
@@ -41,19 +44,16 @@ trait Order {
     comparator : Comparator[ ICommand ],
     monitor :    IProgressMonitor
   ) : Unit = {
-    import scala.math.Ordering.comparatorToOrdering
     implicit val _ = comparator
+    import scala.math.Ordering.comparatorToOrdering
     val description = project.getDescription
-    /** This is array by clone.  */
-    val buildSpec = description.getBuildSpec
-    val buildTest = description.getBuildSpec
+    val buildSpec = description.getBuildSpec // clone
+    val buildTest = description.getBuildSpec // clone
     Sorting.quickSort( buildSpec )
-    val hasChange = !buildSpec.corresponds( buildTest ) {
-      case ( b1, b2 ) => comparator.compare( b1, b2 ) == 0
-    }
+    val hasChange = !buildSpec.sameElements( buildTest )
     if ( hasChange ) {
       description.setBuildSpec( buildSpec )
-      project.setDescription( description, monitor )
+      project.setDescription( description, FORCE, monitor )
     }
   }
 
@@ -72,9 +72,9 @@ trait Order {
   }
 
   /**
-   *
+   * Order Eclipse .project builder entries
    */
-  def reorderBuilder(
+  def ensureOrderBuilder(
     request : ProjectConfigurationRequest,
     config :  ParamsConfig,
     monitor : IProgressMonitor
@@ -146,6 +146,31 @@ trait Order {
       }
       val comparator = ComparatorArtifact( field, sort )
       reorderClasspath( classpath, comparator, monitor )
+    }
+  }
+
+  /**
+   * Order natures inside Eclipse .project.
+   */
+  def ensureOrderNature(
+    request : ProjectConfigurationRequest,
+    config :  ParamsConfig,
+    monitor : IProgressMonitor
+  ) = {
+    import config._
+    if ( eclipseNatureReorder ) {
+      log.info( "Ordering Eclipse .project nature entries." )
+      val mapper = new SettingsRegexMapper( eclipseNatureOrdering, commonSequenceSeparator )
+      val comparator = ComparatorStringRule( mapper )
+      val project = request.getProject
+      val description = project.getDescription // clone
+      val natureList = description.getNatureIds // clone
+      Arrays.sort( natureList, comparator )
+      val natureTest = description.getNatureIds // clone
+      val hasChange = !natureList.sameElements( natureTest )
+      if ( hasChange ) {
+        Nature.persistNature( project, natureList, monitor )
+      }
     }
   }
 
@@ -223,6 +248,13 @@ object Order {
       else if ( entry.getPath == null ) sortTail
       else if ( entry.getPath.toPortableString == null ) sortTail
       else entry.getPath.toPortableString
+    }
+  }
+
+  case class ComparatorStringRule( mapper : RegexMapper )
+    extends ComparatorAnyRule[ String ] {
+    override def text( entry : String ) = {
+      entry
     }
   }
 

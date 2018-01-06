@@ -1,7 +1,6 @@
 package com.carrotgarden.maven.scalor
 
 import org.eclipse.core.runtime.IProgressMonitor
-import org.eclipse.jdt.launching.JavaRuntime
 import org.eclipse.jface.viewers.IDecoration
 import org.eclipse.jface.viewers.ILightweightLabelDecorator
 import org.eclipse.jface.viewers.LabelProvider
@@ -10,7 +9,6 @@ import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
 import org.eclipse.m2e.jdt.IClasspathDescriptor
 import org.eclipse.m2e.jdt.IJavaProjectConfigurator
 import org.osgi.framework.BundleContext
-import org.scalaide.core.SdtConstants
 
 import com.carrotgarden.maven.tools.Description
 
@@ -108,13 +106,8 @@ object EclipsePlugin {
       assertCancel( monitor )
       val config = paramsConfig( log, request.getMavenProjectFacade, monitor )
       assertVersion( config, monitor )
-      ensureRoots( request, classpath, monitor )
-
-      val javaContainerId = JavaRuntime.JRE_CONTAINER
-      val scalaContainerId = SdtConstants.ScalaLibContId
-
-      // FIXME id to config
-      ensureContainer( request, config, classpath, scalaContainerId, monitor )
+      ensureSourceRoots( request, classpath, monitor )
+      ensureScalaLibrary( request, config, classpath, monitor )
       ensureOrderTopLevel( request, config, classpath, monitor )
     }
 
@@ -138,9 +131,10 @@ object EclipsePlugin {
       assertCancel( monitor )
       val config = paramsConfig( log, request.getMavenProjectFacade, monitor )
       assertVersion( config, monitor )
-      ensureNature( request, config, monitor )
-      ensureComment( request, config, monitor )
-      reorderBuilder( request, config, monitor )
+      ensureProjectNature( request, config, monitor )
+      ensureProjectComment( request, config, monitor )
+      ensureOrderBuilder( request, config, monitor )
+      ensureOrderNature( request, config, monitor )
       configureScalaIDE( request, config, monitor )
       // TODO project refresh
     }
@@ -148,7 +142,7 @@ object EclipsePlugin {
   }
 
   /**
-   * Provide Eclipse UI decorations.
+   * Eclipse UI decorator contributed by this Eclipse plugin.
    */
   @Description( """
   Keep in sync with src/main/resources/plugin.xml.

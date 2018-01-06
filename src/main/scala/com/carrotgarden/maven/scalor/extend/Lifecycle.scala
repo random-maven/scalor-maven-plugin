@@ -13,8 +13,9 @@ import org.apache.maven.plugins.annotations.LifecyclePhase._
 import com.carrotgarden.maven.scalor.A
 
 /**
- * Provide default lifecycle for scalor plugin.
- * Does not work in Eclipse / M2E.
+ * Provide default Maven lifecycle for Scalor plugin.
+ * Note: this does not work in Eclipse / M2E environment.
+ * Use only for "plain" command line Maven mode.
  */
 @Component(
   role = classOf[ AbstractMavenLifecycleParticipant ],
@@ -96,14 +97,22 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
         registerExecution( COMPILE, `compile-main` )
         registerExecution( COMPILE, `prepack-main` )
 
+        registerExecution( PROCESS_CLASSES, `scaladoc-macro` )
+
+        registerExecution( PROCESS_CLASSES, `scaladoc-main` )
+
         registerExecution( PROCESS_CLASSES, `link-scala-js-main` )
         registerExecution( PROCESS_CLASSES, `prepack-linker-main` )
 
         registerExecution( TEST_COMPILE, `compile-test` )
         registerExecution( TEST_COMPILE, `prepack-test` )
 
-        registerExecution( PROCESS_TEST_CLASSES, `link-scala-js-test` )
         registerExecution( PROCESS_TEST_CLASSES, `prepack-linker-test` )
+        registerExecution( PROCESS_TEST_CLASSES, `scaladoc-test` )
+
+        registerExecution( PACKAGE, `sources-macro` )
+        registerExecution( PACKAGE, `sources-main` )
+        registerExecution( PACKAGE, `sources-test` )
 
       case None =>
         throw new RuntimeException( "Missing scalor plugin." )

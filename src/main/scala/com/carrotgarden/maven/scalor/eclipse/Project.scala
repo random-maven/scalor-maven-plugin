@@ -7,6 +7,9 @@ import org.eclipse.m2e.core.project.IMavenProjectFacade
 
 import com.carrotgarden.maven.scalor._
 
+/**
+ * Assemble M2E project configurator components.
+ */
 object Project {
 
   /**
@@ -29,7 +32,7 @@ object Project {
     import util.Classer._
 
     /**
-     * Provide plugin configuration values.
+     * Extract plugin configuration values.
      */
     def paramsConfig(
       log :     AnyLog,
@@ -53,7 +56,10 @@ object Project {
 
       val config = ParamsConfig()
       config.updateParams( paramValue )
-      // config.reportParams( reportValue )
+      if ( config.eclipseLogParamsConfig ) {
+        log.info( s"Eclipse companion plugin parameters:" )
+        config.reportParams( reportValue )
+      }
       config
     }
 

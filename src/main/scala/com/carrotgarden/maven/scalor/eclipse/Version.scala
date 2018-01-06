@@ -17,7 +17,7 @@ import org.osgi.framework.Bundle
 import org.eclipse.m2e.core.ui.internal.M2EUIPluginActivator
 
 /**
- * Version resolution support.
+ * Version verification support.
  */
 trait Version {
 
@@ -57,6 +57,9 @@ trait Version {
     }
   }
 
+  /**
+   * Verify Eclipse M2E plugin version.
+   */
   def assertVersionMaven(
     config :  ParamsConfig,
     monitor : IProgressMonitor
@@ -74,6 +77,9 @@ trait Version {
     )
   }
 
+  /**
+   * Verify Scala IDE plugin version.
+   */
   def assertVersionScala(
     config :  ParamsConfig,
     monitor : IProgressMonitor
@@ -91,6 +97,9 @@ trait Version {
     )
   }
 
+  /**
+   * Verify required Eclipse Platform plugins versions.
+   */
   def assertVersion(
     config :  ParamsConfig,
     monitor : IProgressMonitor

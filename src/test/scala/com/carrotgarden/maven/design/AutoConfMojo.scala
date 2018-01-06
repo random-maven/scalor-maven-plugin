@@ -35,13 +35,13 @@ class AutoConfMojo extends AbstractMojo
   with base.Mojo
   with base.Params
   with base.Logging
-  with base.BuildEncoding
+  // with base.BuildEncoding
   with base.BuildMacroSources
   with base.BuildMainSources
   with base.BuildTestSources
   with com.carrotgarden.maven.design.conf.Params
-  with zinc.ParamsPluginList
-//  with zinc.ParamsRegexJar
+  //  with zinc.ParamsPluginList
+  //  with zinc.ParamsRegexJar
   with scalor.eclipse.Build {
 
   override def mojoName = `auto-conf`
@@ -59,15 +59,15 @@ class AutoConfMojo extends AbstractMojo
 
   def projectProps = project.getProperties
 
-  def pluginConfig: Xpp3Dom = ??? // pluginDescriptor.getPlugin.getConfiguration.asInstanceOf[ Xpp3Dom ]
+  def pluginConfig : Xpp3Dom = ??? // pluginDescriptor.getPlugin.getConfiguration.asInstanceOf[ Xpp3Dom ]
 
   def hasProperty( name : String ) =
     userProps.getProperty( name ) != null || projectProps.getProperty( name ) != null
 
-//  def persistProperty( key : String, value : String ) = {
-//    projectProps.put( key, value )
-//    reportProperty( key )
-//  }
+  //  def persistProperty( key : String, value : String ) = {
+  //    projectProps.put( key, value )
+  //    reportProperty( key )
+  //  }
 
   def reportMojo( mojo : descriptor.MojoDescriptor ) = {
     if ( autoconfLogProperties ) {
@@ -148,8 +148,8 @@ class AutoConfMojo extends AbstractMojo
    */
   def generateEclipseEncodings : Unit = {
     val base = project.getBasedir
-    val encoding = buildSourceEncoding
-    val format = eclipseEncodingFormat( encoding ) _;
+     val encoding = "UTF-8" // buildSourceEncoding
+     val format = eclipseEncodingFormat( encoding ) _;
     {
       val list = ArrayBuffer[ String ]()
       eclipseAppend( format, base, buildMacroSourceJavaFolders, list )
@@ -217,25 +217,25 @@ class AutoConfMojo extends AbstractMojo
    * Provide scala version from project build path.
    */
   def generateScalaVersion : Unit = {
-//    val classPath : Array[ File ] = projectClassPath()
-//    util.Folder.resolveJar( classPath, zincRegexScalaLibrary ) match {
-//      case Right( library ) =>
-//        val ( epoch, release ) = util.Params.versionPair( library.version )
-//        persistProperty( autoconfScalaVersionEpoch, epoch )
-//        persistProperty( autoconfScalaVersionRelease, release )
-//      case Left( error ) =>
-//        say.error( error )
-//    }
+    //    val classPath : Array[ File ] = projectClassPath()
+    //    util.Folder.resolveJar( classPath, zincRegexScalaLibrary ) match {
+    //      case Right( library ) =>
+    //        val ( epoch, release ) = util.Params.versionPair( library.version )
+    //        persistProperty( autoconfScalaVersionEpoch, epoch )
+    //        persistProperty( autoconfScalaVersionRelease, release )
+    //      case Left( error ) =>
+    //        say.error( error )
+    //    }
   }
 
   /**
    * Provide scala compiler plugins from scalor maven plugin class path.
    */
   def generatePluginList : Unit = {
-//    val loader = this.getClass.getClassLoader
-//    val separator = "," // hard coded in scala-ide
-//    val pluginList = zincPluginDiscoveryList( loader ).mkString( separator )
-//    persistProperty( autoconfCompilerPluginList, pluginList )
+    //    val loader = this.getClass.getClassLoader
+    //    val separator = "," // hard coded in scala-ide
+    //    val pluginList = zincPluginDiscoveryList( loader ).mkString( separator )
+    //    persistProperty( autoconfCompilerPluginList, pluginList )
   }
 
   /**
@@ -266,10 +266,11 @@ class AutoConfMojo extends AbstractMojo
           case A.maven.propertyRegex( propertyName ) => // has configurable property
             if ( !hasProperty( propertyName ) ) { // property is not yet configured
               val entry = pluginConfig.getChild( parameterName ) // optional configuration entry
-              val expression = if ( entry != null )
+              val expression = if ( entry != null ) {
                 entry.getValue // use plugin/configuration entry
-              else
+              } else {
                 param.getDefaultValue // use plugin/parameter/default entry
+              }
               val propertyValue = evaluator.evaluate( expression ) // interpolate for final result
               persistProperty( propertyName, propertyValue.toString ) // inject changes
             }
@@ -283,9 +284,9 @@ class AutoConfMojo extends AbstractMojo
         mojo.getParameters.forEach( paramAction )
       }
     }
-    
+
     // pluginDescriptor.getMojos.forEach( mojoAction )
-    
+
   }
 
   def performAutoConf : Unit = {

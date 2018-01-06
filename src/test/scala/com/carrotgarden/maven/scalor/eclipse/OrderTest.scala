@@ -11,7 +11,8 @@ import java.util.Collections
 import org.scalactic.source.Position.apply
 
 @RunWith( classOf[ JUnitRunner ] )
-class OrderTest extends FunSuite with base.AnyPar {
+class OrderTest extends FunSuite
+  with base.ParamsAny {
 
   import eclipse.Order._
   import util.Params._

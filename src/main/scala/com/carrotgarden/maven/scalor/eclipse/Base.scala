@@ -25,7 +25,8 @@ object Base {
       asType :        Class[ T ],
       mojoExecution : MojoExecution,
       monitor :       IProgressMonitor
-    ) : T = super.getParameterValue( project, parameter, asType, mojoExecution, monitor )
+    ) : T =
+      super.getParameterValue( project, parameter, asType, mojoExecution, monitor )
 
   }
 

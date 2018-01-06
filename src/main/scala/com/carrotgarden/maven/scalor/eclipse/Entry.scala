@@ -23,6 +23,7 @@ import org.eclipse.m2e.core.project.configurator.AbstractProjectConfigurator
 import com.carrotgarden.maven.scalor.eclipse.Logging.AnyLog
 import org.eclipse.jdt.core.IClasspathAttribute
 import com.carrotgarden.maven.scalor.base.Build.BuildParam
+import org.scalaide.core.SdtConstants
 
 /**
  * Manage eclipse .classpath file class path entries.
@@ -116,7 +117,7 @@ trait Entry {
    * Configure source/target folder entries.
    * Iterate all executions which can contribute roots.
    */
-  def ensureRoots(
+  def ensureSourceRoots(
     request :   ProjectConfigurationRequest,
     classpath : IClasspathDescriptor,
     monitor :   IProgressMonitor
@@ -131,19 +132,45 @@ trait Entry {
    */
   def ensureContainer(
     request :     ProjectConfigurationRequest,
-    config :      ParamsConfig,
     classpath :   IClasspathDescriptor,
+    hasRemove :   Boolean,
     containerId : String,
     monitor :     IProgressMonitor
   ) = {
     assertCancel( monitor )
     val containerEntry = classpathEntry( containerId )
     val containerPath = containerEntry.getPath
-    if ( classpath.containsPath( containerPath ) ) {
+    if ( hasRemove ) {
+      log.info( s"Deleting container ${containerId}." )
       classpath.removeEntry( containerPath )
+    } else {
+      log.info( s"Creating container ${containerId}." )
+      classpath.removeEntry( containerPath )
+      classpath.addEntry( containerEntry )
     }
-    classpath.addEntry( containerEntry )
     reportWorked( monitor )
+  }
+
+  // val javaContainerId = JavaRuntime.JRE_CONTAINER
+  // val scalaContainerId = SdtConstants.ScalaLibContId
+
+  /**
+   * Create/Delete Scala IDE scala-library container.
+   */
+  def ensureScalaLibrary(
+    request :   ProjectConfigurationRequest,
+    config :    ParamsConfig,
+    classpath : IClasspathDescriptor,
+    monitor :   IProgressMonitor
+  ) = {
+    import config._
+    ensureContainer(
+      request,
+      classpath,
+      hasRemove   = eclipseRemoveLibraryContainer,
+      containerId = SdtConstants.ScalaLibContId,
+      monitor
+    )
   }
 
 }

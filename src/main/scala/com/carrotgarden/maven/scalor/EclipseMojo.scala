@@ -5,6 +5,7 @@ import org.apache.maven.plugins.annotations._
 import com.carrotgarden.maven.tools.Description
 
 import A.mojo._
+import A.extend._
 
 import util.OSGI._
 import util.Error._
@@ -25,8 +26,81 @@ import scala.collection.JavaConverters._
 import org.eclipse.m2e.core.ui.internal.UpdateMavenProjectJob
 import org.eclipse.core.resources.IProject
 
+/**
+ * Shared Eclipse mojo interface.
+ */
+trait EclipseAnyMojo extends base.Mojo {
+
+  @Description( """
+  Flag to skip goal execution: <code>eclipse-*</code>.
+  """ )
+  @Parameter(
+    property     = "scalor.skipEclipse", //
+    defaultValue = "false"
+  )
+  var skipEclipse : Boolean = _
+
+  @Description( """
+  Invoke Eclipse configuration executions only when runnting inside Eclipse/M2E.
+  When <code>false</code>, force executions regardless of the Eclipse detection state.
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseDetectPresent", //
+    defaultValue = "true"
+  )
+  var eclipseDetectPresent : Boolean = _
+
+  /**
+   * Connect this Maven plugin with host Eclipse plugins.
+   */
+  def reportHandle = wiringHandle match {
+    case Success( handle ) =>
+      say.info( "Using Eclipse platform plugins:" )
+      say.info( s"   ${handle.resourcesPlugin.getBundle}" )
+      say.info( s"   ${handle.mavenPlugin.getBundle}" )
+      // TODO remove dependency on m2e.core.ui/UpdateMavenProjectJob
+      say.info( s"   ${handle.mavenPluginUI.getBundle}" )
+    case Failure( error ) =>
+      say.error( "Required Eclipse plugin is missing: " + error )
+  }
+
+  /**
+   * Connect this Maven plugin with host Eclipse plugins.
+   */
+  def resolveHandle = wiringHandle match {
+    case Success( handle ) =>
+      handle
+    case Failure( error ) =>
+      throw error
+  }
+
+  /**
+   * Eclipse mojo business logic.
+   */
+  def performEclipse : Unit
+
+  override def perform() : Unit = {
+    if ( skipEclipse ) {
+      reportSkipReason( "Skipping disabled goal execution." )
+      return
+    }
+    if ( eclipseDetectPresent && !hasEclipse ) {
+      reportSkipReason( "Skipping non-eclipse build invocation." )
+      return
+    }
+    if ( hasIncremental ) {
+      reportSkipReason( "Skipping incremental build invocation." )
+      return
+    }
+    reportHandle
+    resolveHandle
+    performEclipse
+  }
+
+}
+
 @Description( """
-Install companion Eclipse plugin.
+Install companion Eclipse plugin provided by this Maven plugin when running under Eclipse/M2E.
 """ )
 @Mojo(
   name                         = `eclipse-config`,
@@ -34,10 +108,8 @@ Install companion Eclipse plugin.
   requiresDependencyResolution = ResolutionScope.NONE
 )
 class EclipseConfigMojo extends EclipseAnyMojo
-  with base.ParamsArtifact
+  with base.ParamsCompiler
   with eclipse.Params {
-
-  import EclipseConfigMojo._
 
   override def mojoName = `eclipse-config`
 
@@ -70,81 +142,14 @@ class EclipseConfigMojo extends EclipseAnyMojo
       say.info( "Scheduling project update in Eclipse to invoke M2E project configurator." )
       val projectList = handle.workspace.getRoot.getProjects
       val currentProject = projectWithBase( projectList, project.getBasedir )
-      // TODO remove dependency on m2e.core.ui
+      // TODO remove dependency on m2e.core.ui/UpdateMavenProjectJob
       val updateJob = new UpdateMavenProjectJob( Array[ IProject ]( currentProject ) )
-      val updateName = "Project update for: " + pluginId + " @ " + project.getArtifactId
+      val updateName = "Project update for: " + project.getArtifactId + " by " + pluginId
       updateJob.setName( updateName )
-      updateJob.setPriority( 10 ) // INTERACTIVE
-      updateJob.schedule( 1 * 1000 )
+      updateJob.setPriority( 10 ) // interactive
+      updateJob.schedule( 1 * 1000 ) // start delay, seconds
     }
 
-  }
-
-}
-
-object EclipseConfigMojo {
-
-}
-
-/**
- * Shared Eclipse mojo interface.
- */
-trait EclipseAnyMojo extends base.Mojo {
-
-  @Description( """
-  Flag to skip goal execution: eclipse-*.
-  """ )
-  @Parameter(
-    property     = "scalor.skipEclipse", //
-    defaultValue = "false"
-  )
-  var skipEclipse : Boolean = _
-
-  @Description( """
-  Invoke eclipse configuration executions
-  only when runnting inside Eclipse/M2E.
-  """ )
-  @Parameter(
-    property     = "scalor.eclipseDetectPresent", //
-    defaultValue = "true"
-  )
-  var eclipseDetectPresent : Boolean = _
-
-  def reportHandle = wiringHandle match {
-    case Success( handle ) =>
-      say.info( "Using Eclipse platform plugins:" )
-      say.info( s"   ${handle.resourcesPlugin.getBundle}" )
-      say.info( s"   ${handle.mavenPlugin.getBundle}" )
-      say.info( s"   ${handle.mavenPluginUI.getBundle}" )
-    case Failure( error ) =>
-      say.error( "Required eclipse plugin is missing: " + error )
-  }
-
-  def resolveHandle = wiringHandle match {
-    case Success( handle ) =>
-      handle
-    case Failure( error ) =>
-      throw error
-  }
-
-  def performEclipse : Unit
-
-  override def perform() : Unit = {
-    if ( skipEclipse ) {
-      reportSkipReason( "Skipping disabled goal execution." )
-      return
-    }
-    if ( eclipseDetectPresent && !hasEclipse ) {
-      reportSkipReason( "Skipping non-eclipse build invocation." )
-      return
-    }
-    if ( hasIncremental ) {
-      reportSkipReason( "Skipping incremental build invocation." )
-      return
-    }
-    reportHandle
-    resolveHandle
-    performEclipse
   }
 
 }

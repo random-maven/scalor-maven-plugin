@@ -101,8 +101,10 @@ trait Compiler {
   /**
    * Compilation scope input source files.
    */
-  def zincBuildSources : Array[ File ] =
+  def zincBuildSources : Array[ File ] = {
+    val zincRegexAnySource = zincRegexAnyJava + "|" + zincRegexAnyScala
     fileListByRegex( buildSourceFolders, zincRegexAnySource )
+  }
 
   /**
    * Compilation scope classes output directory.
@@ -154,15 +156,10 @@ trait Compiler {
       new URLClassLoader( entryList )
     }
 
-    //    defineBridge.foreach { define =>
-    //      say.info( s" ${define}" )
-    //    }
-    //    defineCompiler.foreach { define =>
-    //      say.info( s" ${define}" )
-    //    }
-    //    definePluginList.foreach { define =>
-    //      say.info( s" ${define}" )
-    //    }
+    // Provide compiler options.
+    val optionsConfig = Settings.extract(
+      compilerInstall.version, parseCompileOptions, say.error
+    )
 
     // Provide user reporting.
     if ( zincLogSourcesList ) {
@@ -181,11 +178,26 @@ trait Compiler {
       say.info( "Compiler plugin list:" )
       reportFileList( compilerPluginList )
     }
+    if ( zincLogCompileOptions ) {
+      say.info( "Compiler options report:" )
+      val reportFile = zincComileOptionsReport
+      val reportText = optionsConfig.reportFun()
+      ensureParent( reportFile )
+      persistString( reportFile, reportText )
+      say.info( s"   ${reportFile}" )
+    }
 
     // Verify dependency version consistency.
     if ( zincVerifyVersion ) {
       Version.assertVersion( compilerInstall )
     }
+
+    // Final compilation options.
+    val pluginOptions = compilerPluginList.flatMap( pluginStanza( _ ) )
+    val scalacOptions = optionsConfig.standard ++ pluginOptions
+    val javacOptions = Array.empty[ String ] // not used
+    val compileOrder = CompileOrder.valueOf( optionsConfig.compileOrder )
+    val maxErrors = optionsConfig.maxErrors
 
     // Provide Zinc ScalaC instance.
     val scalaInstance = instanceFrom( compilerLoader, compilerInstall )
@@ -237,7 +249,7 @@ trait Compiler {
     }
 
     // Compilation problem reporter.
-    val reporter = new LoggedReporter( zincMaximumErrors, logger ) {
+    val reporter = new LoggedReporter( maxErrors, logger ) {
       override def logInfo( problem : Problem ) : Unit =
         logger.info( problem.toString )
       override def logWarning( problem : Problem ) : Unit =
@@ -269,11 +281,6 @@ trait Compiler {
       extra          = Array.empty
     )
 
-    // Final compilation options.
-    val pluginOptions = compilerPluginList.flatMap( pluginStanza( _ ) )
-    val scalacOptions = zincSettingsScalaC ++ pluginOptions
-    val javacOptions = zincSettingsJavaC
-
     // Iterative inputs.
     val inputsPast = incremental.inputs(
       classpath             = buildClassPath,
@@ -281,9 +288,9 @@ trait Compiler {
       classesDirectory      = buildOutputFolder,
       scalacOptions         = scalacOptions,
       javacOptions          = javacOptions,
-      maxErrors             = zincMaximumErrors,
+      maxErrors             = maxErrors,
       sourcePositionMappers = Array.empty,
-      order                 = CompileOrder.valueOf( zincCompileOrder ),
+      order                 = compileOrder,
       compilers             = compilers,
       setup                 = setup,
       pr                    = incremental.emptyPreviousResult // FIXME read past state.

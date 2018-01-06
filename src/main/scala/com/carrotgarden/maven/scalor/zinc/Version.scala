@@ -3,6 +3,9 @@ package com.carrotgarden.maven.scalor.zinc
 import com.carrotgarden.maven.scalor.util.Error._
 import com.carrotgarden.maven.scalor.util.Folder._
 
+/**
+ * Version verification support.
+ */
 object Version {
 
   import Module._

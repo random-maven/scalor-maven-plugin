@@ -13,7 +13,7 @@ import com.carrotgarden.maven.scalor.util._
  * Eclipse/Maven (M2E) build integration context.
  */
 trait Build {
-  
+
   self : base.Params =>
 
   @Description( """
@@ -23,7 +23,7 @@ trait Build {
   var buildContext : BuildContext = _
 
   /**
-   * Connect this maven plugin with host eclispe plugins.
+   * Connect this Maven plugin with host Eclipse plugins.
    */
   lazy val wiringHandle = Error.TryHard {
     Wiring( buildContext ).setup
@@ -62,7 +62,7 @@ trait Build {
   def hasEclipse = eclipse.isPresent || m2e.isPresent
 
   /**
-   * M2E integration.
+   * M2E detection.
    */
   object m2e {
     /**
@@ -77,7 +77,7 @@ trait Build {
   }
 
   /**
-   * Eclipse integration.
+   * Eclipse detection.
    */
   object eclipse {
     /**

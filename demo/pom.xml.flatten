@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.carrotgarden.maven</groupId>
   <artifactId>scalor-maven-plugin-demo</artifactId>
-  <version>0.20180102011559</version>
+  <version>0.20180105214329</version>
   <description>Demonstration project, features:
     * 3-scope build
     * Scala macro compile

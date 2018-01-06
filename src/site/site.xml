@@ -14,7 +14,8 @@
     <custom>
         <fluidoSkin>
             <gitHub>
-                <projectId>random-maven/${this.artifactId}</projectId>
+                <!-- Use explicit id to bypass flatten. -->
+                <projectId>random-maven/scalor-maven-plugin</projectId>
                 <ribbonOrientation>right</ribbonOrientation>
                 <ribbonColor>gray</ribbonColor>
             </gitHub>

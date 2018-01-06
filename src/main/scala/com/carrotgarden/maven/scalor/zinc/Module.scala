@@ -7,6 +7,9 @@ import org.apache.maven.artifact.Artifact
 import Module._
 import java.io.File
 
+/**
+ * A module is binary jar with optional source jar.
+ */
 case class Module(
   moduleType :     Type,
   binaryArtifact : Artifact,
@@ -39,27 +42,26 @@ object Module {
    * Provide artifact module type detector.
    */
   case class Detector(
-    artifactCompilerBridge :   String,
-    artifactScalaCompiler :    String,
-    artifactScalaLibrary :     String,
-    artifactScalaReflect :     String,
-    artifactPluginDescriptor : String
+    regexCompilerBridge :   String,
+    regexScalaCompiler :    String,
+    regexScalaLibrary :     String,
+    regexScalaReflect :     String,
+    resourcePluginDescriptor : String
   ) {
-    val rexexCompilerBridge = artifactCompilerBridge.r
-    val regexScalaCompiler = artifactScalaCompiler.r
-    val regexScalaLibrary = artifactScalaLibrary.r
-    val regexCompilerBridge = artifactCompilerBridge.r
-    val regexScalaReflect = artifactScalaReflect.r
+    val RxCompilerBridge = regexCompilerBridge.r
+    val RxScalaCompiler = regexScalaCompiler.r
+    val RxScalaLibrary = regexScalaLibrary.r
+    val RxScalaReflect = regexScalaReflect.r
     /**
      * Provide artifact module type detector.
      */
     def moduleType( artifact : Artifact ) : Type = {
       Maven.artifactIdentity( artifact ) match {
-        case rexexCompilerBridge() => CompilerBridge
-        case regexScalaCompiler() => ScalaCompiler
-        case regexScalaLibrary() => ScalaLibrary
-        case regexScalaReflect() => ScalaReflect
-        case _ if Maven.hasResourceMatch( `artifact`, artifactPluginDescriptor ) => CompilerPlugin
+        case RxCompilerBridge() => CompilerBridge
+        case RxScalaCompiler() => ScalaCompiler
+        case RxScalaLibrary() => ScalaLibrary
+        case RxScalaReflect() => ScalaReflect
+        case _ if Maven.hasResourceMatch( `artifact`, resourcePluginDescriptor ) => CompilerPlugin
         case _ => Unknown
       }
     }

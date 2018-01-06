@@ -7,23 +7,26 @@ import scala.collection.JavaConverters._
 import com.carrotgarden.maven.scalor._
 
 /**
- * Resolve Scala installation from plugin dependencies.
+ * Resolve Scala installation from defined dependencies.
  */
 trait Resolve {
 
   self : ParamScalaInstall // 
-  with resolve.Maven with base.ParamsArtifact =>
+  with resolve.Maven with base.ParamsCompiler =>
 
   def moduleDetector() : Module.Detector = {
     Module.Detector(
-      artifactCompilerBridge,
-      artifactScalaCompiler,
-      artifactScalaLibrary,
-      artifactScalaReflect,
-      artifactPluginDescriptor
+      regexCompilerBridge,
+      regexScalaCompiler,
+      regexScalaLibrary,
+      regexScalaReflect,
+      resourcePluginDescriptor
     )
   }
 
+  /**
+   * Resolve Scala installation from defined dependencies.
+   */
   def resolveCustomInstall() : ScalaInstall = {
     val detector = moduleDetector()
 

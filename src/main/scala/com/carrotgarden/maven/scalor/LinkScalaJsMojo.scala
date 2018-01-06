@@ -26,7 +26,7 @@ class LinkMainScalaJsMojo extends LinkAnyScalaJsMojo
   override def mojoName = A.mojo.`link-scala-js-main`
 
   @Description( """
-  Flag to skip goal execution: link-scala-js-main.
+  Flag to skip goal execution: <code>link-scala-js-main</code>.
   """ )
   @Parameter(
     property     = "scalor.skipLinkerMain", //
@@ -52,7 +52,7 @@ class LinkTestScalaJsMojo extends LinkAnyScalaJsMojo
   override def mojoName = A.mojo.`link-scala-js-test`
 
   @Description( """
-  Flag to skip this goal execution: link-scala-js-test.
+  Flag to skip this goal execution: <code>link-scala-js-test</code>.
   """ )
   @Parameter(
     property     = "scalor.skipLinkerTest", //
@@ -79,7 +79,7 @@ trait LinkAnyScalaJsMojo extends AbstractMojo
   with scalajs.Build {
 
   @Description( """
-  Flag to skip this execution: link-scala-js-*.
+  Flag to skip this execution: <code>link-scala-js-*</code>.
   """ )
   @Parameter(
     property     = "scalor.skipLinker", //
@@ -115,7 +115,7 @@ trait LinkAnyScalaJsMojo extends AbstractMojo
   }
 
   @Description( """
-  Flag to skip linker execution in Eclipse: link-scala-js-*.
+  Flag to skip linker execution in Eclipse: <code>link-scala-js-*</code>.
   """ )
   @Parameter(
     property     = "scalor.skipLinkerEclipse", //
@@ -145,7 +145,7 @@ trait LinkAnyScalaJsMojo extends AbstractMojo
         say.info( "Missing scalajs-library, skipping execution." )
       }
     } else {
-      say.info( "Forcing linker invocation." )
+      say.info( "Skipping library detect, forcing linker invocation." )
       invokeLinker()
     }
   }

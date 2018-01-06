@@ -27,13 +27,6 @@ import meta.Macro._
 import util.Error._
 import util.Folder._
 
-// https://maven.apache.org/guides/introduction/introduction-to-the-pom.html
-// <sourceDirectory>src/main/java</sourceDirectory>
-// <testSourceDirectory>src/test/java</testSourceDirectory>
-// <directory>target</directory>
-// <outputDirectory>target/classes</outputDirectory>
-// <testOutputDirectory>target/test-classes</testOutputDirectory>
-
 /**
  * Build definition for compilation scope=macro.
  */
@@ -54,7 +47,7 @@ trait BuildMacroDependency extends BuildAnyDependency {
     property     = "scalor.buildMacroDependencyFolders",
     defaultValue = "" // empty
   )
-  var buildMacroDependencyFolders : Array[ File ] = Array[ File ]()
+  var buildMacroDependencyFolders : Array[ File ] = Array.empty
 
   @Description( """
   Maven dependency scopes which control selection
@@ -65,7 +58,7 @@ trait BuildMacroDependency extends BuildAnyDependency {
     property     = "scalor.buildMacroDependencyScopes",
     defaultValue = "compile,provided,system"
   )
-  var buildMacroDependencyScopes : Array[ String ] = Array[ String ]()
+  var buildMacroDependencyScopes : Array[ String ] = Array.empty
 
   override def buildDependencyFolders = buildMacroDependencyFolders
   override def buildDependencyScopes = buildMacroDependencyScopes
@@ -90,7 +83,7 @@ trait BuildMacroSources extends BuildAnySources {
     property     = "scalor.buildMacroSourceScalaFolders",
     defaultValue = "${project.build.sourceDirectory}/../../macro/scala"
   )
-  var buildMacroSourceScalaFolders : Array[ File ] = Array[ File ]()
+  var buildMacroSourceScalaFolders : Array[ File ] = Array.empty
 
   override def buildSourceFolders = buildMacroSourceJavaFolders ++ buildMacroSourceScalaFolders
 
@@ -143,7 +136,7 @@ trait BuildMainDependency extends BuildAnyDependency {
     property     = "scalor.buildMainDependencyFolders",
     defaultValue = "${project.build.directory}/macro-classes"
   )
-  var buildMainDependencyFolders : Array[ File ] = Array[ File ]()
+  var buildMainDependencyFolders : Array[ File ] = Array.empty
 
   @Description( """
   Maven dependency scopes which control selection
@@ -154,7 +147,7 @@ trait BuildMainDependency extends BuildAnyDependency {
     property     = "scalor.buildMainDependencyScopes",
     defaultValue = "compile,provided,system"
   )
-  var buildMainDependencyScopes : Array[ String ] = Array[ String ]()
+  var buildMainDependencyScopes : Array[ String ] = Array.empty
 
   override def buildDependencyFolders = buildMainDependencyFolders
   override def buildDependencyScopes = buildMainDependencyScopes
@@ -170,7 +163,7 @@ trait BuildMainSources extends BuildAnySources {
     property     = "scalor.buildMainSourceJavaFolders",
     defaultValue = "${project.build.sourceDirectory}"
   )
-  var buildMainSourceJavaFolders : Array[ File ] = Array[ File ]()
+  var buildMainSourceJavaFolders : Array[ File ] = Array.empty
 
   @Description( """
   Scala source root folders to be included in compilation scope=main.
@@ -179,7 +172,7 @@ trait BuildMainSources extends BuildAnySources {
     property     = "scalor.buildMainSourceScalaFolders",
     defaultValue = "${project.build.sourceDirectory}/../scala"
   )
-  var buildMainSourceScalaFolders : Array[ File ] = Array[ File ]()
+  var buildMainSourceScalaFolders : Array[ File ] = Array.empty
 
   override def buildSourceFolders = buildMainSourceJavaFolders ++ buildMainSourceScalaFolders
 
@@ -220,7 +213,7 @@ trait BuildTestDependency extends BuildAnyDependency {
     property     = "scalor.buildTestDependencyFolders",
     defaultValue = "${project.build.directory}/macro-classes,${project.build.directory}/classes"
   )
-  var buildTestDependencyFolders : Array[ File ] = Array[ File ]()
+  var buildTestDependencyFolders : Array[ File ] = Array.empty
 
   @Description( """
   Maven dependency scopes which control selection
@@ -231,7 +224,7 @@ trait BuildTestDependency extends BuildAnyDependency {
     property     = "scalor.buildTestDependencyScopes",
     defaultValue = "compile,provided,system,test,runtime"
   )
-  var buildTestDependencyScopes : Array[ String ] = Array[ String ]()
+  var buildTestDependencyScopes : Array[ String ] = Array.empty
 
   override def buildDependencyFolders = buildTestDependencyFolders
   override def buildDependencyScopes = buildTestDependencyScopes
@@ -247,7 +240,7 @@ trait BuildTestSources extends BuildAnySources {
     property     = "scalor.buildTestSourceJavaFolders",
     defaultValue = "${project.build.testSourceDirectory}"
   )
-  var buildTestSourceJavaFolders : Array[ File ] = Array[ File ]()
+  var buildTestSourceJavaFolders : Array[ File ] = Array.empty
 
   @Description( """
   Scala source root folders to be included in compilation scope=test.
@@ -256,7 +249,7 @@ trait BuildTestSources extends BuildAnySources {
     property     = "scalor.buildTestSourceScalaFolders",
     defaultValue = "${project.build.testSourceDirectory}/../scala"
   )
-  var buildTestSourceScalaFolders : Array[ File ] = Array[ File ]()
+  var buildTestSourceScalaFolders : Array[ File ] = Array.empty
 
   override def buildSourceFolders = buildTestSourceJavaFolders ++ buildTestSourceScalaFolders
 
@@ -309,22 +302,6 @@ trait BuildAnyTarget {
    * Compile output directory.
    */
   def buildTargetFolder : File
-}
-
-/**
- * Text encoding for sources and resources.
- */
-trait BuildEncoding {
-
-  @Description( """
-  Text encoding for sources and resources.
-  """ )
-  @Parameter(
-    property     = "scalor.buildSourceEncoding",
-    defaultValue = "${project.build.sourceEncoding}"
-  )
-  var buildSourceEncoding : String = "UTF-8"
-
 }
 
 /**

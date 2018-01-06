@@ -8,6 +8,7 @@ import util.Params._
 import Params._
 
 import com.carrotgarden.maven.scalor.eclipse.Logging.AnyLog
+import org.eclipse.core.resources.IResource
 
 /**
  * Provide eclipse .project file comment.
@@ -17,10 +18,11 @@ trait Comment {
   self : Logging with Maven =>
 
   import Maven._
+  import IResource._
 
   /**
    */
-  def ensureComment(
+  def ensureProjectComment(
     request : ProjectConfigurationRequest,
     config :  ParamsConfig,
     monitor : IProgressMonitor
@@ -31,7 +33,7 @@ trait Comment {
       val project = request.getProject
       val description = project.getDescription
       description.setComment( eclipseProjectCommentString )
-      project.setDescription( description, monitor )
+      project.setDescription( description, FORCE, monitor )
     }
   }
 

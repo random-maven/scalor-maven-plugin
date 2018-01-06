@@ -19,6 +19,9 @@ import util.Folder._
 import com.carrotgarden.maven.tools.Description
 import java.util.Arrays
 
+/**
+ * Shared clean mojo interface.
+ */
 trait CleanAnyMojo extends AbstractMojo
   with base.Mojo
   with base.Params
@@ -26,7 +29,7 @@ trait CleanAnyMojo extends AbstractMojo
   with base.SkipMojo {
 
   @Description( """
-  Flag to skip goal execution: clean-*.
+  Flag to skip goal execution: <code>clean-*</code>.
   """ )
   @Parameter(
     property     = "scalor.skipRegister", //
@@ -71,7 +74,7 @@ class CleanMacroMojo extends CleanAnyMojo
   override def mojoName = `clean-macro`
 
   @Description( """
-  Flag to skip goal execution: clean-macro.
+  Flag to skip goal execution: <code>clean-macro</code>.
   """ )
   @Parameter(
     property     = "scalor.skipCleanMacro", //
@@ -98,7 +101,7 @@ class CleanMainMojo extends CleanAnyMojo
   override def mojoName = `clean-main`
 
   @Description( """
-  Flag to skip goal execution: clean-main.
+  Flag to skip goal execution: <code>clean-main</code>.
   """ )
   @Parameter(
     property     = "scalor.skipCleanMain", //
@@ -125,7 +128,7 @@ class CleanTestMojo extends CleanAnyMojo
   override def mojoName = `clean-test`
 
   @Description( """
-  Flag to skip goal execution: clean-test.
+  Flag to skip goal execution: <code>clean-test</code>.
   """ )
   @Parameter(
     property     = "scalor.skipCleanTest", //

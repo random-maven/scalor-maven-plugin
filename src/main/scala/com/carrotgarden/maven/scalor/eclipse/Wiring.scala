@@ -42,7 +42,7 @@ case class Wiring(
 ) {
 
   /**
-   * Connect this maven plugin to host eclispe plugins.
+   * Connect this Maven plugin to host Eclipse plugins.
    */
   def setup[ T ] : Handle = {
 

@@ -17,38 +17,40 @@ import com.carrotgarden.maven.tools.Description
  *
  * https://github.com/scala-js/scala-js-cli
  */
-trait Linker {
-  self : Build with eclipse.Build with base.Logging with base.Params with base.BuildAnyDependency =>
+trait Linker extends base.ParamsAny {
+
+  self : Build with eclipse.Build //
+  with base.Logging with base.Params with base.BuildAnyDependency //
+  =>
 
   import Linker._
   import com.carrotgarden.maven.scalor.util.Folder._
 
   @Description( """
-  Regualr expression used to split linker options.
-  """ )
-  @Parameter(
-    property     = "scalor.linkerOptionSeparator", //
-    defaultValue = """\s+"""
-  )
-  var linkerOptionSeparator : String = _
-
-  @Description( """
-  Build options for Scala.js CLI in Eclipse.
-  Uses [linkerOptionSeparator]
+  Build options for Scala.js CLI in Eclipse M2E.
+  Separator parameter: <a href="#commonSequenceSeparator"><b>commonSequenceSeparator</b></a>.
   """ )
   @Parameter(
     property     = "scalor.linkerInteractiveOptions", //
-    defaultValue = "--fastOpt --sourceMap --debug --prettyPrint"
+    defaultValue = """
+    --fastOpt ;
+    --sourceMap ;
+    --debug ;
+    --prettyPrint ;
+    """
   )
   var linkerInteractiveOptions : String = _
 
   @Description( """
-  Build options for Scala.js CLI in Jenkins.
-  Uses [linkerOptionSeparator]
+  Build options for Scala.js CLI in Jenkins CI.
+  Separator parameter: <a href="#commonSequenceSeparator"><b>commonSequenceSeparator</b></a>.
   """ )
   @Parameter(
     property     = "scalor.linkerIntegrationOptions", //
-    defaultValue = "--fullOpt --sourceMap"
+    defaultValue = """
+    --fullOpt ;
+    --sourceMap ;
+    """
   )
   var linkerIntegrationOptions : String = _
 
@@ -56,7 +58,7 @@ trait Linker {
   Report linker arguments during mojo execution.
   """ )
   @Parameter(
-    property     = "scalor.linkerShowArgs", //
+    property     = "scalor.linkerLogArgs", //
     defaultValue = "true"
   )
   var linkerLogArgs : Boolean = _
@@ -66,15 +68,19 @@ trait Linker {
    */
   def lnkerReportArgs( args : Array[ String ] ) = if ( linkerLogArgs ) {
     say.info( "Scala.js linker args:" )
-    args.foreach( item => say.info( "   " + item ) )
+    args.foreach( item => say.info( s"   ${item}" ) )
   }
 
   /**
    * Scala.js linker user options configuration.
    */
   def linkerUserOptions : Array[ String ] = {
-    val options = if ( m2e.isPresent ) linkerInteractiveOptions else linkerIntegrationOptions
-    options.split( linkerOptionSeparator )
+    val options = if ( m2e.isPresent ) {
+      linkerInteractiveOptions
+    } else {
+      linkerIntegrationOptions
+    }
+    parseCommonSequence( options, commonSequenceSeparator )
   }
 
   /**

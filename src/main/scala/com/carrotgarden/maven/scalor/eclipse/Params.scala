@@ -11,22 +11,41 @@ import com.carrotgarden.maven.scalor._
  * Maven plugin parameters used to control companion Eclipse plugin.
  */
 trait Params extends AnyRef
-  with base.AnyPar
-  with base.ParamsArtifact
+  with base.ParamsAny
+  with base.ParamsCompiler
   with base.BuildMacroSources
   with base.BuildMainSources
   with base.BuildTestSources
-  with zinc.ParamsCompileOrder
-  with zinc.ParamsOptionsJavaC
-  with zinc.ParamsOptionsScalaC
+  with zinc.ParamsCompileOptions
   with zinc.ParamScalaInstall
-  with zinc.ParamsPluginList
+  with ParamsOrder
+  with ParamsLogger
   with ParamsVersionMaven
   with ParamsVersionScala {
 
   @Description( """
+  Enable to remove Scala Library container from Eclipse build class path.
+  Normally, Scala Library container is provided by default by Scala IDE plugin.
+  Normally, scala-library artifact must also be provided as <code>pom.xml</code> dependnecy.
+  That results in scala-library dependency listed twice on Eclipse build class path.
+  To avoid "duplicate library on class path" warning, 
+  use this parameter to remove Scala IDE provided container.
+  Custom Scala installation configured by this plugin will use scala-library resolved from
+    <a href="#defineCompiler"><b>defineCompiler</b></a>, 
+  which normally should be configured as identical to the scala-library 
+  provided as <code>pom.xml</code> project dependnecy.
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseRemoveLibraryContainer",
+    defaultValue = "true"
+  )
+  var eclipseRemoveLibraryContainer : Boolean = _
+
+  @Description( """
   Enable to rename Scala Library container in Eclipse UI.
-  Container description will reflect title of custom Scala installation. 
+  Container description will reflect title of the custom Scala installation. 
+  Only effective when not removing scala-library container via parameter: 
+    <a href="#eclipseRemoveLibraryContainer"><b>eclipseRemoveLibraryContainer</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseRenameLibraryContainer",
@@ -35,8 +54,9 @@ trait Params extends AnyRef
   var eclipseRenameLibraryContainer : Boolean = _
 
   @Description( """
-  Reset all preferences to their default values before applying Maven configuration.
-  Use this to remove manual user provided Eclipse UI configuration settins.
+  Reset Eclipse Scala IDE project preferences 
+  to their default values before applying Maven provided configuration.
+  Use this to remove manual user-provided Eclipse UI configuration settins for Scala IDE.
   """ )
   @Parameter(
     property     = "scalor.eclipseResetPreferences",
@@ -44,8 +64,50 @@ trait Params extends AnyRef
   )
   var eclipseResetPreferences : Boolean = _
 
+//  @Description( """
+//  Enable to apply comment in Scala IDE settings file.
+//  <pre>${project.basedir}/.settings/org.scala-ide.sdt.core.prefs</pre>
+//  """ )
+//  @Parameter(
+//    property     = "scalor.eclipseScalaSettingsCommentApply",
+//    defaultValue = "true"
+//  )
+//  var eclipseScalaSettingsCommentApply : Boolean = _
+//
+//  @Description( """
+//  Content of the comment in Scala IDE settings file.
+//  <pre>${project.basedir}/.settings/org.scala-ide.sdt.core.prefs</pre>
+//  """ )
+//  @Parameter(
+//    property     = "scalor.eclipseScalaSettingsCommentString",
+//    defaultValue = "scalor-maven-plugin @ ${project.properties(release.stamp)}"
+//  )
+//  var eclipseScalaSettingsCommentString : String = _
+
   @Description( """
-  Report persisting of configured Scala IDE settings.
+  Enable to apply comment in Eclipse <code>.project</code> descriptor.
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseProjectCommentApply",
+    defaultValue = "true"
+  )
+  var eclipseProjectCommentApply : Boolean = _
+
+  @Description( """
+  Content of the comment in eclipse <code>.project</code> descriptor.
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseProjectCommentString",
+    defaultValue = "scalor-maven-plugin @ ${project.properties(release.stamp)}"
+  )
+  var eclipseProjectCommentString : String = _
+
+}
+
+trait ParamsLogger {
+
+  @Description( """
+  Report persisting of configured project Scala IDE settings.
   """ )
   @Parameter(
     property     = "scalor.eclipseLogPersistSettings",
@@ -54,7 +116,7 @@ trait Params extends AnyRef
   var eclipseLogPersistSettings : Boolean = _
 
   @Description( """
-  Report persisting of selected compiler.
+  Report persisting of selected Scala compiler installation.
   """ )
   @Parameter(
     property     = "scalor.eclipseLogPersistCompiler",
@@ -63,7 +125,7 @@ trait Params extends AnyRef
   var eclipseLogPersistCompiler : Boolean = _
 
   @Description( """
-  Enable to log class path -re-ordering results.
+  Enable to log class path re-ordering results.
   """ )
   @Parameter(
     property     = "scalor.eclipseLogClasspathOrder",
@@ -81,7 +143,9 @@ trait Params extends AnyRef
   var eclipseLogInstallResolve : Boolean = _
 
   @Description( """
-  Report all available custom Scala installations persisted by Scala IDE.
+  Report all available custom Scala installations persisted by Eclispe Scala IDE plugin.
+  Generated report output file parameter: 
+    <a href="#eclipseCustomInstallReport"><b>eclipseCustomInstallReport</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseLogCustomInstall",
@@ -91,53 +155,35 @@ trait Params extends AnyRef
 
   @Description( """
   Report all available custom Scala installations persisted by Scala IDE.
+  Enablement parameter:
+    <a href="#eclipseLogCustomInstall"><b>eclipseLogCustomInstall</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseCustomInstallReport",
-    defaultValue = "${project.build.directory}/custom-scala-install-report.txt"
+    defaultValue = "${project.build.directory}/scalor/scala-install-report.txt"
   )
   var eclipseCustomInstallReport : File = _
-
-  @Description( """
-  Enable to apply comment in Scala IDE settings file.
-  ${project.basedir}/.settings/org.scala-ide.sdt.core.prefs
+  
+    @Description( """
+  Enable to log effective parameters configured for Eclipse companion plugin.
   """ )
   @Parameter(
-    property     = "scalor.eclipseScalaSettingsCommentApply",
-    defaultValue = "true"
+    property     = "scalor.eclipseLogParamsConfig",
+    defaultValue = "false"
   )
-  var eclipseScalaSettingsCommentApply : Boolean = _
+  var eclipseLogParamsConfig : Boolean = _
+
+}
+
+trait ParamsOrder {
 
   @Description( """
-  Content of the comment in Scala IDE settings file.
-  ${project.basedir}/.settings/org.scala-ide.sdt.core.prefs
-  """ )
-  @Parameter(
-    property     = "scalor.eclipseScalaSettingsCommentString",
-    defaultValue = "scalor-maven-plugin @ ${project.properties(release.stamp)}"
-  )
-  var eclipseScalaSettingsCommentString : String = _
-
-  @Description( """
-  Enable to apply comment in Eclipse .project file.
-  """ )
-  @Parameter(
-    property     = "scalor.eclipseProjectCommentApply",
-    defaultValue = "true"
-  )
-  var eclipseProjectCommentApply : Boolean = _
-
-  @Description( """
-  Content of the comment in eclipse .project file.
-  """ )
-  @Parameter(
-    property     = "scalor.eclipseProjectCommentString",
-    defaultValue = "scalor-maven-plugin @ ${project.properties(release.stamp)}"
-  )
-  var eclipseProjectCommentString : String = _
-
-  @Description( """
-  Enable to re-order Eclipse .project file by 'projectDescription/buildSpec/buildCommand/name' .
+  Enable to re-order Eclipse <code>.project</code> descriptor by 
+<pre>
+  projectDescription/buildSpec/buildCommand/name
+</pre>
+  Builder order is important in Eclipse builds.
+  Ordering parameter: <a href="#eclipseBuilderOrdering"><b>eclipseBuilderOrdering</b></a>
   """ )
   @Parameter(
     property     = "scalor.eclipseBuilderReorder",
@@ -146,31 +192,40 @@ trait Params extends AnyRef
   var eclipseBuilderReorder : Boolean = _
 
   @Description( """
-  Order Eclipse .project file builder entries according to these rules.
-  Rule format: item = path,
+  Order Eclipse <code>.project</code> descriptor builder entries according to these rules.
+  Rule format: 
+<pre>
+item = path ;
   where:
-  'item' - relative sort order index,
-  'path' - regular expression to match against 'projectDescription/buildSpec/buildCommand/name', 
+  item - relative sort order index,
+  path - regular expression to match against 'projectDescription/buildSpec/buildCommand/name', 
+</pre>  
+  Separator parameter: <a href="#commonSequenceSeparator"><b>commonSequenceSeparator</b></a>.
+  Enablement parameter: <a href="#eclipseBuilderReorder"><b>eclipseBuilderReorder</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseBuilderOrdering",
     defaultValue = """
     
-    11 = org.eclipse.wst.+
-    12 = org.eclipse.dltk.+
+    11 = org.eclipse.wst.+ ;
+    12 = org.eclipse.dltk.+ ;
     
-    41 = org.eclipse.jdt.+ 
-    42 = org.scala-ide.sdt.+ 
+    41 = org.eclipse.jdt.+ ;
+    42 = org.scala-ide.sdt.+ ; 
     
-    71 = org.eclipse.pde.+ 
-    72 = org.eclipse.m2e.+ 
+    71 = org.eclipse.pde.+ ;
+    72 = org.eclipse.m2e.+ ;
     
     """
   )
   var eclipseBuilderOrdering : String = _
 
   @Description( """
-  Enable to re-order Eclipse .classpath file by 'classpath/classpathentry/@path' .
+  Enable to re-order Eclipse <code>.classpath</code> descriptor by
+<pre>
+  classpath/classpathentry/@path
+</pre>
+  Ordering parameter: <a href="#eclipseClasspathOrdering"><b>eclipseClasspathOrdering</b></a>
   """ )
   @Parameter(
     property     = "scalor.eclipseClasspathReorder",
@@ -179,52 +234,59 @@ trait Params extends AnyRef
   var eclipseClasspathReorder : Boolean = _
 
   @Description( """
-  Re-order Eclipse top level .classpath file entries according to these rules.
-  Rule format: 
-    item = path ;
+  Re-order Eclipse top level <code>.classpath</code> descriptor entries according to these rules.
+  Class path entry order controls visual presentation in Eclipse UI.
+  Rule format:
+<pre>
+item = path ;
   where:
-    'item' - relative sort order index,
-    'path' - regular expression to match against 'classpath/classpathentry/@path', 
+  item - relative sort order index,
+  path - regular expression to match against 'classpath/classpathentry/@path', 
+</pre>  
+  Separator parameter: <a href="#commonSequenceSeparator"><b>commonSequenceSeparator</b></a>.
+  Enablement parameter: <a href="#eclipseClasspathReorder"><b>eclipseClasspathReorder</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseClasspathOrdering",
     defaultValue = """
     
-    11 = .*src/macr.*/java
-    12 = .*src/macr.*/scala 
-    13 = .*src/macr.*/groovy 
-    14 = .*src/macr.*/res.*
+    11 = .*src/macr.*/java ;
+    12 = .*src/macr.*/scala ;
+    13 = .*src/macr.*/groovy ;
+    14 = .*src/macr.*/res.* ;
     
-    21 = .*src/main.*/java 
-    22 = .*src/main.*/scala 
-    23 = .*src/main.*/groovy 
-    24 = .*src/main.*/res.*
+    21 = .*src/main.*/java ;
+    22 = .*src/main.*/scala ;
+    23 = .*src/main.*/groovy ;
+    24 = .*src/main.*/res.* ;
     
-    31 = .*src/test.*/java 
-    32 = .*src/test.*/scala 
-    33 = .*src/test.*/groovy 
-    34 = .*src/test.*/res.*
+    31 = .*src/test.*/java ;
+    32 = .*src/test.*/scala ;
+    33 = .*src/test.*/groovy ;
+    34 = .*src/test.*/res.* ;
     
-    51 = .*target/gen[a-z-]*sources.* 
-    52 = .*target/gen[a-z-]*test-.* 
-    53 = .*target/gen[a-z-]*.*
+    51 = .*target/gen[a-z-]*sources.* ; 
+    52 = .*target/gen[a-z-]*test-.* ;
+    53 = .*target/gen[a-z-]*.* ;
     
-    81 = org.scala-ide.sdt.*
-    82 = org.eclipse.jdt.*
-    83 = org.eclipse.m2e.*
-    84 = GROOVY_SUPPORT
-    85 = GROOVY_DSL_SUPPORT
+    81 = org.scala-ide.sdt.* ;
+    82 = org.eclipse.jdt.* ;
+    83 = org.eclipse.m2e.* ;
+    84 = GROOVY_SUPPORT ;
+    85 = GROOVY_DSL_SUPPORT ;
     
-    91 = .*target/macro-classes 
-    92 = .*target/classes 
-    93 = .*target/test-classes 
+    91 = .*target/macro-classes ; 
+    92 = .*target/classes ;
+    93 = .*target/test-classes ; 
     
     """
   )
   var eclipseClasspathOrdering : String = _
 
   @Description( """
-  Enable to re-order class path entires inside the .classpath Maven container.
+  Enable to re-order class path entires inside the<code>.classpath</code>Maven container.
+  Class path entry order controls visual presentation in Eclipse UI.
+  Ordering parameter: <a href="#eclipseMavenOrdering"><b>eclipseMavenOrdering</b></a>
   """ )
   @Parameter(
     property     = "scalor.eclipseMavenReorder",
@@ -233,8 +295,13 @@ trait Params extends AnyRef
   var eclipseMavenReorder : Boolean = _
 
   @Description( """
-  Re-order class path entires inside the .classpath Maven container acording to these rules.
+  Re-order class path entires inside the<code>.classpath</code>Maven container acording to these rules.
   Available rules are:
+<pre>
+    artifactId = ascending
+</pre>
+  Separator parameter: <a href="#commonSequenceSeparator"><b>commonSequenceSeparator</b></a>.
+  Enablement parameter: <a href="#eclipseMavenReorder"><b>eclipseMavenReorder</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseMavenOrdering",
@@ -245,19 +312,44 @@ trait Params extends AnyRef
   var eclipseMavenOrdering : String = _
 
   @Description( """
-  Eclipse Scala IDE plugin options. See: ScalaPluginSettings:
-	https://github.com/scala-ide/scala-ide/blob/master/org.scala-ide.sdt.core/src/org/scalaide/ui/internal/preferences/IDESettings.scala
-  Available custom interpolation properties:
-    ${scalor.zincCompileOrder} ;
+  Enable to re-order nature entires in <code>.project</code> descriptor.
+  Nature order controls project presentation in Eclipse UI.
+  Ordering parameter: <a href="#eclipseNatureOrdering"><b>eclipseNatureOrdering</b></a>
   """ )
   @Parameter(
-    property     = "scalor.eclipseOptsScalaIDE",
-    defaultValue = """
-		-useScopesCompiler
-		-compileorder:Mixed
-		"""
+    property     = "scalor.eclipseNatureReorder",
+    defaultValue = "true"
   )
-  var eclipseOptsScalaIDE : String = _
+  var eclipseNatureReorder : Boolean = _
+
+  @Description( """
+  Re-order nature entires in <code>.project</code> descriptor according to these rules.
+  Nature order controls project presentation in Eclipse UI.
+  In order to see <code>[S]<code> icon for Scala project, Scala nature must come first.
+  Rule format: 
+<pre>
+item = path ;
+  where:
+  item - relative sort order index,
+  path - regular expression to match against 'projectDescription/natures/nature', 
+</pre>  
+  Separator parameter: <a href="#commonSequenceSeparator"><b>commonSequenceSeparator</b></a>.
+  Enablement parameter: <a href="#eclipseNatureReorder"><b>eclipseNatureReorder</b></a>.
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseNatureOrdering",
+    defaultValue = """
+
+    11 = org.scala-ide.sdt.+ ;
+    21 = org.eclipse.jdt.+ ;
+    31 = org.eclipse.pde.+ ;
+    41 = org.eclipse.m2e.+ ;
+    51 = org.eclipse.wst.+ ;
+    61 = org.eclipse.dltk.+ ;
+
+    """
+  )
+  var eclipseNatureOrdering : String = _
 
 }
 
@@ -268,6 +360,7 @@ trait ParamsVersionMaven {
 
   @Description( """
   Verify version of Maven M2E when running companion Eclipse plugin.
+  Version range parameter: <a href="#eclipseMavenPluginVersionRange"><b>eclipseMavenPluginVersionRange</b></a> 
   """ )
   @Parameter(
     property     = "scalor.eclipseMavenPluginVersionCheck",
@@ -277,8 +370,11 @@ trait ParamsVersionMaven {
 
   @Description( """
   Reaction of companion Eclipse plugin on Maven M2E version out of range error:
-  true -> fail with error;
-  false -> only log an error;
+<pre>
+  true  -> fail with error
+  false -> only log an error
+</pre>
+  Version range parameter: <a href="#eclipseMavenPluginVersionRange"><b>eclipseMavenPluginVersionRange</b></a> 
   """ )
   @Parameter(
     property     = "scalor.eclipseMavenPluginVersionError",
@@ -287,7 +383,13 @@ trait ParamsVersionMaven {
   var eclipseMavenPluginVersionError : Boolean = _
 
   @Description( """
-  Version range of Maven M2E known to work with this release of companion Eclipse plugin. 
+  Version range of Eclipse M2E plugin known to work with this release of companion Eclipse plugin.
+  To verify Eclipse Platform M2E plugin version, navigate:
+<pre>
+  Eclipse -> Help -> About Eclipse -> Installation Details -> Installed Software -> M2E 
+</pre>
+  Enablement parameter: <a href="#eclipseMavenPluginVersionCheck"><b>eclipseMavenPluginVersionCheck</b></a>.
+  Behavioral parameter: <a href="#eclipseMavenPluginVersionError"><b>eclipseMavenPluginVersionError</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseMavenPluginVersionRange",
@@ -303,7 +405,8 @@ trait ParamsVersionMaven {
 trait ParamsVersionScala {
 
   @Description( """
-  Verify version of Scala IDE when running companion Eclipse plugin.
+  Verify version of Scala IDE plugin when running companion Eclipse plugin.
+  Version range parameter: <a href="#eclipseScalaPluginVersionRange"><b>eclipseScalaPluginVersionRange</b></a>. 
   """ )
   @Parameter(
     property     = "scalor.eclipseScalaPluginVersionCheck",
@@ -313,8 +416,11 @@ trait ParamsVersionScala {
 
   @Description( """
   Reaction of companion Eclipse plugin on Scala IDE version out of range error:
-  true -> fail with error;
-  false -> only log an error;
+<pre>
+  true  -> fail with error
+  false -> only log an error
+</pre>
+  Version range parameter: <a href="#eclipseScalaPluginVersionRange"><b>eclipseScalaPluginVersionRange</b></a>. 
   """ )
   @Parameter(
     property     = "scalor.eclipseScalaPluginVersionError",
@@ -324,6 +430,12 @@ trait ParamsVersionScala {
 
   @Description( """
   Version range of Scala IDE known to work with this release of companion Eclipse plugin. 
+  To verify Eclipse Platform Scala IDE plugin version, navigate:
+<pre>
+  Eclipse -> Help -> About Eclipse -> Installation Details -> Installed Software -> Scala IDE
+</pre>
+  Enablement parameter: <a href="#eclipseScalaPluginVersionCheck"><b>eclipseScalaPluginVersionCheck</b></a>.
+  Behavioral parameter: <a href="#eclipseScalaPluginVersionError"><b>eclipseScalaPluginVersionError</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseScalaPluginVersionRange",
@@ -336,9 +448,7 @@ trait ParamsVersionScala {
 /**
  * Expose static parameter names.
  */
-object Params extends Params {
-
-}
+object Params extends Params
 
 /**
  * Expose updatable parameter values.

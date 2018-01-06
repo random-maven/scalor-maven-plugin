@@ -21,7 +21,7 @@ import org.apache.maven.toolchain.ToolchainManager
 /**
  * Shared mojo execution configuration parameters.
  *
- * Provides injected components from maven runtime.
+ * Provides components injected by maven runtime.
  */
 trait Params {
 
@@ -56,28 +56,28 @@ trait Params {
   val propertySeparator = "\u0000"
 
   /**
-   * Custom optonal project property.
+   * Custom optional project property.
    */
   def extractProperty( key : String ) : Option[ String ] = {
     Option( project.getProperties.getProperty( key ) )
   }
 
   /**
-   * Custom optonal project property containing a list.
+   * Custom optional project property containing a list.
    */
   def extractPropertyList( key : String ) : Option[ java.util.List[ String ] ] = {
     extractProperty( key ).map( entry => Arrays.asList( entry.split( propertySeparator ) : _* ) )
   }
 
   /**
-   * Custom optonal project property.
+   * Custom optional project property.
    */
   def persistProperty( key : String, value : String ) : Unit = {
     project.getProperties.setProperty( key, value )
   }
 
   /**
-   * Custom optonal project property containing a list.
+   * Custom optional project property containing a list.
    */
   def persistPropertyList( key : String, sourceValue : String ) : Unit = {
     val sourceList = extractPropertyList( key ).getOrElse( Collections.emptyList() )
@@ -136,82 +136,40 @@ trait Params {
 }
 
 /**
- * Scala installation artifact descriptors.
+ * Common parameters.
  */
-trait ParamsArtifact extends AnyRef
-  with ParamsDefine
-  with ParamsPluginList {
+trait ParamsAny {
 
   @Description( """
-  Maven identity of Scala library artifact.
-  Regular expression in the form: '${groupId}:${artifactId}'.
+  Common separator for list values provided in <code>pom.xml</code>.
+  Separator regular expression is used as follows:
+<pre>
+  options.split( separator ).map( _.trim ).filterNot( _.isEmpty )
+</pre>
+  Note: <code>&lt;![CDATA[ ... ]]&gt;</code> brackets 
+  can help preserve text entries in <code>pom.xml</code>.
   """ )
   @Parameter(
-    property     = "scalor.artifactScalaLibrary",
-    defaultValue = "org.scala-lang:scala-library"
+    property     = "scalor.commonSequenceSeparator",
+    defaultValue = """[;\n]+"""
   )
-  var artifactScalaLibrary : String = _
+  var commonSequenceSeparator : String = _
 
-  @Description( """
-  Maven identity of Scala compiler artifact.
-  Regular expression in the form: '${groupId}:${artifactId}'.
-  """ )
-  @Parameter(
-    property     = "scalor.artifactScalaCompiler",
-    defaultValue = "org.scala-lang:scala-compiler"
-  )
-  var artifactScalaCompiler : String = _
-
-  @Description( """
-  Maven identity of Scala reflect artifact.
-  Regular expression in the form: '${groupId}:${artifactId}'.
-  """ )
-  @Parameter(
-    property     = "scalor.artifactScalaReflect",
-    defaultValue = "org.scala-lang:scala-reflect"
-  )
-  var artifactScalaReflect : String = _
-
-  @Description( """
-  Maven identity of Scala bridge artifact.
-  Regular expression in the form: '${groupId}:${artifactId}'.
-  """ )
-  @Parameter(
-    property     = "scalor.artifactCompilerBridge",
-    defaultValue = "org.scala-sbt:compiler-bridge_.+"
-  )
-  var artifactCompilerBridge : String = _
-
-  import com.carrotgarden.maven.scalor.util.Maven._
-  import com.carrotgarden.maven.scalor.zinc.Module._
-
-  // XXX remove
-  def moduleType( artifact : Artifact ) : Type = {
-    artifactIdentity( artifact ) match {
-      case artifactCompilerBridge.r() => CompilerBridge
-      case artifactScalaCompiler.r() => ScalaCompiler
-      case artifactScalaLibrary.r() => ScalaLibrary
-      case artifactScalaReflect.r() => ScalaReflect
-      case _ if hasResourceMatch( `artifact`, artifactPluginDescriptor ) => CompilerPlugin
-      case _ => Unknown
-    }
+  /**
+   * Produce clean options sequence.
+   */
+  def parseCommonSequence( options : String, separator : String ) : Array[ String ] = {
+    options.split( separator ).map( _.trim ).filterNot( _.isEmpty )
   }
 
 }
 
-trait ParamsPluginList {
-
-  @Description( """
-  Scala compiler plugin descriptor file name,
-  stored inside compiler plugin jar.
-  Used for auto discovery of compiler plugins
-  form scalor maven plugin dependnency class path.
-  """ )
-  @Parameter(
-    property     = "scalor.artifactPluginDescriptor",
-    defaultValue = "scalac-plugin.xml"
-  )
-  var artifactPluginDescriptor : String = _
+/**
+ * Scala compiler installation definition.
+ */
+trait ParamsCompiler extends AnyRef
+  with ParamsDefine
+  with ParamsRegex {
 
 }
 
@@ -224,9 +182,11 @@ trait ParamsDefine {
 
   @Description( """
   Provide required compiler bridge dependency.
-  Can declare additional dependencies for bridge.
-  Bridge artifact must match expected regular expression.
-  Example:
+  Can declare here additional dependencies for the bridge.
+  Bridge artifact must match expected regular expression in 
+    <a href="#regexCompilerBridge"><b>regexCompilerBridge</b></a>.
+  Example entry in <code>pom.xml</code>:
+<pre>
 &lt;defineBridge&gt;
   &lt;dependency&gt;
       &lt;groupId&gt;org.scala-sbt&lt;/groupId&gt;
@@ -234,17 +194,20 @@ trait ParamsDefine {
       &lt;version&gt;${version.scala.zinc}&lt;/version&gt;
   &lt;/dependency&gt;
 &lt;/defineBridge&gt;
+</pre>
   """ )
   @Parameter(
     required = true
   )
-  var defineBridge : Array[ Dependency ] = _
+  var defineBridge : Array[ Dependency ] = Array.empty
 
   @Description( """
   Provide required scala compiler dependency.
-  Can declare additional dependencies for compiler.
-  Compiler artifact must match expected regular expression.
-  Example:
+  Can declare here additional dependencies for the compiler.
+  Compiler artifact must match expected regular expression in 
+    <a href="#regexScalaCompiler"><b>regexScalaCompiler</b></a>.
+  Example entry in <code>pom.xml</code>:
+<pre>
 &lt;defineCompiler&gt;
   &lt;dependency&gt;
       &lt;groupId&gt;org.scala-lang&lt;/groupId&gt;
@@ -252,17 +215,20 @@ trait ParamsDefine {
       &lt;version&gt;${version.scala.release}&lt;/version&gt;
   &lt;/dependency&gt;
 &lt;/defineCompiler&gt;
+</pre>
   """ )
   @Parameter(
     required = true
   )
-  var defineCompiler : Array[ Dependency ] = _
+  var defineCompiler : Array[ Dependency ] = Array.empty
 
   @Description( """
   Provide optional scala plugins dependency.
   Can declare mulitiple scala compiler plugins.
-  Plugin artifact jar must contain expected descriptor resource. 
-  Example:
+  Plugin artifact jar must contain expected descriptor resource in 
+    <a href="#resourcePluginDescriptor"><b>resourcePluginDescriptor</b></a>.
+  Example entry in <code>pom.xml</code>:
+<pre>
 &lt;definePluginList&gt;
   &lt;dependency&gt;
       &lt;groupId&gt;org.scala-js&lt;/groupId&gt;
@@ -270,43 +236,90 @@ trait ParamsDefine {
       &lt;version&gt;${version.sjs.release}&lt;/version&gt;
   &lt;/dependency&gt;
 &lt;/definePluginList&gt;
+</pre>
   """ )
   @Parameter(
-    required = false
+    required     = true,
+    defaultValue = ""
   )
-  var definePluginList : Array[ Dependency ] = _
+  var definePluginList : Array[ Dependency ] = Array.empty
+
+}
+
+trait ParamsRegex {
+
+  @Description( """
+  Maven identity of Scala bridge artifact.
+  Regular expression in the form: <code>${groupId}:${artifactId}</code>.
+  Used for auto discovery of compiler-bridge from 
+    <a href="#defineBridge"><b>defineBridge</b></a>.
+  """ )
+  @Parameter(
+    property     = "scalor.regexCompilerBridge",
+    defaultValue = "org.scala-sbt:compiler-bridge_.+"
+  )
+  var regexCompilerBridge : String = _
+
+  @Description( """
+  Maven identity of Scala compiler artifact.
+  Regular expression in the form: <code>${groupId}:${artifactId}</code>.
+  Used for auto discovery of scala-compiler from 
+    <a href="#defineCompiler"><b>defineCompiler</b></a>.
+  """ )
+  @Parameter(
+    property     = "scalor.regexScalaCompiler",
+    defaultValue = "org.scala-lang:scala-compiler"
+  )
+  var regexScalaCompiler : String = _
+
+  @Description( """
+  Maven identity of Scala library artifact.
+  Regular expression in the form: <code>${groupId}:${artifactId}</code>.
+  Used for auto discovery of scala-library from 
+    <a href="#defineCompiler"><b>defineCompiler</b></a>.
+  """ )
+  @Parameter(
+    property     = "scalor.regexScalaLibrary",
+    defaultValue = "org.scala-lang:scala-library"
+  )
+  var regexScalaLibrary : String = _
+
+  @Description( """
+  Maven identity of Scala reflect artifact.
+  Regular expression in the form: <code>${groupId}:${artifactId}</code>.
+  Used for auto discovery of scala-reflect from 
+    <a href="#defineCompiler"><b>defineCompiler</b></a>.
+  """ )
+  @Parameter(
+    property     = "scalor.regexScalaReflect",
+    defaultValue = "org.scala-lang:scala-reflect"
+  )
+  var regexScalaReflect : String = _
+
+  @Description( """
+  Scala compiler plugin descriptor file name, stored inside compiler plugin jar.
+  Used for auto discovery of Scala compiler plugins form 
+    <a href="#definePluginList"><b>definePluginList</b></a>.
+  Plain file name, not a regex.
+  """ )
+  @Parameter(
+    property     = "scalor.resourcePluginDescriptor",
+    defaultValue = "scalac-plugin.xml"
+  )
+  var resourcePluginDescriptor : String = _
 
 }
 
 object Params {
 
+  /**
+   * Artifact set definition.
+   */
   trait Define[ T ] {
     val defineBridge : List[ T ]
     val defineCompiler : List[ T ]
     val definePluginList : List[ T ]
   }
-
-  //  /**
-  //   * Use "Object with Fields" to get support
-  //   * from Maven DefaultConfigurationConverter in M2E.
-  //   */
-  //  class DefineConfig {
-  //    var groupId : String = _
-  //    var artifactId : String = _
-  //    var version : String = _
-  //    override def toString = s"${groupId}:${artifactId}:${version}"
-  //    def toDependency : Dependency = {
-  //      val dependency = new Dependency()
-  //      dependency.setGroupId( groupId )
-  //      dependency.setArtifactId( artifactId )
-  //      dependency.setVersion( version )
-  //      dependency
-  //    }
-  //  }
-
-  //    def convert( array : Array[ DefineConfig ] ) : List[ Dependency ] = {
-  //      array.map( _.toDependency ).toList
-  //    }
 
   /**
    * Cleanup user entries.
@@ -315,12 +328,18 @@ object Params {
     array.toList
   }
 
+  /**
+   * Maven resolution request.
+   */
   case class DefineRequest(
     defineBridge :     List[ Dependency ],
     defineCompiler :   List[ Dependency ],
     definePluginList : List[ Dependency ]
   ) extends Define[ Dependency ]
 
+  /**
+   * Maven resolution response.
+   */
   case class DefineResponse(
     defineBridge :     List[ Artifact ],
     defineCompiler :   List[ Artifact ],

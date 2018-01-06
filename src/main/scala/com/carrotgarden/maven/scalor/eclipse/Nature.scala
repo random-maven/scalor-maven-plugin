@@ -6,9 +6,10 @@ import scala.collection.mutable.ArrayBuffer
 import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
 import org.eclipse.jdt.core.JavaCore
 import org.scalaide.core.SdtConstants
+import org.eclipse.core.resources.IResource
 
 /**
- * Provide eclipse .project file natures, with optional sort.
+ * Provide eclipse .project file natures.
  */
 trait Nature {
 
@@ -17,7 +18,7 @@ trait Nature {
   import Nature._
 
   /**
-   * Provide Java and Scala nature, with optional sort.
+   * Create/Delete project natures.
    */
   def ensureNature(
     project :    IProject,
@@ -42,18 +43,17 @@ trait Nature {
         hasChange = true
       }
     }
-    if ( !hasChange && natureList != natureList.sorted ) {
-      hasChange = true
-    }
     if ( hasChange ) {
-      description.setNatureIds( natureList.sorted.toArray )
-      project.setDescription( description, monitor )
+      persistNature( project, natureList.toArray, monitor )
     } else {
       reportWorked( monitor )
     }
   }
 
-  def ensureNature(
+  /**
+   * Provide eclipse .project descriptor natures.
+   */
+  def ensureProjectNature(
     request : ProjectConfigurationRequest,
     config :  ParamsConfig,
     monitor : IProgressMonitor
@@ -70,5 +70,24 @@ object Nature {
 
   val javaNatureId = JavaCore.NATURE_ID
   val scalaNatureId = SdtConstants.NatureId
+
+  import IResource._
+
+  /**
+   * Work around Eclipse ignoring nature ordering.
+   */
+  def persistNature(
+    project :    IProject,
+    natureList : Array[ String ],
+    monitor :    IProgressMonitor
+  ) = {
+    val description = project.getDescription
+    // delete
+    description.setNatureIds( Array() )
+    project.setDescription( description, FORCE | AVOID_NATURE_CONFIG, monitor )
+    // create
+    description.setNatureIds( natureList )
+    project.setDescription( description, FORCE, monitor )
+  }
 
 }

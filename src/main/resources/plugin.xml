@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin>
 
+   <!-- Eclipse companion plugin integrations. -->
+
    <!-- Contribute Scalor project decorator. -->
    <!-- 
    FIXME needs work around for decorator uninstall: 
@@ -19,12 +21,12 @@
    </extension>
    -->
 
-   <!-- Contribute "/lifecycle-mapping-metadata.xml" resource. -->
+   <!-- Contribute M2E "/lifecycle-mapping-metadata.xml" resource. -->
    <extension
         point="org.eclipse.m2e.core.lifecycleMappingMetadataSource">
    </extension>
 
-   <!-- Contribute M2E project configurator. -->
+   <!-- Contribute M2E project configurator for Scala projects. -->
    <extension
          point="org.eclipse.m2e.core.projectConfigurators">
         <configurator

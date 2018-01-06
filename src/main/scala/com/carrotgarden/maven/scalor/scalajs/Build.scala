@@ -18,6 +18,7 @@ trait BuildMain extends Build
 
   @Description( """
   Name of the generated runtime JavaScript file.
+  File is packaged inside <a href="#linkerMetaFolder"><b>linkerMetaFolder</b></a>
   """ )
   @Parameter(
     property     = "scalor.linkerMainRuntimeJs", //
@@ -27,6 +28,7 @@ trait BuildMain extends Build
 
   @Description( """
   Name of the runtime dependency resolution report file.
+  File is packaged inside <a href="#linkerMetaFolder"><b>linkerMetaFolder</b></a>
   """ )
   @Parameter(
     property     = "scalor.linkerMainRuntimeDeps", //
@@ -88,6 +90,7 @@ trait BuildTest extends Build
 
   @Description( """
   Name of the generated runtime JavaScript file.
+  File is packaged inside <a href="#linkerMetaFolder"><b>linkerMetaFolder</b></a>
   """ )
   @Parameter(
     property     = "scalor.linkerTestRuntimeJs", //
@@ -97,6 +100,7 @@ trait BuildTest extends Build
 
   @Description( """
   Name of the runtime dependency resolution report file.
+  File is packaged inside <a href="#linkerMetaFolder"><b>linkerMetaFolder</b></a>
   """ )
   @Parameter(
     property     = "scalor.linkerTestRuntimeDeps", //
@@ -151,7 +155,6 @@ trait BuildTestTarget extends base.BuildAnyTarget with BuildMetaFolder {
 
 /**
  * Build resource definitions.
- * Provides composable build paramenter modules.
  */
 trait Build extends AnyRef
   with base.BuildAnyTarget

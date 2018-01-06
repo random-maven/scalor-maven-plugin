@@ -66,25 +66,18 @@
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>scalor-maven-plugin_2.12</artifactId>
                 <!-- <version>RELEASE</version> -->
-                <version>1.0.0.20180102011032</version>
+                <version>1.0.0.20180105205319</version>
 
                 <configuration>
-                
+
                     <skip>false</skip>
-                    
+
                     <zincLogSourcesList>true</zincLogSourcesList>
                     <zincLogProjectClassPath>true</zincLogProjectClassPath>
                     <zincLogCompilerClassPath>true</zincLogCompilerClassPath>
                     <zincLogCompilerPluginList>true</zincLogCompilerPluginList>
 
-                    <zincOptionsJavaC>
-                        -target
-                        ${version.java}
-                        -encoding
-                        ${project.build.sourceEncoding}
-                        -deprecation
-                    </zincOptionsJavaC>
-                    <zincOptionsScalaC>
+                    <zincCompileOptions>
                         -target:jvm-${version.java}
                         -encoding
                         ${project.build.sourceEncoding}
@@ -92,7 +85,8 @@
                         -unchecked
                         -feature
                         -P:scalajs:sjsDefinedByDefault
-                    </zincOptionsScalaC>
+                        -compileorder:Mixed
+                    </zincCompileOptions>
 
                     <defineBridge>
                         <dependency>

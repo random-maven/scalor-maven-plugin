@@ -8,7 +8,7 @@ import com.carrotgarden.maven.scalor._
 import com.carrotgarden.maven.tools.Description
 import com.carrotgarden.maven.scalor.base
 
-trait ClasspathDesign extends base.AnyPar {
+trait ClasspathDesign extends base.ParamsAny {
 
   import ClasspathDesign._
   import util.Folder._

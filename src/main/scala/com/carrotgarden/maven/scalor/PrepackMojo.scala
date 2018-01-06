@@ -33,7 +33,7 @@ class PrepareMacroMojo extends PrepackAnyMojo
   override def mojoName = `prepack-macro`
 
   @Description( """
-  Flag to skip goal execution: prepack-macro.
+  Flag to skip goal execution: <code>prepack-macro</code>.
   """ )
   @Parameter(
     property     = "scalor.skipPrepackMacro",
@@ -60,7 +60,7 @@ class PrepareMainMojo extends PrepackAnyMojo
   override def mojoName = `prepack-main`
 
   @Description( """
-  Flag to skip goal execution: prepack-main.
+  Flag to skip goal execution: <code>prepack-main</code>.
   """ )
   @Parameter(
     property     = "scalor.skipPrepackMain",
@@ -87,7 +87,7 @@ class PrepareTestMojo extends PrepackAnyMojo
   override def mojoName = `prepack-test`
 
   @Description( """
-  Flag to skip goal execution: prepack-test.
+  Flag to skip goal execution: <code>prepack-test</code>.
   """ )
   @Parameter(
     property     = "scalor.skipPrepackTest",
@@ -114,7 +114,7 @@ class PrepackLinkerMainMojo extends PrepackAnyMojo
   override def mojoName = `prepack-linker-main`
 
   @Description( """
-  Flag to skip goal execution: prepack-linker-main.
+  Flag to skip goal execution: <code>prepack-linker-main</code>.
   """ )
   @Parameter(
     property     = "scalor.skipPrepackLinkerMain",
@@ -142,7 +142,7 @@ class PrepackLinkerTestMojo extends PrepackAnyMojo
   override def mojoName = `prepack-linker-test`
 
   @Description( """
-  Flag to skip goal execution: prepack-linker-test.
+  Flag to skip goal execution: <code>prepack-linker-test</code>.
   """ )
   @Parameter(
     property     = "scalor.skipPrepackLinkerTest",
@@ -169,7 +169,7 @@ trait PrepackAnyMojo extends AbstractMojo
   import com.carrotgarden.maven.scalor.util.Folder._
 
   @Description( """
-  Flag to skip goal execution: prepack-linker-*.
+  Flag to skip goal execution: <code>prepack-linker-*</code>.
   """ )
   @Parameter(
     property     = "scalor.skipPrepackLinker",
@@ -178,7 +178,7 @@ trait PrepackAnyMojo extends AbstractMojo
   var skipPrepackLinker : Boolean = _
 
   @Description( """
-  Report prepare folders.
+  Report prepack origin/output folders.
   """ )
   @Parameter(
     property     = "scalor.prepackLogSummary",
@@ -283,7 +283,7 @@ trait PrepackAnyMojo extends AbstractMojo
 
     val hasSame = Files.isSameFile( origin, output )
     if ( hasSame ) {
-      say.info( "Skipping prepare: origin and output are same." )
+      say.info( "Skipping prepack: origin and output are same." )
       reportSummary()
     } else {
       say.info( "Copying build classes from origin into output." )

@@ -18,7 +18,7 @@ import Module._
 /**
  * Scala compiler installation descriptor.
  *
- * Abstract away form both scala, scala-ide, zinc.
+ * Abstract away form Scala, Scala IDE, Zinc.
  * @param bridge - compiler-bridge jar
  * @param compiler - compiler-bridge jar
  * @param library - scala-library jar
@@ -40,7 +40,7 @@ case class ScalaInstall(
 ) {
 
   /**
-   * Dependencies for IDE Zinc.
+   * Dependencies for Scala IDE Zinc.
    */
   def extraJars : Seq[ Module ] = {
     compilerList
@@ -49,7 +49,7 @@ case class ScalaInstall(
   }
 
   /**
-   * Dependencies for Maven Zinc.
+   * Dependencies for Maven Scalor Zinc.
    */
   def zincJars : Seq[ Module ] = {
     compilerList
@@ -138,10 +138,10 @@ object ScalaInstall {
     val pluginDefineList = make( detector, definePluginList )
 
     import detector._
-    val bridge = find( bridgeList, "bridge", artifactCompilerBridge, CompilerBridge )
-    val compiler = find( compilerList, "compiler", artifactScalaCompiler, ScalaCompiler )
-    val library = find( compilerList, "library", artifactScalaLibrary, ScalaLibrary )
-    val reflect = find( compilerList, "reflect", artifactScalaReflect, ScalaReflect )
+    val bridge = find( bridgeList, "bridge", regexCompilerBridge, CompilerBridge )
+    val compiler = find( compilerList, "compiler", regexScalaCompiler, ScalaCompiler )
+    val library = find( compilerList, "library", regexScalaLibrary, ScalaLibrary )
+    val reflect = find( compilerList, "reflect", regexScalaReflect, ScalaReflect )
 
     val pluginList = pluginDefineList
       .filter( _.moduleType == CompilerPlugin )

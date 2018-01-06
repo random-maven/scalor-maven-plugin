@@ -13,7 +13,7 @@ import com.carrotgarden.maven.tools.Description
 import A.mojo._
 
 @Description( """
-Compile Scala sources in compilation scope=macro.
+Compile Java and Scala sources in compilation scope=macro.
 """ )
 @Mojo(
   name                         = `compile-macro`,
@@ -26,7 +26,7 @@ class CompileMacroMojo extends CompileAnyMojo
   override def mojoName = `compile-macro`
 
   @Description( """
-    Flag to skip goal execution: compile-macro.
+    Flag to skip goal execution: <code>compile-macro</code>.
     """ )
   @Parameter(
     property     = "scalor.skipCompileMacro", //
@@ -52,7 +52,7 @@ class CompileMainMojo extends CompileAnyMojo
   override def mojoName = `compile-main`
 
   @Description( """
-  Flag to skip goal execution: compile-main.
+  Flag to skip goal execution: <code>compile-main</code>.
   """ )
   @Parameter(
     property     = "scalor.skipCompileMain", //
@@ -78,7 +78,7 @@ class CompileTestMojo extends CompileAnyMojo
   override def mojoName = `compile-test`
 
   @Description( """
-  Flag to skip goal execution: compile-test.
+  Flag to skip goal execution: <code>compile-test</code>.
   """ )
   @Parameter(
     property     = "scalor.skipCompileTest", //
@@ -95,14 +95,14 @@ class CompileTestMojo extends CompileAnyMojo
  */
 trait CompileAnyMojo extends base.Mojo
   with base.Build
-  with base.ParamsArtifact
+  with base.ParamsCompiler
   with resolve.Maven
   with zinc.Params
   with zinc.Compiler
   with zinc.Resolve {
 
   @Description( """
-  Flag to skip compile execution: compile-*.
+  Flag to skip compile execution: <code>compile-*</code>.
   """ )
   @Parameter(
     property     = "scalor.skipCompile", //
@@ -111,7 +111,7 @@ trait CompileAnyMojo extends base.Mojo
   var skipCompile : Boolean = _
 
   @Description( """
-  Flag to skip compile execution in Eclipse: compile-*.
+  Flag to skip compile execution in Eclipse: <code>compile-*</code>.
   """ )
   @Parameter(
     property     = "scalor.skipCompileEclipse", //

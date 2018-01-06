@@ -92,11 +92,11 @@ trait ScalaIDE {
   ) : Module.Detector = {
     import config._
     Module.Detector(
-      artifactCompilerBridge,
-      artifactScalaCompiler,
-      artifactScalaLibrary,
-      artifactScalaReflect,
-      artifactPluginDescriptor
+      regexCompilerBridge,
+      regexScalaCompiler,
+      regexScalaLibrary,
+      regexScalaReflect,
+      resourcePluginDescriptor
     )
   }
 
@@ -121,7 +121,7 @@ trait ScalaIDE {
   }
 
   /**
-   * Build custom scala compiler installation from scalor plugin dependencies.
+   * Build custom Scala compiler installation from Scalor plugin definitions.
    */
   def resolveCustomInstall(
     request : ProjectConfigurationRequest,
@@ -182,13 +182,13 @@ trait ScalaIDE {
     log.info( s"Providing configured settings." )
     import config._
     import zinc.Compiler._
-    val ideArgs =
-      parseCommonSequence( eclipseOptsScalaIDE, commonSequenceSeparator ).toList
+    //    val ideArgs =
+    //      parseOptionsScalaIDE.toList
     val zincArgs =
-      parseCommonSequence( zincOptionsScalaC, commonSequenceSeparator ).toList
+      parseCompileOptions.toList
     val pluginArgs = install.pluginDefineList
       .flatMap( module => pluginStanza( module.binaryArtifact.getFile ).toList )
-    val argsList = ideArgs ++ zincArgs ++ pluginArgs
+    val argsList = zincArgs ++ pluginArgs
     val settings = CustomSettings( log.fail )
     settings.makeBuildMangerSettings()
     settings.makeCompilationScopeSettings( project )
@@ -285,16 +285,16 @@ trait ScalaIDE {
     store :   IPersistentPreferenceStore
   ) : Unit = {
     import config._
-    if ( eclipseScalaSettingsCommentApply ) {
-      log.info( "Applying Scala IDE .settings/ comment." )
-      persistComment( store, eclipseScalaSettingsCommentString )
-    }
+//    if ( eclipseScalaSettingsCommentApply ) {
+//      log.info( "Applying Scala IDE .settings/ comment." )
+//      persistComment( store, eclipseScalaSettingsCommentString )
+//    }
   }
 
   /**
    * Rename Scala Library container in Eclipse UI.
    */
-  def renameScalaLibrary(
+  def renameScalaLibraryContainer(
     request : ProjectConfigurationRequest,
     config :  ParamsConfig,
     project : ScalaProject,
@@ -302,7 +302,7 @@ trait ScalaIDE {
     monitor : IProgressMonitor
   ) : Unit = {
     import config._
-    if ( eclipseRenameLibraryContainer ) {
+    if ( !eclipseRemoveLibraryContainer && eclipseRenameLibraryContainer ) {
       log.info( "Renaming Scala Library container." )
       val description = s"Scala Library @ ${install.title}"
       val javaProject = project.javaProject
@@ -338,7 +338,8 @@ trait ScalaIDE {
     persistCompilerSelection( request, config, project, install, monitor )
     persistConfiguredSettings( request, config, store, settings, monitor )
     store.save()
-    // persistSettingsComment( request, config, store ) // XXX
+    // TODO
+    // persistSettingsComment( request, config, store )
     project.initializeCompilerSettings( settings, _ => true )
     // project.publish( ScalaInstallationChange() )
   }
@@ -364,7 +365,7 @@ trait ScalaIDE {
     scheduleScalaJob( project, "Scalor: update project settings for Scala IDE" ) {
       persistCustomInstall( request, project, install, monitor )
       updateProjectScalaIDE( request, config, project, install, monitor )
-      renameScalaLibrary( request, config, project, install, monitor )
+      renameScalaLibraryContainer( request, config, project, install, monitor )
     }
 
   }

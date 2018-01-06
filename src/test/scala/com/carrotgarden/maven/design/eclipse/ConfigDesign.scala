@@ -28,12 +28,12 @@ trait ConfigKryo {
   var eclipseConfigKryoLogFile : File = _
 
   @Description( """
-	LEVEL_NONE = 6;
-	LEVEL_ERROR = 5;
-	LEVEL_WARN = 4;
-	LEVEL_INFO = 3;
-	LEVEL_DEBUG = 2;
-	LEVEL_TRACE = 1;
+    LEVEL_NONE = 6;
+    LEVEL_ERROR = 5;
+    LEVEL_WARN = 4;
+    LEVEL_INFO = 3;
+    LEVEL_DEBUG = 2;
+    LEVEL_TRACE = 1;
   """ )
   @Parameter(
     property     = "scalor.eclipseConfigKryoLogLevel",

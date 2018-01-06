@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
 
     <description>
-        Produce cross-scala version build.
+        Produce cross-scala-version build.
     </description>
 
     <modules>
@@ -43,6 +43,8 @@
 
         <maven.compiler.source>${version.java}</maven.compiler.source>
         <maven.compiler.target>${version.java}</maven.compiler.target>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     </properties>
 
@@ -82,7 +84,7 @@
         <plugins>
 
             <!-- Build Scala project for configured Scala version. -->
-            
+
             <plugin>
                 <groupId>@project.groupId@</groupId>
                 <artifactId>@project.artifactId@</artifactId>
@@ -155,7 +157,7 @@
             </plugin>
 
             <!-- Produce clean deployment pom.xml. -->
-            
+
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
