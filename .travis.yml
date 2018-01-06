@@ -6,6 +6,9 @@ cache:
   directories:
   - "$HOME/.m2"
   - "./test-repo"
+branches:
+  only:
+  - master
 env:
   global:
   - secure: S148YHxyq9YjH0HezSJ1zIJq0NuI5RBWB8N5mFcjvmkaSFC48WEOiXbR+TtWmuji++DIv43lqFjpVNt0P6AjyNBQDekWQ2T8W6x9rr2tWphVu9iQBytbbcUCYZGgk7SXpZojQK54L7QuHpaXXfUpgeXpPw9gFnpDXLrZ9SxAjuU7U10OdCz2qWSHWzvnZ/bAHyVZHqo5L/pzUxoft8G31B2S27jlByI2s7rnMW6vBfzbGgEDZVPoCDJ9uF+grypBZrbbnMqjD2+/E519i39n0+/m3YDCNKbLMX/ZtTg0Pw0nFdZQUjB2hxwY8TL0r/+CN6MX0NrNbM9SLYBvgj2NUl7YXUlqk0b2MCE0aPiHOGLOeY0Wdi5HuLDJjko/MDNzYfsNUNIMO00IheCRZ9BUVUJxpI3pgBQafQqyOWAF1/iRPPYfw6hPcXwUmL3GPwvyo1fqL/ZvJlFUyfgyUGe5lgFuk24QxXBDpiSEvuFl2wZsWNTUOCLZeTgMoESi0SJPicbtxg90uUDPlcU+RpboZaKBpswZA7zqGzRq7ojZ/GPGhymHuijDCimvMZk1IkvSNNlIDkz/sueQVnZN63BN94QJzuxp2jpMOJFOATSRFPyfoaKC8n3Bqf0f/CGTMQLEoy0FUqIp3TkhNJeOtCZIgANqy26l17vNjaKIKmcxqyM=
