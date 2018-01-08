@@ -1,1 +1,0 @@
-# scalor-maven-plugin

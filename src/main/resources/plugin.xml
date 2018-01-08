@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+   <!-- Eclipse companion plugin integrations. -->
+
+   <!-- Contribute Scalor project decorator. -->
+   <!-- 
+   FIXME needs work around for decorator uninstall: 
+   https://bugs.eclipse.org/bugs/show_bug.cgi?id=450710 
+   -->
+   <!--
+   <extension point="org.eclipse.ui.decorators"> 
+        <decorator 
+                id="${eclipse.plugin.projectDecorator}" 
+                label="Scalor Maven Plugin / Project Decorator @ ${eclipse.plugin.revision}" 
+                state="false"
+                lightweight="true"
+                class="com.carrotgarden.maven.scalor.EclipsePlugin$Decorator" 
+                adaptable="true"> 
+          </decorator> 
+   </extension>
+   -->
+
+   <!-- Contribute M2E "/lifecycle-mapping-metadata.xml" resource. -->
+   <extension
+        point="org.eclipse.m2e.core.lifecycleMappingMetadataSource">
+   </extension>
+
+   <!-- Contribute M2E project configurator for Scala projects. -->
+   <!-- runsAfter="org.eclipse.m2e.jdt.javaConfigurator" -->
+   <extension
+         point="org.eclipse.m2e.core.projectConfigurators">
+        <configurator
+              id="${eclipse.plugin.projectConfigurator}"
+              class="com.carrotgarden.maven.scalor.EclipsePlugin$Configurator"
+              name="Scalor Maven Plugin / M2E Project Configurator @ ${eclipse.plugin.revision}"
+              runsAfter="org.eclipse.m2e.jdt.javaConfigurator">
+        </configurator>
+   </extension>
+   
+   <!-- Contribute M2E lifecycle mapping for Scala projects. -->
+   <!--
+   <extension
+         point="org.eclipse.m2e.core.lifecycleMappings">
+      <lifecycleMapping
+            id="${eclipse.plugin.lifecycleMapping}"
+            class="com.carrotgarden.maven.scalor.EclipsePlugin$LifecycleMapping"
+            name="Scalor Maven Plugin / M2E Lifecycle Mapping @ ${eclipse.plugin.revision}">
+      </lifecycleMapping>
+   </extension>
+    -->
+       
+</plugin>

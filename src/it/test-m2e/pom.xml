@@ -1,0 +1,127 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.carrotgarden.a</groupId>
+        <artifactId>carrot-a</artifactId>
+        <version>0-SNAPSHOT</version>
+        <relativePath>.mvn</relativePath>
+    </parent>
+
+    <groupId>com.carrotgarden.maven</groupId>
+    <artifactId>scalor-maven-plugin-test-m2e</artifactId>
+    <version>0.0.0-SNAPSHOT</version>
+    <packaging>eclipse-test-plugin</packaging>
+
+    <description>
+        Verify Eclipse Maven M2E / Scala IDE operation of scalor-maven-plugin. 
+    </description>
+
+    <properties>
+
+        <tycho.test.jvmArgs>-Xmx800m</tycho.test.jvmArgs>
+        <tycho.surefire.timeout>300</tycho.surefire.timeout>
+
+    </properties>
+
+    <dependencies>
+
+        <!-- <dependency> -->
+        <!-- <groupId>org.scala-lang</groupId> -->
+        <!-- <artifactId>scala-library</artifactId> -->
+        <!-- </dependency> -->
+
+        <!-- <dependency> -->
+        <!-- <groupId>junit</groupId> -->
+        <!-- <artifactId>junit</artifactId> -->
+        <!-- </dependency> -->
+
+    </dependencies>
+
+    <build>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-surefire-plugin</artifactId>
+                    <configuration>
+                        <useUIHarness>true</useUIHarness>
+                        <useUIThread>false</useUIThread>
+                        <!-- Kill test JVM if test take too long. -->
+                        <forkedProcessTimeoutInSeconds>${tycho.surefire.timeout}</forkedProcessTimeoutInSeconds>
+                        <argLine>${tycho.test.jvmArgs}</argLine>
+                        <includes>
+                            <include>**/*Test.class</include>
+                        </includes>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+
+            <!-- <plugin> -->
+
+            <!-- <groupId>@project.groupId@</groupId> -->
+            <!-- <artifactId>@project.artifactId@</artifactId> -->
+            <!-- <version>@project.version@</version> -->
+
+            <!-- <groupId>com.carrotgarden.maven</groupId> -->
+            <!-- <artifactId>scalor-maven-plugin_2.12</artifactId> -->
+            <!-- <version>1.0.0.20180103204547</version> -->
+
+            <!-- Activate scalor life cycle. -->
+            <!-- <extensions>true</extensions> -->
+
+            <!-- <configuration> -->
+
+            <!-- <buildMainSourceJavaFolders> -->
+            <!-- <folder>${project.basedir}/src</folder> -->
+            <!-- </buildMainSourceJavaFolders> -->
+
+            <!-- <defineBridge> -->
+            <!-- <dependency> -->
+            <!-- <groupId>org.scala-sbt</groupId> -->
+            <!-- <artifactId>compiler-bridge_${version.scala.epoch}</artifactId> -->
+            <!-- <version>${version.scala.zinc}</version> -->
+            <!-- </dependency> -->
+            <!-- </defineBridge> -->
+            <!-- <defineCompiler> -->
+            <!-- <dependency> -->
+            <!-- <groupId>org.scala-lang</groupId> -->
+            <!-- <artifactId>scala-compiler</artifactId> -->
+            <!-- <version>${version.scala.release}</version> -->
+            <!-- </dependency> -->
+            <!-- </defineCompiler> -->
+            <!-- <definePluginList> -->
+            <!-- </definePluginList> -->
+
+            <!-- </configuration> -->
+
+            <!-- <executions> -->
+            <!-- <execution> -->
+            <!-- <goals> -->
+
+            <!-- <goal>eclipse-config</goal> -->
+
+            <!-- <goal>register-main</goal> -->
+
+            <!-- <goal>clean-main</goal> -->
+
+            <!-- <goal>compile-main</goal> -->
+
+            <!-- <goal>prepack-main</goal> -->
+
+            <!-- </goals> -->
+            <!-- </execution> -->
+            <!-- </executions> -->
+
+            <!-- </plugin> -->
+
+        </plugins>
+    </build>
+
+</project>

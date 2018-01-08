@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
+
+    <publishDate format="yyyy-MM-dd" position="right" />
+    <version position="right" />
+
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.6</version>
+    </skin>
+
+    <custom>
+        <fluidoSkin>
+            <gitHub>
+                <!-- Use explicit id to bypass flatten. -->
+                <projectId>random-maven/scalor-maven-plugin</projectId>
+                <ribbonOrientation>right</ribbonOrientation>
+                <ribbonColor>gray</ribbonColor>
+            </gitHub>
+        </fluidoSkin>
+    </custom>
+
+    <body>
+
+        <links>
+            <!-- <item name="Maven" href="http://maven.apache.org/" /> -->
+        </links>
+
+        <breadcrumbs>
+            <item name="${this.name}" href="${this.url}" />
+        </breadcrumbs>
+
+        <menu name="Overview">
+
+            <!-- <item name="Intro" href="index.html" /> -->
+
+            <item name="Goals" href="plugin-info.html" />
+
+            <item name="eclipse-config" href="eclipse-config-mojo.html" />
+
+            <item name="register-macro" href="register-macro-mojo.html" />
+            <item name="register-main" href="register-main-mojo.html" />
+            <item name="register-test" href="register-test-mojo.html" />
+
+            <item name="compile-macro" href="compile-macro-mojo.html" />
+            <item name="compile-main" href="compile-main-mojo.html" />
+            <item name="compile-test" href="compile-test-mojo.html" />
+
+            <item name="prepack-macro" href="prepack-macro-mojo.html" />
+            <item name="prepack-main" href="prepack-main-mojo.html" />
+            <item name="prepack-test" href="prepack-test-mojo.html" />
+
+            <item name="link-scala-js-main" href="link-scala-js-main-mojo.html" />
+            <item name="link-scala-js-test" href="link-scala-js-test-mojo.html" />
+
+            <item name="prepack-linker-main" href="prepack-linker-main-mojo.html" />
+            <item name="prepack-linker-test" href="prepack-linker-test-mojo.html" />
+
+            <!-- <item name="Usage" href="usage.html" /> -->
+            <!-- <item name="FAQ" href="faq.html" /> -->
+
+        </menu>
+
+        <!-- <menu ref="reports" inherit="bottom" /> -->
+
+    </body>
+
+</project>

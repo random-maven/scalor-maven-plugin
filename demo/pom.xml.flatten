@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.carrotgarden.maven</groupId>
+  <artifactId>scalor-maven-plugin-demo</artifactId>
+  <version>0.20180108001420</version>
+  <description>Demonstration project, features:
+    * 3-scope build
+    * Scala macro compile
+    * Scala.js runtime.js linker</description>
+  <url>http://www.carrotgarden.com/scalor-maven-plugin-demo/</url>
+  <organization>
+    <name>CarrotGarden</name>
+    <url>http://www.carrotgarden.com/</url>
+  </organization>
+  <developers>
+    <developer>
+      <name>CarrotGarden</name>
+    </developer>
+  </developers>
+  <scm>
+    <url>http://www.carrotgarden.com/scalor-maven-plugin-demo//scalor-maven-plugin-demo</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>org.scala-js</groupId>
+      <artifactId>scalajs-library_2.11</artifactId>
+      <version>0.6.21</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>2.11.12</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+</project>
