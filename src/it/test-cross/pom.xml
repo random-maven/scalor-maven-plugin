@@ -32,7 +32,7 @@
         <version.scala.epoch>2.11</version.scala.epoch>
         <version.scala.release>2.11.0</version.scala.release>
 
-        <version.scala.zinc>1.1.0-RC4</version.scala.zinc>
+        <version.scala.zinc>1.1.0</version.scala.zinc>
         <version.scala.plug.macro>2.1.0</version.scala.plug.macro>
 
         <version.sjs.epoch>0.6</version.sjs.epoch>
@@ -86,20 +86,21 @@
             <!-- Build Scala project for configured Scala version. -->
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
+                <configuration>
+                    <skip>true</skip>
+                    <skipMain>true</skipMain>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>@project.groupId@</groupId>
                 <artifactId>@project.artifactId@</artifactId>
                 <version>@project.version@</version>
 
                 <configuration>
-
-                    <skipLogReason>true</skipLogReason>
-
-                    <!-- <zincCompileOrder>JavaThenScala</zincCompileOrder> -->
-                    <!-- <eclipseDetectPresent>false</eclipseDetectPresent> -->
-                    <!-- <autoconfLogProperties>true</autoconfLogProperties> -->
-                    <!-- <zincLogBuildClassPath>true</zincLogBuildClassPath> -->
-                    <!-- <zincLogPluginClassPath>true</zincLogPluginClassPath> -->
-                    <!-- <eclipseProjectNamePattern>${project.groupId}:${project.artifactId}</eclipseProjectNamePattern> -->
 
                     <defineBridge>
                         <dependency>

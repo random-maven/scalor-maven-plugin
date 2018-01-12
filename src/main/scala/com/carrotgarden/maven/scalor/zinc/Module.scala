@@ -1,23 +1,26 @@
 package com.carrotgarden.maven.scalor.zinc
 
 import com.carrotgarden.maven.scalor.util.Maven
+import com.carrotgarden.maven.scalor.util.Folder
 
 import org.apache.maven.artifact.Artifact
 
-import Module._
 import java.io.File
 
 /**
  * A module is binary jar with optional source jar.
  */
 case class Module(
-  moduleType :     Type,
+  moduleType :     Module.Type,
   binaryArtifact : Artifact,
   sourceArtifact : Option[ Artifact ]
 )
 
 object Module {
 
+  /**
+   * Classify supported modules.
+   */
   sealed trait Type
   case object Unknown extends Type
   case object ScalaLibrary extends Type
@@ -26,15 +29,21 @@ object Module {
   case object CompilerBridge extends Type
   case object CompilerPlugin extends Type
 
-  def fileFrom( module : Module ) : File = module.binaryArtifact.getFile.getCanonicalFile
+  def fileFrom( module : Module ) : File = {
+    import Folder._
+    ensureCanonicalFile( module.binaryArtifact.getFile )
+  }
 
-  def versionFrom( module : Module ) : String = module.binaryArtifact.getVersion
+  def versionFrom( module : Module ) : String = {
+    module.binaryArtifact.getVersion
+  }
 
   def entiresFrom( module : Module ) : Seq[ String ] = {
+    import Folder._
     import module._
     Seq(
-      binaryArtifact.getFile.getCanonicalPath,
-      sourceArtifact.map( _.getFile.getCanonicalPath ).getOrElse( "" )
+      ensureCanonicalPath( binaryArtifact.getFile ),
+      sourceArtifact.map( artifact => ensureCanonicalPath( artifact.getFile ) ).getOrElse( "" )
     )
   }
 
@@ -42,16 +51,18 @@ object Module {
    * Provide artifact module type detector.
    */
   case class Detector(
-    regexCompilerBridge :   String,
-    regexScalaCompiler :    String,
-    regexScalaLibrary :     String,
-    regexScalaReflect :     String,
+    regexCompilerBridge :      String,
+    regexScalaCompiler :       String,
+    regexScalaLibrary :        String,
+    regexScalaReflect :        String,
     resourcePluginDescriptor : String
   ) {
+
     val RxCompilerBridge = regexCompilerBridge.r
     val RxScalaCompiler = regexScalaCompiler.r
     val RxScalaLibrary = regexScalaLibrary.r
     val RxScalaReflect = regexScalaReflect.r
+
     /**
      * Provide artifact module type detector.
      */
@@ -65,6 +76,7 @@ object Module {
         case _ => Unknown
       }
     }
+
   }
 
 }

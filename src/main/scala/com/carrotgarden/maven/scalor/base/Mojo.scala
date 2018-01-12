@@ -13,7 +13,7 @@ trait Mojo extends AbstractMojo
   with Logging
   with Skip
   with SkipMojo
-  with eclipse.Build {
+  with eclipse.Context {
 
   def hasSkip : Boolean = {
     skip

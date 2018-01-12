@@ -20,6 +20,7 @@ before_script:
   - "/bin/bash /etc/init.d/xvfb start"
   - "sleep 3"
 script:
+- "/bin/cp -f -r ./.mvn/ci/.scalaide $HOME/.scalaide"
 - "/bin/cp -f ./.mvn/ci/settings.xml $HOME/.m2/settings.xml"
 - "/bin/cp -f ./.mvn/ci/toolchains.xml $HOME/.m2/toolchains.xml"
 - "./.mvn/verify.sh || exit 1"

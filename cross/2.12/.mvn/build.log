@@ -1,0 +1,14 @@
+    [INFO] [DBUG] Invalidating 
+/home/work/source/git/scalor-maven-plugin/cross/2.12/target/scalor/classes/macro/com/carrotgarden/maven/scalor/meta/Macro.class
+    : class 
+com.carrotgarden.maven.scalor.meta.Macro$
+    now provided by 
+/home/work/source/git/scalor-maven-plugin/cross/2.12/target/scalor/classes/macro/com/carrotgarden/maven/scalor/meta/Macro$.class
+
+
+[INFO] [DBUG] Invalidating 
+/home/work/source/git/scalor-maven-plugin/cross/2.12/target/scalor/classes/macro/com/carrotgarden/maven/scalor/meta/Cached.class
+: class 
+com.carrotgarden.maven.scalor.meta.Cached$
+ now provided by 
+/home/work/source/git/scalor-maven-plugin/cross/2.12/target/scalor/classes/macro/com/carrotgarden/maven/scalor/meta/Cached$.class

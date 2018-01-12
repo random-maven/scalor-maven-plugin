@@ -13,15 +13,37 @@ import com.carrotgarden.maven.scalor._
 trait Params extends AnyRef
   with base.ParamsAny
   with base.ParamsCompiler
-  with base.BuildMacroSources
-  with base.BuildMainSources
-  with base.BuildTestSources
+  with base.BuildMacro
+  with base.BuildMain
+  with base.BuildTest
   with zinc.ParamsCompileOptions
   with zinc.ParamScalaInstall
   with ParamsOrder
   with ParamsLogger
+  with ParamsComment
+  with ParamsLibrary
+  with ParamsPreferences
   with ParamsVersionMaven
   with ParamsVersionScala {
+
+}
+
+trait ParamsPreferences {
+
+  @Description( """
+  Reset Eclipse Scala IDE project preferences 
+  to their default values before applying Maven provided configuration.
+  Use this feature to remove extraneous user-provided Eclipse UI configuration settings for Scala IDE.
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseResetPreferences",
+    defaultValue = "true"
+  )
+  var eclipseResetPreferences : Boolean = _
+
+}
+
+trait ParamsLibrary {
 
   @Description( """
   Enable to remove Scala Library container from Eclipse build class path.
@@ -53,16 +75,9 @@ trait Params extends AnyRef
   )
   var eclipseRenameLibraryContainer : Boolean = _
 
-  @Description( """
-  Reset Eclipse Scala IDE project preferences 
-  to their default values before applying Maven provided configuration.
-  Use this feature to remove manual user-provided Eclipse UI configuration settins for Scala IDE.
-  """ )
-  @Parameter(
-    property     = "scalor.eclipseResetPreferences",
-    defaultValue = "true"
-  )
-  var eclipseResetPreferences : Boolean = _
+}
+
+trait ParamsComment {
 
   //  @Description( """
   //  Enable to apply comment in Scala IDE settings file.
@@ -293,9 +308,11 @@ item = path ;
     84 = GROOVY_SUPPORT ;
     85 = GROOVY_DSL_SUPPORT ;
     
-    91 = .*target/macro-classes ; 
-    92 = .*target/classes ;
-    93 = .*target/test-classes ; 
+    91 = .*target/clas.* ;
+    92 = .*target/test-clas.* ; 
+    93 = .*target/scalor/clas.*/macr.* ; 
+    94 = .*target/scalor/clas.*/main.* ; 
+    95 = .*target/scalor/clas.*/test.* ; 
     
     """
   )
@@ -377,7 +394,11 @@ item = path ;
 trait ParamsVersionMaven {
 
   @Description( """
-  Verify version of Maven M2E when running companion Eclipse plugin.
+  Verify version of
+  <a href="http://www.eclipse.org/m2e/">
+    Eclipse M2E plugin
+  </a> 
+  when running companion Eclipse plugin.
   Version range parameter: <a href="#eclipseMavenPluginVersionRange"><b>eclipseMavenPluginVersionRange</b></a> 
   """ )
   @Parameter(
@@ -423,7 +444,11 @@ trait ParamsVersionMaven {
 trait ParamsVersionScala {
 
   @Description( """
-  Verify version of Scala IDE plugin when running companion Eclipse plugin.
+  Verify version of 
+  <a href="http://scala-ide.org/">
+    Scala IDE plugin 
+  </a> 
+  when running companion Eclipse plugin.
   Version range parameter: <a href="#eclipseScalaPluginVersionRange"><b>eclipseScalaPluginVersionRange</b></a>. 
   """ )
   @Parameter(
@@ -463,36 +488,97 @@ trait ParamsVersionScala {
 
 }
 
-/**
- * Expose static parameter names.
- */
-object Params extends Params
+object Params extends Params {
+  // Ensure variables have default values.
+}
+
+import meta.Macro._
+import ParamsConfig._
 
 /**
  * Expose updatable parameter values.
  */
-case class ParamsConfig() extends Params {
-
-  import meta.Macro._
+case class ParamsConfig() extends Params
+  with VariableCount
+  with VariableReport
+  with VariableUpdate {
 
   /**
    * Number of variable values.
    */
-  def paramsCount = variableCount[ Params ]
-
-  /**
-   * Update class variable values via macro.
-   */
-  def updateParams( paramValue : UpdateFun ) : ParamsConfig = {
-    variableUpdateBlock[ Params ]( paramValue )
-    this
-  }
+  override def paramsCount = variableCount[ Params ]
 
   /**
    * Report class variable values via macro.
    */
-  def reportParams( reportValue : ReportFun ) : Unit = {
+  override def reportParams( reportValue : ReportFun ) : Unit = {
     variableReportBlock[ Params ]( reportValue )
+  }
+
+  /**
+   * Update class variable values via macro.
+   */
+  override def updateParams( paramValue : UpdateFun ) : Unit = {
+    variableUpdateBlock[ Params ]( paramValue )
+  }
+
+  /**
+   *  Build parameters for scope=macro.
+   */
+  val buildMacro = BuildMacro()
+
+  /**
+   *  Build parameters for scope=main.
+   */
+  val buildMain = BuildMain()
+
+  /**
+   *  Build parameters for scope=test.
+   */
+  val buildTest = BuildTest()
+
+  /**
+   * Update class variable values for all fields.
+   */
+  def update( paramValue : UpdateFun ) : Unit = {
+    this.updateParams( paramValue )
+    buildMacro.updateParams( paramValue )
+    buildMain.updateParams( paramValue )
+    buildTest.updateParams( paramValue )
+  }
+
+}
+
+object ParamsConfig {
+
+  /**
+   *  Build parameters for scope=macro.
+   */
+  case class BuildMacro() extends base.BuildMacro
+    with VariableUpdate {
+    override def updateParams( paramValue : UpdateFun ) : Unit = {
+      variableUpdateBlock[ BuildMacro ]( paramValue )
+    }
+  }
+
+  /**
+   *  Build parameters for scope=main.
+   */
+  case class BuildMain() extends base.BuildMain
+    with VariableUpdate {
+    override def updateParams( paramValue : UpdateFun ) : Unit = {
+      variableUpdateBlock[ BuildMain ]( paramValue )
+    }
+  }
+
+  /**
+   *  Build parameters for scope=test.
+   */
+  case class BuildTest() extends base.BuildTest
+    with VariableUpdate {
+    override def updateParams( paramValue : UpdateFun ) : Unit = {
+      variableUpdateBlock[ BuildTest ]( paramValue )
+    }
   }
 
 }

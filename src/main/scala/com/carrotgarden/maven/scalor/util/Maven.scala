@@ -44,7 +44,8 @@ object Maven {
    * Verify that artifact jar contains named resource.
    */
   def hasResourceMatch( artifact : Artifact, resource : String ) : Boolean = {
-    val url = artifact.getFile.getCanonicalFile.toURI.toURL
+    import Folder._
+    val url = ensureCanonicalFile( artifact.getFile ).toURI.toURL
     val loader = new URLClassLoader( Array[ URL ]( url ) );
     val result = loader.getResources( resource ).hasMoreElements
     loader.close

@@ -1,17 +1,17 @@
 package com.carrotgarden.maven.scalor.eclipse
 
-import org.eclipse.core.runtime
-import com.carrotgarden.maven.scalor.util
 import java.util.Properties
-import com.carrotgarden.maven.scalor.A
-import org.slf4j.LoggerFactory
-import org.eclipse.core.runtime.IStatus
-import org.eclipse.core.runtime.Status
-import org.eclipse.core.runtime.Platform
+
 import org.eclipse.core.internal.registry.ExtensionRegistry
+import org.eclipse.core.runtime
 import org.eclipse.core.runtime.ContributorFactoryOSGi
 import org.eclipse.core.runtime.CoreException
-import scala.util.DynamicVariable
+import org.eclipse.core.runtime.IStatus
+import org.eclipse.core.runtime.Platform
+import org.eclipse.core.runtime.Status
+import org.slf4j.LoggerFactory
+
+import com.carrotgarden.maven.scalor.util
 
 object Plugin {
 
@@ -21,12 +21,10 @@ object Plugin {
   trait Activator extends runtime.Plugin with Logging {
 
     import Logging._
-
     import Plugin._
     import Plugin.Config._
-
-    import util.Props._
-    import util.OSGI._
+    import com.carrotgarden.maven.scalor.util.OSGI._
+    import com.carrotgarden.maven.scalor.util.Props._
 
     /**
      * Eclipse plugin self-descriptor.
@@ -44,7 +42,7 @@ object Plugin {
     lazy val mavenGroupId = property( key.mavenGroupId )
     lazy val mavenArtifactId = property( key.mavenArtifactId )
     lazy val mavenVersion = property( key.mavenVersion )
-    lazy val projectDecorator = property( key.projectDecorator )
+    lazy val eclipseDecorator = property( key.eclipseDecorator )
     lazy val projectConfigurator = property( key.projectConfigurator )
 
     lazy val logId = mavenArtifactId + "-" + mavenVersion
@@ -53,8 +51,6 @@ object Plugin {
      * Log to M2E "Maven Console".
      */
     object slf4jLog extends AnyLog {
-      /**  Work around lack of logging source in M2E "Maven Console". */
-      // private lazy val prefix = "[" + A.eclipse.name + ":" + A.mojo.`eclipse-config` + "] "
       private lazy val logger = LoggerFactory.getLogger( logId );
       override def info( line : String ) = logger.info( context + line )
       override def warn( line : String ) = logger.warn( context + line )
@@ -66,7 +62,7 @@ object Plugin {
      * Log to Eclipse "Error Log".
      */
     object eclipseLog extends AnyLog {
-      import IStatus._
+      import org.eclipse.core.runtime.IStatus._
       override def info( line : String ) = getLog.log( new Status( INFO, logId, context + line ) )
       override def warn( line : String ) = getLog.log( new Status( WARNING, logId, context + line ) )
       override def fail( line : String ) = getLog.log( new Status( ERROR, logId, context + line ) )
@@ -92,10 +88,10 @@ object Plugin {
      */
     override lazy val log : AnyLog =
       if ( hasLogback ) {
-        eclipseLog.info( "Plugin logger is using M2E Maven Console." )
+        eclipseLog.info( "Plugin logger is using M2E [Maven Console]." )
         slf4jLog
       } else {
-        eclipseLog.info( "Plugin logger is using Eclipse Error Log." )
+        eclipseLog.info( "Plugin logger is using Eclipse [Error Log]." )
         eclipseLog
       }
 
@@ -155,9 +151,9 @@ object Plugin {
 
   }
   /**
-   * Shared maven/eclipse settings.
+   * Shared Maven/Eclipse settings.
    *
-   * Ensure not loading osgi dependences here.
+   * Ensure not loading OSGI classes here.
    */
   object Config extends util.JarRes {
 
@@ -177,7 +173,7 @@ object Plugin {
       val mavenGroupId = "mavenGroupId"
       val mavenArtifactId = "mavenArtifactId"
       val mavenVersion = "mavenVersion"
-      val projectDecorator = "projectDecorator"
+      val eclipseDecorator = "eclipseDecorator"
       val projectConfigurator = "projectConfigurator"
     }
 
@@ -192,12 +188,12 @@ object Plugin {
     }
 
     /**
-     * Configuration plugin.properties resource in the jar file.
+     * Configuration "plugin.properties" resource in the jar file.
      */
     def pluginPropertiesUrl = resourceURL( plugin.properties )
 
     /**
-     * Configuration plugin.xml resource in the jar file.
+     * Configuration "plugin.xml" resource in the plugin jar file.
      */
     def pluginXmlUrl = resourceURL( plugin.xml )
 

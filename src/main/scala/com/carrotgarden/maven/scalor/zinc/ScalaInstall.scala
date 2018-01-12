@@ -19,6 +19,7 @@ import Module._
  * Scala compiler installation descriptor.
  *
  * Abstract away form Scala, Scala IDE, Zinc.
+ *
  * @param bridge - compiler-bridge jar
  * @param compiler - compiler-bridge jar
  * @param library - scala-library jar
@@ -65,6 +66,9 @@ case class ScalaInstall(
 
 }
 
+/**
+ * Install factory.
+ */
 object ScalaInstall {
 
   import util.Hex
@@ -87,16 +91,22 @@ object ScalaInstall {
     moduleList.flatMap( module => Module.entiresFrom( module ) )
   }
 
+  /**
+   * Fail with formatted error.
+   */
   def fail(
     list :   List[ Module ],
     module : String, regex : String
   ) = {
-    val listLine = list.mkString( "[ ", " ; ", " ]" )
     val helpText = "Can not resolve Scala installaton."
+    val listLine = list.mkString( "[ ", " ; ", " ]" )
     Throw( s"${helpText} Missing module '${module}' with regex '${regex}' in list ${listLine}." )
   }
 
-  def find(
+  /**
+   * Find scala module by type.
+   */
+  def moduleFind(
     list :       List[ Module ],
     module :     String,
     regex :      String,
@@ -105,7 +115,10 @@ object ScalaInstall {
     list.find( _.moduleType == moduleType ).getOrElse( fail( list, module, regex ) )
   }
 
-  def make(
+  /**
+   * Build module list form artifact list containing binary and source jars.
+   */
+  def moduleList(
     detector : Detector,
     list :     List[ Artifact ]
   ) : List[ Module ] = {
@@ -124,7 +137,7 @@ object ScalaInstall {
   import base.Params._
 
   /**
-   * Produce installation from dependency list.
+   * Produce installation from dependency definition.
    */
   def apply(
     title :    String,
@@ -133,15 +146,15 @@ object ScalaInstall {
   ) : ScalaInstall = {
     import define._
 
-    val bridgeList = make( detector, defineBridge )
-    val compilerList = make( detector, defineCompiler )
-    val pluginDefineList = make( detector, definePluginList )
+    val bridgeList = moduleList( detector, defineBridge )
+    val compilerList = moduleList( detector, defineCompiler )
+    val pluginDefineList = moduleList( detector, definePluginList )
 
     import detector._
-    val bridge = find( bridgeList, "bridge", regexCompilerBridge, CompilerBridge )
-    val compiler = find( compilerList, "compiler", regexScalaCompiler, ScalaCompiler )
-    val library = find( compilerList, "library", regexScalaLibrary, ScalaLibrary )
-    val reflect = find( compilerList, "reflect", regexScalaReflect, ScalaReflect )
+    val bridge = moduleFind( bridgeList, "bridge", regexCompilerBridge, CompilerBridge )
+    val compiler = moduleFind( compilerList, "compiler", regexScalaCompiler, ScalaCompiler )
+    val library = moduleFind( compilerList, "library", regexScalaLibrary, ScalaLibrary )
+    val reflect = moduleFind( compilerList, "reflect", regexScalaReflect, ScalaReflect )
 
     val pluginList = pluginDefineList
       .filter( _.moduleType == CompilerPlugin )
@@ -149,7 +162,7 @@ object ScalaInstall {
     val version = ScalaVersion( versionFrom( library ) )
 
     ScalaInstall(
-      title,
+      title            = title,
       bridge           = bridge,
       compiler         = compiler,
       library          = library,

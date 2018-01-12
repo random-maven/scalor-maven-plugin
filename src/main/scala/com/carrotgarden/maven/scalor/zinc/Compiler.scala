@@ -1,29 +1,28 @@
 package com.carrotgarden.maven.scalor.zinc
 
 import java.io.File
-import java.nio.file.Paths
-import java.net.JarURLConnection
+import java.net.URLClassLoader
 import java.util.Optional
-import java.util.ArrayList
-import java.util.HashSet
+
+import com.carrotgarden.maven.scalor.base
+import com.carrotgarden.maven.scalor.meta
+import com.carrotgarden.maven.scalor.util
 
 import sbt.internal.inc.AnalyzingCompiler
 import sbt.internal.inc.FileAnalysisStore
 import sbt.internal.inc.IncrementalCompilerImpl
 import sbt.internal.inc.Locate
 import sbt.internal.inc.LoggedReporter
-import sbt.internal.inc.ProblemStringFormats
 import sbt.internal.inc.ScalaInstance
 import sbt.util.InterfaceUtil
 import sbt.util.Level
 import sbt.util.Logger
-
-import xsbt.CompilerInterface
 import xsbti.Problem
 import xsbti.compile.AnalysisContents
 import xsbti.compile.AnalysisStore
 import xsbti.compile.ClasspathOptionsUtil
 import xsbti.compile.CompileAnalysis
+import xsbti.compile.CompileOrder
 import xsbti.compile.CompileProgress
 import xsbti.compile.CompilerCache
 import xsbti.compile.DefinesClass
@@ -32,12 +31,6 @@ import xsbti.compile.MiniSetup
 import xsbti.compile.PerClasspathEntryLookup
 import xsbti.compile.PreviousResult
 import xsbti.compile.ZincCompilerUtil
-import xsbti.compile.CompileOrder
-
-import com.carrotgarden.maven.scalor._
-
-import com.carrotgarden.maven.scalor.util.Folder._
-import java.net.URLClassLoader
 
 /**
  * Compiler for scope=macro.
@@ -102,6 +95,7 @@ trait Compiler {
    * Compilation scope input source files.
    */
   def zincBuildSources : Array[ File ] = {
+    import util.Folder._
     val zincRegexAnySource = zincRegexAnyJava + "|" + zincRegexAnyScala
     fileListByRegex( buildSourceFolders, zincRegexAnySource )
   }
@@ -121,23 +115,41 @@ trait Compiler {
    * Verify if logging is enabled at a level.
    */
   def zincHasLog( level : Level.Value ) : Boolean = {
-    level.id >= zincLogAtLevel
+    level.id >= zincLogActiveLevel
+  }
+
+  /**
+   * Incremental compiler file analysis store.
+   */
+  def zincStateStore( cacheFile : File ) : AnalysisStore = {
+    storeType( zincStateStoreType ) match {
+      case Store.Text =>
+        FileAnalysisStore.text( cacheFile )
+      case Store.Binary =>
+        FileAnalysisStore.binary( cacheFile )
+      case _ =>
+        val param = meta.Macro.nameOf( zincStateStoreType )
+        val value = zincStateStoreType
+        say.error( s"Unknown store type ${param}=${value}, using 'binary'." )
+        FileAnalysisStore.binary( cacheFile )
+    }
   }
 
   /**
    * Setup and invoke Zinc incremental compiler.
    */
   def zincPerformCompile() : Unit = {
+    import util.Folder._
 
     // Assemble required build context.
     val buildSources : Array[ File ] =
-      zincBuildSources.map( _.getCanonicalFile )
+      zincBuildSources.map( ensureCanonicalFile( _ ) )
     val buildClassPath : Array[ File ] =
-      zincBuildClassPath.map( _.getCanonicalFile )
+      zincBuildClassPath.map( ensureCanonicalFile( _ ) )
     val buildCacheFile : File =
-      zincBuildCache.getCanonicalFile
+      ensureCanonicalFile( zincBuildCache )
     val buildOutputFolder : File =
-      zincBuildTarget.getCanonicalFile
+      ensureCanonicalFile( zincBuildTarget )
 
     // Ensure output locations.
     ensureParent( buildCacheFile )
@@ -212,7 +224,7 @@ trait Compiler {
       provider         = provider,
       classpathOptions = ClasspathOptionsUtil.auto,
       onArgsHandler = _ => (),
-      classLoaderCache = None // FIXME provide cache
+      classLoaderCache = None // FIXME provide loader cache
     )
 
     // Use zinc incremental compiler.
@@ -261,10 +273,10 @@ trait Compiler {
     // Compilation progress printer.
     val progress = new CompileProgress {
       override def startUnit( phase : String, unitPath : String ) : Unit = {
-        if ( zincLogProgressUnit ) say.info( s"[I] ${phase} / ${unitPath}" )
+        if ( zincLogProgressUnit ) say.info( s"[INIT] ${phase} / ${unitPath}" )
       }
       override def advance( current : Int, total : Int ) : Boolean = {
-        if ( zincLogProgressRate ) say.info( s"[S] ${current} / ${total}" )
+        if ( zincLogProgressRate ) say.info( s"[STEP] ${current} / ${total}" )
         true
       }
     }
@@ -281,6 +293,14 @@ trait Compiler {
       extra          = Array.empty
     )
 
+    // Extract past state.
+    val storePast = zincStateStore( buildCacheFile )
+    val storeNext = AnalysisStore.getCachedStore( storePast )
+
+    //    val contentPast = storePast.get()
+    //    val resultPast = PreviousResult
+    //      .of( contentPast.map( _.getAnalysis ), contentPast.map( _.getMiniSetup ) )
+
     // Iterative inputs.
     val inputsPast = incremental.inputs(
       classpath             = buildClassPath,
@@ -293,23 +313,21 @@ trait Compiler {
       order                 = compileOrder,
       compilers             = compilers,
       setup                 = setup,
-      pr                    = incremental.emptyPreviousResult // FIXME read past state.
+      pr                    = incremental.emptyPreviousResult
+    //      pr                    = resultPast
     )
-
-    // State change analysis.
-    val analysis = AnalysisStore.getCachedStore( FileAnalysisStore.binary( buildCacheFile ) )
 
     // Iterative inputs.
     val inputsNext = {
-      InterfaceUtil.toOption( analysis.get() ) match {
-        case Some( analysisContents ) =>
-          val previousAnalysis = analysisContents.getAnalysis
-          val previousSetup = analysisContents.getMiniSetup
-          val previousResult = PreviousResult.of(
-            Optional.of[ CompileAnalysis ]( previousAnalysis ),
-            Optional.of[ MiniSetup ]( previousSetup )
+      InterfaceUtil.toOption( storeNext.get() ) match {
+        case Some( contentPast ) =>
+          val analysisPast = contentPast.getAnalysis
+          val setupPast = contentPast.getMiniSetup
+          val resultPast = PreviousResult.of(
+            Optional.of[ CompileAnalysis ]( analysisPast ),
+            Optional.of[ MiniSetup ]( setupPast )
           )
-          inputsPast.withPreviousResult( previousResult )
+          inputsPast.withPreviousResult( resultPast )
         case _ =>
           inputsPast
       }
@@ -318,23 +336,24 @@ trait Compiler {
     say.info( s"Invoking Zinc compiler: ${scalaInstance.version}" )
 
     // Run compiler invocation.
-    val result = incremental.compile( inputsNext, logger )
+    val resultNext = incremental.compile( inputsNext, logger )
 
-    // Persist state changes.
-    analysis.set( AnalysisContents.create( result.analysis, result.setup ) )
+    // Persist next state.
+    val contentNext = AnalysisContents.create( resultNext.analysis, resultNext.setup )
+    storeNext.set( contentNext )
 
   }
 
 }
 
 object Compiler {
-
+  import util.Folder._
   import Module._
 
   /**
    * Scala compiler argument: plugin stanza: activate plugin by jar path.
    */
-  def pluginStanza( file : File ) = Array[ String ]( "-Xplugin", file.getCanonicalPath )
+  def pluginStanza( file : File ) = Array[ String ]( "-Xplugin", ensureCanonicalPath( file ) )
 
   /**
    * Convert into Zinc scala compiler installation format.
@@ -349,6 +368,19 @@ object Compiler {
       allJars        = zincJars.map( fileFrom( _ ) ).toArray,
       explicitActual = Some( version.unparse )
     )
+  }
+
+  object Store {
+    sealed trait Type
+    case object Text extends Type
+    case object Binary extends Type
+    case object Unknown extends Type
+  }
+
+  def storeType( name : String ) = name match {
+    case "text"   => Store.Text
+    case "binary" => Store.Binary
+    case _        => Store.Unknown
   }
 
 }

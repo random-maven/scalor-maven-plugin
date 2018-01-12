@@ -5,11 +5,7 @@ import org.sonatype.plexus.build.incremental.BuildContext
 
 import com.carrotgarden.maven.scalor.base
 import com.carrotgarden.maven.scalor.util
-
-import util.Folder._
-import util.Classer._
-import util.OSGI._
-import util.Error._
+import com.carrotgarden.maven.tools.Description
 
 import org.osgi.framework.BundleReference
 import org.eclipse.core.resources.ResourcesPlugin
@@ -27,11 +23,15 @@ import org.osgi.framework.Bundle
 import Wiring._
 import org.eclipse.m2e.core.ui.internal.M2EUIPluginActivator
 import org.eclipse.m2e.core.internal.MavenPluginActivator
+import java.nio.file.Files
 
 /**
  * Connect this Maven plugin with host Eclipse platform
  * in order to install its own companion Eclipse plugin.
  */
+@Description( """
+Note: controlled OSGI environment.
+""" )
 case class Wiring(
   buildContext :    BuildContext,
   metaRuntime :     Meta         = Meta( "org.eclipse.equinox.common", "org.eclipse.core.runtime" ),
@@ -55,7 +55,7 @@ case class Wiring(
     val loaderM2E = buildContext.getClass.getClassLoader
 
     // maven-scalor-plugin loader
-    val localRealm = this.getClass.getClassLoader.asInstanceOf[ ClassRealm ]
+    val localRealm = getClass.getClassLoader.asInstanceOf[ ClassRealm ]
 
     // verify existing package import
     def hasImport( pkg : String ) = {
@@ -76,6 +76,7 @@ case class Wiring(
 
     // discover eclipse bundle and import select packages into local realm
     def importBundle( meta : Meta ) : Bundle = {
+      import util.OSGI._
       val bundle = discoverBundle( bundleM2E, meta.id ).get
       importPackage( bundleClassLoader( bundle ), meta )
       bundle
@@ -138,25 +139,27 @@ object Wiring {
    * Find eclipse project with matching base directory.
    */
   def projectWithBase( projectList : Array[ IProject ], baseDir : File ) : IProject = {
-    val canonicalPath = baseDir.getCanonicalPath
+    import util.Folder._
+    import util.Error._
+    val sourcePath = baseDir.toPath
     val length = projectList.length
     var index = 0
     while ( index < length ) {
       val project = projectList( index ); index += 1
       val hasFile = true &&
         project != null &&
-        project.getRawLocation != null &&
-        project.getRawLocation.makeAbsolute != null &&
-        project.getRawLocation.makeAbsolute.toFile != null &&
+        project.getLocation != null &&
+        project.getLocation.toFile != null &&
         true
       if ( hasFile ) {
-        val hasMatch = project.getRawLocation.makeAbsolute.toFile.getCanonicalPath == canonicalPath
-        if ( hasMatch ) {
+        val targetPath = project.getLocation.toFile.toPath
+        val hasBoth = Files.exists( sourcePath ) && Files.exists( targetPath )
+        if ( hasBoth && Files.isSameFile( sourcePath, targetPath ) ) {
           return project
         }
       }
     }
-    throw new RuntimeException( "Missing required project: " + baseDir )
+    Throw( s"Missing required project: ${sourcePath}" )
   }
 
 }

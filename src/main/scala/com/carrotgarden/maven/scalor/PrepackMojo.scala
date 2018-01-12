@@ -18,30 +18,25 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 import com.carrotgarden.maven.tools.Description
+import java.nio.file.Paths
 
 /**
  * Prepare build resources for packaging for given scope.
  */
 trait PrepackAnyMojo extends AbstractMojo
+  with base.Dir
   with base.Mojo
   with base.Params
   with base.Logging
   with base.SkipMojo
   with base.BuildAnyTarget
-  with eclipse.Build {
-  import com.carrotgarden.maven.scalor.util.Folder._
+  with eclipse.Context {
+
+  import util.Folder._
+  import util.Error._
 
   @Description( """
-  Flag to skip goal execution: <code>prepack-linker-*</code>.
-  """ )
-  @Parameter(
-    property     = "scalor.skipPrepackLinker",
-    defaultValue = "false"
-  )
-  var skipPrepackLinker : Boolean = _
-
-  @Description( """
-  Report prepack origin/output folders.
+  Enable to log package origin/output folders.
   """ )
   @Parameter(
     property     = "scalor.prepackLogSummary",
@@ -50,52 +45,55 @@ trait PrepackAnyMojo extends AbstractMojo
   var prepackLogSummary : Boolean = _
 
   @Description( """
-  Report file transfer details.
+  Enable to log package file transfer details: origin -> output.
   """ )
   @Parameter(
     property     = "scalor.prepackLogTransfer",
-    defaultValue = "true"
+    defaultValue = "false"
   )
   var prepackLogTransfer : Boolean = _
 
   @Description( """
-  Create output folder when missing.
+  Create package output folder when missing.
   """ )
   @Parameter(
-    property     = "scalor.prepackEnsureOutput",
+    property     = "scalor.prepackEnsureOutputFolder",
     defaultValue = "true"
   )
-  var prepackEnsureOutput : Boolean = _
+  var prepackEnsureOutputFolder : Boolean = _
 
   @Description( """
-  Fail build when origin folder is missing.
+  Fail build when package origin folder is missing.
+<pre>
+  true  -> fail with error
+  false -> only report error
+</pre>
   """ )
   @Parameter(
-    property     = "scalor.prepackFailOnInvalidSource",
+    property     = "scalor.prepackFailOnInvalidOrigin",
     defaultValue = "false"
   )
-  var prepackFailOnInvalidSource : Boolean = _
+  var prepackFailOnInvalidOrigin : Boolean = _
 
   @Description( """
-  Fail build when output folder is missing.
+  Fail build when package output folder is missing.
+<pre>
+  true  -> fail with error
+  false -> only report error
+</pre>
   """ )
   @Parameter(
-    property     = "scalor.prepackFailOnInvalidTarget",
+    property     = "scalor.prepackFailOnInvalidOutput",
     defaultValue = "false"
   )
-  var prepackFailOnInvalidTarget : Boolean = _
-
-  /**
-   * Default project build output folder for given scope.
-   */
-  def outputFolder : String
+  var prepackFailOnInvalidOutput : Boolean = _
 
   /**
    * Fail build when origin folder is missing.
    */
   def assertOrigin( path : Path ) = {
-    if ( prepackFailOnInvalidSource ) {
-      throw new RuntimeException( s"Invalid origin: ${path}" )
+    if ( prepackFailOnInvalidOrigin ) {
+      Throw( s"Invalid origin: ${path}" )
     } else {
       say.warn( s"Skipping invalid origin: ${path}" )
     }
@@ -105,8 +103,8 @@ trait PrepackAnyMojo extends AbstractMojo
    * Fail build when output folder is missing.
    */
   def assertOutput( path : Path ) = {
-    if ( prepackFailOnInvalidTarget ) {
-      throw new RuntimeException( s"Invalid output: ${path}" )
+    if ( prepackFailOnInvalidOutput ) {
+      Throw( s"Invalid output: ${path}" )
     } else {
       say.warn( s"Skipping invalid output: ${path}" )
     }
@@ -115,17 +113,19 @@ trait PrepackAnyMojo extends AbstractMojo
   /**
    * Transfer build resources from origin folder to output folder.
    */
+  // FIXME copy only delta
   def performPrepare() : Unit = {
 
-    val origin : Path = buildTargetFolder.getCanonicalFile.toPath
+    val origin : Path = basedir.absolute( buildTargetFolder.toPath )
     if ( !Files.isDirectory( origin ) ) {
       assertOrigin( origin )
       return
     }
 
-    val output : Path = new File( outputFolder ).getCanonicalFile.toPath
-    if ( prepackEnsureOutput ) {
-      ensureFolder( output.toFile )
+    val output : Path = basedir.absolute( buildOutputFolder.toPath )
+    if ( prepackEnsureOutputFolder ) {
+      say.info( s"Ensuring output folder." )
+      ensureFolder( output )
     }
     if ( !Files.isDirectory( output ) ) {
       assertOutput( output )
@@ -139,18 +139,18 @@ trait PrepackAnyMojo extends AbstractMojo
 
     val reportTransfer = new TransferListener {
       override def onFile( source : Path, target : Path, relative : Path ) : Unit = {
-        if ( prepackLogTransfer ) say.info( s"path: ${relative}" )
-        // FIXME update eclipse
+        if ( prepackLogTransfer ) say.info( s"   ${relative}" )
       }
     }
 
-    val hasSame = Files.isSameFile( origin, output )
+    val hasSame = basedir.isSamePath( origin, output )
     if ( hasSame ) {
       say.info( "Skipping prepack: origin and output are same." )
       reportSummary()
     } else {
       say.info( "Copying build classes from origin into output." )
       reportSummary()
+      // FIXME update eclipse
       transferFolder( origin, output, listener = reportTransfer )
     }
   }
@@ -159,7 +159,7 @@ trait PrepackAnyMojo extends AbstractMojo
    * Transfer build resources from origin folder to output folder.
    */
   override def perform() : Unit = {
-    if ( skipPrepackLinker || hasSkipMojo ) {
+    if ( hasSkipMojo ) {
       reportSkipReason( "Skipping disabled goal execution." )
       return
     }
@@ -195,7 +195,6 @@ class PrepareMacroMojo extends PrepackAnyMojo
   var skipPrepackMacro : Boolean = _
 
   override def hasSkipMojo = skipPrepackMacro
-  override def outputFolder = project.getBuild.getOutputDirectory
 
 }
 
@@ -222,7 +221,6 @@ class PrepareMainMojo extends PrepackAnyMojo
   var skipPrepackMain : Boolean = _
 
   override def hasSkipMojo = skipPrepackMain
-  override def outputFolder = project.getBuild.getOutputDirectory
 
 }
 
@@ -249,7 +247,20 @@ class PrepareTestMojo extends PrepackAnyMojo
   var skipPrepackTest : Boolean = _
 
   override def hasSkipMojo = skipPrepackTest
-  override def outputFolder = project.getBuild.getTestOutputDirectory
+
+}
+
+trait PrepackLinkerAnyMojo extends PrepackAnyMojo
+  with scalajs.BuildMainMetaFolder {
+
+  @Description( """
+  Flag to skip goal execution: <code>prepack-linker-*</code>.
+  """ )
+  @Parameter(
+    property     = "scalor.skipPrepackLinker",
+    defaultValue = "false"
+  )
+  var skipPrepackLinker : Boolean = _
 
 }
 
@@ -261,7 +272,7 @@ Prepare linker build resources for packaging for compilation scope=main.
   defaultPhase                 = LifecyclePhase.PROCESS_CLASSES,
   requiresDependencyResolution = ResolutionScope.NONE
 )
-class PrepackLinkerMainMojo extends PrepackAnyMojo
+class PrepackLinkerMainMojo extends PrepackLinkerAnyMojo
   with scalajs.BuildMainTarget {
 
   override def mojoName = `prepack-linker-main`
@@ -275,9 +286,12 @@ class PrepackLinkerMainMojo extends PrepackAnyMojo
   )
   var skipPrepackLinkerMain : Boolean = _
 
-  override def hasSkipMojo = skipPrepackLinkerMain
-  override def outputFolder =
-    project.getBuild.getOutputDirectory + File.separator + linkerMetaFolder
+  override def hasSkipMojo = skipPrepackLinker || skipPrepackLinkerMain
+
+  /**
+   * Final script location in the jar.
+   */
+  override def buildOutputFolder = new File( super.buildOutputFolder, linkerMainMetaFolder )
 
 }
 
@@ -289,7 +303,7 @@ Prepare linker build resources for packaging for compilation scope=test.
   defaultPhase                 = LifecyclePhase.PROCESS_TEST_CLASSES,
   requiresDependencyResolution = ResolutionScope.NONE
 )
-class PrepackLinkerTestMojo extends PrepackAnyMojo
+class PrepackLinkerTestMojo extends PrepackLinkerAnyMojo
   with scalajs.BuildTestTarget {
 
   override def mojoName = `prepack-linker-test`
@@ -303,8 +317,11 @@ class PrepackLinkerTestMojo extends PrepackAnyMojo
   )
   var skipPrepackLinkerTest : Boolean = _
 
-  override def hasSkipMojo = skipPrepackLinkerTest
-  override def outputFolder =
-    project.getBuild.getTestOutputDirectory + File.separator + linkerMetaFolder
+  override def hasSkipMojo = skipPrepackLinker || skipPrepackLinkerTest
+
+  /**
+   * Final script location in the jar.
+   */
+  override def buildOutputFolder = new File( super.buildOutputFolder, linkerTestMetaFolder )
 
 }

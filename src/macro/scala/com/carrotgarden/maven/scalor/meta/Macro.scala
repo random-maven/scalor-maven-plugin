@@ -4,6 +4,7 @@ import scala.annotation.tailrec
 import scala.language.experimental.macros
 import scala.reflect.macros.whitebox.Context
 import scala.reflect.api.materializeWeakTypeTag
+import java.util.UUID
 
 /**
  * Build support.
@@ -16,6 +17,11 @@ trait Macro {
    *  Generate property name.
    */
   def nameOf( member : Any ) : String = macro MacroBundle.nameOf
+
+  /**
+   *  Generate name with GUID suffix.
+   */
+  def guidOf( name : String ) : String = macro MacroBundle.guidOf
 
   /**
    * Generate variable registry.
@@ -47,6 +53,18 @@ object Macro extends Macro {
    * Produce value report based on variable name.
    */
   type ReportFun = ( String, Any ) => Unit
+
+  trait VariableCount {
+    def paramsCount : Int
+  }
+
+  trait VariableReport {
+    def reportParams( reportValue : ReportFun ) : Unit
+  }
+
+  trait VariableUpdate {
+    def updateParams( paramValue : UpdateFun ) : Unit
+  }
 
 }
 
@@ -156,6 +174,17 @@ class MacroBundle( val c : Context ) extends RichContext {
     """
     info( s"${showCode( result )}" )
     c.Expr[ Unit ]( result )
+  }
+
+  def guidOf( name : c.Expr[ String ] ) : c.Expr[ String ] = {
+    val Literal( Constant( term ) ) = name.tree
+    val guid = UUID.randomUUID.toString
+    val entry = s"${term}[${guid}]"
+    val result = q"""
+      ${entry}
+    """
+    info( s"${showCode( result )}" )
+    c.Expr[ String ]( result )
   }
 
 }

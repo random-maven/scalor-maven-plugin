@@ -6,7 +6,7 @@
 quiet = true
 
 # Ignore download errors for existing files.
-#offline = false
+#offline = true
 
 # Ignore "Last-Modified" header, always download.
 fresh = true

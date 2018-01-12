@@ -1,6 +1,7 @@
 package com.carrotgarden.maven.scalor.eclipse
 
-import com.carrotgarden.maven.scalor._
+import com.carrotgarden.maven.scalor.base
+import com.carrotgarden.maven.scalor.util
 
 import scala.collection.mutable.HashSet
 import scala.tools.nsc
@@ -34,6 +35,7 @@ import org.scalaide.util.eclipse.EclipseUtils
 import org.scalaide.util.internal.SettingConverterUtil.SCALA_DESIRED_INSTALLATION
 import org.scalaide.util.internal.SettingConverterUtil.USE_PROJECT_SETTINGS_PREFERENCE
 import org.scalaide.util.internal.SettingConverterUtil.convertNameToProperty
+import org.eclipse.jdt.core.IClasspathAttribute
 
 /**
  * Provide Scala IDE settings for a project.
@@ -53,11 +55,11 @@ trait ScalaIDE {
    */
   def scheduleScalaJob(
     project : ScalaProject,
-    message : String
+    name :    String
   )( block : => Unit ) : Job = {
     import project._
     EclipseUtils.scheduleJob(
-      message, underlying, Job.BUILD
+      name, underlying, Job.BUILD
     ) { monitor =>
       block
       Status.OK_STATUS
@@ -92,10 +94,10 @@ trait ScalaIDE {
   ) : Unit = {
     import config._
     if ( eclipseLogInstallReport ) {
-      import com.carrotgarden.maven.scalor.util.Folder._
+      import util.Folder._
       log.info( s"Producing custom Scala installation report." )
-      val reportFile = eclipseInstallReportFile
-      log.info( s"   ${reportFile.getCanonicalPath}" )
+      val reportFile = ensureCanonicalFile( eclipseInstallReportFile )
+      log.info( s"   ${reportFile}" )
       ensureParent( reportFile )
       val reportText = ScalaInstallation.customInstallations.map( report( _ ) ).mkString
       persistString( reportFile, reportText )
@@ -169,8 +171,6 @@ trait ScalaIDE {
     log.info( s"Providing configured settings." )
     import com.carrotgarden.maven.scalor.zinc.Compiler._
     import config._
-    //    val ideArgs =
-    //      parseOptionsScalaIDE.toList
     val zincArgs =
       parseCompileOptions.toList
     val pluginArgs = install.pluginDefineList
@@ -350,7 +350,8 @@ trait ScalaIDE {
     reportCustomInstall( request, config, subMon.split( 20 ) )
     val project = ScalaProject( request.getProject )
     val install = resolveCustomInstall( request, config, subMon.split( 20 ) )
-    val scalaJob = scheduleScalaJob( project, "Scalor: update project settings for Scala IDE" ) {
+    val name = "Scalor: update project settings for Scala IDE" // Keep name, used in test.
+    val scalaJob = scheduleScalaJob( project, name ) {
       log.context( "step#3+" )
       log.info( s"Configuring Scala IDE (scheduled job)." )
       persistCustomInstall( request, config, project, install, subMon.split( 20 ) )
@@ -372,9 +373,12 @@ object ScalaIDE {
   import com.carrotgarden.maven.scalor.zinc._
 
   /**
-   * Eclipse absolute resource path for Maven artifact jar file.
+   * Eclipse resource path for Maven artifact jar file.
    */
-  def pathFrom( artifact : Artifact ) = new Path( artifact.getFile.getCanonicalPath )
+  def pathFrom( artifact : Artifact ) = {
+    import util.Folder._
+    new Path( ensureCanonicalPath( artifact.getFile ) )
+  }
 
   /**
    * Convert module from this plugin format to Scala IDE format.
@@ -404,6 +408,7 @@ object ScalaIDE {
   }
 
   def report( module : ScalaModule ) = {
+    import util.Folder._
     import module._
     val text = new StringBuffer
     def spacer = text.append( "      " )
@@ -413,7 +418,7 @@ object ScalaIDE {
       text.append( ": " )
       path match {
         case Some( path ) =>
-          text.append( path.toFile.getCanonicalPath )
+          text.append( ensureCanonicalPath( path.toFile ) )
         case None =>
           text.append( "<missing>" )
       }
@@ -475,7 +480,7 @@ object ScalaIDE {
    */
   case class Settings( errorFun : ErrorFun ) extends nsc.Settings( errorFun ) {
     val NamePrefix = "-" // Use as command line option.
-    val EmptyString = ""
+    val EmptyString = "" // Common value.
 
     /**
      * Path-dependent type cast.
@@ -490,7 +495,7 @@ object ScalaIDE {
     /**
      * Extract custom class path entry attribute describing a scope.
      */
-    def scopeAttrib( entry : IClasspathEntry ) = {
+    def scopeAttrib( entry : IClasspathEntry ) : Option[ IClasspathAttribute ] = {
       import com.carrotgarden.maven.scalor.base.Build._
       entry.getExtraAttributes.find( Param.attrib.scope == _.getName )
     }
@@ -536,9 +541,9 @@ object ScalaIDE {
         scope <- scopeIDE( attrib.getValue )
         resource <- Option( workspaceRoot.findMember( entry.getPath ) )
       } yield {
-        val srcFolder = resource.getLocation
-        val srcFolderRelativeToProject = srcFolder.makeRelativeTo( projectRoot )
-        val name = makeName( srcFolderRelativeToProject )
+        val folderAbsolute = resource.getLocation
+        val folderRelative = folderAbsolute.makeRelativeTo( projectRoot )
+        val name = makeName( folderRelative )
         val setting = ChoiceSetting(
           name    = name, choices = choices, default = EmptyString,
           helpArg = EmptyString, descr = EmptyString

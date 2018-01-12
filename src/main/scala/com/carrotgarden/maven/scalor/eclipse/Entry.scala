@@ -15,6 +15,7 @@ import org.apache.maven.plugin.MojoExecution
 
 import com.carrotgarden.maven.scalor.base
 import com.carrotgarden.maven.scalor.util
+import com.carrotgarden.maven.tools.Description
 
 import org.eclipse.jdt.core.IClasspathEntry
 import org.eclipse.jdt.core.JavaCore
@@ -25,6 +26,8 @@ import org.eclipse.jdt.core.IClasspathAttribute
 import com.carrotgarden.maven.scalor.base.Build.Param
 import org.scalaide.core.SdtConstants
 import com.carrotgarden.maven.scalor.base.ParamsProjectUnit
+import java.nio.file.Files
+import java.nio.file.Paths
 
 /**
  * Manage eclipse .classpath file class path entries.
@@ -46,22 +49,26 @@ trait Entry {
   def configurePathEntry(
     request :      ProjectConfigurationRequest,
     classpath :    IClasspathDescriptor,
-    sourceFolder : File,
-    targetFolder : File,
+    sourceFolder : String, // absolute
+    targetFolder : String, // absolute
     monitor :      IProgressMonitor,
     attribMap :    Map[ String, String ]       = Map(),
     generated :    Boolean                     = false
   ) = {
-    log.info( s"   entry: ${relativePath( request, sourceFolder )} -> ${relativePath( request, targetFolder )}" )
-    val facade = request.getMavenProjectFacade
-    val sourcePath = resolveFullPath( facade, sourceFolder )
-    val targetPath = resolveFullPath( facade, targetFolder )
+    import util.Folder._
+    val project = request.getProject
+    val sourcePath = projectFolder( project, sourceFolder ).getFullPath
+    val targetPath = projectFolder( project, targetFolder ).getFullPath
+    log.info( s"   ${sourcePath} -> ${targetPath}" )
     val entry = classpath.addSourceEntry( sourcePath, targetPath, generated )
     attribMap.foreach {
       case ( key, value ) => entry.setClasspathAttribute( key, value )
     }
   }
 
+  @Description( """
+  Path convention: resolve as absolute.
+  """ )
   def ensureSourceRoots(
     request :    ProjectConfigurationRequest,
     classpath :  IClasspathDescriptor,
@@ -70,64 +77,55 @@ trait Entry {
     attribMap :  Map[ String, String ],
     monitor :    IProgressMonitor
   ) : Unit = {
-    val targetFolder = new File( target ).getCanonicalFile
+    import util.Folder
+    @Description( """
+    Project source/target folders are project-contained.
+    """ )
+    val basedir = Folder( request.getProject.getLocation.toFile.toPath )
+    val targetFolder = basedir.absolute( Paths.get( target ) ).toString
     sourceList.foreach { source =>
-      val sourceFolder = new File( source ).getCanonicalFile
+      val sourceFolder = basedir.absolute( Paths.get( source ) ).toString
       configurePathEntry( request, classpath, sourceFolder, targetFolder, monitor, attribMap )
     }
   }
 
+  def ensureSourceRoots(
+    request :   ProjectConfigurationRequest,
+    classpath : IClasspathDescriptor,
+    build :     base.Build,
+    attribMap : Map[ String, String ],
+    monitor :   IProgressMonitor
+  ) : Unit = {
+    import build._
+    val resourceList = buildResourceFolders.map( _.getDirectory )
+    val sourceList = buildSourceFolders.map( _.getAbsolutePath )
+    val target = buildTargetFolder.getAbsolutePath
+    ensureSourceRoots( request, classpath, resourceList, target, attribMap, monitor )
+    ensureSourceRoots( request, classpath, sourceList, target, attribMap, monitor )
+  }
+
   /**
-   * Configure source/target folder entries.
-   * 
+   * Configure source/target folder class path entries.
+   *
    * Note: register-* goals must be executed before this.
    */
   def ensureSourceRoots(
     request :   ProjectConfigurationRequest,
+    config :    ParamsConfig,
     classpath : IClasspathDescriptor,
     monitor :   IProgressMonitor
   ) : Unit = {
-
-    val project = request.getMavenProject
-    val projectUnit = ParamsProjectUnit( project )
     import Param._
-    val attribMap = Map(
+    val attribAny = Map(
       attrib.optional -> "true"
     )
     import base.Build._
-    for { // see register-macro
-      sourceList <- projectUnit.extractPropertyList( buildMacroSourceFoldersParam )
-      target <- projectUnit.extractProperty( buildMacroTargetParam )
-    } yield {
-      val attribMacro = attribMap + ( attrib.scope -> scope.`macro` )
-      ensureSourceRoots( request, classpath, sourceList.asScala, target, attribMacro, monitor )
-    }
-    { // see register-main
-      val sourceList = project.getCompileSourceRoots.asScala
-      val target = project.getBuild.getOutputDirectory
-      val attribMain = attribMap + ( attrib.scope -> scope.`main` )
-      ensureSourceRoots( request, classpath, sourceList, target, attribMain, monitor )
-    }
-    { // see register-main
-        // TODO absolute vs relative
-      val sourceList = project.getBuild.getResources.asScala.map( _.getDirectory )
-      val target = project.getBuild.getOutputDirectory
-      val attribMain = attribMap + ( attrib.scope -> scope.`main` )
-      ensureSourceRoots( request, classpath, sourceList, target, attribMain, monitor )
-    }
-    { // see register-test
-      val sourceList = project.getTestCompileSourceRoots.asScala
-      val target = project.getBuild.getTestOutputDirectory
-      val attribTest = attribMap + ( attrib.scope -> scope.`test` )
-      ensureSourceRoots( request, classpath, sourceList, target, attribTest, monitor )
-    }
-    { // see register-test
-        // TODO absolute vs relative
-      val sourceList = project.getBuild.getTestResources.asScala.map( _.getDirectory )
-      val target = project.getBuild.getTestOutputDirectory
-      val attribTest = attribMap + ( attrib.scope -> scope.`test` )
-      ensureSourceRoots( request, classpath, sourceList, target, attribTest, monitor )
-    }
+    val attribMacro = attribAny + ( attrib.scope -> scope.`macro` )
+    val attribMain = attribAny + ( attrib.scope -> scope.`main` )
+    val attribTest = attribAny + ( attrib.scope -> scope.`test` )
+    ensureSourceRoots( request, classpath, config.buildMacro, attribMacro, monitor )
+    ensureSourceRoots( request, classpath, config.buildMain, attribMain, monitor )
+    ensureSourceRoots( request, classpath, config.buildTest, attribTest, monitor )
   }
 
   /**

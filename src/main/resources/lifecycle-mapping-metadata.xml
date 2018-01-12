@@ -3,6 +3,7 @@
 
     <lifecycleMappings>
 
+        <!-- TODO -->
         <!-- <lifecycleMapping> -->
         <!-- <packagingType>scala</packagingType> -->
         <!-- <lifecycleMappingId>com.carrotgarden.maven.scalor.EclipsePlugin$LifecycleMapping</lifecycleMappingId> -->
@@ -22,8 +23,8 @@
             <pluginExecutionFilter>
 
                 <!-- Use unique Maven plugin version. -->
-                <groupId>com.carrotgarden.maven</groupId>
-                <artifactId>scalor-maven-plugin_${version.scala.epoch}</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>${project.artifactId}</artifactId>
                 <versionRange>[${project.version}]</versionRange>
                 <goals>
 

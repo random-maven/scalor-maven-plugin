@@ -21,107 +21,86 @@
 
     <properties>
 
-        <tycho.test.jvmArgs>-Xmx800m</tycho.test.jvmArgs>
-        <tycho.surefire.timeout>300</tycho.surefire.timeout>
+        <scala.ide.repo.url>http://download.scala-ide.org/sdk/lithium/e47/scala212/stable/site</scala.ide.repo.url>
+        <m2e.repo.url>https://repository.takari.io/content/sites/m2e.extras/m2e/1.9.0/N/LATEST/</m2e.repo.url>
 
     </properties>
 
+    <repositories>
+        <repository>
+            <id>scala-ide</id>
+            <url>${scala.ide.repo.url}</url>
+            <layout>p2</layout>
+        </repository>
+        <repository>
+            <id>m2e</id>
+            <url>${m2e.repo.url}</url>
+            <layout>p2</layout>
+        </repository>
+    </repositories>
+
     <dependencies>
-
-        <!-- <dependency> -->
-        <!-- <groupId>org.scala-lang</groupId> -->
-        <!-- <artifactId>scala-library</artifactId> -->
-        <!-- </dependency> -->
-
-        <!-- <dependency> -->
-        <!-- <groupId>junit</groupId> -->
-        <!-- <artifactId>junit</artifactId> -->
-        <!-- </dependency> -->
-
+        <!-- Use META-INF/MANIFEST.MF -->
     </dependencies>
 
     <build>
 
         <pluginManagement>
             <plugins>
+
                 <plugin>
                     <groupId>org.eclipse.tycho</groupId>
                     <artifactId>tycho-surefire-plugin</artifactId>
                     <configuration>
+
+                        <!-- Note: make sure CI has Xorg. -->
                         <useUIHarness>true</useUIHarness>
                         <useUIThread>false</useUIThread>
-                        <!-- Kill test JVM if test take too long. -->
-                        <forkedProcessTimeoutInSeconds>${tycho.surefire.timeout}</forkedProcessTimeoutInSeconds>
-                        <argLine>${tycho.test.jvmArgs}</argLine>
+
+                        <!-- Run tests with ordering by name. -->
+                        <runOrder>alphabetical</runOrder>
+
+                        <!-- Kill test if takes too long. -->
+                        <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+
+                        <!-- Enough memory for Eclipse to start. -->
+                        <argLine>-Xmx1G</argLine>
+
+                        <!-- Expose platform console logger output. -->
+                        <showEclipseLog>true</showEclipseLog>
+
+                        <!-- Test discovery pattern. -->
                         <includes>
                             <include>**/*Test.class</include>
                         </includes>
+
+                        <!-- Enable Scala IDE weaving. -->
+                        <frameworkExtensions>
+                            <frameworkExtension>
+                                <groupId>org.eclipse.platform</groupId>
+                                <artifactId>org.eclipse.equinox.weaving.hook</artifactId>
+                                <version>1.2.0</version>
+                            </frameworkExtension>
+                        </frameworkExtensions>
+                        <bundleStartLevel>
+                            <bundle>
+                                <id>org.eclipse.equinox.weaving.aspectj</id>
+                                <level>2</level>
+                                <autoStart>true</autoStart>
+                            </bundle>
+                        </bundleStartLevel>
+
+                        <!-- Suppress Scala IDE diagnostics dialog. -->
+                        <systemProperties>
+                            <sdtcore.headless>true</sdtcore.headless>
+                        </systemProperties>
+
                     </configuration>
                 </plugin>
+
             </plugins>
         </pluginManagement>
 
-        <plugins>
-
-            <!-- <plugin> -->
-
-            <!-- <groupId>@project.groupId@</groupId> -->
-            <!-- <artifactId>@project.artifactId@</artifactId> -->
-            <!-- <version>@project.version@</version> -->
-
-            <!-- <groupId>com.carrotgarden.maven</groupId> -->
-            <!-- <artifactId>scalor-maven-plugin_2.12</artifactId> -->
-            <!-- <version>1.0.0.20180103204547</version> -->
-
-            <!-- Activate scalor life cycle. -->
-            <!-- <extensions>true</extensions> -->
-
-            <!-- <configuration> -->
-
-            <!-- <buildMainSourceJavaFolders> -->
-            <!-- <folder>${project.basedir}/src</folder> -->
-            <!-- </buildMainSourceJavaFolders> -->
-
-            <!-- <defineBridge> -->
-            <!-- <dependency> -->
-            <!-- <groupId>org.scala-sbt</groupId> -->
-            <!-- <artifactId>compiler-bridge_${version.scala.epoch}</artifactId> -->
-            <!-- <version>${version.scala.zinc}</version> -->
-            <!-- </dependency> -->
-            <!-- </defineBridge> -->
-            <!-- <defineCompiler> -->
-            <!-- <dependency> -->
-            <!-- <groupId>org.scala-lang</groupId> -->
-            <!-- <artifactId>scala-compiler</artifactId> -->
-            <!-- <version>${version.scala.release}</version> -->
-            <!-- </dependency> -->
-            <!-- </defineCompiler> -->
-            <!-- <definePluginList> -->
-            <!-- </definePluginList> -->
-
-            <!-- </configuration> -->
-
-            <!-- <executions> -->
-            <!-- <execution> -->
-            <!-- <goals> -->
-
-            <!-- <goal>eclipse-config</goal> -->
-
-            <!-- <goal>register-main</goal> -->
-
-            <!-- <goal>clean-main</goal> -->
-
-            <!-- <goal>compile-main</goal> -->
-
-            <!-- <goal>prepack-main</goal> -->
-
-            <!-- </goals> -->
-            <!-- </execution> -->
-            <!-- </executions> -->
-
-            <!-- </plugin> -->
-
-        </plugins>
     </build>
 
 </project>

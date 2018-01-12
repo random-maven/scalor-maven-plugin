@@ -20,12 +20,16 @@ import com.carrotgarden.maven.tools.Description
 import java.util.Arrays
 import java.util.Collections
 import org.apache.maven.model.Resource
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.Path
 
 /**
  * Shared register mojo interface.
  * Register Java, Scala, Resource folders for given compilation scope.
  */
 trait RegisterAnyMojo extends AbstractMojo
+  with base.Dir
   with base.Mojo
   with base.Params
   with base.Logging
@@ -33,7 +37,7 @@ trait RegisterAnyMojo extends AbstractMojo
   with base.BuildEnsure
   with base.BuildAnySources
   with base.BuildAnyTarget
-  with eclipse.Build {
+  with eclipse.Context {
 
   type RegistrationFunction[ T ] = ( T => Unit )
 
@@ -49,11 +53,16 @@ trait RegisterAnyMojo extends AbstractMojo
   /**
    * Detect if given resource root is already registered.
    */
-  def hasResourceRoot( root : Resource ) =
-    resourceRootList.asScala.find( _.getDirectory == root.getDirectory ).isDefined
+  def hasResourceRoot( root : Resource ) = {
+    val rootPath = Paths.get( root.getDirectory )
+    resourceRootList.asScala
+      .map( resource => Paths.get( resource.getDirectory ) )
+      .find( testPath => basedir.isSamePath( testPath, rootPath ) )
+      .isDefined
+  }
 
   /**
-   * Report currently registered project resource roots.
+   * Provide currently registered project resource roots.
    */
   def resourceRootList : java.util.List[ Resource ]
 
@@ -65,7 +74,12 @@ trait RegisterAnyMojo extends AbstractMojo
   /**
    * Detect if given source root is already registered.
    */
-  def hasSourceRoot( root : String ) = sourceRootList.contains( root )
+  def hasSourceRoot( rootPath : Path ) = {
+    sourceRootList.asScala
+      .map( entry => Paths.get( entry ) )
+      .find( testPath => basedir.isSamePath( testPath, rootPath ) )
+      .isDefined
+  }
 
   /**
    * Report currently registered project source roots.
@@ -80,7 +94,10 @@ trait RegisterAnyMojo extends AbstractMojo
   /**
    * Detect if given target root is already registered.
    */
-  def hasTargetRoot( root : String ) : Boolean = root == targetRoot
+  def hasTargetRoot( rootPath : Path ) : Boolean = {
+    val testPath = Paths.get( targetRoot )
+    basedir.isSamePath( rootPath, testPath )
+  }
 
   /**
    * Report currently registered project target root.
@@ -93,48 +110,58 @@ trait RegisterAnyMojo extends AbstractMojo
   def registerTargetRoot : RegistrationFunction[ String ]
 
   /**
-   * Business logic of adding folders to the project model.
+   * Business logic of adding root folders to the project model.
    */
+  @Description( """
+  Path convention: resolve as absolute.
+  """ )
   def perfromRegister() : Unit = {
 
-    buildSourceFolders.map( _.getCanonicalPath ).foreach { path : String =>
-      if ( hasSourceRoot( path ) ) {
-        say.info( "Already registered:   " + path )
-      } else {
-        say.info( "Register source root: " + path )
-        registerSourceRoot( path )
+    buildResourceFolders
+      .foreach { resource : Resource =>
+        val path = basedir.absolute( Paths.get( resource.getDirectory ) )
+        if ( hasResourceRoot( resource ) ) {
+          say.info( "Already registered: " + path )
+        } else {
+          say.info( "Registering root:   " + path )
+          registerResourceRoot( resource )
+        }
       }
-    }
 
-    buildResourceFolders.foreach { path : Resource =>
-      if ( hasResourceRoot( path ) ) {
-        say.info( "Already registered:   " + path.getDirectory )
-      } else {
-        say.info( "Register source root: " + path )
-        registerResourceRoot( path )
+    buildSourceFolders
+      .map( file => basedir.absolute( file.toPath ) )
+      .foreach { path : Path =>
+        if ( hasSourceRoot( path ) ) {
+          say.info( "Already registered: " + path )
+        } else {
+          say.info( "Registering root:   " + path )
+          registerSourceRoot( path.toString )
+        }
       }
-    }
 
-    List( buildTargetFolder.getCanonicalPath ).foreach { path : String =>
-      if ( hasTargetRoot( path ) ) {
-        say.info( "Already registered:   " + path )
-      } else {
-        say.info( "Register target root: " + path )
-        registerTargetRoot( path )
+    List( buildTargetFolder )
+      .map( file => basedir.absolute( file.toPath ) )
+      .foreach { path : Path =>
+        if ( hasTargetRoot( path ) ) {
+          say.info( "Already registered: " + path )
+        } else {
+          say.info( "Registering root:   " + path )
+          // registerTargetRoot( path.toString )
+        }
       }
-    }
 
     if ( buildEnsureFolders ) {
       say.info( "Ensuring build folders." )
-      buildResourceFolders.foreach { resource =>
-        // TODO absolute vs relative
-        val folder = new File( resource.getDirectory )
-        ensureFolder( folder )
-      }
-      buildSourceFolders.foreach { folder =>
-        ensureFolder( folder )
-      }
-      ensureFolder( buildTargetFolder )
+      buildResourceFolders
+        .foreach { resource : Resource =>
+          val path = basedir.absolute( Paths.get( resource.getDirectory ) )
+          ensureFolder( path )
+        };
+      ( buildSourceFolders ++ List( buildTargetFolder ) )
+        .foreach { file : File =>
+          val path = basedir.absolute( file.toPath )
+          ensureFolder( path )
+        }
     }
 
   }
@@ -144,10 +171,6 @@ trait RegisterAnyMojo extends AbstractMojo
       reportSkipReason( "Skipping disabled goal execution." )
       return
     }
-    //    if ( hasIncremental ) {
-    //      reportSkipReason( "Skipping incremental build invocation." )
-    //      return
-    //    }
     perfromRegister()
   }
 
@@ -182,23 +205,26 @@ class RegisterMacroMojo extends RegisterAnyMojo
 
   // TODO support macro resources
 
-  override def resourceRootList =
-    Collections.emptyList()
+  //  override def resourceRootList =     Collections.emptyList()
+  //  override def registerResourceRoot =     ( Resource => () )
+  //  override def sourceRootList =
+  //    extractPropertyList( buildMacroSourceFoldersParam ).getOrElse( Collections.emptyList() )
+  //
+  //  override def registerSourceRoot =
+  //    persistPropertyList( buildMacroSourceFoldersParam, _ )
+  //
+  //  override def targetRoot : String =
+  //    extractProperty( buildMacroTargetParam ).getOrElse( "." )
+  //
+  //  override def registerTargetRoot =
+  //    persistProperty( buildMacroTargetParam, _ )
 
-  override def registerResourceRoot =
-    ( Resource => () )
-
-  override def sourceRootList =
-    extractPropertyList( buildMacroSourceFoldersParam ).getOrElse( Collections.emptyList() )
-
-  override def registerSourceRoot =
-    persistPropertyList( buildMacroSourceFoldersParam, _ )
-
-  override def targetRoot : String =
-    extractProperty( buildMacroTargetParam ).getOrElse( "." )
-
-  override def registerTargetRoot =
-    persistProperty( buildMacroTargetParam, _ )
+  override def resourceRootList = project.getBuild.getResources
+  override def registerResourceRoot = project.getBuild.addResource _
+  override def sourceRootList = project.getCompileSourceRoots
+  override def registerSourceRoot = project.addCompileSourceRoot _
+  override def targetRoot : String = project.getBuild.getOutputDirectory
+  override def registerTargetRoot = project.getBuild.setOutputDirectory _
 
 }
 
@@ -211,6 +237,7 @@ Register Java, Scala, Resource folders for compilation scope=main.
   requiresDependencyResolution = ResolutionScope.NONE
 )
 class RegisterMainMojo extends RegisterAnyMojo
+  with base.BuildMain
   with base.BuildMainSources
   with base.BuildMainTarget {
 

@@ -17,7 +17,7 @@
                 <!-- Use explicit id to bypass flatten. -->
                 <projectId>random-maven/scalor-maven-plugin</projectId>
                 <ribbonOrientation>right</ribbonOrientation>
-                <ribbonColor>gray</ribbonColor>
+                <ribbonColor>orange</ribbonColor>
             </gitHub>
         </fluidoSkin>
     </custom>
@@ -25,38 +25,20 @@
     <body>
 
         <links>
-            <!-- <item name="Maven" href="http://maven.apache.org/" /> -->
+            <!-- <item name="Github Project" href="https://github.com/random-maven/scalor-maven-plugin" /> -->
         </links>
 
         <breadcrumbs>
+            <!-- <item name="Home" href="/" /> -->
+            <!-- <item name="Github Project" href="https://github.com/random-maven/scalor-maven-plugin" /> -->
             <item name="${this.name}" href="${this.url}" />
         </breadcrumbs>
 
-        <menu name="Overview">
+        <menu name="Index">
 
-            <!-- <item name="Intro" href="index.html" /> -->
+            <!-- <item name="Index" href="index.html" /> -->
 
-            <item name="Goals" href="plugin-info.html" />
-
-            <item name="eclipse-config" href="eclipse-config-mojo.html" />
-
-            <item name="register-macro" href="register-macro-mojo.html" />
-            <item name="register-main" href="register-main-mojo.html" />
-            <item name="register-test" href="register-test-mojo.html" />
-
-            <item name="compile-macro" href="compile-macro-mojo.html" />
-            <item name="compile-main" href="compile-main-mojo.html" />
-            <item name="compile-test" href="compile-test-mojo.html" />
-
-            <item name="prepack-macro" href="prepack-macro-mojo.html" />
-            <item name="prepack-main" href="prepack-main-mojo.html" />
-            <item name="prepack-test" href="prepack-test-mojo.html" />
-
-            <item name="link-scala-js-main" href="link-scala-js-main-mojo.html" />
-            <item name="link-scala-js-test" href="link-scala-js-test-mojo.html" />
-
-            <item name="prepack-linker-main" href="prepack-linker-main-mojo.html" />
-            <item name="prepack-linker-test" href="prepack-linker-test-mojo.html" />
+            <item name="Goals 2.12" href="https://random-maven.github.io/scalor-maven-plugin/2.12/plugin-info.html" />
 
             <!-- <item name="Usage" href="usage.html" /> -->
             <!-- <item name="FAQ" href="faq.html" /> -->

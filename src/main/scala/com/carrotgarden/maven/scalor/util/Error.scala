@@ -4,11 +4,10 @@ import scala.util.{ Either, Failure, Left, Right, Success, Try }
 
 import scala.language.implicitConversions
 
+/**
+ * Errors support.
+ */
 object Error {
-
-  object Throw {
-    def apply( message : String ) = throw new RuntimeException( message )
-  }
 
   implicit def Either_Try[ E <: Throwable, R ]( either : Either[ E, R ] ) : Try[ R ] = {
     either match {
@@ -26,7 +25,14 @@ object Error {
   }
 
   /**
-   * Capture all exceptions, including "fatal" for standard Try.
+   * Produce a runtime exception.
+   */
+  object Throw {
+    def apply( message : String ) = throw new RuntimeException( message )
+  }
+
+  /**
+   * Capture all exceptions, including "fatal" for standard [[Try]].
    */
   object TryHard {
     def apply[ T ]( block : => T ) : Try[ T ] =

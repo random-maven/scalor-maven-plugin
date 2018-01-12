@@ -11,15 +11,17 @@ import org.apache.maven.plugins.annotations.LifecyclePhase
 import org.apache.maven.plugins.annotations.LifecyclePhase._
 
 import com.carrotgarden.maven.scalor.A
+import com.carrotgarden.maven.scalor.meta
+import com.carrotgarden.maven.scalor.util.Error._
 
 /**
  * Provide default Maven lifecycle for Scalor plugin.
- * Note: this does not work in Eclipse / M2E environment.
- * Use only for "plain" command line Maven mode.
+ * 
+ * FIXME No M2E support https://bugs.eclipse.org/bugs/show_bug.cgi?id=486737
  */
 @Component(
-  role = classOf[ AbstractMavenLifecycleParticipant ],
-  hint = "scalor"
+  role = Lifecycle.Role,
+  hint = Lifecycle.Hint
 )
 class Lifecycle extends AbstractMavenLifecycleParticipant {
 
@@ -115,9 +117,20 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
         registerExecution( PACKAGE, `sources-test` )
 
       case None =>
-        throw new RuntimeException( "Missing scalor plugin." )
+        Throw( "Missing scalor plugin." )
     }
 
   }
 
+}
+
+/**
+ * 
+ */
+object Lifecycle {
+  import meta.Macro
+  final val Role = classOf[ AbstractMavenLifecycleParticipant ]
+  final val Impl = classOf[ Lifecycle ]
+  // Globally unique component identity, once per build.
+  final val Hint = "scalor-cycle" // Macro.guidOf( "com.carrotgarden.maven.scalor.extend.Lifecycle" )
 }

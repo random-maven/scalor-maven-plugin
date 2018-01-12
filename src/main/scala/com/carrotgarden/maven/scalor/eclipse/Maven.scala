@@ -1,35 +1,34 @@
 package com.carrotgarden.maven.scalor.eclipse
 
-import scala.collection.JavaConverters._
+import java.io.File
 
-import org.apache.maven.project.MavenProject
-import org.apache.maven.plugin.MojoExecution
-import org.eclipse.core.runtime.IProgressMonitor
+import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.reflect.ClassTag
-import org.eclipse.m2e.core.project.IMavenProjectFacade
+
+import org.apache.maven.RepositoryUtils
+import org.apache.maven.artifact.Artifact
+import org.apache.maven.model.Dependency
+import org.apache.maven.plugin.MojoExecution
+import org.apache.maven.project.MavenProject
+import org.codehaus.plexus.util.xml.Xpp3Dom
+import org.eclipse.aether.util.artifact.JavaScopes
+import org.eclipse.core.runtime.IPath
+import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.m2e.core.MavenPlugin
+import org.eclipse.m2e.core.internal.MavenPluginActivator
 import org.eclipse.m2e.core.internal.project.registry.MavenProjectFacade
 import org.eclipse.m2e.core.internal.project.registry.ProjectRegistryManager
-import org.eclipse.m2e.core.project.configurator.AbstractProjectConfigurator
-import com.carrotgarden.maven.scalor.A
-import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
-import java.io.File
+import org.eclipse.m2e.core.project.IMavenProjectFacade
 import org.eclipse.m2e.core.project.MavenProjectUtils
-import org.eclipse.core.runtime.IPath
-import org.eclipse.jdt.core.JavaCore
-import org.eclipse.jdt.core.IClasspathEntry
+import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
+
+import com.carrotgarden.maven.scalor.A
+import com.carrotgarden.maven.scalor.resolve
+import com.carrotgarden.maven.scalor.util
+import org.eclipse.core.resources.IProject
 import org.eclipse.core.runtime.Path
-import org.apache.maven.model.Dependency
-import org.eclipse.m2e.core.MavenPlugin
-import org.apache.maven.artifact.Artifact
-import org.eclipse.m2e.core.internal.MavenPluginActivator
-import org.apache.maven.artifact.DefaultArtifact
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter
-import org.apache.maven.RepositoryUtils
-
-import org.eclipse.aether.util.artifact.JavaScopes // XXX
-
-import com.carrotgarden.maven.scalor._
-import org.codehaus.plexus.util.xml.Xpp3Dom
+import org.eclipse.core.resources.IFolder
+import org.apache.maven.plugin.descriptor.PluginDescriptor
 
 /**
  * Provide M2E infrastructure functions.
@@ -82,24 +81,40 @@ trait Maven {
 object Maven {
 
   /**
-   * Resolve external file against the maven project.
+   * Relative path of project file. File must be inside the project.
    */
-  def relativePath(
-    request : ProjectConfigurationRequest,
-    file :    File
-  ) = {
-    val project = request.getMavenProjectFacade.getProject
-    MavenProjectUtils.getProjectRelativePath( project, file.getCanonicalPath );
+  def relativePath( project : IProject, file : File ) = {
+    import util.Folder._
+    MavenProjectUtils.getProjectRelativePath( project, ensureAbsolutePath( file ) );
   }
 
   /**
    * Absolute path of project file. File must be inside the project.
    */
-  def resolveFullPath( facade : IMavenProjectFacade, file : File ) : IPath = {
-    val project = facade.getProject
-    val relativePath = MavenProjectUtils.getProjectRelativePath( project, file.getCanonicalPath )
-    val absolutePath = project.getFullPath.append( relativePath )
-    absolutePath
+  def absolutePath( project : IProject, file : File ) : IPath = {
+    project.getFullPath.append( relativePath( project, file ) )
+  }
+
+  def projectFolder( project : IProject, absolutePath : String ) : IFolder = {
+    val location = project.getLocation
+    if ( location.equals( Path.fromOSString( absolutePath ) ) ) {
+      project.getFolder( location )
+    } else {
+      project.getFolder( projectRelative( project, absolutePath ) )
+    }
+  }
+
+  def projectRelative( project : IProject, absolutePath : String ) : IPath = {
+    val basedir = project.getLocation.toFile // absolute
+    val resolve =
+      if ( absolutePath.equals( basedir.getAbsolutePath ) ) {
+        "."
+      } else if ( absolutePath.startsWith( basedir.getAbsolutePath ) ) {
+        absolutePath.substring( basedir.getAbsolutePath().length() + 1 )
+      } else { // outside the project
+        absolutePath
+      }
+    new Path( resolve.replace( '\\', '/' ) )
   }
 
   /**
@@ -127,6 +142,31 @@ object Maven {
         execution.setConfiguration( configuration )
         execution
       }
+  }
+
+  /**
+   * Provide descriptor of this plugin.
+   */
+  def pluginDescriptor(
+    facade :  IMavenProjectFacade,
+    monitor : IProgressMonitor
+  ) : PluginDescriptor = {
+    val execution = executionDefinition( facade, A.mojo.`eclipse-config`, monitor ).get
+    execution.getMojoDescriptor.getPluginDescriptor
+  }
+
+  /**
+   * Access context of this (plugin,project).
+   */
+  def pluginContext(
+    facade :  IMavenProjectFacade,
+    monitor : IProgressMonitor
+  ) : java.util.Map[ String, Object ] = {
+    val maven = MavenPlugin.getMaven
+    val context = maven.getExecutionContext
+    val plugin = pluginDescriptor( facade, monitor )
+    val project = facade.getMavenProject
+    context.getSession.getPluginContext( plugin, project )
   }
 
   /**
@@ -173,7 +213,7 @@ object Maven {
     artifactList
   }
 
-  import base.Params._
+  import com.carrotgarden.maven.scalor.base.Params._
 
   def resolveDefine(
     request : ProjectConfigurationRequest,

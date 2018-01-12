@@ -3,20 +3,28 @@ package com.carrotgarden.maven.scalor
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.jface.viewers.IDecoration
 import org.eclipse.jface.viewers.ILightweightLabelDecorator
-import org.eclipse.jface.viewers.LabelProvider
 import org.eclipse.m2e.core.project.IMavenProjectFacade
 import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
 import org.eclipse.m2e.jdt.IClasspathDescriptor
 import org.eclipse.m2e.jdt.IJavaProjectConfigurator
 import org.osgi.framework.BundleContext
+import org.eclipse.jface.viewers.LabelProvider
 
 import com.carrotgarden.maven.tools.Description
 import org.eclipse.core.runtime.SubMonitor
 import org.eclipse.m2e.core.project.configurator.AbstractCustomizableLifecycleMapping
+import org.apache.maven.plugin.MojoExecution
+import org.eclipse.m2e.core.lifecyclemapping.model.IPluginExecutionMetadata
+import org.eclipse.m2e.core.project.configurator.AbstractBuildParticipant
+import org.eclipse.m2e.core.project.configurator.AbstractProjectConfigurator
+import org.eclipse.m2e.core.internal.embedder.IMavenComponentContributor
 
 /**
  * Eclipse companion plugin installed by this Maven plugin.
  */
+@Description( """
+Keep in sync with src/main/resources/plugin.xml.
+""" )
 object EclipsePlugin {
 
   @volatile private var instance : Activator = _
@@ -66,7 +74,25 @@ object EclipsePlugin {
 
     lazy val plugin = EclipsePlugin()
 
-    override lazy val log = plugin.log
+    lazy val log = plugin.log
+
+    /**
+     * Cache during configurator life cycle.
+     */
+    lazy val cached = meta.Cached()
+
+    /**
+     * M2E build participant enables executions.
+     */
+    override def getBuildParticipant(
+      facade :    IMavenProjectFacade,
+      execution : MojoExecution,
+      metadata :  IPluginExecutionMetadata
+    ) : AbstractBuildParticipant = {
+      val subMon = SubMonitor.convert( null )
+      val config = cached( paramsConfig( facade, subMon ) )
+      new eclipse.Build.Participant( log, config, execution )
+    }
 
     /**
      * M2E configuration step #1.
@@ -112,7 +138,7 @@ object EclipsePlugin {
       val facade = request.getMavenProjectFacade
       val config = cached( paramsConfig( facade, subMon.split( 10 ) ) )
       val assert = cached( assertVersion( config, subMon.split( 10 ) ) )
-      ensureSourceRoots( request, classpath, subMon.split( 20 ) )
+      ensureSourceRoots( request, config, classpath, subMon.split( 20 ) )
       ensureScalaLibrary( request, config, classpath, subMon.split( 20 ) )
       ensureOrderTopLevel( request, config, classpath, subMon.split( 20 ) )
     }
@@ -139,12 +165,11 @@ object EclipsePlugin {
       val facade = request.getMavenProjectFacade
       val config = cached( paramsConfig( facade, subMon.split( 10 ) ) )
       val assert = cached( assertVersion( config, subMon.split( 10 ) ) )
-      ensureProjectNature( request, config, subMon.split( 10 ) )
       ensureProjectComment( request, config, subMon.split( 10 ) )
+      ensureProjectNature( request, config, subMon.split( 10 ) )
       ensureOrderBuilder( request, config, subMon.split( 10 ) )
       ensureOrderNature( request, config, subMon.split( 10 ) )
       configureScalaIDE( request, config, subMon.split( 30 ) )
-      // TODO project refresh
     }
 
   }
@@ -153,6 +178,7 @@ object EclipsePlugin {
    * Eclipse UI decorator contributed by this Eclipse plugin.
    */
   @Description( """
+  TODO
   Keep in sync with src/main/resources/plugin.xml.
   """ )
   class Decorator extends LabelProvider
@@ -167,7 +193,7 @@ object EclipsePlugin {
       classOf[ ClassPathContainer ] -> processContainer _
     )
 
-    def hasContext = false // TODO
+    def hasContext = false
 
     override def decorate( element : Object, decoration : IDecoration ) : Unit = {
       if ( hasContext ) {
@@ -183,10 +209,31 @@ object EclipsePlugin {
    * Eclipse M2E lifecycle mapping contributed by this Eclipse plugin.
    */
   @Description( """
+  TODO
   Keep in sync with src/main/resources/plugin.xml.
   """ )
   class LifecycleMapping extends AbstractCustomizableLifecycleMapping {
 
+  }
+
+  /**
+   * Contribute this plugin components into M2E runtime environment.
+   */
+  @Description( """
+  TODO
+  FIXME not activated on dynamic bundle install
+  Keep in sync with src/main/resources/plugin.xml.
+  """ )
+  class Injector extends IMavenComponentContributor {
+    import IMavenComponentContributor.IMavenComponentBinder
+    import extend.Lifecycle
+    lazy val plugin = EclipsePlugin()
+    lazy val log = plugin.log
+    override def contribute( binder : IMavenComponentBinder ) : Unit = {
+      log.context( "inject" )
+      log.info( s"Provide lifecycle extension ${Lifecycle.Hint}" )
+      binder.bind( Lifecycle.Role, Lifecycle.Impl, Lifecycle.Hint )
+    }
   }
 
 }

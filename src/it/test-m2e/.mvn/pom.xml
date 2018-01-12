@@ -1832,6 +1832,7 @@
                                 -deprecation
                                 -unchecked
                                 -feature
+                                -compileorder:Mixed
                             </zincCompileOptions>
                             <defineBridge>
                                 <dependency>
@@ -1912,6 +1913,7 @@
                                 -deprecation
                                 -unchecked
                                 -feature
+                                -compileorder:Mixed
                                 -P:scalajs:sjsDefinedByDefault
                             </zincCompileOptions>
                             <defineBridge>
@@ -1998,6 +2000,7 @@
                                 -deprecation
                                 -unchecked
                                 -feature
+                                -compileorder:Mixed
                                 -P:scalajs:sjsDefinedByDefault
                             </zincCompileOptions>
                             <defineBridge>
@@ -2061,20 +2064,21 @@
 
         <!-- Use custom maven plugin annotations. -->
         <profile>
-            <id>plug-anno</id>
+            <id>plugin-extra</id>
             <activation>
                 <file>
-                    <exists>.mvn/pom-plug-anno.md</exists>
+                    <exists>.mvn/pom-plugin-extra.md</exists>
                 </file>
             </activation>
             <properties>
-                <version.maven.plug.anno>1.0.20171214023519</version.maven.plug.anno>
+                <version.maven.plugin.extra>1.0.20171214023519</version.maven.plugin.extra>
             </properties>
             <dependencies>
+                <!-- Provide custom annotations. -->
                 <dependency>
                     <groupId>com.carrotgarden.maven</groupId>
                     <artifactId>maven-plugin-tools-annotations</artifactId>
-                    <version>${version.maven.plug.anno}</version>
+                    <version>${version.maven.plugin.extra}</version>
                 </dependency>
             </dependencies>
             <build>
@@ -2083,13 +2087,15 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-plugin-plugin</artifactId>
                         <dependencies>
+                            <!-- Provide custom extractor. -->
                             <dependency>
                                 <groupId>com.carrotgarden.maven</groupId>
                                 <artifactId>maven-plugin-tools-annotations</artifactId>
-                                <version>${version.maven.plug.anno}</version>
+                                <version>${version.maven.plugin.extra}</version>
                             </dependency>
                         </dependencies>
                         <configuration>
+                            <!-- Use only custom extractor. -->
                             <extractors>
                                 <extractor>java-annotations-extra</extractor>
                             </extractors>
@@ -5301,6 +5307,13 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <!-- GPG 2.0 options -->
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

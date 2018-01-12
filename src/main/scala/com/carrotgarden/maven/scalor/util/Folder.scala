@@ -17,14 +17,101 @@ import java.nio.charset.Charset
 import scala.language.implicitConversions
 
 /**
+ * Operations against base folder.
+ */
+case class Folder( root : Path ) {
+
+  require( root.isAbsolute(), "Expecting absolute base." )
+
+  lazy val base = root.toAbsolutePath().normalize()
+
+  /**
+   * Match absolute normalized path.
+   */
+  def isSamePath( path1 : Path, path2 : Path ) : Boolean =
+    Folder.isSamePath( base, path1, path2 )
+
+  /**
+   * String absolute normalized path.
+   */
+  def textPath( path : Path ) : String =
+    Folder.textPath( base, path )
+
+  /**
+   * Absolute normalized path.
+   */
+  def absolute( path : Path ) : Path =
+    if ( path.isAbsolute() ) path.normalize()
+    else base.resolve( path ).toAbsolutePath().normalize()
+
+  /**
+   * Relative normalized path.
+   */
+  def relative( path : Path ) : Path =
+    base.relativize( path ).normalize()
+
+}
+
+/**
  * Common file system operations.
  */
 object Folder {
+
+  def textPath( base : Path, path : Path ) : String = {
+    if ( path.isAbsolute() ) {
+      path.normalize().toString()
+    } else {
+      base.resolve( path ).toAbsolutePath().normalize().toString()
+    }
+  }
+
+  /**
+   * Match absolute normalized path.
+   */
+  def isSamePath( base : Path, path1 : Path, path2 : Path ) : Boolean = {
+    textPath( base, path1 ) == textPath( base, path2 )
+  }
+
+  /**
+   * Enforce path resolution.
+   * Absolute path does not resolve symbolic links.
+   */
+  def ensureAbsoluteFile( file : File ) : File = {
+    file.getAbsoluteFile
+  }
+
+  /**
+   * Enforce path resolution.
+   * Absolute path does not resolve symbolic links.
+   */
+  def ensureAbsolutePath( file : File ) : String = {
+    file.getAbsolutePath
+  }
+
+  /**
+   * Enforce path resolution.
+   * Canonical path resolves symbolic links.
+   */
+  def ensureCanonicalFile( file : File ) : File = {
+    file.getCanonicalFile
+  }
+
+  /**
+   * Enforce path resolution.
+   * Canonical path resolves symbolic links.
+   */
+  def ensureCanonicalPath( file : File ) : String = {
+    file.getCanonicalPath
+  }
 
   def ensureFolder( dir : File ) : Unit = {
     if ( !dir.exists() ) {
       dir.mkdirs()
     }
+  }
+
+  def ensureFolder( dir : Path ) : Unit = {
+    ensureFolder(dir.toFile) // work around travis ci
   }
 
   def ensureParent( file : File ) : Unit = {
@@ -51,7 +138,7 @@ object Folder {
     var limit = list.length
     while ( index < limit ) {
       val file = list( index ); index += 1
-      if ( file.isFile() && regex.matcher( file.getAbsolutePath ).matches() ) {
+      if ( file.isFile() && regex.matcher( ensureAbsolutePath( file ) ).matches() ) {
         fileList.add( file )
       } else if ( file.isDirectory() ) {
         fileCollectByRegex( file, regex, fileList )
@@ -59,26 +146,26 @@ object Folder {
     }
   }
 
-  def findJarByResource( loader : ClassLoader, resource : String ) : Array[ File ] = {
-    val iter = loader.getResources( resource )
-    val list = new HashSet[ File ]( 16 )
-    while ( iter.hasMoreElements() ) {
-      val url = iter.nextElement()
-      val con = url.openConnection
-      //      if(con.isInstanceOf[FileURLConnection]) {
-      //
-      //      }
-      val fileUrl = if ( con.isInstanceOf[ JarURLConnection ] ) {
-        val jarCon = con.asInstanceOf[ JarURLConnection ]
-        jarCon.getJarFileURL
-      } else {
-        url
-      }
-      val path = Paths.get( fileUrl.toURI )
-      list.add( path.toFile.getCanonicalFile )
-    }
-    list.toArray( Array[ File ]() )
-  }
+  //  def findJarByResource( loader : ClassLoader, resource : String ) : Array[ File ] = {
+  //    val iter = loader.getResources( resource )
+  //    val list = new HashSet[ File ]( 16 )
+  //    while ( iter.hasMoreElements() ) {
+  //      val url = iter.nextElement()
+  //      val con = url.openConnection
+  //      //      if(con.isInstanceOf[FileURLConnection]) {
+  //      //
+  //      //      }
+  //      val fileUrl = if ( con.isInstanceOf[ JarURLConnection ] ) {
+  //        val jarCon = con.asInstanceOf[ JarURLConnection ]
+  //        jarCon.getJarFileURL
+  //      } else {
+  //        url
+  //      }
+  //      val path = Paths.get( fileUrl.toURI )
+  //      list.add( path.toFile ) // XXX
+  //    }
+  //    list.toArray( Array[ File ]() )
+  //  }
 
   trait TransferListener {
     def onFile( source : Path, target : Path, relative : Path ) : Unit = ()
@@ -90,6 +177,7 @@ object Folder {
   import java.nio.file.StandardCopyOption
   import java.nio.file.StandardCopyOption._
 
+  // FIXME copy only delta
   def transferFolder(
     sourceFolder : Path,
     targetFolder : Path,
@@ -98,8 +186,8 @@ object Folder {
       REPLACE_EXISTING, COPY_ATTRIBUTES
     )
   ) : Unit = {
-    require( Files.isDirectory( sourceFolder ) )
-    require( Files.isDirectory( targetFolder ) )
+    require( Files.isDirectory( sourceFolder ), s"Expecting folder ${sourceFolder}" )
+    require( Files.isDirectory( targetFolder ), s"Expecting folder ${targetFolder}" )
     val consumer = new Consumer[ Path ] {
       override def accept( sourcePath : Path ) = {
         val relative = sourceFolder.relativize( sourcePath )
@@ -179,15 +267,15 @@ object Folder {
     Files.write( file.toPath, text.getBytes( charset ) )
   }
 
-  def convertFileString( source : Array[ File ] ) : Array[ String ] = {
-    val length = source.length
-    val target = Array.ofDim[ String ]( length )
-    var index = 0
-    while ( index < length ) {
-      target( index ) = source( index ).getCanonicalPath
-      index += 1
-    }
-    target
-  }
+  //  def convertFileString( source : Array[ File ] ) : Array[ String ] = {
+  //    val length = source.length
+  //    val target = Array.ofDim[ String ]( length )
+  //    var index = 0
+  //    while ( index < length ) {
+  //      target( index ) = source( index ) // XXX
+  //      index += 1
+  //    }
+  //    target
+  //  }
 
 }

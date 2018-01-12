@@ -5,6 +5,7 @@ import com.carrotgarden.maven.scalor.A
 
 /**
  * Simple logging facade.
+ * 
  * Abstract away from Eclipse Console, Maven Console, etc.
  */
 trait Logging {
@@ -20,6 +21,7 @@ object Logging {
    * Simple logging facade.
    */
   trait AnyLog {
+    
     /**
      *  Thread-local logger context.
      */

@@ -18,10 +18,12 @@ import scala.collection.JavaConverters._
 import com.carrotgarden.maven.tools.Description
 import org.apache.maven.toolchain.ToolchainManager
 
+import com.carrotgarden.maven.scalor.util
+
 /**
  * Shared mojo execution configuration parameters.
  *
- * Provides components injected by maven runtime.
+ * Provides components injected by Maven runtime.
  */
 trait Params extends ParamsProject {
 
@@ -114,7 +116,9 @@ trait ParamsProject {
   /**
    * Resolved project dependencies with matching scopes.
    */
+  // FIXME remove
   def projectClassPath( bucket : Scope.Bucket = Scope.Select.Test ) : Array[ File ] = {
+    import util.Folder._
     val list = new ArrayList[ File ]()
     val iter = project.getArtifacts.iterator
     while ( iter.hasNext ) {
@@ -127,7 +131,7 @@ trait ParamsProject {
         if ( hasResolve && hasBucket ) {
           val file = artifact.getFile
           if ( file != null ) {
-            list.add( file.getCanonicalFile )
+            list.add( ensureCanonicalFile( file ) )
           }
         }
       }
@@ -147,7 +151,7 @@ case class ParamsProjectUnit( proj : MavenProject ) extends ParamsProject {
 trait ParamsAny {
 
   @Description( """
-  Common separator for list values provided in <code>pom.xml</code>.
+  Common separator for plugin configuration list values provided in <code>pom.xml</code>.
   Separator regular expression is used as follows:
 <pre>
   options.split( separator ).map( _.trim ).filterNot( _.isEmpty )
@@ -187,7 +191,7 @@ trait ParamsDefine {
   import Params._
 
   @Description( """
-  Provide required compiler bridge dependency.
+  Provide required Scala compiler bridge dependency.
   Can declare here additional dependencies for the bridge.
   Bridge artifact must match expected regular expression in 
     <a href="#regexCompilerBridge"><b>regexCompilerBridge</b></a>.
@@ -208,7 +212,7 @@ trait ParamsDefine {
   var defineBridge : Array[ Dependency ] = Array.empty
 
   @Description( """
-  Provide required scala compiler dependency.
+  Provide required Scala compiler dependency.
   Can declare here additional dependencies for the compiler.
   Compiler artifact must match expected regular expression in 
     <a href="#regexScalaCompiler"><b>regexScalaCompiler</b></a>.
@@ -229,7 +233,7 @@ trait ParamsDefine {
   var defineCompiler : Array[ Dependency ] = Array.empty
 
   @Description( """
-  Provide optional scala plugins dependency.
+  Provide optional Scala plugins dependency.
   Can declare mulitiple scala compiler plugins.
   Plugin artifact jar must contain expected descriptor resource in 
     <a href="#resourcePluginDescriptor"><b>resourcePluginDescriptor</b></a>.

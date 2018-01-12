@@ -41,7 +41,7 @@ trait EclipseAnyMojo extends base.Mojo {
   var skipEclipse : Boolean = _
 
   @Description( """
-  Invoke Eclipse configuration executions only when runnting inside Eclipse/M2E.
+  Invoke Eclipse executions only when runnting inside Eclipse/M2E.
   When <code>false</code>, force executions regardless of the Eclipse detection state.
   """ )
   @Parameter(
@@ -58,7 +58,6 @@ trait EclipseAnyMojo extends base.Mojo {
       say.info( "Using Eclipse platform plugins:" )
       say.info( s"   ${handle.resourcesPlugin.getBundle}" )
       say.info( s"   ${handle.mavenPlugin.getBundle}" )
-      // TODO remove dependency on m2e.core.ui/UpdateMavenProjectJob
       say.info( s"   ${handle.mavenPluginUI.getBundle}" )
     case Failure( error ) =>
       say.error( "Required Eclipse plugin is missing: " + error )
@@ -125,29 +124,31 @@ class EclipseConfigMojo extends EclipseAnyMojo
     say.info( "   pluginId: " + pluginId )
     say.info( "   location: " + pluginLocation )
 
-    val context = handle.bundleM2E.getBundleContext
+    val bundleContext = handle.bundleM2E.getBundleContext
 
-    val pluginOption = Option( context.getBundle( pluginLocation ) )
+    val pluginOption = Option( bundleContext.getBundle( pluginLocation ) )
 
-    val ( message, pluginBundle, hasProjectUpdate ) = if ( pluginOption.isDefined ) {
-      ( "Companion plugin was previously installed", pluginOption.get, false )
-    } else {
-      context.installBundle( pluginLocation ).start()
-      ( "Companion plugin is now installed in Eclipse", context.getBundle( pluginLocation ), true )
-    }
+    val ( installMessage, pluginBundle, needProjectUpdate ) =
+      if ( pluginOption.isDefined ) {
+        val pluginBundle = pluginOption.get
+        ( "Companion plugin is already installed", pluginBundle, false )
+      } else {
+        bundleContext.installBundle( pluginLocation ).start()
+        val pluginBundle = bundleContext.getBundle( pluginLocation )
+        ( "Companion plugin installed in Eclipse", pluginBundle, true )
+      }
 
-    say.info( message + ": " + pluginBundle )
+    say.info( installMessage + ": " + pluginBundle )
 
-    if ( hasProjectUpdate ) {
+    if ( needProjectUpdate ) {
       say.info( "Scheduling project update in Eclipse to invoke M2E project configurator." )
       val projectList = handle.workspace.getRoot.getProjects
       val currentProject = projectWithBase( projectList, project.getBasedir )
-      // TODO remove dependency on m2e.core.ui/UpdateMavenProjectJob
       val updateJob = new UpdateMavenProjectJob( Array[ IProject ]( currentProject ) )
-      val updateName = "Project update for: " + project.getArtifactId + " by " + pluginId
+      val updateName = s"Project update for: ${project.getArtifactId} by: ${pluginId}"
       updateJob.setName( updateName )
       updateJob.setPriority( 10 ) // interactive
-      updateJob.schedule( 1 * 1000 ) // start delay, seconds
+      updateJob.schedule( 1 * 1000 ) // start delay
     }
 
   }

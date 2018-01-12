@@ -9,7 +9,9 @@ import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
 object Base {
 
   /**
-   * M2E project configurator java -> scala compatibility layer.
+   * M2E project configurator Scala -> Java  compatibility layer.
+   * 
+   * Convert "protected" to "public" for self-type trait member access.
    */
   abstract class Conf extends AbstractProjectConfigurator {
 

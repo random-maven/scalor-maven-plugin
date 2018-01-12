@@ -5,17 +5,21 @@ Bundle-SymbolicName: scalor-maven-plugin-test-m2e
 Bundle-Version: 0.0.0.qualifier
 Bundle-Vendor: CarrotGarden
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.resources,
- org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.jface,
  org.eclipse.jdt.core,
+ org.eclipse.jdt.launching,
  org.eclipse.ui.ide,
  org.eclipse.ui.workbench,
+ org.eclipse.m2e.maven.runtime,
  org.eclipse.m2e.core,
+ org.eclipse.m2e.core.ui,
+ org.eclipse.m2e.jdt,
  org.eclipse.m2e.importer,
  org.eclipse.m2e.tests.common,
- org.eclipse.m2e.maven.runtime.slf4j.simple,
- org.slf4j.api,
  org.apache.ant,
  org.junit;bundle-version="4.12.0",
- org.apache.commons.io;bundle-version="2.2.0"
+ org.apache.commons.io;bundle-version="2.2.0",
+ org.scala-ide.sdt.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

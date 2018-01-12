@@ -1,0 +1,7 @@
+
+# Keep Eclipse descriptors
+
+!target/
+!.project
+!.classpath
+!.settings/

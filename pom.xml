@@ -12,8 +12,8 @@
 
     <groupId>com.carrotgarden.maven</groupId>
     <artifactId>scalor-maven-plugin</artifactId>
-    <version>${revision}</version>
-    <packaging>maven-plugin</packaging>
+    <version>0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <name>Scalor Maven Plugin</name>
     <description>Build integrator for Java, Scala, Scala.macro, Scala.js, Eclipse and Maven.</description>
@@ -21,6 +21,8 @@
     <url>https://github.com/random-maven/scalor-maven-plugin</url>
     <scm>
         <url>https://github.com/random-maven/scalor-maven-plugin</url>
+        <connection>scm:git:git@github.com:random-maven/scalor-maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:random-maven/scalor-maven-plugin.git</developerConnection>
     </scm>
 
     <licenses>
@@ -29,10 +31,16 @@
         </license>
     </licenses>
 
+    <!-- Cross version build. -->
+    <modules>
+        <module>cross/2.12</module>
+        <!-- <module>cross/2.13</module> -->
+    </modules>
+
     <properties>
 
-        <!-- Release series. -->
-        <release.epoch>1.0.0</release.epoch>
+        <!-- Scalor release series. -->
+        <release.epoch>1.0.1</release.epoch>
 
         <!-- Development releases repository. -->
         <bintray.subject>random-maven</bintray.subject>
@@ -42,7 +50,7 @@
         <version.maven>[3.5,3.6)</version.maven>
 
         <!-- Compiler epoch. -->
-        <version.scala.zinc>1.1.0-RC4</version.scala.zinc>
+        <version.scala.zinc>1.1.0</version.scala.zinc>
         <version.scala.plug.macro>2.1.1</version.scala.plug.macro>
 
         <!-- Eclipse platform plugins. -->
@@ -53,22 +61,26 @@
         <eclipse.plugin.name>${project.groupId}.${project.artifactId}</eclipse.plugin.name>
         <eclipse.plugin.revision>${version.scala.epoch}_${project.version}</eclipse.plugin.revision>
         <eclipse.plugin.identity>${eclipse.plugin.name}_${eclipse.plugin.revision}</eclipse.plugin.identity>
+        <eclipse.plugin.eclipseDecorator>${eclipse.plugin.name}.eclipseDecorator_${eclipse.plugin.revision}</eclipse.plugin.eclipseDecorator>
         <eclipse.plugin.lifecycleMapping>${eclipse.plugin.name}.lifecycleMapping_${eclipse.plugin.revision}</eclipse.plugin.lifecycleMapping>
-        <eclipse.plugin.projectDecorator>${eclipse.plugin.name}.projectDecorator_${eclipse.plugin.revision}</eclipse.plugin.projectDecorator>
         <eclipse.plugin.projectConfigurator>${eclipse.plugin.name}.projectConfigurator_${eclipse.plugin.revision}</eclipse.plugin.projectConfigurator>
         <eclipse.bundle.name>${eclipse.plugin.identity}</eclipse.bundle.name>
-        <eclipse.bundle.version>0.0.0</eclipse.bundle.version><!-- version is in the name -->
+        <eclipse.bundle.version>0.0.0</eclipse.bundle.version><!-- Version is in the name. -->
 
     </properties>
 
-    <prerequisites>
-        <!-- Maven epoch. -->
-        <maven>3.5</maven>
-    </prerequisites>
+    <!-- Documentation site folder. -->
+    <distributionManagement>
+        <site>
+            <id>github-docs</id>
+            <url>file://${project.basedir}/docs/</url>
+        </site>
+    </distributionManagement>
 
+    <!-- Provide Eclipse plugins. -->
     <repositories>
-        <!-- Provides org.scala-ide. -->
-        <!-- Provides org.eclipse.m2e. -->
+        <!-- org.eclipse.m2e -->
+        <!-- org.scala-ide.sdt -->
         <repository>
             <id>scalor@random-maven</id>
             <url>https://dl.bintray.com/random-maven/scalor</url>
@@ -282,7 +294,6 @@
 
     </dependencies>
 
-
     <build>
 
         <!-- Substitute ${project} variables. -->
@@ -300,7 +311,9 @@
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>scalor-maven-plugin_${version.scala.epoch}</artifactId>
                 <!-- <version>RELEASE</version> -->
-                <!-- <version>1.0.0.20180104034428</version> -->
+                <!-- <version>1.0.1.20180110133544</version> -->
+                <!-- <version>1.0.1.20180112014105</version> -->
+
                 <configuration>
 
                     <zincCompileOptions>
@@ -308,10 +321,15 @@
                         -encoding ;
                         ${project.build.sourceEncoding} ;
                         -target:jvm-${maven.compiler.target} ;
-                        -Xmaxerrs ; 10 ;
+                        -Xmaxerrs ; 20 ;
                         -compileorder:JavaThenScala ;
                         -useScopesCompiler ;
                     </zincCompileOptions>
+
+                    <!-- <zincLogProjectClassPath>true</zincLogProjectClassPath> -->
+                    <!-- <prepackLogTransfer>true</prepackLogTransfer> -->
+                    <!-- <zincLogProgressRate>true</zincLogProgressRate> -->
+                    <!-- <zincLogProgressUnit>true</zincLogProgressUnit> -->
 
                     <defineBridge>
                         <dependency>
@@ -378,6 +396,7 @@
                         <Bundle-Activator>com.carrotgarden.maven.scalor.EclipsePlugin$Activator</Bundle-Activator>
                         <Bundle-SymbolicName>${eclipse.bundle.name};singleton:=true</Bundle-SymbolicName>
                         <Bundle-Version>${eclipse.bundle.version}</Bundle-Version>
+                        <Bundle-DocURL>${project.url}</Bundle-DocURL>
                     </instructions>
                 </configuration>
                 <executions>
@@ -402,13 +421,14 @@
                 </configuration>
             </plugin>
 
-            <!-- Use Scala epoch identity for this plugin. -->
+            <!-- Produce clean deployment pom.xml. -->
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
                 <configuration>
-                    <performOverrideIdentity>true</performOverrideIdentity>
-                    <overrideArtifactId>${project.artifactId}_${version.scala.epoch}</overrideArtifactId>
+                    <targetPomFile>${project.build.directory}/flatten/pom.xml.flatten</targetPomFile>
+                    <!-- <performOverrideIdentity>true</performOverrideIdentity> -->
+                    <!-- <overrideArtifactId>${project.artifactId}_${version.scala.epoch}</overrideArtifactId> -->
                 </configuration>
                 <executions>
                     <execution>
@@ -481,6 +501,7 @@
 
     <reporting>
         <plugins>
+            <!-- Default index. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -492,6 +513,7 @@
                     </reportSet>
                 </reportSets>
             </plugin>
+            <!-- Plugin executions. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>

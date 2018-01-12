@@ -4,14 +4,16 @@ import org.apache.maven.plugin.AbstractMojo
 
 import com.carrotgarden.maven.scalor.A
 import com.carrotgarden.maven.scalor.eclipse
+import com.carrotgarden.maven.scalor.util
+
 import java.io.File
 
 /**
  * Shared logging features.
  */
 trait Logging {
-  
-  self : eclipse.Build with AbstractMojo =>
+
+  self : eclipse.Context with AbstractMojo =>
 
   def mojoName : String
 
@@ -30,7 +32,10 @@ trait Logging {
    * Log file list.
    */
   def reportFileList( fileList : Array[ File ] ) = {
-    fileList.sorted.foreach( file => say.info( "   " + file.getCanonicalPath ) )
+    import util.Folder._
+    fileList.sorted.foreach {
+      file => say.info( "   " + ensureCanonicalFile( file ) )
+    }
   }
 
 }

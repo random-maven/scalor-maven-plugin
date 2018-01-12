@@ -30,7 +30,7 @@
         <version.scala.release>2.11.12</version.scala.release>
 
         <version.scala.plug.macro>2.1.0</version.scala.plug.macro>
-        <version.scala.zinc>1.1.0-RC4</version.scala.zinc>
+        <version.scala.zinc>1.1.0</version.scala.zinc>
 
     </properties>
 
@@ -66,7 +66,7 @@
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>scalor-maven-plugin_2.12</artifactId>
                 <!-- <version>RELEASE</version> -->
-                <version>1.0.0.20180107230449</version>
+                <!-- <version>1.0.1.20180108183644</version> -->
 
                 <configuration>
 

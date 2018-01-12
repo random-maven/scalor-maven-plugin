@@ -16,4 +16,4 @@ test-repo/
 /.scalor/
 
 # Flatten plugin
-/pom.xml.flatten
+pom.xml.flatten

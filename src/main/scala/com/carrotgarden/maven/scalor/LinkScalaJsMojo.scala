@@ -22,7 +22,7 @@ trait LinkAnyScalaJsMojo extends AbstractMojo
   with base.Params
   with base.Logging
   with base.SkipMojo
-  with eclipse.Build
+  with eclipse.Context
   with scalajs.Linker
   with scalajs.Build {
 
@@ -62,32 +62,32 @@ trait LinkAnyScalaJsMojo extends AbstractMojo
     resolveJar( linkerDependencyFilePath, linkerRegexScalajsLibrary ).right.toOption
   }
 
-  @Description( """
-  Flag to skip linker execution in Eclipse: <code>link-scala-js-*</code>.
-  """ )
-  @Parameter(
-    property     = "scalor.skipLinkerEclipse", //
-    defaultValue = "true"
-  )
-  var skipLinkerEclipse : Boolean = _
+  //  @Description( """
+  //  Flag to skip linker execution in Eclipse: <code>link-scala-js-*</code>.
+  //  """ )
+  //  @Parameter(
+  //    property     = "scalor.skipLinkerEclipse", //
+  //    defaultValue = "true"
+  //  )
+  //  var skipLinkerEclipse : Boolean = _
 
   override def perform() : Unit = {
     if ( skipLinker || hasSkipMojo ) {
       reportSkipReason( "Skipping disabled goal execution." )
       return
     }
-    if ( hasEclipse && skipLinkerEclipse ) {
-      reportSkipReason( "Skipping eclipse build invocation." )
-      return
-    }
+    //    if ( hasEclipse && skipLinkerEclipse ) {
+    //      reportSkipReason( "Skipping eclipse build invocation." )
+    //      return
+    //    }
     if ( hasIncremental ) {
       reportSkipReason( "Skipping incremental build invocation." )
       return
     }
     if ( linkerDetectScalajs ) {
-      val option = linkerLibraryOption
-      if ( option.isDefined ) {
-        say.info( s"Detected scalajs-library: ${option.get.version}." )
+      val libraryOption = linkerLibraryOption
+      if ( libraryOption.isDefined ) {
+        say.info( s"Detected scalajs-library: ${libraryOption.get.version}." )
         invokeLinker()
       } else {
         say.info( "Missing scalajs-library, skipping execution." )

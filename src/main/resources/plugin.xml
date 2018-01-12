@@ -1,25 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin>
 
-   <!-- Eclipse companion plugin integrations. -->
-
-   <!-- Contribute Scalor project decorator. -->
-   <!-- 
-   FIXME needs work around for decorator uninstall: 
-   https://bugs.eclipse.org/bugs/show_bug.cgi?id=450710 
-   -->
-   <!--
-   <extension point="org.eclipse.ui.decorators"> 
-        <decorator 
-                id="${eclipse.plugin.projectDecorator}" 
-                label="Scalor Maven Plugin / Project Decorator @ ${eclipse.plugin.revision}" 
-                state="false"
-                lightweight="true"
-                class="com.carrotgarden.maven.scalor.EclipsePlugin$Decorator" 
-                adaptable="true"> 
-          </decorator> 
-   </extension>
-   -->
+   <!-- Eclipse companion plugin Eclipse Platform integrations. -->
 
    <!-- Contribute M2E "/lifecycle-mapping-metadata.xml" resource. -->
    <extension
@@ -27,7 +9,6 @@
    </extension>
 
    <!-- Contribute M2E project configurator for Scala projects. -->
-   <!-- runsAfter="org.eclipse.m2e.jdt.javaConfigurator" -->
    <extension
          point="org.eclipse.m2e.core.projectConfigurators">
         <configurator
@@ -37,8 +18,26 @@
               runsAfter="org.eclipse.m2e.jdt.javaConfigurator">
         </configurator>
    </extension>
+
+   <!-- TODO Contribute Scalor project decorator. -->
+   <!-- 
+   FIXME needs work around for decorator uninstall: 
+   https://bugs.eclipse.org/bugs/show_bug.cgi?id=450710 
+   -->
+   <!--
+   <extension point="org.eclipse.ui.decorators"> 
+        <decorator 
+                id="${eclipse.plugin.eclipseDecorator}" 
+                label="Scalor Maven Plugin / Eclipse Decorator @ ${eclipse.plugin.revision}" 
+                state="false"
+                lightweight="true"
+                class="com.carrotgarden.maven.scalor.EclipsePlugin$Decorator" 
+                adaptable="true"> 
+          </decorator> 
+   </extension>
+   -->
    
-   <!-- Contribute M2E lifecycle mapping for Scala projects. -->
+   <!-- TODO Contribute M2E lifecycle mapping for Scala projects. -->
    <!--
    <extension
          point="org.eclipse.m2e.core.lifecycleMappings">
@@ -50,4 +49,14 @@
    </extension>
     -->
        
+   <!-- TODO Contribute M2E component injector. -->
+   <!--
+   <extension
+         point="org.eclipse.m2e.core.mavenComponentContributors">
+      <configurator
+            class="com.carrotgarden.maven.scalor.EclipsePlugin$Injector">
+      </configurator>
+   </extension>
+    -->
+          
 </plugin>

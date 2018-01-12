@@ -8,8 +8,14 @@ import java.util.Properties
  */
 trait JarRes {
 
+  /**
+   * Discover class location URL as string.
+   */
   def location = getClass.getProtectionDomain.getCodeSource.getLocation.toExternalForm
 
-  def resourceURL( path : String ) = new URL( "jar:" + location + "!/" + path )
+  /**
+   * Discover resource location URL only from current jar file.
+   */
+  def resourceURL( resource : String ) = new URL( s"jar:${location}!/${resource}" )
 
 }
