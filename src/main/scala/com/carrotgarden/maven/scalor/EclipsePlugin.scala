@@ -113,7 +113,8 @@ object EclipsePlugin {
       val subMon = monitor.toSub
       val config = cached( paramsConfig( facade, subMon.split( 10 ) ) )
       val assert = cached( assertVersion( config, subMon.split( 10 ) ) )
-      ensureOrderMaven( facade, config, classpath, subMon.split( 80 ) )
+      // ensureOrderMaven( facade, config, classpath, subMon.split( 80 ) )
+      // reportClassPath( facade, config, classpath, subMon.split( 80 ) )
     }
 
     /**

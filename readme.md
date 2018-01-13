@@ -65,8 +65,9 @@ Project update tips:
 * After an edit of `pom.xml`, propagate changes to Scala IDE  
   via context menu `Project -> Maven -> Update Project...`
 
-* Activate M2E [Maven Console](https://www.ibm.com/support/knowledgecenter/SS8PJ7_9.1.0/com.ibm.etools.maven.doc/topics/troubleshooting.html) 
-to review Maven and Eclipse [plugin messages](https://github.com/random-maven/scalor-maven-plugin/blob/master/note/install-log.md).
+* Activate M2E [Maven Console](https://www.ibm.com/support/knowledgecenter/SS8PJ7_9.1.0/com.ibm.etools.maven.doc/topics/troubleshooting.html)
+to review  
+Maven plugin and Eclipse [plugin messages](https://github.com/random-maven/scalor-maven-plugin/blob/master/note/install-log.md).
 
 * When in doubt, review generated Eclipse descriptors:  
 [.project](https://github.com/random-maven/scalor-maven-plugin/blob/master/note/eclipse.project.md),
@@ -91,7 +92,7 @@ which allows `scalor-maven-plugin_2.12` to build projects
 with different Scala epoch, such as `2.11`, `2.12`, `2.13`
 
 Required mapping is provided via `scalor-maven-plugin` configuration entries:
-```
+```xml
 <defineBridge>
 <defineCompiler>
 <definePluginList>

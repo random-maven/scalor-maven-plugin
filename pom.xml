@@ -40,7 +40,7 @@
     <properties>
 
         <!-- Scalor release series. -->
-        <release.epoch>1.0.1</release.epoch>
+        <release.epoch>1.0.2</release.epoch>
 
         <!-- Development releases repository. -->
         <bintray.subject>random-maven</bintray.subject>
@@ -292,6 +292,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.maven.plugin-testing</groupId>
+            <artifactId>maven-plugin-testing-harness</artifactId>
+            <version>3.3.0</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -326,8 +333,8 @@
                         -useScopesCompiler ;
                     </zincCompileOptions>
 
-                    <!-- <zincLogProjectClassPath>true</zincLogProjectClassPath> -->
                     <!-- <prepackLogTransfer>true</prepackLogTransfer> -->
+                    <!-- <zincLogProjectClassPath>true</zincLogProjectClassPath> -->
                     <!-- <zincLogProgressRate>true</zincLogProgressRate> -->
                     <!-- <zincLogProgressUnit>true</zincLogProgressUnit> -->
 

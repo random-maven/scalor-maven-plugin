@@ -21,7 +21,7 @@ import com.carrotgarden.maven.tools.Description
 import java.nio.file.Paths
 
 /**
- * Prepare build resources for packaging for given scope.
+ * Prepare build result classes for packaging for given scope.
  */
 trait PrepackAnyMojo extends AbstractMojo
   with base.Dir
@@ -173,7 +173,7 @@ trait PrepackAnyMojo extends AbstractMojo
 }
 
 @Description( """
-Prepare build resources for packaging for compilation scope=macro.
+Prepare build result classes for packaging for compilation scope=macro.
 """ )
 @Mojo(
   name                         = `prepack-macro`,
@@ -199,7 +199,7 @@ class PrepareMacroMojo extends PrepackAnyMojo
 }
 
 @Description( """
-Prepare build resources for packaging for compilation scope=main.
+Prepare build result classes for packaging for compilation scope=main.
 """ )
 @Mojo(
   name                         = `prepack-main`,
@@ -225,7 +225,7 @@ class PrepareMainMojo extends PrepackAnyMojo
 }
 
 @Description( """
-Prepare build resources for packaging for compilation scope=test.
+Prepare build result classes for packaging for compilation scope=test.
 """ )
 @Mojo(
   name                         = `prepack-test`,

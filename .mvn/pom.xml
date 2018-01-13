@@ -1813,6 +1813,11 @@
                 </file>
             </activation>
             <properties>
+                <!-- Release tag. -->
+                <release.revision.tag>${revision}</release.revision.tag>
+                <!-- Release comment. -->
+                <release.revision.message>release ${revision}</release.revision.message>
+                <!-- Release descriptor. -->
                 <release.revision.file>release-revision.conf</release.revision.file>
                 <release.revision.path>${project.basedir}/.mvn/${release.revision.file}</release.revision.path>
             </properties>
@@ -1828,7 +1833,6 @@
 <![CDATA[
 # release revision
 version=${revision}
-
 ]]>
                                 </echo>
                             </target>
@@ -1848,6 +1852,7 @@ version=${revision}
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-scm-plugin</artifactId>
                         <executions>
+                            <!-- Add descriptor. -->
                             <execution>
                                 <id>release-revision-register</id>
                                 <phase>deploy</phase>
@@ -1859,6 +1864,7 @@ version=${revision}
                                     <includes>**/${release.revision.file}</includes>
                                 </configuration>
                             </execution>
+                            <!-- Commit descriptor. -->
                             <execution>
                                 <id>release-revision-commit</id>
                                 <phase>deploy</phase>
@@ -1867,9 +1873,10 @@ version=${revision}
                                 </goals>
                                 <configuration>
                                     <pushChanges>true</pushChanges>
-                                    <message>release ${revision}</message>
+                                    <message>${release.revision.message}</message>
                                 </configuration>
                             </execution>
+                            <!-- Tag release. -->
                             <execution>
                                 <id>release-revision-tag</id>
                                 <phase>deploy</phase>
@@ -1878,7 +1885,8 @@ version=${revision}
                                 </goals>
                                 <configuration>
                                     <pushChanges>true</pushChanges>
-                                    <tag>${revision}</tag>
+                                    <message>${release.revision.message}</message>
+                                    <tag>${release.revision.tag}</tag>
                                 </configuration>
                             </execution>
                         </executions>

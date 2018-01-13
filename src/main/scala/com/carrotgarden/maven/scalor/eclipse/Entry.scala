@@ -28,6 +28,7 @@ import org.scalaide.core.SdtConstants
 import com.carrotgarden.maven.scalor.base.ParamsProjectUnit
 import java.nio.file.Files
 import java.nio.file.Paths
+import org.eclipse.m2e.core.project.IMavenProjectFacade
 
 /**
  * Manage eclipse .classpath file class path entries.
@@ -37,9 +38,9 @@ trait Entry {
   self : Logging with Monitor with Maven with Base.Conf =>
 
   /**
-   * Provide class path entry instance.
+   * Provide container class path entry instance.
    */
-  def classpathEntry( path : String ) : IClasspathEntry = {
+  def containerEntry( path : String ) : IClasspathEntry = {
     JavaCore.newContainerEntry( Path.fromPortableString( path ) )
   }
 
@@ -138,15 +139,29 @@ trait Entry {
     containerId : String,
     monitor :     IProgressMonitor
   ) = {
-    val containerEntry = classpathEntry( containerId )
-    val containerPath = containerEntry.getPath
+    val entry = containerEntry( containerId )
+    val path = entry.getPath
     if ( hasRemove ) {
       log.info( s"Deleting container ${containerId}." )
-      classpath.removeEntry( containerPath )
+      classpath.removeEntry( path )
     } else {
       log.info( s"Creating container ${containerId}." )
-      classpath.removeEntry( containerPath )
-      classpath.addEntry( containerEntry )
+      classpath.removeEntry( path )
+      classpath.addEntry( entry )
+    }
+  }
+
+  /**
+   * Log class path entries.
+   */
+  def reportClassPath(
+    facade :    IMavenProjectFacade,
+    config :    ParamsConfig,
+    classpath : IClasspathDescriptor,
+    monitor :   IProgressMonitor
+  ) : Unit = {
+    classpath.getEntryDescriptors.asScala.foreach { entry =>
+      log.info( s"XXX ${entry.getPath} -> ${entry.getOutputLocation}" )
     }
   }
 
