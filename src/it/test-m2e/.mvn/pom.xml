@@ -71,8 +71,8 @@
         <version.kamon>0.6.7</version.kamon>
         <version.scalatest>3.0.4</version.scalatest>
         <version.scalacheck>1.13.5</version.scalacheck>
-        <version.scala.plug.meta>3.0.0-M10</version.scala.plug.meta>
-        <version.scala.plug.macro>2.1.1</version.scala.plug.macro>
+        <version.scala.plugin.meta>3.0.0-M10</version.scala.plugin.meta>
+        <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
         <version.scala.zinc>1.1.0-RC1</version.scala.zinc>
 
         <!-- Scala.js stack. -->
@@ -207,13 +207,13 @@
             <dependency><!-- plugin -->
                 <groupId>org.scalameta</groupId>
                 <artifactId>paradise_${version.scala.release}</artifactId>
-                <version>${version.scala.plug.meta}</version>
+                <version>${version.scala.plugin.meta}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency><!-- plugin -->
                 <groupId>org.scalamacros</groupId>
                 <artifactId>paradise_${version.scala.release}</artifactId>
-                <version>${version.scala.plug.macro}</version>
+                <version>${version.scala.plugin.macro}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency><!-- runtime -->
@@ -5254,7 +5254,7 @@ version=${revision}
                 <!-- Scala/Meta compiler plugin identification. -->
                 <meta.plugin.groupId>org.scalameta</meta.plugin.groupId>
                 <meta.plugin.artifactId>paradise_${version.scala.release}</meta.plugin.artifactId>
-                <meta.plugin.version>${version.scala.plug.meta}</meta.plugin.version>
+                <meta.plugin.version>${version.scala.plugin.meta}</meta.plugin.version>
                 <!-- Scala/Meta compiler plugin Eclipse integration. -->
                 <meta.plugin.name>macroparadise</meta.plugin.name>
                 <meta.plugin.directory>${project.build.directory}/scala-plugin</meta.plugin.directory>
@@ -5353,7 +5353,7 @@ version=${revision}
                                 <compilerPlugin>
                                     <groupId>org.scalamacros</groupId>
                                     <artifactId>paradise_${version.scala.release}</artifactId>
-                                    <version>${version.scala.plug.macro}</version>
+                                    <version>${version.scala.plugin.macro}</version>
                                 </compilerPlugin>
                             </compilerPlugins>
                         </configuration>

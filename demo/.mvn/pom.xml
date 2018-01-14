@@ -48,11 +48,11 @@
         <version.agrona>0.9.12</version.agrona>
         <version.protobuf>3.5.1</version.protobuf>
         <version.snappy>1.1.7.1</version.snappy>
-        <version.lucene>7.2.0</version.lucene>
-        <version.amazon.sdk>1.11.255</version.amazon.sdk>
+        <version.lucene>7.2.1</version.lucene>
+        <version.amazon.sdk>1.11.263</version.amazon.sdk>
         <version.sigar>1.6.5.132</version.sigar>
         <version.aspectj>1.8.13</version.aspectj>
-        <version.bouncy>1.58</version.bouncy>
+        <version.bouncy>1.59</version.bouncy>
 
         <!-- Scala stack. -->
         <version.scala.epoch>2.12</version.scala.epoch>
@@ -60,10 +60,10 @@
         <version.scala.sbt>0.13.7</version.scala.sbt>
         <version.scala.xml>1.0.6</version.scala.xml>
         <version.scala.protobuf>0.6.7</version.scala.protobuf>
-        <version.akka.main>2.5.8</version.akka.main>
+        <version.akka.main>2.5.9</version.akka.main>
         <version.akka.http>10.0.11</version.akka.http>
         <version.eventuate>0.8.1</version.eventuate>
-        <version.play>2.6.10</version.play>
+        <version.play>2.6.11</version.play>
         <version.scala.buff>1.4.0</version.scala.buff>
         <version.scala.mock>3.6.0</version.scala.mock>
         <version.specs2>4.0.2-291bdf5-20171123131811</version.specs2>
@@ -71,9 +71,9 @@
         <version.kamon>0.6.7</version.kamon>
         <version.scalatest>3.0.4</version.scalatest>
         <version.scalacheck>1.13.5</version.scalacheck>
-        <version.scala.plug.meta>3.0.0-M10</version.scala.plug.meta>
-        <version.scala.plug.macro>2.1.1</version.scala.plug.macro>
-        <version.scala.zinc>1.1.0-RC1</version.scala.zinc>
+        <version.scala.plugin.meta>3.0.0-M10</version.scala.plugin.meta>
+        <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
+        <version.scala.zinc>1.1.0</version.scala.zinc>
 
         <!-- Scala.js stack. -->
         <version.sjs.epoch>0.6</version.sjs.epoch>
@@ -85,7 +85,7 @@
         <version.sjs.prickle>1.1.14</version.sjs.prickle>
         <version.sjs.upickle>0.5.1</version.sjs.upickle>
         <version.sjs.scalarx>0.3.2</version.sjs.scalarx>
-        <version.sjs.utest>0.6.2</version.sjs.utest>
+        <version.sjs.utest>0.6.3</version.sjs.utest>
 
         <!-- Maven plugins. -->
         <version.maven.scm>1.9.5</version.maven.scm>
@@ -94,7 +94,7 @@
 
         <!-- Database providers. -->
         <version.slick>3.2.1</version.slick>
-        <version.hikari>2.7.4</version.hikari>
+        <version.hikari>2.7.6</version.hikari>
         <version.postgres>42.1.4</version.postgres>
 
         <!-- Carrot Garden internal repository. -->
@@ -207,13 +207,13 @@
             <dependency><!-- plugin -->
                 <groupId>org.scalameta</groupId>
                 <artifactId>paradise_${version.scala.release}</artifactId>
-                <version>${version.scala.plug.meta}</version>
+                <version>${version.scala.plugin.meta}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency><!-- plugin -->
                 <groupId>org.scalamacros</groupId>
                 <artifactId>paradise_${version.scala.release}</artifactId>
-                <version>${version.scala.plug.macro}</version>
+                <version>${version.scala.plugin.macro}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency><!-- runtime -->
@@ -232,6 +232,18 @@
                 <groupId>com.lihaoyi</groupId>
                 <artifactId>acyclic_${version.scala.epoch}</artifactId>
                 <version>0.1.7</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-sbt</groupId>
+                <artifactId>zinc_${version.scala.epoch}</artifactId>
+                <version>${version.scala.zinc}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-sbt</groupId>
+                <artifactId>compiler-bridge_${version.scala.epoch}</artifactId>
+                <version>${version.scala.zinc}</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -452,7 +464,7 @@
             <dependency>
                 <groupId>org.webjars.bower</groupId>
                 <artifactId>vue</artifactId>
-                <version>2.5.3</version>
+                <version>2.5.13</version>
             </dependency>
             <dependency>
                 <groupId>org.webjars.bower</groupId>
@@ -744,7 +756,7 @@
             <dependency>
                 <groupId>org.eclipse.jgit</groupId>
                 <artifactId>org.eclipse.jgit</artifactId>
-                <version>4.9.2.201712150930-r</version>
+                <version>4.10.0.201712302008-r</version>
             </dependency>
 
             <!-- Indexing and searching. -->
@@ -996,7 +1008,7 @@
             <dependency>
                 <groupId>net.sourceforge.htmlunit</groupId>
                 <artifactId>htmlunit</artifactId>
-                <version>2.28</version>
+                <version>2.29</version>
             </dependency>
             <!-- Note: check AWS, JGIT, Play-WS, IB -->
             <dependency>
@@ -1219,7 +1231,7 @@
             <dependency>
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna</artifactId>
-                <version>4.5.0</version>
+                <version>4.5.1</version>
             </dependency>
 
             <!-- Cryptography provider. -->
@@ -1367,7 +1379,7 @@
                         <dependency>
                             <groupId>com.vladsch.flexmark</groupId>
                             <artifactId>flexmark-all</artifactId>
-                            <version>0.28.24</version>
+                            <version>0.28.32</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -1801,6 +1813,100 @@
 
     <profiles>
 
+        <!-- Publish release revision. -->
+        <profile>
+            <id>release-revision</id>
+            <activation>
+                <property>
+                    <name>release-revision</name>
+                </property>
+                <file>
+                    <exists>.mvn/pom-release-revision.md</exists>
+                </file>
+            </activation>
+            <properties>
+                <!-- Release tag. -->
+                <release.revision.tag>${revision}</release.revision.tag>
+                <!-- Release comment. -->
+                <release.revision.message>release ${revision}</release.revision.message>
+                <!-- Release descriptor. -->
+                <release.revision.file>release-revision.conf</release.revision.file>
+                <release.revision.path>${project.basedir}/.mvn/${release.revision.file}</release.revision.path>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- Produce descriptor. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <configuration>
+                            <target>
+                                <echo file="${release.revision.path}" append="false">
+<![CDATA[
+# release revision
+version=${revision}
+]]>
+                                </echo>
+                            </target>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>release-revision</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Publish release tag. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-scm-plugin</artifactId>
+                        <executions>
+                            <!-- Add descriptor. -->
+                            <execution>
+                                <id>release-revision-register</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>add</goal>
+                                </goals>
+                                <configuration>
+                                    <pushChanges>false</pushChanges>
+                                    <includes>**/${release.revision.file}</includes>
+                                </configuration>
+                            </execution>
+                            <!-- Commit descriptor. -->
+                            <execution>
+                                <id>release-revision-commit</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>checkin</goal>
+                                </goals>
+                                <configuration>
+                                    <pushChanges>true</pushChanges>
+                                    <message>${release.revision.message}</message>
+                                </configuration>
+                            </execution>
+                            <!-- Tag release. -->
+                            <execution>
+                                <id>release-revision-tag</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>tag</goal>
+                                </goals>
+                                <configuration>
+                                    <pushChanges>true</pushChanges>
+                                    <message>${release.revision.message}</message>
+                                    <tag>${release.revision.tag}</tag>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <!-- Scala compiler setup. -->
         <profile>
             <id>scalor</id>
@@ -1823,15 +1929,16 @@
                     <!-- Enable alternative compiler. -->
                     <plugin>
                         <groupId>com.carrotgarden.maven</groupId>
-                        <artifactId>scalor-maven-plugin_${version.scala.epoch}</artifactId>
+                        <artifactId>scalor-maven-plugin_2.12</artifactId>
                         <configuration>
                             <zincCompileOptions>
-                                -target:jvm-${version.java}
                                 -encoding
                                 ${project.build.sourceEncoding}
-                                -deprecation
-                                -unchecked
+                                -target:jvm-${version.java}
                                 -feature
+                                -unchecked
+                                -deprecation
+                                -compileorder:Mixed
                             </zincCompileOptions>
                             <defineBridge>
                                 <dependency>
@@ -1854,10 +1961,6 @@
                             <execution>
                                 <goals>
                                     <!-- -->
-                                    <goal>clean-macro</goal>
-                                    <goal>clean-main</goal>
-                                    <goal>clean-test</goal>
-                                    <!-- -->
                                     <goal>eclipse-config</goal>
                                     <!-- -->
                                     <goal>register-macro</goal>
@@ -1865,13 +1968,8 @@
                                     <goal>register-test</goal>
                                     <!-- -->
                                     <goal>compile-macro</goal>
-                                    <goal>prepack-macro</goal>
-                                    <!-- -->
                                     <goal>compile-main</goal>
-                                    <goal>prepack-main</goal>
-                                    <!-- -->
                                     <goal>compile-test</goal>
-                                    <goal>prepack-test</goal>
                                     <!-- -->
                                 </goals>
                             </execution>
@@ -1903,16 +2001,17 @@
                     <!-- Enable alternative compiler. -->
                     <plugin>
                         <groupId>com.carrotgarden.maven</groupId>
-                        <artifactId>scalor-maven-plugin_${version.scala.epoch}</artifactId>
+                        <artifactId>scalor-maven-plugin_2.12</artifactId>
                         <configuration>
                             <zincCompileOptions>
-                                -target:jvm-${version.java}
+                                -P:scalajs:sjsDefinedByDefault
                                 -encoding
                                 ${project.build.sourceEncoding}
-                                -deprecation
-                                -unchecked
+                                -target:jvm-${version.java}
                                 -feature
-                                -P:scalajs:sjsDefinedByDefault
+                                -unchecked
+                                -deprecation
+                                -compileorder:Mixed
                             </zincCompileOptions>
                             <defineBridge>
                                 <dependency>
@@ -1940,10 +2039,6 @@
                             <execution>
                                 <goals>
                                     <!-- -->
-                                    <goal>clean-macro</goal>
-                                    <goal>clean-main</goal>
-                                    <goal>clean-test</goal>
-                                    <!-- -->
                                     <goal>eclipse-config</goal>
                                     <!-- -->
                                     <goal>register-macro</goal>
@@ -1951,13 +2046,8 @@
                                     <goal>register-test</goal>
                                     <!-- -->
                                     <goal>compile-macro</goal>
-                                    <goal>prepack-macro</goal>
-                                    <!-- -->
                                     <goal>compile-main</goal>
-                                    <goal>prepack-main</goal>
-                                    <!-- -->
                                     <goal>compile-test</goal>
-                                    <goal>prepack-test</goal>
                                     <!-- -->
                                 </goals>
                             </execution>
@@ -1989,16 +2079,17 @@
                     <!-- Enable alternative compiler. -->
                     <plugin>
                         <groupId>com.carrotgarden.maven</groupId>
-                        <artifactId>scalor-maven-plugin_${version.scala.epoch}</artifactId>
+                        <artifactId>scalor-maven-plugin_2.12</artifactId>
                         <configuration>
                             <zincCompileOptions>
-                                -target:jvm-${version.java}
+                                -P:scalajs:sjsDefinedByDefault
                                 -encoding
                                 ${project.build.sourceEncoding}
-                                -deprecation
-                                -unchecked
+                                -target:jvm-${version.java}
                                 -feature
-                                -P:scalajs:sjsDefinedByDefault
+                                -unchecked
+                                -deprecation
+                                -compileorder:Mixed
                             </zincCompileOptions>
                             <defineBridge>
                                 <dependency>
@@ -2026,10 +2117,6 @@
                             <execution>
                                 <goals>
                                     <!-- -->
-                                    <goal>clean-macro</goal>
-                                    <goal>clean-main</goal>
-                                    <goal>clean-test</goal>
-                                    <!-- -->
                                     <goal>eclipse-config</goal>
                                     <!-- -->
                                     <goal>register-macro</goal>
@@ -2037,19 +2124,11 @@
                                     <goal>register-test</goal>
                                     <!-- -->
                                     <goal>compile-macro</goal>
-                                    <goal>prepack-macro</goal>
-                                    <!-- -->
                                     <goal>compile-main</goal>
-                                    <goal>prepack-main</goal>
-                                    <!-- -->
                                     <goal>compile-test</goal>
-                                    <goal>prepack-test</goal>
                                     <!-- -->
                                     <goal>link-scala-js-main</goal>
-                                    <goal>prepack-linker-main</goal>
-                                    <!-- -->
                                     <goal>link-scala-js-test</goal>
-                                    <goal>prepack-linker-test</goal>
                                     <!-- -->
                                 </goals>
                             </execution>
@@ -2061,20 +2140,21 @@
 
         <!-- Use custom maven plugin annotations. -->
         <profile>
-            <id>plug-anno</id>
+            <id>plugin-extra</id>
             <activation>
                 <file>
-                    <exists>.mvn/pom-plug-anno.md</exists>
+                    <exists>.mvn/pom-plugin-extra.md</exists>
                 </file>
             </activation>
             <properties>
-                <version.maven.plug.anno>1.0.20171214023519</version.maven.plug.anno>
+                <version.maven.plugin.extra>1.0.20171214023519</version.maven.plugin.extra>
             </properties>
             <dependencies>
+                <!-- Provide custom annotations. -->
                 <dependency>
                     <groupId>com.carrotgarden.maven</groupId>
                     <artifactId>maven-plugin-tools-annotations</artifactId>
-                    <version>${version.maven.plug.anno}</version>
+                    <version>${version.maven.plugin.extra}</version>
                 </dependency>
             </dependencies>
             <build>
@@ -2083,13 +2163,15 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-plugin-plugin</artifactId>
                         <dependencies>
+                            <!-- Provide custom extractor. -->
                             <dependency>
                                 <groupId>com.carrotgarden.maven</groupId>
                                 <artifactId>maven-plugin-tools-annotations</artifactId>
-                                <version>${version.maven.plug.anno}</version>
+                                <version>${version.maven.plugin.extra}</version>
                             </dependency>
                         </dependencies>
                         <configuration>
+                            <!-- Use only custom extractor. -->
                             <extractors>
                                 <extractor>java-annotations-extra</extractor>
                             </extractors>
@@ -2167,46 +2249,6 @@
                 <version.scala.epoch>${version.scala213.epoch}</version.scala.epoch>
                 <version.scala.release>${version.scala213.release}</version.scala.release>
             </properties>
-        </profile>
-
-        <!-- Setup site in github/docs. -->
-        <profile>
-            <id>github-docs</id>
-            <activation>
-                <file>
-                    <exists>.mvn/pom-github-docs.md</exists>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <!-- Generate documentation site. -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-site-plugin</artifactId>
-                    </plugin>
-                    <!-- Deploy site to magic github folder. -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>github-docs</id>
-                                <phase>site</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <copy todir="${basedir}/docs/">
-                                            <fileset dir="${basedir}/target/site/" />
-                                        </copy>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
 
         <!-- Disable any testing. -->
@@ -3073,6 +3115,27 @@
                         <artifactId>bintray-maven-plugin</artifactId>
                         <configuration>
                             <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Skip integraton test invocaton. -->
+        <profile>
+            <id>no-invoke</id>
+            <activation>
+                <file>
+                    <exists>.mvn/pom-no-invoke.md</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <configuration>
+                            <skipInvocation>true</skipInvocation>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -5173,7 +5236,7 @@
                 <!-- Scala/Meta compiler plugin identification. -->
                 <meta.plugin.groupId>org.scalameta</meta.plugin.groupId>
                 <meta.plugin.artifactId>paradise_${version.scala.release}</meta.plugin.artifactId>
-                <meta.plugin.version>${version.scala.plug.meta}</meta.plugin.version>
+                <meta.plugin.version>${version.scala.plugin.meta}</meta.plugin.version>
                 <!-- Scala/Meta compiler plugin Eclipse integration. -->
                 <meta.plugin.name>macroparadise</meta.plugin.name>
                 <meta.plugin.directory>${project.build.directory}/scala-plugin</meta.plugin.directory>
@@ -5272,7 +5335,7 @@
                                 <compilerPlugin>
                                     <groupId>org.scalamacros</groupId>
                                     <artifactId>paradise_${version.scala.release}</artifactId>
-                                    <version>${version.scala.plug.macro}</version>
+                                    <version>${version.scala.plugin.macro}</version>
                                 </compilerPlugin>
                             </compilerPlugins>
                         </configuration>
@@ -5301,6 +5364,13 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <!-- GPG 2.0 options -->
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

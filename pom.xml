@@ -40,7 +40,7 @@
     <properties>
 
         <!-- Scalor release series. -->
-        <release.epoch>1.0.2</release.epoch>
+        <release.epoch>1.0.3</release.epoch>
 
         <!-- Development releases repository. -->
         <bintray.subject>random-maven</bintray.subject>
@@ -51,7 +51,7 @@
 
         <!-- Compiler epoch. -->
         <version.scala.zinc>1.1.0</version.scala.zinc>
-        <version.scala.plug.macro>2.1.1</version.scala.plug.macro>
+        <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
 
         <!-- Eclipse platform plugins. -->
         <version.eclipse.m2e>1.8.1</version.eclipse.m2e>
@@ -153,12 +153,14 @@
             <groupId>org.scala-sbt</groupId>
             <artifactId>zinc_${version.scala.epoch}</artifactId>
             <version>${version.scala.zinc}</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.scala-sbt</groupId>
             <artifactId>compiler-bridge_${version.scala.epoch}</artifactId>
             <version>${version.scala.zinc}</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Scala.js linker. -->
@@ -366,7 +368,7 @@
                         <dependency>
                             <groupId>org.scalamacros</groupId>
                             <artifactId>paradise_${version.scala.release}</artifactId>
-                            <version>${version.scala.plug.macro}</version>
+                            <version>${version.scala.plugin.macro}</version>
                         </dependency>
                     </definePluginList>
 
