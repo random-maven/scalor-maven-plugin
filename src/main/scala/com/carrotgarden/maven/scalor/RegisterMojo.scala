@@ -39,7 +39,7 @@ trait RegisterAnyMojo extends AbstractMojo
   with base.BuildAnyTarget
   with eclipse.Context {
 
-  type RegistrationFunction[ T ] = ( T => Unit )
+  type RegisterFun[ T ] = ( T => Unit )
 
   @Description( """
   Flag to skip goal execution: <code>register-*</code>.
@@ -69,7 +69,7 @@ trait RegisterAnyMojo extends AbstractMojo
   /**
    * Register resource root for given compilation scope with the project.
    */
-  def registerResourceRoot : RegistrationFunction[ Resource ]
+  def registerResource : RegisterFun[ Resource ]
 
   /**
    * Detect if given source root is already registered.
@@ -89,7 +89,7 @@ trait RegisterAnyMojo extends AbstractMojo
   /**
    * Register source root for given compilation scope with the project.
    */
-  def registerSourceRoot : RegistrationFunction[ String ]
+  def registerSource : RegisterFun[ String ]
 
   /**
    * Detect if given target root is already registered.
@@ -107,7 +107,7 @@ trait RegisterAnyMojo extends AbstractMojo
   /**
    * Register target root for given compilation scope with the project.
    */
-  def registerTargetRoot : RegistrationFunction[ String ]
+  def registerTarget : RegisterFun[ String ]
 
   /**
    * Business logic of adding root folders to the project model.
@@ -121,10 +121,10 @@ trait RegisterAnyMojo extends AbstractMojo
       .foreach { resource : Resource =>
         val path = basedir.absolute( Paths.get( resource.getDirectory ) )
         if ( hasResourceRoot( resource ) ) {
-          say.info( "Already registered: " + path )
+          log.info( "Already registered: " + path )
         } else {
-          say.info( "Registering root:   " + path )
-          registerResourceRoot( resource )
+          log.info( "Registering root:   " + path )
+          registerResource( resource )
         }
       }
 
@@ -132,10 +132,10 @@ trait RegisterAnyMojo extends AbstractMojo
       .map( file => basedir.absolute( file.toPath ) )
       .foreach { path : Path =>
         if ( hasSourceRoot( path ) ) {
-          say.info( "Already registered: " + path )
+          log.info( "Already registered: " + path )
         } else {
-          say.info( "Registering root:   " + path )
-          registerSourceRoot( path.toString )
+          log.info( "Registering root:   " + path )
+          registerSource( path.toString )
         }
       }
 
@@ -143,15 +143,15 @@ trait RegisterAnyMojo extends AbstractMojo
       .map( file => basedir.absolute( file.toPath ) )
       .foreach { path : Path =>
         if ( hasTargetRoot( path ) ) {
-          say.info( "Already registered: " + path )
+          log.info( "Already registered: " + path )
         } else {
-          say.info( "Registering root:   " + path )
-          // registerTargetRoot( path.toString )
+          log.info( "Registering root:   " + path )
+          registerTarget( path.toString )
         }
       }
 
     if ( buildEnsureFolders ) {
-      say.info( "Ensuring build folders." )
+      log.info( "Ensuring build folders." )
       buildResourceFolders
         .foreach { resource : Resource =>
           val path = basedir.absolute( Paths.get( resource.getDirectory ) )
@@ -186,7 +186,7 @@ Register Java, Scala, Resource folders for compilation scope=macro.
 )
 class RegisterMacroMojo extends RegisterAnyMojo
   with base.BuildMacroSources
-  with base.BuildMacroTarget {
+  with base.BuildMainTarget {
 
   import base.Build._
 
@@ -203,28 +203,12 @@ class RegisterMacroMojo extends RegisterAnyMojo
 
   override def hasSkipMojo = skipRegisterMacro
 
-  // TODO support macro resources
-
-  //  override def resourceRootList =     Collections.emptyList()
-  //  override def registerResourceRoot =     ( Resource => () )
-  //  override def sourceRootList =
-  //    extractPropertyList( buildMacroSourceFoldersParam ).getOrElse( Collections.emptyList() )
-  //
-  //  override def registerSourceRoot =
-  //    persistPropertyList( buildMacroSourceFoldersParam, _ )
-  //
-  //  override def targetRoot : String =
-  //    extractProperty( buildMacroTargetParam ).getOrElse( "." )
-  //
-  //  override def registerTargetRoot =
-  //    persistProperty( buildMacroTargetParam, _ )
-
   override def resourceRootList = project.getBuild.getResources
-  override def registerResourceRoot = project.getBuild.addResource _
+  override def registerResource = project.getBuild.addResource _
   override def sourceRootList = project.getCompileSourceRoots
-  override def registerSourceRoot = project.addCompileSourceRoot _
+  override def registerSource = project.addCompileSourceRoot _
   override def targetRoot : String = project.getBuild.getOutputDirectory
-  override def registerTargetRoot = project.getBuild.setOutputDirectory _
+  override def registerTarget = project.getBuild.setOutputDirectory _
 
 }
 
@@ -237,7 +221,6 @@ Register Java, Scala, Resource folders for compilation scope=main.
   requiresDependencyResolution = ResolutionScope.NONE
 )
 class RegisterMainMojo extends RegisterAnyMojo
-  with base.BuildMain
   with base.BuildMainSources
   with base.BuildMainTarget {
 
@@ -254,11 +237,11 @@ class RegisterMainMojo extends RegisterAnyMojo
 
   override def hasSkipMojo = skipRegisterMain
   override def resourceRootList = project.getBuild.getResources
-  override def registerResourceRoot = project.getBuild.addResource _
+  override def registerResource = project.getBuild.addResource _
   override def sourceRootList = project.getCompileSourceRoots
-  override def registerSourceRoot = project.addCompileSourceRoot _
+  override def registerSource = project.addCompileSourceRoot _
   override def targetRoot : String = project.getBuild.getOutputDirectory
-  override def registerTargetRoot = project.getBuild.setOutputDirectory _
+  override def registerTarget = project.getBuild.setOutputDirectory _
 
 }
 
@@ -287,10 +270,10 @@ class RegisterTestMojo extends RegisterAnyMojo
 
   override def hasSkipMojo = skipRegisterTest
   override def resourceRootList = project.getBuild.getTestResources
-  override def registerResourceRoot = project.getBuild.addTestResource _
+  override def registerResource = project.getBuild.addTestResource _
   override def sourceRootList = project.getTestCompileSourceRoots
-  override def registerSourceRoot = project.addTestCompileSourceRoot _
+  override def registerSource = project.addTestCompileSourceRoot _
   override def targetRoot : String = project.getBuild.getTestOutputDirectory
-  override def registerTargetRoot = project.getBuild.setTestOutputDirectory _
+  override def registerTarget = project.getBuild.setTestOutputDirectory _
 
 }

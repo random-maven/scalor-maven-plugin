@@ -15,7 +15,8 @@ import A.mojo._
 /**
  * Shared compiler mojo interface.
  */
-trait CompileAnyMojo extends base.Mojo
+trait CompileAnyMojo extends AbstractMojo
+  with base.Mojo
   with base.Build
   with base.ParamsCompiler
   with resolve.Maven

@@ -21,7 +21,6 @@ import org.eclipse.jdt.core.IClasspathEntry
 import org.eclipse.jdt.core.JavaCore
 import org.eclipse.core.runtime.Path
 import org.eclipse.m2e.core.project.configurator.AbstractProjectConfigurator
-import com.carrotgarden.maven.scalor.eclipse.Logging.AnyLog
 import org.eclipse.jdt.core.IClasspathAttribute
 import com.carrotgarden.maven.scalor.base.Build.Param
 import org.scalaide.core.SdtConstants
@@ -29,6 +28,7 @@ import com.carrotgarden.maven.scalor.base.ParamsProjectUnit
 import java.nio.file.Files
 import java.nio.file.Paths
 import org.eclipse.m2e.core.project.IMavenProjectFacade
+import com.carrotgarden.maven.scalor.util.Logging
 
 /**
  * Manage eclipse .classpath file class path entries.

@@ -35,9 +35,7 @@ Main Maven goals
 * [clean-main](https://random-maven.github.io/scalor-maven-plugin/2.12/clean-main-mojo.html)
 * [register-main](https://random-maven.github.io/scalor-maven-plugin/2.12/register-main-mojo.html)
 * [compile-main](https://random-maven.github.io/scalor-maven-plugin/2.12/compile-main-mojo.html)
-* [prepack-main](https://random-maven.github.io/scalor-maven-plugin/2.12/prepack-main-mojo.html)
 * [link-scala-js-main](https://random-maven.github.io/scalor-maven-plugin/2.12/link-scala-js-main-mojo.html)
-* [prepack-linker-main](https://random-maven.github.io/scalor-maven-plugin/2.12/prepack-linker-main-mojo.html)
 
 Complete goals reference
 
@@ -182,25 +180,14 @@ mvn clean install -P scalor
                                     <goal>register-main</goal>
                                     <goal>register-test</goal>
 
-                                    <!-- Process scope=macro. -->
+                                    <!-- Compile sources. -->
                                     <goal>compile-macro</goal>
-                                    <goal>prepack-macro</goal>
-
-                                    <!-- Process scope=main. -->
                                     <goal>compile-main</goal>
-                                    <goal>prepack-main</goal>
-
-                                    <!-- Process scope=test. -->
                                     <goal>compile-test</goal>
-                                    <goal>prepack-test</goal>
 
-                                    <!-- Link JS in scope=main. -->
+                                    <!-- Link runtime script. -->
                                     <goal>link-scala-js-main</goal>
-                                    <goal>prepack-linker-main</goal>
-
-                                    <!-- Link JS in scope=test. -->
                                     <goal>link-scala-js-test</goal>
-                                    <goal>prepack-linker-test</goal>
 
                                 </goals>
 

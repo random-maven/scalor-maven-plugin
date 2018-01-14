@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.m2e.core.project.IMavenProjectFacade
 
 import com.carrotgarden.maven.scalor.util.Classer.primitiveWrap
+import com.carrotgarden.maven.scalor.util.Logging
 
 /**
  * Extract plugin configuration parameters.

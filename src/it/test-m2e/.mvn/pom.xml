@@ -1801,6 +1801,100 @@
 
     <profiles>
 
+        <!-- Publish release revision. -->
+        <profile>
+            <id>release-revision</id>
+            <activation>
+                <property>
+                    <name>release-revision</name>
+                </property>
+                <file>
+                    <exists>.mvn/pom-release-revision.md</exists>
+                </file>
+            </activation>
+            <properties>
+                <!-- Release tag. -->
+                <release.revision.tag>${revision}</release.revision.tag>
+                <!-- Release comment. -->
+                <release.revision.message>release ${revision}</release.revision.message>
+                <!-- Release descriptor. -->
+                <release.revision.file>release-revision.conf</release.revision.file>
+                <release.revision.path>${project.basedir}/.mvn/${release.revision.file}</release.revision.path>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- Produce descriptor. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <configuration>
+                            <target>
+                                <echo file="${release.revision.path}" append="false">
+<![CDATA[
+# release revision
+version=${revision}
+]]>
+                                </echo>
+                            </target>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>release-revision</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Publish release tag. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-scm-plugin</artifactId>
+                        <executions>
+                            <!-- Add descriptor. -->
+                            <execution>
+                                <id>release-revision-register</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>add</goal>
+                                </goals>
+                                <configuration>
+                                    <pushChanges>false</pushChanges>
+                                    <includes>**/${release.revision.file}</includes>
+                                </configuration>
+                            </execution>
+                            <!-- Commit descriptor. -->
+                            <execution>
+                                <id>release-revision-commit</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>checkin</goal>
+                                </goals>
+                                <configuration>
+                                    <pushChanges>true</pushChanges>
+                                    <message>${release.revision.message}</message>
+                                </configuration>
+                            </execution>
+                            <!-- Tag release. -->
+                            <execution>
+                                <id>release-revision-tag</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>tag</goal>
+                                </goals>
+                                <configuration>
+                                    <pushChanges>true</pushChanges>
+                                    <message>${release.revision.message}</message>
+                                    <tag>${release.revision.tag}</tag>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <!-- Scala compiler setup. -->
         <profile>
             <id>scalor</id>
@@ -2173,46 +2267,6 @@
                 <version.scala.epoch>${version.scala213.epoch}</version.scala.epoch>
                 <version.scala.release>${version.scala213.release}</version.scala.release>
             </properties>
-        </profile>
-
-        <!-- Setup site in github/docs. -->
-        <profile>
-            <id>github-docs</id>
-            <activation>
-                <file>
-                    <exists>.mvn/pom-github-docs.md</exists>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <!-- Generate documentation site. -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-site-plugin</artifactId>
-                    </plugin>
-                    <!-- Deploy site to magic github folder. -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>github-docs</id>
-                                <phase>site</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <copy todir="${basedir}/docs/">
-                                            <fileset dir="${basedir}/target/site/" />
-                                        </copy>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
 
         <!-- Disable any testing. -->
@@ -3079,6 +3133,27 @@
                         <artifactId>bintray-maven-plugin</artifactId>
                         <configuration>
                             <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Skip integraton test invocaton. -->
+        <profile>
+            <id>no-invoke</id>
+            <activation>
+                <file>
+                    <exists>.mvn/pom-no-invoke.md</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <configuration>
+                            <skipInvocation>true</skipInvocation>
                         </configuration>
                     </plugin>
                 </plugins>

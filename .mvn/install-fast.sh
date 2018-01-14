@@ -7,4 +7,4 @@ set -e -u
 
 cd "${BASH_SOURCE%/*}/.."
 
-./mvnw.sh install -B -P skip-test -e
+./mvnw.sh install -B -P skip-test -P attach-sources

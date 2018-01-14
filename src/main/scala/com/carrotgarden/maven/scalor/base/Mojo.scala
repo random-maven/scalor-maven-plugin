@@ -15,6 +15,11 @@ trait Mojo extends AbstractMojo
   with SkipMojo
   with eclipse.Context {
 
+  /**
+   * Mojo execution name.
+   */
+  def mojoName : String
+
   def hasSkip : Boolean = {
     skip
   }
@@ -24,7 +29,7 @@ trait Mojo extends AbstractMojo
   }
 
   def reportSkipReason( line : String ) : Unit = {
-    if ( skipLogReason ) { say.info( line ) }
+    if ( skipLogReason ) { log.info( line ) }
   }
 
   /**
@@ -48,7 +53,7 @@ trait Mojo extends AbstractMojo
       case error : Throwable =>
         val message = "Execution failure:"
         contextError( message, error );
-        say.error( message + " " + error.getMessage )
+        log.fail( message + " " + error.getMessage )
         throw new MojoFailureException( message, error )
     }
   }

@@ -94,27 +94,15 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
         registerExecution( INITIALIZE, `register-test` )
 
         registerExecution( COMPILE, `compile-macro` )
-        registerExecution( COMPILE, `prepack-macro` )
-
         registerExecution( COMPILE, `compile-main` )
-        registerExecution( COMPILE, `prepack-main` )
-
-        registerExecution( PROCESS_CLASSES, `scaladoc-macro` )
-
-        registerExecution( PROCESS_CLASSES, `scaladoc-main` )
-
         registerExecution( PROCESS_CLASSES, `link-scala-js-main` )
-        registerExecution( PROCESS_CLASSES, `prepack-linker-main` )
-
+        
         registerExecution( TEST_COMPILE, `compile-test` )
-        registerExecution( TEST_COMPILE, `prepack-test` )
+        registerExecution( PROCESS_TEST_CLASSES, `link-scala-js-test` )
 
-        registerExecution( PROCESS_TEST_CLASSES, `prepack-linker-test` )
-        registerExecution( PROCESS_TEST_CLASSES, `scaladoc-test` )
-
-        registerExecution( PACKAGE, `sources-macro` )
-        registerExecution( PACKAGE, `sources-main` )
-        registerExecution( PACKAGE, `sources-test` )
+        registerExecution( PACKAGE, `scaladoc-macro` )
+        registerExecution( PACKAGE, `scaladoc-main` )
+        registerExecution( PACKAGE, `scaladoc-test` )
 
       case None =>
         Throw( "Missing scalor plugin." )

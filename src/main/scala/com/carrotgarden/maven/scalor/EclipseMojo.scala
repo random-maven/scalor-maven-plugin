@@ -5,7 +5,6 @@ import org.apache.maven.plugins.annotations._
 import com.carrotgarden.maven.tools.Description
 
 import A.mojo._
-import A.extend._
 
 import util.OSGI._
 import util.Error._
@@ -29,7 +28,8 @@ import org.eclipse.core.resources.IProject
 /**
  * Shared Eclipse mojo interface.
  */
-trait EclipseAnyMojo extends base.Mojo {
+trait EclipseAnyMojo extends AbstractMojo
+  with base.Mojo {
 
   @Description( """
   Flag to skip goal execution: <code>eclipse-*</code>.
@@ -55,12 +55,12 @@ trait EclipseAnyMojo extends base.Mojo {
    */
   def reportHandle = wiringHandle match {
     case Success( handle ) =>
-      say.info( "Using Eclipse platform plugins:" )
-      say.info( s"   ${handle.resourcesPlugin.getBundle}" )
-      say.info( s"   ${handle.mavenPlugin.getBundle}" )
-      say.info( s"   ${handle.mavenPluginUI.getBundle}" )
+      log.info( "Using Eclipse platform plugins:" )
+      log.info( s"   ${handle.resourcesPlugin.getBundle}" )
+      log.info( s"   ${handle.mavenPlugin.getBundle}" )
+      log.info( s"   ${handle.mavenPluginUI.getBundle}" )
     case Failure( error ) =>
-      say.error( "Required Eclipse plugin is missing: " + error )
+      log.fail( "Required Eclipse plugin is missing: " + error )
   }
 
   /**
@@ -113,7 +113,7 @@ class EclipseConfigMojo extends EclipseAnyMojo
   override def mojoName = `eclipse-config`
 
   override def performEclipse = {
-    say.info( "Configuring companion Eclipse plugin:" )
+    log.info( "Configuring companion Eclipse plugin:" )
     val handle = resolveHandle
 
     val descriptorUrl = Plugin.Config.pluginPropertiesUrl
@@ -121,8 +121,8 @@ class EclipseConfigMojo extends EclipseAnyMojo
 
     val pluginId = descriptorProps.getProperty( Plugin.Config.key.pluginId )
     val pluginLocation = Plugin.Config.location
-    say.info( "   pluginId: " + pluginId )
-    say.info( "   location: " + pluginLocation )
+    log.info( "   pluginId: " + pluginId )
+    log.info( "   location: " + pluginLocation )
 
     val bundleContext = handle.bundleM2E.getBundleContext
 
@@ -138,10 +138,10 @@ class EclipseConfigMojo extends EclipseAnyMojo
         ( "Companion plugin installed in Eclipse", pluginBundle, true )
       }
 
-    say.info( installMessage + ": " + pluginBundle )
+    log.info( installMessage + ": " + pluginBundle )
 
     if ( needProjectUpdate ) {
-      say.info( "Scheduling project update in Eclipse to invoke M2E project configurator." )
+      log.info( "Scheduling project update in Eclipse to invoke M2E project configurator." )
       val projectList = handle.workspace.getRoot.getProjects
       val currentProject = projectWithBase( projectList, project.getBasedir )
       val updateJob = new UpdateMavenProjectJob( Array[ IProject ]( currentProject ) )

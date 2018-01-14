@@ -23,8 +23,8 @@ trait LinkAnyScalaJsMojo extends AbstractMojo
   with base.Logging
   with base.SkipMojo
   with eclipse.Context
-  with scalajs.Linker
-  with scalajs.Build {
+  with scalajs.Build
+  with scalajs.Linker {
 
   @Description( """
   Flag to skip this execution: <code>link-scala-js-*</code>.
@@ -87,13 +87,13 @@ trait LinkAnyScalaJsMojo extends AbstractMojo
     if ( linkerDetectScalajs ) {
       val libraryOption = linkerLibraryOption
       if ( libraryOption.isDefined ) {
-        say.info( s"Detected scalajs-library: ${libraryOption.get.version}." )
+        log.info( s"Detected scalajs-library: ${libraryOption.get.version}." )
         invokeLinker()
       } else {
-        say.info( "Missing scalajs-library, skipping execution." )
+        log.info( "Missing scalajs-library, skipping execution." )
       }
     } else {
-      say.info( "Skipping library detect, forcing linker invocation." )
+      log.info( "Skipping library detect, forcing linker invocation." )
       invokeLinker()
     }
   }

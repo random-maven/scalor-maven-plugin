@@ -12,15 +12,24 @@ import org.eclipse.core.runtime.Status
 import org.slf4j.LoggerFactory
 
 import com.carrotgarden.maven.scalor.util
+import com.carrotgarden.maven.scalor.util.Logging
+import com.carrotgarden.maven.scalor.A
 
 object Plugin {
+
+  import Logging._
+
+  trait Log extends AnyLog {
+    /**  Work around lack of logging source in M2E "Maven Console". */
+    override def context( value : String ) = { CTX.value = s"[${A.eclipse.name}:${value}] " }
+  }
 
   /**
    * Eclipse companion plugin installed by this Maven plugin.
    */
-  trait Activator extends runtime.Plugin with Logging {
+  trait Activator extends runtime.Plugin
+    with Logging {
 
-    import Logging._
     import Plugin._
     import Plugin.Config._
     import com.carrotgarden.maven.scalor.util.OSGI._
@@ -50,23 +59,23 @@ object Plugin {
     /**
      * Log to M2E "Maven Console".
      */
-    object slf4jLog extends AnyLog {
+    object slf4jLog extends Plugin.Log {
       private lazy val logger = LoggerFactory.getLogger( logId );
-      override def info( line : String ) = logger.info( context + line )
-      override def warn( line : String ) = logger.warn( context + line )
-      override def fail( line : String ) = logger.error( context + line )
-      override def fail( line : String, error : Throwable ) = logger.error( context + line, error )
+      override def info( line : String ) = logger.info( context() + line )
+      override def warn( line : String ) = logger.warn( context() + line )
+      override def fail( line : String ) = logger.error( context() + line )
+      override def fail( line : String, error : Throwable ) = logger.error( context() + line, error )
     }
 
     /**
      * Log to Eclipse "Error Log".
      */
-    object eclipseLog extends AnyLog {
+    object eclipseLog extends Plugin.Log {
       import org.eclipse.core.runtime.IStatus._
-      override def info( line : String ) = getLog.log( new Status( INFO, logId, context + line ) )
-      override def warn( line : String ) = getLog.log( new Status( WARNING, logId, context + line ) )
-      override def fail( line : String ) = getLog.log( new Status( ERROR, logId, context + line ) )
-      override def fail( line : String, error : Throwable ) = getLog.log( new Status( ERROR, logId, context + line, error ) )
+      override def info( line : String ) = getLog.log( new Status( INFO, logId, context() + line ) )
+      override def warn( line : String ) = getLog.log( new Status( WARNING, logId, context() + line ) )
+      override def fail( line : String ) = getLog.log( new Status( ERROR, logId, context() + line ) )
+      override def fail( line : String, error : Throwable ) = getLog.log( new Status( ERROR, logId, context() + line, error ) )
     }
 
     /**

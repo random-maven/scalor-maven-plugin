@@ -7,8 +7,8 @@ import com.carrotgarden.maven.scalor.util
 import util.Params._
 import Params._
 
-import com.carrotgarden.maven.scalor.eclipse.Logging.AnyLog
 import org.eclipse.core.resources.IResource
+import com.carrotgarden.maven.scalor.util.Logging
 
 /**
  * Provide eclipse .project file comment.

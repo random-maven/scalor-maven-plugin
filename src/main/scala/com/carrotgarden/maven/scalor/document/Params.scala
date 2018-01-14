@@ -18,16 +18,24 @@ import org.codehaus.plexus.archiver.jar.JarArchiver
 import org.apache.maven.archiver.MavenArchiveConfiguration
 import org.apache.maven.project.MavenProjectHelper
 
+/**
+ * Provides components injected by Maven runtime.
+ */
 trait Params {
 
-  @Description( """
-  Maven archive builder.
-  """ )
-  @Component( role = classOf[ Archiver ], hint = "jar" )
-  var archiveBuilder : JarArchiver = _
+//  @Description( """
+//  Maven archive builder.
+//  """ )
+//  @Component( role = classOf[ Archiver ], hint = "jar" )
+//  var archiveBuilder : JarArchiver = _
 
   @Description( """
-  Maven archive configuration.
+  Configuration of Scaladoc archive jar. 
+  Normally used with provided default values.
+  Component reference:
+<a href="https://maven.apache.org/shared/maven-archiver/index.html">
+  MavenArchiveConfiguration
+</a>
   """ )
   @Parameter()
   var archiveConfig : MavenArchiveConfiguration = new MavenArchiveConfiguration()
@@ -39,69 +47,9 @@ trait Params {
   var projectHelper : MavenProjectHelper = _
 
   @Description( """
-  The directory where the generated archive file will be put.
-  """ )
-  @Parameter( defaultValue = "${project.build.directory}" )
-  var sourcesOutputDirectory : File = _
-
-  @Description( """
-  Contains the full list of projects in the reactor.
+  Contains the full list of projects in the build.
   """ )
   @Parameter( defaultValue = "${reactorProjects}", readonly = true )
   var reactorProjects : java.util.List[ MavenProject ] = _
-
-}
-
-trait ParamsAnySources {
-
-  def sourcesClassifier : String
-
-}
-
-trait ParamsMacroSources extends AnyRef
-  with ParamsAnySources {
-
-  @Description( """
-  Classifier of sources in compilation scope=macro.
-  """ )
-  @Parameter(
-    property     = "scalor.sourcesMacroClassifier",
-    defaultValue = "macro-sources"
-  )
-  var sourcesMacroClassifier : String = _
-
-  override def sourcesClassifier = sourcesMacroClassifier
-
-}
-
-trait ParamsMainSources extends AnyRef
-  with ParamsAnySources {
-
-  @Description( """
-  Classifier of sources in compilation scope=main.
-  """ )
-  @Parameter(
-    property     = "scalor.sourcesMainClassifier",
-    defaultValue = "sources"
-  )
-  var sourcesMainClassifier : String = _
-
-  override def sourcesClassifier = sourcesMainClassifier
-
-}
-
-trait ParamsTestSources extends AnyRef
-  with ParamsAnySources {
-
-  @Description( """
-  Classifier of sources in compilation scope=test.
-  """ )
-  @Parameter(
-    property     = "scalor.sourcesTestClassifier",
-    defaultValue = "test-sources"
-  )
-  var sourcesTestClassifier : String = _
-
-  override def sourcesClassifier = sourcesTestClassifier
 
 }

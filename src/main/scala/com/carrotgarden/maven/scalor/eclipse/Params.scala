@@ -24,7 +24,34 @@ trait Params extends AnyRef
   with ParamsLibrary
   with ParamsPreferences
   with ParamsVersionMaven
-  with ParamsVersionScala {
+  with ParamsVersionScala
+  with ParamsHackSymlinks
+  {
+
+}
+
+trait ParamsHackSymlinks {
+
+  @Description( """
+  Work around Scala IDE mishandling of symbolic link paths.
+  Specifically, discover project folders which are symbolic links,
+  and explicitly declare them in the <code>.project</code> descriptor.
+  Example result entry in the descriptor: 
+<pre>
+&lt;linkedResources&gt;
+	&lt;link&gt;
+		&lt;name&gt;src&lt;/name&gt;
+		&lt;type&gt;2&lt;/type&gt;
+		&lt;location&gt;/home/work/source/git/scalor-maven-plugin/src&lt;/location&gt;
+	&lt;/link&gt;
+&lt;/linkedResources&gt;
+</pre>
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseHackSymbolicLinks",
+    defaultValue = "true"
+  )
+  var eclipseHackSymbolicLinks : Boolean = _
 
 }
 

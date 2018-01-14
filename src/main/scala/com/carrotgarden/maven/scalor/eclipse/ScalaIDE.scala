@@ -36,6 +36,7 @@ import org.scalaide.util.internal.SettingConverterUtil.SCALA_DESIRED_INSTALLATIO
 import org.scalaide.util.internal.SettingConverterUtil.USE_PROJECT_SETTINGS_PREFERENCE
 import org.scalaide.util.internal.SettingConverterUtil.convertNameToProperty
 import org.eclipse.jdt.core.IClasspathAttribute
+import com.carrotgarden.maven.scalor.util.Logging
 
 /**
  * Provide Scala IDE settings for a project.

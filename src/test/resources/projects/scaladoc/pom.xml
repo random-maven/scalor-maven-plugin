@@ -1,0 +1,114 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.carrotgarden.maven</groupId>
+    <artifactId>scalor-maven-plugin-test-scaladoc</artifactId>
+    <version>0-SNAPSHOT</version>
+
+    <properties>
+
+        <!-- Resource identity sequence. -->
+        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+
+        <!-- Streaming release version. -->
+        <release.epoch>0.0.0</release.epoch>
+        <release.stamp>${maven.build.timestamp}</release.stamp>
+        <revision>${release.epoch}.${release.stamp}</revision>
+
+        <!-- Must override in each cross-version module. -->
+        <version.scala.epoch>2.11</version.scala.epoch>
+        <version.scala.release>2.11.0</version.scala.release>
+
+        <version.scala.zinc>1.1.0</version.scala.zinc>
+        <version.scala.plug.macro>2.1.0</version.scala.plug.macro>
+
+        <version.sjs.epoch>0.6</version.sjs.epoch>
+        <version.sjs.release>${version.sjs.epoch}.21</version.sjs.release>
+        <version.sjs.library>sjs${version.sjs.epoch}_${version.scala.epoch}</version.sjs.library>
+
+        <version.java>1.8</version.java>
+
+        <maven.compiler.source>${version.java}</maven.compiler.source>
+        <maven.compiler.target>${version.java}</maven.compiler.target>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${version.scala.release}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scala-js</groupId>
+            <artifactId>scalajs-library_${version.scala.epoch}</artifactId>
+            <version>${version.sjs.release}</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <!-- Note:
+                AbstractMojoTestCase needs:
+                * executoin id
+                * configuration per execution
+            -->
+
+            <plugin>
+                <groupId>com.carrotgarden.maven</groupId>
+                <artifactId>scalor-maven-plugin_2.12</artifactId>
+                <version>@project.version@</version>
+
+                <configuration>
+                    <defineBridge>
+                        <dependency>
+                            <groupId>org.scala-sbt</groupId>
+                            <artifactId>compiler-bridge_${version.scala.epoch}</artifactId>
+                            <version>${version.scala.zinc}</version>
+                        </dependency>
+                    </defineBridge>
+                    <defineCompiler>
+                        <dependency>
+                            <groupId>org.scala-lang</groupId>
+                            <artifactId>scala-compiler</artifactId>
+                            <version>${version.scala.release}</version>
+                        </dependency>
+                    </defineCompiler>
+                    <definePluginList>
+                        <dependency>
+                            <groupId>org.scala-js</groupId>
+                            <artifactId>scalajs-compiler_${version.scala.release}</artifactId>
+                            <version>${version.sjs.release}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.scalamacros</groupId>
+                            <artifactId>paradise_${version.scala.release}</artifactId>
+                            <version>${version.scala.plug.macro}</version>
+                        </dependency>
+                    </definePluginList>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>scaladoc-main</id>
+                        <goals>
+                            <goal>scaladoc-main</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

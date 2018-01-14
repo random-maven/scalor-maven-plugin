@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="target/scalor/classes/macro" path="src/macro/java">
+	<classpathentry kind="src" output="target/classes" path="src/macro/java">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 			<attribute name="optional" value="true"/>
 			<attribute name="scalor.scope" value="macro"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="target/scalor/classes/macro" path="src/macro/scala">
+	<classpathentry kind="src" output="target/classes" path="src/macro/scala">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 			<attribute name="optional" value="true"/>
 			<attribute name="scalor.scope" value="macro"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="target/scalor/classes/main" path="src/main/java">
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 			<attribute name="optional" value="true"/>
 			<attribute name="scalor.scope" value="main"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="target/scalor/classes/main" path="src/main/scala">
+	<classpathentry kind="src" output="target/classes" path="src/main/scala">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 			<attribute name="optional" value="true"/>
 			<attribute name="scalor.scope" value="main"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="target/scalor/classes/main" path="src/main/resources">
+	<classpathentry kind="src" output="target/classes" path="src/main/resources">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 			<attribute name="optional" value="true"/>
 			<attribute name="scalor.scope" value="main"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="target/scalor/classes/test" path="src/test/java">
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 			<attribute name="optional" value="true"/>
 			<attribute name="scalor.scope" value="test"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="target/scalor/classes/test" path="src/test/scala">
+	<classpathentry kind="src" output="target/test-classes" path="src/test/scala">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 			<attribute name="optional" value="true"/>
 			<attribute name="scalor.scope" value="test"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="target/scalor/classes/test" path="src/test/resources">
+	<classpathentry kind="src" output="target/test-classes" path="src/test/resources">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 			<attribute name="optional" value="true"/>

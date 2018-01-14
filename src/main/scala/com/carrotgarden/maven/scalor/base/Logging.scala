@@ -11,22 +11,12 @@ import java.io.File
 /**
  * Shared logging features.
  */
-trait Logging {
+trait Logging extends util.Logging {
 
-  self : eclipse.Context with AbstractMojo =>
+  self : Mojo with eclipse.Context =>
 
-  def mojoName : String
-
-  object say {
-    /**  Work around lack of logging source in M2E "Maven Console". */
-    private lazy val prefix =
-      if ( m2e.isPresent ) "[" + A.maven.name + ":" + mojoName + "] " else ""
-    //
-    def debug( line : String ) = getLog().debug( prefix + line );
-    def info( line : String ) = getLog().info( prefix + line );
-    def warn( line : String ) = getLog().warn( prefix + line );
-    def error( line : String ) = getLog().error( prefix + line );
-  }
+  // Lazy, for plexus injector.
+  override lazy val log = Logging.Log( getLog, mojoName, m2e.isPresent )
 
   /**
    * Log file list.
@@ -34,8 +24,25 @@ trait Logging {
   def reportFileList( fileList : Array[ File ] ) = {
     import util.Folder._
     fileList.sorted.foreach {
-      file => say.info( "   " + ensureCanonicalFile( file ) )
+      file => log.info( "   " + ensureCanonicalFile( file ) )
     }
+  }
+
+}
+
+object Logging {
+
+  case class Log(
+    logger :   org.apache.maven.plugin.logging.Log,
+    mojoName : String,
+    hasM2E :   Boolean
+  ) extends util.Logging.AnyLog {
+    /**  Work around lack of logging source in M2E "Maven Console". */
+    override val context = if ( hasM2E ) "[" + A.maven.name + ":" + mojoName + "] " else ""
+    override def info( line : String ) = logger.info( context + line )
+    override def warn( line : String ) = logger.warn( context + line )
+    override def fail( line : String ) = logger.error( context + line )
+    override def fail( line : String, error : Throwable ) = logger.error( context + line, error )
   }
 
 }

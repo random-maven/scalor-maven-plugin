@@ -226,17 +226,17 @@ trait ParamsLogging {
   Uses Maven logger at Maven <code>INFO</code> level.
   Available Zinc logger levels:
 <pre>
-  1 -> Debug, Info, Warn, Error
-  2 -> Info, Warn, Error
-  3 -> Warn, Error
-  4 -> Error
+  debug
+  info
+  warn
+  error
 </pre>
   """ )
   @Parameter(
     property     = "scalor.zincLogActiveLevel",
-    defaultValue = "1"
+    defaultValue = "debug"
   )
-  var zincLogActiveLevel : Int = _
+  var zincLogActiveLevel : String = _
 
   @Description( """
   Enable logging of current project build class path.
@@ -301,7 +301,7 @@ trait ParamsLogging {
 
   @Description( """
   Enable logging of available/effective compiler options with help description.
-  Report output location: <a href="#zincComileOptionsReport"><b>zincComileOptionsReport</b></a>
+  Report output location: <a href="#zincCompileOptionsReport"><b>zincCompileOptionsReport</b></a>
   """ )
   @Parameter(
     property     = "scalor.zincLogCompileOptions",
@@ -314,10 +314,10 @@ trait ParamsLogging {
   Enable output: <a href="#zincLogCompileOptions"><b>zincLogCompileOptions</b></a>
   """ )
   @Parameter(
-    property     = "scalor.zincComileOptionsReport",
+    property     = "scalor.zincCompileOptionsReport",
     defaultValue = "${project.build.directory}/scalor/scala-options-report.txt"
   )
-  var zincComileOptionsReport : File = _
+  var zincCompileOptionsReport : File = _
 
 }
 

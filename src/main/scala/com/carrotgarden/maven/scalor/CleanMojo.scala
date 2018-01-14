@@ -32,7 +32,7 @@ trait CleanAnyMojo extends AbstractMojo
   Flag to skip goal execution: <code>clean-*</code>.
   """ )
   @Parameter(
-    property     = "scalor.skipRegister", //
+    property     = "scalor.skipRegister",
     defaultValue = "false"
   )
   var skipClean : Boolean = _
@@ -42,7 +42,7 @@ trait CleanAnyMojo extends AbstractMojo
   def performClean() : Unit = {
     resouceList.foreach { file =>
       val path = ensureCanonicalFile( file )
-      say.info( s"Deleting ${path}" )
+      log.info( s"Deleting ${path}" )
       path.delete
     }
   }
@@ -78,7 +78,7 @@ class CleanMacroMojo extends CleanAnyMojo
   Flag to skip goal execution: <code>clean-macro</code>.
   """ )
   @Parameter(
-    property     = "scalor.skipCleanMacro", //
+    property     = "scalor.skipCleanMacro",
     defaultValue = "false"
   )
   var skipCleanMacro : Boolean = _
@@ -105,7 +105,7 @@ class CleanMainMojo extends CleanAnyMojo
   Flag to skip goal execution: <code>clean-main</code>.
   """ )
   @Parameter(
-    property     = "scalor.skipCleanMain", //
+    property     = "scalor.skipCleanMain",
     defaultValue = "false"
   )
   var skipCleanMain : Boolean = _

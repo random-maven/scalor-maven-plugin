@@ -15,6 +15,7 @@ import util.Error._
 import org.scalaide.core.internal.ScalaPlugin
 import org.osgi.framework.Bundle
 import org.eclipse.m2e.core.ui.internal.M2EUIPluginActivator
+import com.carrotgarden.maven.scalor.util.Logging
 
 /**
  * Version verification support.

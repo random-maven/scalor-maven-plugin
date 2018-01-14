@@ -7,6 +7,7 @@ import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
 import org.eclipse.jdt.core.JavaCore
 import org.scalaide.core.SdtConstants
 import org.eclipse.core.resources.IResource
+import com.carrotgarden.maven.scalor.util.Logging
 
 /**
  * Provide eclipse .project file natures.

@@ -20,7 +20,7 @@ class BasicTest {
 
   @Test
   def testMain() = {
-
+    
   }
 
 }

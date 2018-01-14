@@ -25,6 +25,7 @@ import scala.util.Sorting
 import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
 import java.util.Arrays
 import org.eclipse.core.resources.IResource
+import com.carrotgarden.maven.scalor.util.Logging
 
 /**
  * Re-order eclipse .project file and .classpath file entries.

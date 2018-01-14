@@ -1,4 +1,6 @@
 eclipse.preferences.version=1
+encoding//src/macro/java=UTF-8
+encoding//src/macro/scala=UTF-8
 encoding//src/main/java=UTF-8
 encoding//src/main/resources=UTF-8
 encoding//src/main/scala=UTF-8

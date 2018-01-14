@@ -170,7 +170,8 @@ object EclipsePlugin {
       ensureProjectNature( request, config, subMon.split( 10 ) )
       ensureOrderBuilder( request, config, subMon.split( 10 ) )
       ensureOrderNature( request, config, subMon.split( 10 ) )
-      configureScalaIDE( request, config, subMon.split( 30 ) )
+      hackSymbolicLinks(request, config, subMon.split( 10 ))
+      configureScalaIDE( request, config, subMon.split( 10 ) )
     }
 
   }

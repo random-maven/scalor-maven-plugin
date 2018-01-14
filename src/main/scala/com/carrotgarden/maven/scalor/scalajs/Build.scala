@@ -37,7 +37,7 @@ trait BuildMain extends Build
 
   @Description( """
   Name of the generated runtime JavaScript file.
-  File is packaged inside <a href="#linkerMainMetaFolder"><b>linkerMainMetaFolder</b></a>
+  File is packaged inside <a href="#linkerMainTargetFolder"><b>linkerMainTargetFolder</b></a>
   """ )
   @Parameter(
     property     = "scalor.linkerMainRuntimeJs", //
@@ -47,7 +47,7 @@ trait BuildMain extends Build
 
   @Description( """
   Name of the runtime dependency resolution report file.
-  File is packaged inside <a href="#linkerMainMetaFolder"><b>linkerMainMetaFolder</b></a>
+  File is packaged inside <a href="#linkerMainTargetFolder"><b>linkerMainTargetFolder</b></a>
   """ )
   @Parameter(
     property     = "scalor.linkerMainRuntimeDeps", //
@@ -68,7 +68,7 @@ trait BuildMainDependency extends base.BuildAnyDependency {
   """ )
   @Parameter(
     property     = "scalor.linkerMainDependencyFolders", //
-    defaultValue = "${project.build.directory}/scalor/classes/macro,${project.build.directory}/scalor/classes/main"
+    defaultValue = "${project.build.outputDirectory}"
   )
   var linkerMainDependencyFolders : Array[ File ] = Array[ File ]()
 
@@ -86,35 +86,18 @@ trait BuildMainDependency extends base.BuildAnyDependency {
 
 }
 
-trait BuildMainTarget extends base.BuildAnyTarget
-  with BuildMainMetaFolder {
+trait BuildMainTarget extends base.BuildAnyTarget {
 
   @Description( """
   Build target directory for the generated runtime JavaScript file with scope=main.
-  This folder is a "target" for <code>link-scala-js-main</code>
-  and an "origin" for the <code>prepack-linker-main</code>.
-  Copy direction: origin -> output.
   """ )
   @Parameter(
     property     = "scalor.linkerMainTargetFolder", //
-    defaultValue = "${project.build.directory}/scalor/scala-js/main"
+    defaultValue = "${project.build.outputDirectory}/META-INF/resources/script"
   )
   var linkerMainTargetFolder : File = _
 
-  @Description( """
-  Build package output folder for runtime JavaScript of compilation scope=test.
-  This folder is an "output" for the <code>prepack-linker-main</code>.
-  Combines main runtime in the main jar.
-  Copy direction: origin -> output.
-  """ )
-  @Parameter(
-    property     = "scalor.linkerMainOutputFolder",
-    defaultValue = "${project.build.outputDirectory}"
-  )
-  var linkerMainOutputFolder : File = _
-
   override def buildTargetFolder = linkerMainTargetFolder
-  override def buildOutputFolder = linkerMainOutputFolder
 
 }
 
@@ -127,7 +110,7 @@ trait BuildTest extends Build
 
   @Description( """
   Name of the generated runtime JavaScript file.
-  File is packaged inside <a href="#linkerTestMetaFolder"><b>linkerTestMetaFolder</b></a>
+  File is packaged inside <a href="#linkerTestTargetFolder"><b>linkerTestTargetFolder</b></a>
   """ )
   @Parameter(
     property     = "scalor.linkerTestRuntimeJs", //
@@ -137,7 +120,7 @@ trait BuildTest extends Build
 
   @Description( """
   Name of the runtime dependency resolution report file.
-  File is packaged inside <a href="#linkerTestMetaFolder"><b>linkerTestMetaFolder</b></a>
+  File is packaged inside <a href="#linkerTestTargetFolder"><b>linkerTestTargetFolder</b></a>
   """ )
   @Parameter(
     property     = "scalor.linkerTestRuntimeDeps", //
@@ -158,7 +141,7 @@ trait BuildTestDependency extends base.BuildAnyDependency {
   """ )
   @Parameter(
     property     = "scalor.linkerTestDependencyFolders", //
-    defaultValue = "${project.build.directory}/scalor/classes/macro,${project.build.directory}/scalor/classes/main,${project.build.directory}/scalor/classes/test"
+    defaultValue = "${project.build.outputDirectory},${project.build.testOutputDirectory}"
   )
   var linkerTestDependencyFolders : Array[ File ] = Array[ File ]()
 
@@ -176,66 +159,17 @@ trait BuildTestDependency extends base.BuildAnyDependency {
 
 }
 
-trait BuildTestTarget extends base.BuildAnyTarget
-  with BuildTestMetaFolder {
+trait BuildTestTarget extends base.BuildAnyTarget {
 
   @Description( """
   Build target directory for the generated runtime JavaScript file with scope=test.
-  This folder is a "target" for <code>link-scala-js-test</code>
-  and an "origin" for the <code>prepack-linker-test</code>.
-  Copy direction: origin -> output.
   """ )
   @Parameter(
     property     = "scalor.linkerTestTargetFolder", //
-    defaultValue = "${project.build.directory}/scalor/scala-js/test"
+    defaultValue = "${project.build.testOutputDirectory}/META-INF/resources/script-test"
   )
   var linkerTestTargetFolder : File = _
 
-  @Description( """
-  Build package output folder for runtime JavaScript of compilation scope=main.
-  This folder is an "output" for the <code>prepack-linker-test</code>.
-  Combines test runtime in the test jar.
-  Copy direction: origin -> output.
-  """ )
-  @Parameter(
-    property     = "scalor.linkerTestOutputFolder",
-    defaultValue = "${project.build.testOutputDirectory}"
-  )
-  var linkerTestOutputFolder : File = _
-
   override def buildTargetFolder = linkerTestTargetFolder
-  override def buildOutputFolder = linkerTestOutputFolder
 
-}
-
-/**
- * Location of generated runtime.js JavaScript inside the final jar.
- */
-trait BuildMainMetaFolder {
-  
-  @Description( """
-  Location of generated runtime JavaScript file inside the final jar for scope=main.
-  """ )
-  @Parameter(
-    property     = "scalor.linkerMainMetaFolder", //
-    defaultValue = "META-INF/resources/script"
-  )
-  var linkerMainMetaFolder : String = _
-  
-}
-
-/**
- * Location of generated runtime.js JavaScript inside the final jar.
- */
-trait BuildTestMetaFolder {
-  
-  @Description( """
-  Location of generated runtime JavaScript file inside the final jar for scope=test.
-  """ )
-  @Parameter(
-    property     = "scalor.linkerTestMetaFolder", //
-    defaultValue = "META-INF/resources/script-test"
-  )
-  var linkerTestMetaFolder : String = _
-  
 }

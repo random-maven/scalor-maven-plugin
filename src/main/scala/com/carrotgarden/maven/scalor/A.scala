@@ -64,28 +64,15 @@ object A {
     final val `compile-main` = "compile-main"
     final val `compile-test` = "compile-test"
 
-    final val `prepack-macro` = "prepack-macro"
-    final val `prepack-main` = "prepack-main"
-    final val `prepack-test` = "prepack-test"
-
     final val `link-scala-js-main` = "link-scala-js-main"
     final val `link-scala-js-test` = "link-scala-js-test"
-
-    final val `prepack-linker-main` = "prepack-linker-main"
-    final val `prepack-linker-test` = "prepack-linker-test"
 
     final val `scaladoc-macro` = "scaladoc-macro"
     final val `scaladoc-main` = "scaladoc-main"
     final val `scaladoc-test` = "scaladoc-test"
 
-    final val `sources-macro` = "sources-macro"
-    final val `sources-main` = "sources-main"
-    final val `sources-test` = "sources-test"
-    
-  }
-
-  object extend {
-    final val `scalor-configurator` = "scalor-configurator"
+    final val `report-main` = "report-main"
+    final val `report-test` = "report-test"
   }
 
   /**

@@ -14,7 +14,7 @@ What to look for:
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
     <name>scalor-maven-plugin_2.12</name>
-    <comment>scalor-maven-plugin @ 20180111155551</comment>
+    <comment>scalor-maven-plugin @ 20180114043512</comment>
     <projects>
     </projects>
     <buildSpec>
@@ -35,5 +35,17 @@ What to look for:
         <nature>org.eclipse.pde.PluginNature</nature>
         <nature>org.eclipse.m2e.core.maven2Nature</nature>
     </natures>
+    <linkedResources>
+        <link>
+            <name>src</name>
+            <type>2</type>
+            <location>/home/work/source/git/scalor-maven-plugin/src</location>
+        </link>
+        <link>
+            <name>test-repo</name>
+            <type>2</type>
+            <location>/home/work/source/git/scalor-maven-plugin/cross/2.12/test-repo</location>
+        </link>
+    </linkedResources>
 </projectDescription>
 ```

@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IProject
 import org.eclipse.m2e.core.project.configurator.AbstractBuildParticipant
 import org.eclipse.m2e.core.project.configurator.AbstractBuildParticipant2
 import org.eclipse.core.runtime.SubMonitor
+import com.carrotgarden.maven.scalor.util.Logging
 
 /**
  * Assemble M2E project configurator components.
@@ -26,6 +27,7 @@ object Project {
     with Comment
     with Config
     with Entry
+    with Hack
     with Logging
     with Maven
     with Monitor

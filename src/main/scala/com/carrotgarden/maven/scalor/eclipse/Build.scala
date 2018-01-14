@@ -4,6 +4,7 @@ import org.apache.maven.plugin.MojoExecution
 import org.eclipse.core.resources.IProject
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.m2e.core.project.configurator.MojoExecutionBuildParticipant
+import com.carrotgarden.maven.scalor.util.Logging
 
 /**
  * M2E build support.

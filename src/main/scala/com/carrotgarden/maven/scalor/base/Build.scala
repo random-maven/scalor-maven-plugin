@@ -80,11 +80,6 @@ trait BuildAnyTarget {
    */
   def buildTargetFolder : File
 
-  /**
-   * Package output directory.
-   */
-  def buildOutputFolder : File
-
 }
 
 /**
@@ -93,7 +88,7 @@ trait BuildAnyTarget {
 trait BuildMacro extends Build
   with BuildMacroDependency
   with BuildMacroSources
-  with BuildMacroTarget
+  with BuildMainTarget
 
 object BuildMacro extends BuildMacro {
   // Ensure variables have default values.
@@ -175,37 +170,6 @@ trait BuildMacroSources extends BuildAnySources {
 
 }
 
-trait BuildMacroTarget extends BuildAnyTarget {
-
-  @Description( """
-  Build compile target folder with result classes of compilation scope=macro.
-  This folder is a "target" for the <code>compile-macro</code> 
-  and an "origin" for the <code>prepack-macro</code>.
-  Copy direction: origin -> output.
-  """ )
-  @Parameter(
-    property     = "scalor.buildMacroTargetFolder",
-    defaultValue = "${project.build.directory}/scalor/classes/macro"
-  )
-  var buildMacroTargetFolder : File = _
-
-  @Description( """
-  Build package output folder for classes of compilation scope=macro.
-  This folder is an "output" for the <code>prepack-macro</code>.
-  Combines both macro and main classes in the main jar.
-  Copy direction: origin -> output.
-  """ )
-  @Parameter(
-    property     = "scalor.buildMacroOutputFolder",
-    defaultValue = "${project.build.outputDirectory}"
-  )
-  var buildMacroOutputFolder : File = _
-
-  override def buildTargetFolder = buildMacroTargetFolder
-  override def buildOutputFolder = buildMacroOutputFolder
-
-}
-
 /**
  * Build definition for compilation scope=main.
  */
@@ -223,11 +187,11 @@ trait BuildMainDependency extends BuildAnyDependency {
   @Description( """
   Project folders containing build classes
   which are dependency for compilation scope=main.
-  Normally includes folder scope=[macro].
+  Normally includes folder scope=[macro]
   """ )
   @Parameter(
     property     = "scalor.buildMainDependencyFolders",
-    defaultValue = "${project.build.directory}/scalor/classes/macro"
+    defaultValue = "${project.build.outputDirectory}"
   )
   var buildMainDependencyFolders : Array[ File ] = Array.empty
 
@@ -296,31 +260,15 @@ trait BuildMainSources extends BuildAnySources {
 trait BuildMainTarget extends BuildAnyTarget {
 
   @Description( """
-  Build compile target folder with result classes of compilation scope=main.
-  This folder is a "target" for the <code>compile-main</code>
-  and an "origin" for the <code>prepack-main</code>.
-  Copy direction: origin -> output.
+  Build target folder with result classes of compilation scope=[macro,main].
   """ )
   @Parameter(
     property     = "scalor.buildMainTargetFolder",
-    defaultValue = "${project.build.directory}/scalor/classes/main"
+    defaultValue = "${project.build.outputDirectory}"
   )
   var buildMainTargetFolder : File = _
 
-  @Description( """
-  Build package output folder for classes of compilation scope=main.
-  This folder is an "output" for the <code>prepack-main</code>.
-  Combines both macro and main classes in the main jar.
-  Copy direction: origin -> output.
-  """ )
-  @Parameter(
-    property     = "scalor.buildMainOutputFolder",
-    defaultValue = "${project.build.outputDirectory}"
-  )
-  var buildMainOutputFolder : File = _
-
   override def buildTargetFolder = buildMainTargetFolder
-  override def buildOutputFolder = buildMainOutputFolder
 
 }
 
@@ -345,7 +293,7 @@ trait BuildTestDependency extends BuildAnyDependency {
   """ )
   @Parameter(
     property     = "scalor.buildTestDependencyFolders",
-    defaultValue = "${project.build.directory}/scalor/classes/macro,${project.build.directory}/scalor/classes/main"
+    defaultValue = "${project.build.outputDirectory}"
   )
   var buildTestDependencyFolders : Array[ File ] = Array.empty
 
@@ -414,31 +362,15 @@ trait BuildTestSources extends BuildAnySources {
 trait BuildTestTarget extends BuildAnyTarget {
 
   @Description( """
-  Build compile target folder with result classes of compilation scope=test.
-  This folder is a "target" for the <code>compile-test</code>
-  and an "origin" for the <code>prepack-test</code>.
-  Copy direction: origin -> output.
+  Build target folder with result classes of compilation scope=test.
   """ )
   @Parameter(
     property     = "scalor.buildTestTargetFolder",
-    defaultValue = "${project.build.directory}/scalor/classes/test"
+    defaultValue = "${project.build.testOutputDirectory}"
   )
   var buildTestTargetFolder : File = _
 
-  @Description( """
-  Build package output folder for classes of compilation scope=test.
-  This folder is an "output" for the <code>prepack-test</code>.
-  Combines only test classes in the test jar.
-  Copy direction: origin -> output.
-  """ )
-  @Parameter(
-    property     = "scalor.buildTestOutputFolder",
-    defaultValue = "${project.build.testOutputDirectory}"
-  )
-  var buildTestOutputFolder : File = _
-
   override def buildTargetFolder = buildTestTargetFolder
-  override def buildOutputFolder = buildTestOutputFolder
 
 }
 
@@ -456,18 +388,6 @@ trait BuildEnsure {
 }
 
 object Build {
-
-  //  /**
-  //   * Custom project property used to store registered macro source folders.
-  //   * Emulate 'project.getCompileSourceRoots' for scope=macro.
-  //   */
-  //  val buildMacroSourceFoldersParam = "scalor.buildMacroSourceRoots"
-  //
-  //  /**
-  //   * Custom project property used to store registered macro target folder.
-  //   * Emulate 'project.getBuild.getOutputDirectory' for scope=macro.
-  //   */
-  //  val buildMacroTargetParam = "scalor.buildMacroOutputDirectory"
 
   /**
    * Build constants.

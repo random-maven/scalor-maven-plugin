@@ -16,135 +16,263 @@ import java.io.File
 import java.util.Locale
 import org.codehaus.doxia.sink.Sink
 
-trait ScaladocAnyMojo extends AbstractMojo with MavenReport
-  with base.Mojo
-  with base.Params
-  with base.Logging
-  with base.SkipMojo {
+import util.Folder._
+import org.apache.maven.archiver.MavenArchiver
+import java.nio.file.Paths
+import org.codehaus.plexus.archiver.jar.JarArchiver
 
-  import MavenReport._
-
-  override def isExternalReport() : Boolean = true
-  override def getCategoryName : String = CATEGORY_PROJECT_REPORTS
-  override def getOutputName() : String = ""
-  override def getReportOutputDirectory() : File = ???
-  override def setReportOutputDirectory( file : File ) : Unit = ???
-  override def getName( locale : Locale ) : String = ""
-  override def getDescription( locale : Locale ) : String = ""
-
-  override def canGenerateReport() : Boolean = {
-    //        var back = ((project.isExecutionRoot() || forceAggregate) && canAggregate() && project.getCollectedProjects().size() > 0);
-    //        back = back || (findSourceFiles().size() != 0);
-    //        return back;
-    ???
-  }
-
-  def generate( sink : Sink, locale : Locale ) : Unit = {
-    ???
-  }
-
-  override def perform() : Unit = {
-    say.info( s"TODO" )
-  }
-
-}
-
-@Description( """
-Produce project scaladoc for compilation scope=macro.
-""" )
-@Mojo(
-  name                         = `scaladoc-macro`,
-  defaultPhase                 = LifecyclePhase.GENERATE_SOURCES,
-  requiresDependencyResolution = ResolutionScope.COMPILE
-)
-class ScaladocMacroMojo extends ScaladocAnyMojo {
-
-  override def mojoName : String = `scaladoc-macro`
-
-}
-
-@Description( """
-Produce project scaladoc for compilation scope=main.
-""" )
-@Mojo(
-  name                         = `scaladoc-main`,
-  defaultPhase                 = LifecyclePhase.GENERATE_SOURCES,
-  requiresDependencyResolution = ResolutionScope.COMPILE
-)
-class ScaladocMainMojo extends ScaladocAnyMojo {
-
-  override def mojoName : String = `scaladoc-main`
-
-}
-
-@Description( """
-Produce project scaladoc for compilation scope=test.
-""" )
-@Mojo(
-  name                         = `scaladoc-test`,
-  defaultPhase                 = LifecyclePhase.GENERATE_TEST_SOURCES,
-  requiresDependencyResolution = ResolutionScope.TEST
-)
-class ScaladocTestMojo extends ScaladocAnyMojo {
-
-  override def mojoName : String = `scaladoc-test`
-
-}
-
-trait SourcesAnyMojo extends AbstractMojo
+/**
+ *  Shared interface for site report mojo.
+ */
+trait ReportAnyMojo extends AbstractMojo
   with base.Mojo
   with base.Params
   with base.Logging
   with base.SkipMojo
-  with document.ParamsAnySources {
+  //
+  with MavenReport
+  with document.ReportAny {
+
+  @Description( """
+  Flag to skip document execution: <code>report-*</code>.
+  """ )
+  @Parameter(
+    property     = "scalor.skipReport", //
+    defaultValue = "false"
+  )
+  var skipReport : Boolean = _
+
+  def performReport() : Unit = {
+    log.info( s"TODO TODO TODO" )
+  }
 
   override def perform() : Unit = {
-    say.info( s"TODO" )
+    if ( skipReport || hasSkipMojo ) {
+      reportSkipReason( "Skipping disabled goal execution." )
+      return
+    }
+    performReport
   }
 
 }
 
 @Description( """
-Produce project sources for compilation scope=macro.
+Produce Scaladoc site report for compilation scope=[macro,main].
 """ )
 @Mojo(
-  name                         = `sources-macro`,
+  name                         = `report-main`,
   defaultPhase                 = LifecyclePhase.PACKAGE,
-  requiresDependencyResolution = ResolutionScope.NONE
+  requiresDependencyResolution = ResolutionScope.COMPILE
 )
-class SourcesMacroMojo extends SourcesAnyMojo
-  with document.ParamsMacroSources {
+class ReportMainMojo extends ReportAnyMojo
+  with document.ReportMain {
 
-  override def mojoName : String = `sources-macro`
+  override def mojoName : String = `report-main`
+
+  @Description( """
+  Flag to skip goal execution: <code>report-main</code>.
+  """ )
+  @Parameter(
+    property     = "scalor.skipReportMain", //
+    defaultValue = "false"
+  )
+  var skipReportMain : Boolean = _
+
+  override def hasSkipMojo = skipReportMain
 
 }
 
 @Description( """
-Produce project sources for compilation scope=main.
+Produce Scaladoc site report for compilation scope=[test].
 """ )
 @Mojo(
-  name                         = `sources-main`,
+  name                         = `report-test`,
   defaultPhase                 = LifecyclePhase.PACKAGE,
-  requiresDependencyResolution = ResolutionScope.NONE
+  requiresDependencyResolution = ResolutionScope.COMPILE
 )
-class SourcesMainMojo extends SourcesAnyMojo
-  with document.ParamsMainSources {
+class ReportTestMojo extends ReportAnyMojo
+  with document.ReportTest {
 
-  override def mojoName : String = `sources-main`
+  override def mojoName : String = `report-test`
+
+  @Description( """
+  Flag to skip goal execution: <code>report-test</code>.
+  """ )
+  @Parameter(
+    property     = "scalor.skipReportTest", //
+    defaultValue = "false"
+  )
+  var skipReportTest : Boolean = _
+
+  override def hasSkipMojo = skipReportTest
+
+}
+
+/**
+ *  Shared interface for Scaladoc mojo.
+ */
+trait ScaladocAnyMojo extends AbstractMojo
+  //
+  with document.Params
+  with document.ScaladocAny
+  //
+  with base.Mojo
+  with base.Params
+  with base.Logging
+  with base.SkipMojo
+  //
+  with base.Dir
+  with base.Build
+  with base.ParamsCompiler
+  with resolve.Maven
+  with zinc.Params
+  with zinc.Compiler
+  with zinc.Resolve {
+
+  @Description( """
+  Flag to skip document execution: <code>scaladoc-*</code>.
+  """ )
+  @Parameter(
+    property     = "scalor.skipScaladoc", //
+    defaultValue = "false"
+  )
+  var skipScaladoc : Boolean = _
+
+  /**
+   * Generate scaladoc content folder.
+   */
+  def performScaladoc() : Unit = {
+    val folder = scaladocOutputFolder
+    val options = Seq()
+    log.info( s"Generating Scaladoc: ${folder}" )
+    ensureFolder( folder )
+    zincPerformDocument( folder, options )
+  }
+
+  lazy val scaladocArchive : File = {
+    val scaladocTarget = basedirOutput.toFile
+    ensureFolder( scaladocTarget )
+    new File( scaladocTarget, scaladocArchiveName )
+  }
+
+  /**
+   * Package scaladoc content into an archive jar.
+   */
+  def performPackage() : Unit = {
+    log.info( s"Packaging Scaladoc: ${scaladocArchive}" )
+    if ( scaladocArchive.exists ) { scaladocArchive.delete }
+    val packager = new MavenArchiver()
+    val archiveBuilder = new JarArchiver()
+    packager.setArchiver( archiveBuilder )
+    packager.setOutputFile( scaladocArchive )
+    val includes = Array[ String ]( "**/**" ) // FIXME to config
+    val excludes = Array[ String ]()
+    packager.getArchiver.addDirectory( scaladocOutputFolder, includes, excludes )
+    packager.createArchive( session, project, archiveConfig )
+  }
+
+  /**
+   * Attach Scaladoc artifact to the project as deployment artifact.
+   */
+  def performAttach() : Unit = {
+    if ( scaladocHasAttach ) {
+      log.info( s"Attaching Scaladoc: ${scaladocArchive}" )
+      projectHelper.attachArtifact( project, scaladocArchive, scaladocClassifier )
+    }
+  }
+
+  override def perform() : Unit = {
+    if ( skipScaladoc || hasSkipMojo ) {
+      reportSkipReason( "Skipping disabled goal execution." )
+      return
+    }
+    performScaladoc
+    performPackage
+    performAttach
+  }
 
 }
 
 @Description( """
-Produce project sources for compilation scope=test.
+Produce project Scaladoc artifact for compilation scope=macro.
 """ )
 @Mojo(
-  name                         = `sources-test`,
+  name                         = `scaladoc-macro`,
   defaultPhase                 = LifecyclePhase.PACKAGE,
-  requiresDependencyResolution = ResolutionScope.NONE
+  requiresDependencyResolution = ResolutionScope.COMPILE
 )
-class SourcesTestMojo extends SourcesAnyMojo
-  with document.ParamsTestSources {
+class ScaladocMacroMojo extends ScaladocAnyMojo
+  with document.ScaladocMacro
+  with zinc.CompilerMacro {
 
-  override def mojoName : String = `sources-test`
+  override def mojoName : String = `scaladoc-macro`
+
+  @Description( """
+  Flag to skip goal execution: <code>scaladoc-macro</code>.
+  """ )
+  @Parameter(
+    property     = "scalor.skipScaladocMacro", //
+    defaultValue = "false"
+  )
+  var skipScaladocMacro : Boolean = _
+
+  override def hasSkipMojo = skipScaladocMacro
+
+  override def performPackage = () // included in scope=main
+  override def performAttach = () // included in scope=main
+
+}
+
+@Description( """
+Produce project Scaladoc artifact for compilation scope=main.
+""" )
+@Mojo(
+  name                         = `scaladoc-main`,
+  defaultPhase                 = LifecyclePhase.PACKAGE,
+  requiresDependencyResolution = ResolutionScope.COMPILE
+)
+class ScaladocMainMojo extends ScaladocAnyMojo
+  with document.ScaladocMain
+  with zinc.CompilerMain {
+
+  override def mojoName : String = `scaladoc-main`
+
+  @Description( """
+  Flag to skip goal execution: <code>scaladoc-main</code>.
+  """ )
+  @Parameter(
+    property     = "scalor.skipScaladocMain", //
+    defaultValue = "false"
+  )
+  var skipScaladocMain : Boolean = _
+
+  override def hasSkipMojo = skipScaladocMain
+
+}
+
+@Description( """
+Produce project Scaladoc artifact for compilation scope=test.
+""" )
+@Mojo(
+  name                         = `scaladoc-test`,
+  defaultPhase                 = LifecyclePhase.PACKAGE,
+  requiresDependencyResolution = ResolutionScope.TEST
+)
+class ScaladocTestMojo extends ScaladocAnyMojo
+  with document.ScaladocTest
+  with zinc.CompilerTest {
+
+  override def mojoName : String = `scaladoc-test`
+
+  @Description( """
+  Flag to skip goal execution: <code>scaladoc-test</code>.
+  """ )
+  @Parameter(
+    property     = "scalor.skipScaladocTest", //
+    defaultValue = "false"
+  )
+  var skipScaladocTest : Boolean = _
+
+  override def hasSkipMojo = skipScaladocTest
 
 }
