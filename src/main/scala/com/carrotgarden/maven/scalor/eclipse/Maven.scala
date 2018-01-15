@@ -22,6 +22,8 @@ import org.eclipse.m2e.core.project.IMavenProjectFacade
 import org.eclipse.m2e.core.project.MavenProjectUtils
 import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
 
+import org.codehaus.plexus.component.annotations.Requirement
+
 import com.carrotgarden.maven.scalor.A
 import com.carrotgarden.maven.scalor.resolve
 import com.carrotgarden.maven.scalor.util
@@ -29,13 +31,33 @@ import org.eclipse.core.resources.IProject
 import org.eclipse.core.runtime.Path
 import org.eclipse.core.resources.IFolder
 import org.apache.maven.plugin.descriptor.PluginDescriptor
+import com.carrotgarden.maven.scalor.util.Error._
+import scala.util.Success
+import org.eclipse.aether.impl.VersionRangeResolver
+import org.eclipse.aether.RepositorySystem
+import org.eclipse.aether.spi.log.LoggerFactory
+import org.apache.maven.repository.internal.DefaultVersionRangeResolver
+import scala.util.Failure
+import com.carrotgarden.maven.scalor.util.Logging
+import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader
+import org.eclipse.aether.impl.ArtifactDescriptorReader
+import org.eclipse.aether.impl.VersionResolver
+import org.eclipse.aether.impl.DependencyCollector
+import org.eclipse.aether.impl.ArtifactResolver
+import org.eclipse.aether.impl.MetadataResolver
+import org.eclipse.aether.impl.Installer
+import org.eclipse.aether.impl.Deployer
+import org.eclipse.aether.impl.LocalRepositoryProvider
+import org.eclipse.aether.impl.SyncContextFactory
+import org.eclipse.aether.impl.RemoteRepositoryManager
+import org.eclipse.aether.internal.impl.DefaultRepositorySystem
 
 /**
  * Provide M2E infrastructure functions.
  */
 trait Maven {
 
-  self : Base.Conf =>
+  self : Base.Conf with Logging =>
 
   import Maven._
 
@@ -214,6 +236,54 @@ object Maven {
   }
 
   import com.carrotgarden.maven.scalor.base.Params._
+  import com.carrotgarden.maven.scalor.util.Classer._
+
+  import org.osgi.framework.Version
+
+  /**
+   * Needed for M2E 1.8 / Maven 3.3.9
+   * Not needed for M2E 1.9 / Maven 3.5.2
+   *
+   * Work around M2E invalid component injector:
+   * https://issues.apache.org/jira/browse/MNG-6233
+   * https://github.com/apache/maven/commit/66fc74d6296ea0a33f8a9712dc5ed5eb3affd529
+   */
+  def hackRepoSystem(
+    request : ProjectConfigurationRequest
+  ) : RepositorySystem = {
+    val project = request.getMavenProject
+    val activator = MavenPluginActivator.getDefault
+    val mavenFace = MavenPlugin.getMaven
+    val mavenImpl = activator.getMaven
+
+    val minimalVersion = new Version( "1.9.0" )
+    val currentVersion = activator.getBundle.getVersion
+    val requireHack = currentVersion.compareTo( minimalVersion ) < 0
+
+    if ( requireHack ) {
+      val loader = mavenImpl.getProjectRealm( project )
+      withContextLoader[ RepositorySystem ]( loader ) {
+        val system = new DefaultRepositorySystem
+        import system._
+        import mavenImpl._
+        setLoggerFactory( lookupComponent( classOf[ LoggerFactory ] ) )
+        setVersionResolver( lookupComponent( classOf[ VersionResolver ] ) )
+        setVersionRangeResolver( lookupComponent( classOf[ VersionRangeResolver ] ) )
+        setArtifactResolver( lookupComponent( classOf[ ArtifactResolver ] ) )
+        setMetadataResolver( lookupComponent( classOf[ MetadataResolver ] ) )
+        setArtifactDescriptorReader( lookupComponent( classOf[ ArtifactDescriptorReader ] ) )
+        setDependencyCollector( lookupComponent( classOf[ DependencyCollector ] ) )
+        setInstaller( lookupComponent( classOf[ Installer ] ) )
+        setDeployer( lookupComponent( classOf[ Deployer ] ) )
+        setLocalRepositoryProvider( lookupComponent( classOf[ LocalRepositoryProvider ] ) )
+        setSyncContextFactory( lookupComponent( classOf[ SyncContextFactory ] ) )
+        setRemoteRepositoryManager( lookupComponent( classOf[ RemoteRepositoryManager ] ) )
+        system
+      }
+    } else {
+      mavenImpl.lookupComponent( classOf[ RepositorySystem ] )
+    }
+  }
 
   def resolveDefine(
     request : ProjectConfigurationRequest,
@@ -221,15 +291,12 @@ object Maven {
     scope :   String,
     monitor : IProgressMonitor
   ) : DefineResponse = {
+    val mavenFace = MavenPlugin.getMaven
+    val context = mavenFace.getExecutionContext
 
-    val maven = MavenPlugin.getMaven
-    val context = maven.getExecutionContext
-    val activator = MavenPluginActivator.getDefault
-
-    val repoSystem = activator.getRepositorySystem
+    val repoSystem = hackRepoSystem( request )
     val repoSession = context.getRepositorySession
-    val remoteRepoList = RepositoryUtils.toRepos( maven.getArtifactRepositories )
-
+    val remoteRepoList = RepositoryUtils.toRepos( mavenFace.getArtifactRepositories )
     val stereotypes = repoSession.getArtifactTypeRegistry
 
     val aether = resolve.AetherUnit(
@@ -237,12 +304,10 @@ object Maven {
       repoSession,
       remoteRepoList
     )
-
     import define._
     val bridgeList = aether.resolveRoundTrip( defineBridge, stereotypes, scope )
     val compilerList = aether.resolveRoundTrip( defineCompiler, stereotypes, scope )
     val pluginDefineList = aether.resolveRoundTrip( definePluginList, stereotypes, scope )
-
     DefineResponse(
       bridgeList,
       compilerList,

@@ -19,7 +19,7 @@
         <!-- Some version above supported minimum. -->
         <version.scala211.release>2.11.8</version.scala211.release>
         <version.scala212.release>2.12.4</version.scala212.release>
-        <version.scala.plug.macro>2.1.0</version.scala.plug.macro>
+        <version.scala.plugin.macro>2.1.0</version.scala.plugin.macro>
 
     </properties>
 
@@ -86,17 +86,17 @@
                         <dependency>
                             <groupId>org.scalamacros</groupId>
                             <artifactId>paradise_${version.scala.release}</artifactId>
-                            <version>${version.scala.plug.macro}</version>
+                            <version>${version.scala.plugin.macro}</version>
                         </dependency>
                         <dependency>
                             <groupId>org.scalamacros</groupId>
                             <artifactId>paradise_${version.scala.release}</artifactId>
-                            <version>${version.scala.plug.macro}</version>
+                            <version>${version.scala.plugin.macro}</version>
                         </dependency>
                         <!-- <dependency> -->
                         <!-- <groupId>org.scalameta</groupId> -->
                         <!-- <artifactId>paradise_${version.scala.release}</artifactId> -->
-                        <!-- <version>${version.scala.plug.meta}</version> -->
+                        <!-- <version>${version.scala.plugin.meta}</version> -->
                         <!-- </dependency> -->
                     </definePluginList>
 

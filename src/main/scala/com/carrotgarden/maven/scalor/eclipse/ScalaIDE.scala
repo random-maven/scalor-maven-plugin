@@ -280,6 +280,27 @@ trait ScalaIDE {
   }
 
   /**
+   * Remove Scala Library container from project class path.
+   */
+  def removeScalaLibraryContainer(
+    request : ProjectConfigurationRequest,
+    config :  ParamsConfig,
+    project : ScalaProject,
+    install : ScalaInstall,
+    monitor : IProgressMonitor
+  ) = {
+    import config._
+    if ( eclipseRemoveLibraryContainer ) {
+      log.info( "Removing Scala Library container." )
+      val javaProject = project.javaProject
+      val containerPath = new Path( SdtConstants.ScalaLibContId )
+      val source = javaProject.getRawClasspath.toList
+      val target = source.filterNot( _.getPath == containerPath )
+      javaProject.setRawClasspath( target.toArray, monitor )
+    }
+  }
+
+  /**
    * Rename Scala Library container in Eclipse UI.
    */
   def renameScalaLibraryContainer(
@@ -357,7 +378,8 @@ trait ScalaIDE {
       log.info( s"Configuring Scala IDE (scheduled job)." )
       persistCustomInstall( request, config, project, install, subMon.split( 20 ) )
       updateProjectScalaIDE( request, config, project, install, subMon.split( 20 ) )
-      renameScalaLibraryContainer( request, config, project, install, subMon.split( 20 ) )
+      //      removeScalaLibraryContainer( request, config, project, install, subMon.split( 20 ) )
+      //      renameScalaLibraryContainer( request, config, project, install, subMon.split( 20 ) )
     }
     // FIXME deadlock
     //    val hasDone = scalaJob.join( 10 * 1000, subMon.split( 10 ) )

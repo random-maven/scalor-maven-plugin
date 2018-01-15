@@ -24,7 +24,7 @@
         <version.scala.epoch>2.12</version.scala.epoch>
         <version.scala.release>2.12.4</version.scala.release>
 
-        <version.scala.plug.macro>2.1.1</version.scala.plug.macro>
+        <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
         <version.scala.zinc>1.1.0</version.scala.zinc>
 
         <maven.compiler.source>${version.java}</maven.compiler.source>
@@ -66,6 +66,8 @@
                 <configuration>
 
                     <eclipseProjectCommentString>scalor-maven-plugin</eclipseProjectCommentString>
+                    <eclipseRemoveLibraryContainer>true</eclipseRemoveLibraryContainer>
+                    <eclipseRenameLibraryContainer>false</eclipseRenameLibraryContainer>
 
                     <defineBridge>
                         <dependency>
@@ -85,7 +87,7 @@
                         <dependency>
                             <groupId>org.scalamacros</groupId>
                             <artifactId>paradise_${version.scala.release}</artifactId>
-                            <version>${version.scala.plug.macro}</version>
+                            <version>${version.scala.plugin.macro}</version>
                         </dependency>
                     </definePluginList>
 

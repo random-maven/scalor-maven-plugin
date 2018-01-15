@@ -24,6 +24,7 @@ import scala.collection.JavaConverters._
 
 import org.eclipse.m2e.core.ui.internal.UpdateMavenProjectJob
 import org.eclipse.core.resources.IProject
+import org.eclipse.core.runtime
 
 /**
  * Shared Eclipse mojo interface.
@@ -137,18 +138,26 @@ class EclipseConfigMojo extends EclipseAnyMojo
         val pluginBundle = bundleContext.getBundle( pluginLocation )
         ( "Companion plugin installed in Eclipse", pluginBundle, true )
       }
-
     log.info( installMessage + ": " + pluginBundle )
 
     if ( needProjectUpdate ) {
       log.info( "Scheduling project update in Eclipse to invoke M2E project configurator." )
       val projectList = handle.workspace.getRoot.getProjects
       val currentProject = projectWithBase( projectList, project.getBasedir )
-      val updateJob = new UpdateMavenProjectJob( Array[ IProject ]( currentProject ) )
-      val updateName = s"Project update for: ${project.getArtifactId} by: ${pluginId}"
+
+      val updateJob = new UpdateMavenProjectJob(
+        Array[ IProject ]( currentProject ) /*update list*/ ,
+        handle.mavenPlugin.getMavenConfiguration.isOffline,
+        false /*forceUpdateDependencies*/ ,
+        true /*updateConfiguration*/ ,
+        true /*rebuild*/ ,
+        true /*refreshFromLocal*/
+      )
+
+      val updateName = s"Updating: ${project.getArtifactId} from: ${pluginId}"
       updateJob.setName( updateName )
-      updateJob.setPriority( 10 ) // interactive
-      updateJob.schedule( 1 * 1000 ) // start delay
+      updateJob.setPriority(10)
+      updateJob.schedule(1 * 1000)
     }
 
   }

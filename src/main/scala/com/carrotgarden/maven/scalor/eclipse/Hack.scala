@@ -50,6 +50,7 @@ import java.nio.file.DirectoryStream
 
 import scala.collection.JavaConverters._
 import org.eclipse.core.runtime.IStatus
+import org.eclipse.m2e.core.MavenPlugin
 
 /**
  * Various workarounds.

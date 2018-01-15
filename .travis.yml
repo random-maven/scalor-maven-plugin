@@ -25,5 +25,6 @@ script:
 - "/bin/cp -f ./.mvn/ci/settings.xml $HOME/.m2/settings.xml"
 - "/bin/cp -f ./.mvn/ci/toolchains.xml $HOME/.m2/toolchains.xml"
 - "./.mvn/verify.sh || exit 1"
+- "./demo/.mvn/verify.sh || exit 1"
 - "./.mvn/release-bintray.sh || exit 1"
 - "./.mvn/wipe-repo.sh || exit 1"

@@ -3,20 +3,13 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>com.carrotgarden.a</groupId>
-        <artifactId>carrot-a</artifactId>
-        <version>0-SNAPSHOT</version>
-        <relativePath>.mvn</relativePath>
-    </parent>
-
     <groupId>com.carrotgarden.maven</groupId>
     <artifactId>scalor-maven-plugin-demo</artifactId>
-    <version>${revision}</version>
-    <!-- <packaging>scala</packaging> -->
+    <version>0-SNAPSHOT</version>
 
     <description>
-    Demonstration project, features:
+    Self-contained, minimal demonstration project. 
+    Project feature showcase:
     * 3-scope build
     * Scala macro compile
     * Scala.js runtime.js linker
@@ -24,13 +17,22 @@
 
     <properties>
 
+        <version.scala.epoch>2.12</version.scala.epoch>
+        <version.scala.release>2.12.4</version.scala.release>
+
+        <version.scala.zinc>1.1.0</version.scala.zinc>
+        <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
+
+        <version.sjs.epoch>0.6</version.sjs.epoch>
+        <version.sjs.release>${version.sjs.epoch}.21</version.sjs.release>
+        <version.sjs.library>sjs${version.sjs.epoch}_${version.scala.epoch}</version.sjs.library>
+
         <version.java>1.8</version.java>
 
-        <version.scala.epoch>2.11</version.scala.epoch>
-        <version.scala.release>2.11.12</version.scala.release>
+        <maven.compiler.source>${version.java}</maven.compiler.source>
+        <maven.compiler.target>${version.java}</maven.compiler.target>
 
-        <version.scala.plug.macro>2.1.0</version.scala.plug.macro>
-        <version.scala.zinc>1.1.0</version.scala.zinc>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     </properties>
 
@@ -39,11 +41,29 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
+            <version>${version.scala.release}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-reflect</artifactId>
+            <version>${version.scala.release}</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.scala-js</groupId>
             <artifactId>scalajs-library_${version.scala.epoch}</artifactId>
+            <version>${version.sjs.release}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
@@ -55,6 +75,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
                 <configuration>
                     <skip>true</skip>
                     <skipMain>true</skipMain>
@@ -65,29 +86,25 @@
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>scalor-maven-plugin_2.12</artifactId>
-                <!-- <version>RELEASE</version> -->
-                <!-- <version>1.0.1.20180108183644</version> -->
+                <!-- <version>1.0.2.20180114165441</version> -->
 
                 <configuration>
-
-                    <skip>false</skip>
 
                     <zincLogSourcesList>true</zincLogSourcesList>
                     <zincLogProjectClassPath>true</zincLogProjectClassPath>
                     <zincLogCompilerClassPath>true</zincLogCompilerClassPath>
                     <zincLogCompilerPluginList>true</zincLogCompilerPluginList>
-
                     <!-- <skipLogReason>true</skipLogReason> -->
                     <!-- <eclipseLogBuildParticipant>true</eclipseLogBuildParticipant> -->
 
                     <zincCompileOptions>
-                        -target:jvm-${version.java}
+                        -P:scalajs:sjsDefinedByDefault
                         -encoding
                         ${project.build.sourceEncoding}
-                        -deprecation
-                        -unchecked
+                        -target:jvm-${version.java}
                         -feature
-                        -P:scalajs:sjsDefinedByDefault
+                        -unchecked
+                        -deprecation
                         -compileorder:Mixed
                     </zincCompileOptions>
 
@@ -103,12 +120,6 @@
                             <groupId>org.scala-lang</groupId>
                             <artifactId>scala-compiler</artifactId>
                             <version>${version.scala.release}</version>
-                            <exclusions>
-                                <exclusion>
-                                    <groupId>jline</groupId>
-                                    <artifactId>jline</artifactId>
-                                </exclusion>
-                            </exclusions>
                         </dependency>
                     </defineCompiler>
                     <definePluginList>
@@ -120,7 +131,7 @@
                         <dependency>
                             <groupId>org.scalamacros</groupId>
                             <artifactId>paradise_${version.scala.release}</artifactId>
-                            <version>${version.scala.plug.macro}</version>
+                            <version>${version.scala.plugin.macro}</version>
                         </dependency>
                     </definePluginList>
 
@@ -132,28 +143,20 @@
 
                             <goal>eclipse-config</goal>
 
-                            <goal>register-macro</goal>
-                            <goal>register-main</goal>
-                            <goal>register-test</goal>
-
                             <goal>clean-macro</goal>
                             <goal>clean-main</goal>
                             <goal>clean-test</goal>
 
+                            <goal>register-macro</goal>
+                            <goal>register-main</goal>
+                            <goal>register-test</goal>
+
                             <goal>compile-macro</goal>
-                            <goal>prepack-macro</goal>
-
                             <goal>compile-main</goal>
-                            <goal>prepack-main</goal>
-
                             <goal>compile-test</goal>
-                            <goal>prepack-test</goal>
 
                             <goal>link-scala-js-main</goal>
-                            <goal>prepack-linker-main</goal>
-
                             <goal>link-scala-js-test</goal>
-                            <goal>prepack-linker-test</goal>
 
                         </goals>
                     </execution>
