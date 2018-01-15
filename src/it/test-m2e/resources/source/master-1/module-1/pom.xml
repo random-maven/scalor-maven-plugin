@@ -66,6 +66,8 @@
                 <configuration>
 
                     <eclipseProjectCommentString>scalor-maven-plugin</eclipseProjectCommentString>
+                    <eclipseRemoveLibraryContainer>true</eclipseRemoveLibraryContainer>
+                    <eclipseRenameLibraryContainer>false</eclipseRenameLibraryContainer>
 
                     <defineBridge>
                         <dependency>

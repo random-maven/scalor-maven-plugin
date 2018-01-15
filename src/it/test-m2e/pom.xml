@@ -21,20 +21,21 @@
 
     <properties>
 
-        <scala.ide.repo.url>http://download.scala-ide.org/sdk/lithium/e47/scala212/stable/site</scala.ide.repo.url>
         <m2e.repo.url>https://repository.takari.io/content/sites/m2e.extras/m2e/1.9.0/N/LATEST/</m2e.repo.url>
+
+        <scala.ide.repo.url>http://download.scala-ide.org/sdk/lithium/e47/scala212/stable/site</scala.ide.repo.url>
 
     </properties>
 
     <repositories>
+        <!-- <repository> -->
+        <!-- <id>m2e</id> -->
+        <!-- <url>${m2e.repo.url}</url> -->
+        <!-- <layout>p2</layout> -->
+        <!-- </repository> -->
         <repository>
             <id>scala-ide</id>
             <url>${scala.ide.repo.url}</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
-            <id>m2e</id>
-            <url>${m2e.repo.url}</url>
             <layout>p2</layout>
         </repository>
     </repositories>

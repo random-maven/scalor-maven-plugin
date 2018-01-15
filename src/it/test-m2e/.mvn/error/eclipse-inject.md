@@ -1,6 +1,16 @@
 
-Caused by: java.lang.IllegalArgumentException:
+### 
+
+1) Error injecting: private
  
+org.eclipse.aether.spi.log.Logger
+
+org.apache.maven.repository.internal.DefaultVersionRangeResolver.logger
+
+###
+
+Caused by: java.lang.IllegalArgumentException: 
+
 Can not set 
 
 org.eclipse.aether.spi.log.Logger
@@ -9,6 +19,7 @@ org.eclipse.aether.spi.log.Logger
   
 org.apache.maven.repository.internal.DefaultVersionRangeResolver.logger
 
-  to
-   
+ to 
+
 org.eclipse.aether.internal.impl.slf4j.Slf4jLoggerFactory
+

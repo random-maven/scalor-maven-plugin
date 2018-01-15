@@ -1932,12 +1932,12 @@ version=${revision}
                         <artifactId>scalor-maven-plugin_2.12</artifactId>
                         <configuration>
                             <zincCompileOptions>
-                                -target:jvm-${version.java}
                                 -encoding
                                 ${project.build.sourceEncoding}
-                                -deprecation
-                                -unchecked
+                                -target:jvm-${version.java}
                                 -feature
+                                -unchecked
+                                -deprecation
                                 -compileorder:Mixed
                             </zincCompileOptions>
                             <defineBridge>
@@ -2004,14 +2004,14 @@ version=${revision}
                         <artifactId>scalor-maven-plugin_2.12</artifactId>
                         <configuration>
                             <zincCompileOptions>
-                                -target:jvm-${version.java}
+                                -P:scalajs:sjsDefinedByDefault
                                 -encoding
                                 ${project.build.sourceEncoding}
-                                -deprecation
-                                -unchecked
+                                -target:jvm-${version.java}
                                 -feature
+                                -unchecked
+                                -deprecation
                                 -compileorder:Mixed
-                                -P:scalajs:sjsDefinedByDefault
                             </zincCompileOptions>
                             <defineBridge>
                                 <dependency>
@@ -2082,14 +2082,14 @@ version=${revision}
                         <artifactId>scalor-maven-plugin_2.12</artifactId>
                         <configuration>
                             <zincCompileOptions>
-                                -target:jvm-${version.java}
+                                -P:scalajs:sjsDefinedByDefault
                                 -encoding
                                 ${project.build.sourceEncoding}
-                                -deprecation
-                                -unchecked
+                                -target:jvm-${version.java}
                                 -feature
+                                -unchecked
+                                -deprecation
                                 -compileorder:Mixed
-                                -P:scalajs:sjsDefinedByDefault
                             </zincCompileOptions>
                             <defineBridge>
                                 <dependency>

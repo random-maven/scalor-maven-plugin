@@ -40,18 +40,18 @@
     <properties>
 
         <!-- Scalor release series. -->
-        <release.epoch>1.0.3</release.epoch>
+        <release.epoch>1.0.4</release.epoch>
 
         <!-- Development releases repository. -->
         <bintray.subject>random-maven</bintray.subject>
         <bintray.repository>maven</bintray.repository>
 
-        <!-- Maven epoch. -->
-        <version.maven>[3.5,3.6)</version.maven>
-
         <!-- Compiler epoch. -->
         <version.scala.zinc>1.1.0</version.scala.zinc>
         <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
+
+        <!-- Maven epoch. -->
+        <version.maven>[3.5,3.6)</version.maven>
 
         <!-- Eclipse platform plugins. -->
         <version.eclipse.m2e>1.8.1</version.eclipse.m2e>
@@ -59,13 +59,13 @@
 
         <!-- Eclipse companion plugin properties. -->
         <eclipse.plugin.name>${project.groupId}.${project.artifactId}</eclipse.plugin.name>
-        <eclipse.plugin.revision>${version.scala.epoch}_${project.version}</eclipse.plugin.revision>
+        <eclipse.plugin.revision>${project.version}</eclipse.plugin.revision>
         <eclipse.plugin.identity>${eclipse.plugin.name}_${eclipse.plugin.revision}</eclipse.plugin.identity>
         <eclipse.plugin.eclipseDecorator>${eclipse.plugin.name}.eclipseDecorator_${eclipse.plugin.revision}</eclipse.plugin.eclipseDecorator>
         <eclipse.plugin.lifecycleMapping>${eclipse.plugin.name}.lifecycleMapping_${eclipse.plugin.revision}</eclipse.plugin.lifecycleMapping>
         <eclipse.plugin.projectConfigurator>${eclipse.plugin.name}.projectConfigurator_${eclipse.plugin.revision}</eclipse.plugin.projectConfigurator>
         <eclipse.bundle.name>${eclipse.plugin.identity}</eclipse.bundle.name>
-        <eclipse.bundle.version>0.0.0</eclipse.bundle.version><!-- Version is in the name. -->
+        <eclipse.bundle.version>0.0.0</eclipse.bundle.version><!-- Version is in the identity. -->
 
     </properties>
 
@@ -309,6 +309,30 @@
 
     </dependencies>
 
+    <profiles>
+        <!-- Activate self-host version for Eclipse. -->
+        <profile>
+            <id>m2e-latest</id>
+            <activation>
+                <!-- Eclipse detection: user property set by M2E. -->
+                <property>
+                    <name>m2e.version</name>
+                </property>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.carrotgarden.maven</groupId>
+                            <artifactId>scalor-maven-plugin_2.12</artifactId>
+                            <version>LATEST</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
 
         <!-- Substitute ${project} variables. -->
@@ -324,8 +348,8 @@
             <!-- Self-host this project build. -->
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
-                <artifactId>scalor-maven-plugin_${version.scala.epoch}</artifactId>
-                <!-- <version>1.0.2.20180113144616</version> -->
+                <artifactId>scalor-maven-plugin_2.12</artifactId>
+                <!-- <version>Maven will resolve to latest</version> -->
 
                 <configuration>
 
@@ -384,9 +408,6 @@
                             <goal>compile-macro</goal>
                             <goal>compile-main</goal>
                             <goal>compile-test</goal>
-                            <!-- <goal>prepack-macro</goal> -->
-                            <!-- <goal>prepack-main</goal> -->
-                            <!-- <goal>prepack-test</goal> -->
                         </goals>
                     </execution>
                 </executions>

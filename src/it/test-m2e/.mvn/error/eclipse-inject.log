@@ -1,99 +1,99 @@
-!SESSION 2018-01-09 09:22:53.791 -----------------------------------------------
+!SESSION 2018-01-14 17:06:57.493 -----------------------------------------------
 eclipse.buildId=unknown
 java.version=1.8.0_152
 java.vendor=Oracle Corporation
 BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
 Framework arguments:  -application org.eclipse.tycho.surefire.osgibooter.uitest -testproperties /home/work/source/git/scalor-maven-plugin/src/it/test-m2e/target/surefire.properties -nouithread
-Command-line arguments:  -data /home/work/source/git/scalor-maven-plugin/src/it/test-m2e/target/work/data -application org.eclipse.tycho.surefire.osgibooter.uitest -testproperties /home/work/source/git/scalor-maven-plugin/src/it/test-m2e/target/surefire.properties -nouithread
+Command-line arguments:  -debug -consolelog -data /home/work/source/git/scalor-maven-plugin/src/it/test-m2e/target/work/data -application org.eclipse.tycho.surefire.osgibooter.uitest -testproperties /home/work/source/git/scalor-maven-plugin/src/it/test-m2e/target/surefire.properties -nouithread
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:01.572
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:05.444
 !MESSAGE [scaler] Plugin logger is using Eclipse [Error Log].
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:01.576
-!MESSAGE [scaler] Plugin start: com.carrotgarden.maven.scalor-maven-plugin_2.12_1.0.1.20180109143444
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:05.447
+!MESSAGE [scaler] Plugin start: com.carrotgarden.maven.scalor-maven-plugin_2.12_2.12_1.0.1.20180111042947
 
-!ENTRY com.carrotgarden.maven.scalor-maven-plugin_2.12_1.0.1.20180109143444 4 0 2018-01-09 09:23:01.577
+!ENTRY com.carrotgarden.maven.scalor-maven-plugin_2.12_2.12_1.0.1.20180111042947 4 0 2018-01-14 17:07:05.448
 !MESSAGE Component descriptor entry 'OSGI-INF/service-component/*.xml' not found
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:02.889
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:06.355
 !MESSAGE [scaler:step#1] Configuring dependency classpath.
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:02.921
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:06.399
 !MESSAGE [scaler:step#1] Verifying Maven M2E version.
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:02.922
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:06.401
 !MESSAGE [scaler:step#1]    version 1.8.2.20171007-0217 is in range [1.8.0,1.10.0)
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:02.922
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:06.401
 !MESSAGE [scaler:step#1] Verifying Scala IDE version.
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:02.922
-!MESSAGE [scaler:step#1]    version 4.7.1.local-2_12-201801081840-1eb9709 is in range [4.7.0,4.7.2)
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:06.401
+!MESSAGE [scaler:step#1]    version 4.7.1.local-2_12-201801130107-1eb9709 is in range [4.7.0,4.7.2)
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:02.922
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:06.402
 !MESSAGE [scaler:step#1] Ordering entries inside the .classpath Maven container.
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:03.714
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.192
 !MESSAGE [scaler:step#2] Configuring project classpath.
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:03.720
-!MESSAGE [scaler:step#2]    entry: src/macro/scala -> target/macro-classes
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.196
+!MESSAGE [scaler:step#2]    /module-1/src/macro/java -> /module-1/target/scalor/classes/macro
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:03.720
-!MESSAGE [scaler:step#2]    entry: src/macro/java -> target/macro-classes
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.197
+!MESSAGE [scaler:step#2]    /module-1/src/macro/scala -> /module-1/target/scalor/classes/macro
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:03.721
-!MESSAGE [scaler:step#2]    entry: src/main/java -> target/classes
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.198
+!MESSAGE [scaler:step#2]    /module-1/src/main/resources -> /module-1/target/scalor/classes/main
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:03.721
-!MESSAGE [scaler:step#2]    entry: src/main/scala -> target/classes
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.198
+!MESSAGE [scaler:step#2]    /module-1/src/main/java -> /module-1/target/scalor/classes/main
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:03.722
-!MESSAGE [scaler:step#2]    entry: src/main/resources -> target/classes
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.198
+!MESSAGE [scaler:step#2]    /module-1/src/main/scala -> /module-1/target/scalor/classes/main
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:03.722
-!MESSAGE [scaler:step#2]    entry: src/test/java -> target/test-classes
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.198
+!MESSAGE [scaler:step#2]    /module-1/src/test/resources -> /module-1/target/scalor/classes/test
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:03.722
-!MESSAGE [scaler:step#2]    entry: src/test/scala -> target/test-classes
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.199
+!MESSAGE [scaler:step#2]    /module-1/src/test/java -> /module-1/target/scalor/classes/test
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:03.723
-!MESSAGE [scaler:step#2]    entry: src/test/resources -> target/test-classes
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.199
+!MESSAGE [scaler:step#2]    /module-1/src/test/scala -> /module-1/target/scalor/classes/test
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:03.723
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.199
 !MESSAGE [scaler:step#2] Deleting container org.scala-ide.sdt.launching.SCALA_CONTAINER.
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:03.724
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.200
 !MESSAGE [scaler:step#2] Ordering top level entries inside the .classpath.
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:03.738
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.213
 !MESSAGE [scaler:step#1] Configuring dependency classpath.
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:03.738
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.213
 !MESSAGE [scaler:step#1] Ordering entries inside the .classpath Maven container.
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:03.744
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.220
 !MESSAGE [scaler:step#3] Configuring project settings.
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:03.745
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.222
 !MESSAGE [scaler:step#3] Ensuring project natures.
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:04.423
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.926
 !MESSAGE [scaler:step#3] Applying Eclipse .project comment.
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:04.424
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.928
 !MESSAGE [scaler:step#3] Ordering Eclipse .project builder entries.
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:04.429
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.932
 !MESSAGE [scaler:step#3] Ordering Eclipse .project nature entries.
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:04.447
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.949
 !MESSAGE [scaler:step#3] Configuring Scala IDE.
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 1 0 2018-01-09 09:23:04.448
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 1 0 2018-01-14 17:07:07.950
 !MESSAGE [scaler:step#3] Resolving custom Scala installation.
 
-!ENTRY scalor-maven-plugin-1.0.1.20180109143444 4 0 2018-01-09 09:23:04.471
+!ENTRY scalor-maven-plugin_2.12-1.0.1.20180111042947 4 0 2018-01-14 17:07:07.966
 !MESSAGE [scaler:step#3] Scalor step#3.
 !STACK 0
 org.eclipse.m2e.core.internal.NoSuchComponentException: org.codehaus.plexus.component.repository.exception.ComponentLookupException: com.google.inject.ProvisionException: Unable to provision, see the following errors:
@@ -162,12 +162,12 @@ Caused by: java.lang.IllegalArgumentException: Can not set org.eclipse.aether.sp
     at org.codehaus.plexus.DefaultPlexusContainer.lookup(DefaultPlexusContainer.java:249)
     at org.eclipse.m2e.core.internal.embedder.MavenImpl.lookupComponent(MavenImpl.java:1282)
     at org.eclipse.m2e.core.internal.MavenPluginActivator.getRepositorySystem(MavenPluginActivator.java:454)
-    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:189)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:122)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:108)
+    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:229)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:123)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:109)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.resolveCustomInstall(EclipsePlugin.scala:67)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:350)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:341)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:351)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:342)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.configureScalaIDE(EclipsePlugin.scala:67)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.$anonfun$configure$1(EclipsePlugin.scala:168)
     at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:12)
@@ -288,12 +288,12 @@ Caused by: java.lang.IllegalArgumentException: Can not set org.eclipse.aether.sp
     at org.codehaus.plexus.DefaultPlexusContainer.lookup(DefaultPlexusContainer.java:249)
     at org.eclipse.m2e.core.internal.embedder.MavenImpl.lookupComponent(MavenImpl.java:1282)
     at org.eclipse.m2e.core.internal.MavenPluginActivator.getRepositorySystem(MavenPluginActivator.java:454)
-    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:189)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:122)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:108)
+    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:229)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:123)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:109)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.resolveCustomInstall(EclipsePlugin.scala:67)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:350)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:341)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:351)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:342)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.configureScalaIDE(EclipsePlugin.scala:67)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.$anonfun$configure$1(EclipsePlugin.scala:168)
     at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:12)
@@ -383,12 +383,12 @@ Caused by: java.lang.IllegalArgumentException: Can not set org.eclipse.aether.sp
     at org.codehaus.plexus.DefaultPlexusContainer.lookup(DefaultPlexusContainer.java:249)
     at org.eclipse.m2e.core.internal.embedder.MavenImpl.lookupComponent(MavenImpl.java:1282)
     at org.eclipse.m2e.core.internal.MavenPluginActivator.getRepositorySystem(MavenPluginActivator.java:454)
-    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:189)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:122)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:108)
+    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:229)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:123)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:109)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.resolveCustomInstall(EclipsePlugin.scala:67)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:350)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:341)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:351)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:342)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.configureScalaIDE(EclipsePlugin.scala:67)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.$anonfun$configure$1(EclipsePlugin.scala:168)
     at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:12)
@@ -509,12 +509,12 @@ Caused by: java.lang.IllegalArgumentException: Can not set org.eclipse.aether.sp
     at org.codehaus.plexus.DefaultPlexusContainer.lookup(DefaultPlexusContainer.java:249)
     at org.eclipse.m2e.core.internal.embedder.MavenImpl.lookupComponent(MavenImpl.java:1282)
     at org.eclipse.m2e.core.internal.MavenPluginActivator.getRepositorySystem(MavenPluginActivator.java:454)
-    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:189)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:122)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:108)
+    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:229)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:123)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:109)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.resolveCustomInstall(EclipsePlugin.scala:67)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:350)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:341)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:351)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:342)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.configureScalaIDE(EclipsePlugin.scala:67)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.$anonfun$configure$1(EclipsePlugin.scala:168)
     at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:12)
@@ -635,12 +635,12 @@ Caused by: java.lang.IllegalArgumentException: Can not set org.eclipse.aether.sp
     at org.codehaus.plexus.DefaultPlexusContainer.lookup(DefaultPlexusContainer.java:249)
     at org.eclipse.m2e.core.internal.embedder.MavenImpl.lookupComponent(MavenImpl.java:1282)
     at org.eclipse.m2e.core.internal.MavenPluginActivator.getRepositorySystem(MavenPluginActivator.java:454)
-    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:189)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:122)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:108)
+    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:229)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:123)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:109)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.resolveCustomInstall(EclipsePlugin.scala:67)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:350)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:341)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:351)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:342)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.configureScalaIDE(EclipsePlugin.scala:67)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.$anonfun$configure$1(EclipsePlugin.scala:168)
     at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:12)
@@ -792,12 +792,12 @@ Caused by: java.lang.IllegalArgumentException: Can not set org.eclipse.aether.sp
     at org.codehaus.plexus.DefaultPlexusContainer.lookup(DefaultPlexusContainer.java:249)
     at org.eclipse.m2e.core.internal.embedder.MavenImpl.lookupComponent(MavenImpl.java:1282)
     at org.eclipse.m2e.core.internal.MavenPluginActivator.getRepositorySystem(MavenPluginActivator.java:454)
-    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:189)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:122)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:108)
+    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:229)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:123)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:109)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.resolveCustomInstall(EclipsePlugin.scala:67)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:350)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:341)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:351)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:342)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.configureScalaIDE(EclipsePlugin.scala:67)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.$anonfun$configure$1(EclipsePlugin.scala:168)
     at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:12)
@@ -949,12 +949,12 @@ Caused by: java.lang.IllegalArgumentException: Can not set org.eclipse.aether.sp
     at org.codehaus.plexus.DefaultPlexusContainer.lookup(DefaultPlexusContainer.java:249)
     at org.eclipse.m2e.core.internal.embedder.MavenImpl.lookupComponent(MavenImpl.java:1282)
     at org.eclipse.m2e.core.internal.MavenPluginActivator.getRepositorySystem(MavenPluginActivator.java:454)
-    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:189)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:122)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:108)
+    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:229)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:123)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:109)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.resolveCustomInstall(EclipsePlugin.scala:67)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:350)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:341)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:351)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:342)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.configureScalaIDE(EclipsePlugin.scala:67)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.$anonfun$configure$1(EclipsePlugin.scala:168)
     at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:12)
@@ -1137,12 +1137,12 @@ Caused by: java.lang.IllegalArgumentException: Can not set org.eclipse.aether.sp
     at org.codehaus.plexus.DefaultPlexusContainer.lookup(DefaultPlexusContainer.java:249)
     at org.eclipse.m2e.core.internal.embedder.MavenImpl.lookupComponent(MavenImpl.java:1282)
     at org.eclipse.m2e.core.internal.MavenPluginActivator.getRepositorySystem(MavenPluginActivator.java:454)
-    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:189)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:122)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:108)
+    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:229)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:123)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:109)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.resolveCustomInstall(EclipsePlugin.scala:67)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:350)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:341)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:351)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:342)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.configureScalaIDE(EclipsePlugin.scala:67)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.$anonfun$configure$1(EclipsePlugin.scala:168)
     at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:12)
@@ -1173,12 +1173,12 @@ Caused by: java.lang.IllegalArgumentException: Can not set org.eclipse.aether.sp
   roleHint: 
     at org.eclipse.m2e.core.internal.embedder.MavenImpl.lookupComponent(MavenImpl.java:1284)
     at org.eclipse.m2e.core.internal.MavenPluginActivator.getRepositorySystem(MavenPluginActivator.java:454)
-    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:189)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:122)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:108)
+    at com.carrotgarden.maven.scalor.eclipse.Maven$.resolveDefine(Maven.scala:229)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall(ScalaIDE.scala:123)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.resolveCustomInstall$(ScalaIDE.scala:109)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.resolveCustomInstall(EclipsePlugin.scala:67)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:350)
-    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:341)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE(ScalaIDE.scala:351)
+    at com.carrotgarden.maven.scalor.eclipse.ScalaIDE.configureScalaIDE$(ScalaIDE.scala:342)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.configureScalaIDE(EclipsePlugin.scala:67)
     at com.carrotgarden.maven.scalor.EclipsePlugin$Configurator.$anonfun$configure$1(EclipsePlugin.scala:168)
     at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:12)

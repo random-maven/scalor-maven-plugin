@@ -166,11 +166,11 @@ object EclipsePlugin {
       val facade = request.getMavenProjectFacade
       val config = cached( paramsConfig( facade, subMon.split( 10 ) ) )
       val assert = cached( assertVersion( config, subMon.split( 10 ) ) )
+      hackSymbolicLinks( request, config, subMon.split( 10 ) )
       ensureProjectComment( request, config, subMon.split( 10 ) )
       ensureProjectNature( request, config, subMon.split( 10 ) )
       ensureOrderBuilder( request, config, subMon.split( 10 ) )
       ensureOrderNature( request, config, subMon.split( 10 ) )
-      hackSymbolicLinks(request, config, subMon.split( 10 ))
       configureScalaIDE( request, config, subMon.split( 10 ) )
     }
 

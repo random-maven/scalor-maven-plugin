@@ -54,7 +54,7 @@ Involves two steps:
    this makes plugin available for Maven and Eclipse M2E  
    make sure to provide Maven plugin goal `eclipse-config`  
   
-2. invoke from menu `Eclipse -> Project -> { Clean, Build }`  
+2. invoke from menu `Eclipse -> Project -> { Auto, Clean, Build }`  
    this allows Maven plugin to install own Eclipse companion plugin  
    which in turn invokes M2E project configurator for Scala projects  
 
@@ -67,7 +67,7 @@ Project update tips:
 to review  
 Maven plugin and Eclipse [plugin messages](https://github.com/random-maven/scalor-maven-plugin/blob/master/note/install-log.md).
 
-* When in doubt, review generated Eclipse descriptors:  
+* If in doubt, review generated Eclipse descriptors:  
 [.project](https://github.com/random-maven/scalor-maven-plugin/blob/master/note/eclipse.project.md),
 [.classpath](https://github.com/random-maven/scalor-maven-plugin/blob/master/note/eclipse.classpath.md),
 [.settings/scala-ide](https://github.com/random-maven/scalor-maven-plugin/blob/master/note/eclipse.scala-ide.md).

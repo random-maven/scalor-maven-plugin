@@ -80,4 +80,18 @@ object Classer {
   def fakeCompanion[ T ]( name : String ) : AnyRef =
     this.getClass.getClassLoader.loadClass( name + "$" ).getField( "MODULE$" ).get( null )
 
+  /**
+   * Execute block with context class loader switch.
+   */
+  def withContextLoader[ T ]( target : ClassLoader )( block : => T ) : T = {
+    val thread = Thread.currentThread
+    val source = thread.getContextClassLoader
+    try {
+      thread.setContextClassLoader( target )
+      block
+    } finally {
+      thread.setContextClassLoader( source )
+    }
+  }
+
 }
