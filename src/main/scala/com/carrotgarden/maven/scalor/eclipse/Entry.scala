@@ -158,10 +158,20 @@ trait Entry {
     facade :    IMavenProjectFacade,
     config :    ParamsConfig,
     classpath : IClasspathDescriptor,
+    useOutput : Boolean,
     monitor :   IProgressMonitor
   ) : Unit = {
-    classpath.getEntryDescriptors.asScala.foreach { entry =>
-      log.info( s"XXX ${entry.getPath} -> ${entry.getOutputLocation}" )
+    import config._
+    if ( eclipseLogClasspathOrder ) {
+      classpath.getEntryDescriptors.asScala.foreach { entry =>
+        if ( useOutput ) {
+          val output = Option( entry.getOutputLocation )
+            .map( path => s" -> ${path}" ).getOrElse( "" )
+          log.info( s"   ${entry.getPath}${output}" )
+        } else {
+          log.info( s"   ${entry.getPath}" )
+        }
+      }
     }
   }
 

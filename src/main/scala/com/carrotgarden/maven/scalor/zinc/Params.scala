@@ -80,6 +80,8 @@ trait ParamScalaInstall {
   Actual generated Scala installation will also include a summary, i.e.: <code>Scalor [MD5]</code>,
   where <code>[MD5]</code> is MD5 digest of combined artifact paths included in the installation.
   Prefix allows to distinguish installations in Scala IDE UI, Scalor plugin reports, Eclipse Maven Console.
+  Review available Scala installation details with:
+    <a href="#eclipseLogInstallReport"><b>eclipseLogInstallReport</b></a>.
   """ )
   @Parameter(
     property     = "scalor.zincScalaInstallTitle",
@@ -149,7 +151,7 @@ trait ParamsCompileOptions extends AnyRef
   var zincCompileOptions : String = _
 
   def parseCompileOptions : Array[ String ] = {
-    parseCommonSequence( zincCompileOptions, commonSequenceSeparator )
+    parseCommonList( zincCompileOptions, commonSequenceSeparator )
   }
 
 }

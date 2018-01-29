@@ -4,12 +4,15 @@ import scala.annotation.tailrec
 import scala.language.experimental.macros
 import scala.reflect.macros.whitebox.Context
 
+/**
+ * Provide rich macro context.
+ */
 trait RichContext {
 
   val c : Context
   import c.universe._
 
-  def prefix( message : String ) = s"Scalor macro: $message"
+  def prefix( message : String ) = s"Macro demo: $message"
   def info( message : String ) = c.info( c.enclosingPosition, prefix( message ), true )
   def warn( message : String ) = c.warning( c.enclosingPosition, prefix( message ) )
   def fail( message : String ) = c.abort( c.enclosingPosition, prefix( message ) )
@@ -26,4 +29,3 @@ trait RichContext {
   }
 
 }
-

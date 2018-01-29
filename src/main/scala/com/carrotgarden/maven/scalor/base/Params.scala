@@ -19,6 +19,7 @@ import com.carrotgarden.maven.tools.Description
 import org.apache.maven.toolchain.ToolchainManager
 
 import com.carrotgarden.maven.scalor.util
+import org.apache.maven.plugin.BuildPluginManager
 
 /**
  * Shared mojo execution configuration parameters.
@@ -44,6 +45,12 @@ trait Params extends ParamsProject {
   """ )
   @Component()
   var toolchainManager : ToolchainManager = _
+
+  @Description( """
+  Maven build plugin manager component.
+  """ )
+  @Component()
+  var buildManager : BuildPluginManager = _
 
   //
 
@@ -116,7 +123,7 @@ trait ParamsProject {
   /**
    * Resolved project dependencies with matching scopes.
    */
-  // FIXME remove
+  // FIXME switch to aether
   def projectClassPath( bucket : Scope.Bucket = Scope.Select.Test ) : Array[ File ] = {
     import util.Folder._
     val list = new ArrayList[ File ]()
@@ -156,8 +163,7 @@ trait ParamsAny {
 <pre>
   options.split( separator ).map( _.trim ).filterNot( _.isEmpty )
 </pre>
-  Note: <code>&lt;![CDATA[ ... ]]&gt;</code> brackets 
-  can help preserve text entries in <code>pom.xml</code>.
+  Note: <code>&lt;![CDATA[ ... ]]&gt;</code> brackets can help preserve text entries in <code>pom.xml</code>.
   """ )
   @Parameter(
     property     = "scalor.commonSequenceSeparator",
@@ -165,11 +171,37 @@ trait ParamsAny {
   )
   var commonSequenceSeparator : String = _
 
+  @Description( """
+  Common regular expression for plugin configuration map values provided in <code>pom.xml</code>.
+  Normally uses format:
+<pre>
+  key = value
+</pre>
+  Note: <code>&lt;![CDATA[ ... ]]&gt;</code> brackets can help preserve text entries in <code>pom.xml</code>.
+  """ )
+  @Parameter(
+    property     = "scalor.commonMappingPattern",
+    defaultValue = """\s*([^\s]+)\s*=\s*([^\s]+)\s*"""
+  )
+  var commonMappingPattern : String = _
+
   /**
-   * Produce clean options sequence.
+   * Produce clean options list.
    */
-  def parseCommonSequence( options : String, separator : String ) : Array[ String ] = {
+  def parseCommonList( options : String, separator : String ) : Array[ String ] = {
     options.split( separator ).map( _.trim ).filterNot( _.isEmpty )
+  }
+
+  /**
+   * Produce clean options mapping.
+   */
+  def parseCommonMapping( options : String, separator : String ) : Map[ String, String ] = {
+    val regexKeyValue = commonMappingPattern.r
+    val termList = parseCommonList( options, separator )
+    val entryList = termList.collect {
+      case regexKeyValue( key, value ) => ( key, value )
+    }
+    entryList.toMap
   }
 
 }

@@ -88,6 +88,7 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
         registerExecution( CLEAN, `clean-test` )
 
         registerExecution( INITIALIZE, `eclipse-config` )
+        registerExecution( INITIALIZE, `scala-js-env-prov-nodejs` )
 
         registerExecution( INITIALIZE, `register-macro` )
         registerExecution( INITIALIZE, `register-main` )
@@ -95,10 +96,11 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
 
         registerExecution( COMPILE, `compile-macro` )
         registerExecution( COMPILE, `compile-main` )
-        registerExecution( PROCESS_CLASSES, `link-scala-js-main` )
+        registerExecution( PROCESS_CLASSES, `scala-js-link-main` )
         
         registerExecution( TEST_COMPILE, `compile-test` )
-        registerExecution( PROCESS_TEST_CLASSES, `link-scala-js-test` )
+        registerExecution( PROCESS_TEST_CLASSES, `scala-js-link-test` )
+        registerExecution( PROCESS_TEST_CLASSES, `scala-js-env-conf-nodejs` )
 
         registerExecution( PACKAGE, `scaladoc-macro` )
         registerExecution( PACKAGE, `scaladoc-main` )

@@ -1,15 +1,16 @@
 package com.carrotgarden.maven.scalor.util
 
+import org.junit.jupiter.api._
 import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest._
+import org.junit.platform.runner.JUnitPlatform
 
-@RunWith( classOf[ JUnitRunner ] )
-class ClasserTest extends FunSuite {
+@RunWith( classOf[ JUnitPlatform ] )
+class ClasserTest extends AnyRef {
 
   import Classer._
 
-  test( "companion" ) {
+  @Test
+  def companion: Unit = {
     implicit val loader = this.getClass.getClassLoader
 
     val module = trueCompanion( classOf[ ClasserModule ] )

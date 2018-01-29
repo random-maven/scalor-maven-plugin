@@ -64,8 +64,15 @@ object A {
     final val `compile-main` = "compile-main"
     final val `compile-test` = "compile-test"
 
-    final val `link-scala-js-main` = "link-scala-js-main"
-    final val `link-scala-js-test` = "link-scala-js-test"
+    final val `scala-js-link-main` = "scala-js-link-main"
+    final val `scala-js-link-test` = "scala-js-link-test"
+
+    final val `scala-js-env-prov-nodejs` = "scala-js-env-prov-nodejs"
+    final val `scala-js-env-prov-phantomjs` = "scala-js-env-prov-phantomjs"
+    final val `scala-js-env-prov-webjars` = "scala-js-env-prov-webjars"
+    
+    final val `scala-js-env-conf-nodejs` = "scala-js-env-conf-nodejs"
+    final val `scala-js-env-conf-phantomjs` = "scala-js-env-conf-phantomjs"
 
     final val `scaladoc-macro` = "scaladoc-macro"
     final val `scaladoc-main` = "scaladoc-main"

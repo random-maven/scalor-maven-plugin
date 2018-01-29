@@ -39,24 +39,24 @@
         <!-- Default versions. -->
         <version.java>1.8</version.java>
         <version.maven>3.5.0</version.maven>
-        <version.jackson>2.9.3</version.jackson>
+        <version.jackson>2.9.4</version.jackson>
         <version.slf4j>1.7.25</version.slf4j>
         <version.tycho>1.0.0</version.tycho>
         <version.groovy>2.4.13</version.groovy>
-        <version.jmh>1.19</version.jmh>
+        <version.jmh>1.20</version.jmh>
         <version.sbe>1.7.6</version.sbe>
         <version.agrona>0.9.12</version.agrona>
         <version.protobuf>3.5.1</version.protobuf>
         <version.snappy>1.1.7.1</version.snappy>
         <version.lucene>7.2.1</version.lucene>
-        <version.amazon.sdk>1.11.263</version.amazon.sdk>
+        <version.amazon.sdk>1.11.271</version.amazon.sdk>
         <version.sigar>1.6.5.132</version.sigar>
         <version.aspectj>1.8.13</version.aspectj>
         <version.bouncy>1.59</version.bouncy>
 
         <!-- Scala stack. -->
         <version.scala.epoch>2.12</version.scala.epoch>
-        <version.scala.release>${version.scala.epoch}.4</version.scala.release>
+        <version.scala.release>2.12.4</version.scala.release>
         <version.scala.sbt>0.13.7</version.scala.sbt>
         <version.scala.xml>1.0.6</version.scala.xml>
         <version.scala.protobuf>0.6.7</version.scala.protobuf>
@@ -68,8 +68,8 @@
         <version.scala.mock>3.6.0</version.scala.mock>
         <version.specs2>4.0.2-291bdf5-20171123131811</version.specs2>
         <version.scalaz>7.3.0-M18</version.scalaz>
-        <version.kamon>0.6.7</version.kamon>
-        <version.scalatest>3.0.4</version.scalatest>
+        <version.kamon>1.0.0</version.kamon>
+        <version.scalatest>3.0.5</version.scalatest>
         <version.scalacheck>1.13.5</version.scalacheck>
         <version.scala.plugin.meta>3.0.0-M10</version.scala.plugin.meta>
         <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
@@ -77,9 +77,9 @@
 
         <!-- Scala.js stack. -->
         <version.sjs.epoch>0.6</version.sjs.epoch>
-        <version.sjs.release>${version.sjs.epoch}.21</version.sjs.release>
+        <version.sjs.release>0.6.22</version.sjs.release>
         <version.sjs.library>sjs${version.sjs.epoch}_${version.scala.epoch}</version.sjs.library>
-        <version.sjs.scalacss>0.5.4</version.sjs.scalacss>
+        <version.sjs.scalacss>0.5.5</version.sjs.scalacss>
         <version.sjs.scalatags>0.6.7</version.sjs.scalatags>
         <version.sjs.autowire>0.2.6</version.sjs.autowire>
         <version.sjs.prickle>1.1.14</version.sjs.prickle>
@@ -87,15 +87,21 @@
         <version.sjs.scalarx>0.3.2</version.sjs.scalarx>
         <version.sjs.utest>0.6.3</version.sjs.utest>
 
+        <!-- JUnit Testing -->
+        <version.junit.legacy>4.12</version.junit.legacy>
+        <version.junit.platform>1.0.3</version.junit.platform>
+        <version.junit.jupiter>5.0.3</version.junit.jupiter>
+        <version.junit.vintage>4.12.3</version.junit.vintage>
+
         <!-- Maven plugins. -->
         <version.maven.scm>1.9.5</version.maven.scm>
-        <version.maven.testing>2.20.1</version.maven.testing>
+        <version.maven.testing>2.19.1</version.maven.testing><!-- JUnit5 -->
         <version.maven.javadoc>3.0.0</version.maven.javadoc>
 
         <!-- Database providers. -->
         <version.slick>3.2.1</version.slick>
         <version.hikari>2.7.6</version.hikari>
-        <version.postgres>42.1.4</version.postgres>
+        <version.postgres>42.2.1</version.postgres>
 
         <!-- Carrot Garden internal repository. -->
         <repo.amazon.public.host>public.maven.carrotgarden.com</repo.amazon.public.host>
@@ -219,13 +225,13 @@
             <dependency><!-- runtime -->
                 <groupId>org.scalameta</groupId>
                 <artifactId>scalameta_${version.scala.epoch}</artifactId>
-                <version>2.1.5</version>
+                <version>2.1.7</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.scalameta</groupId>
                 <artifactId>contrib_${version.scala.epoch}</artifactId>
-                <version>2.1.5</version>
+                <version>2.1.7</version>
                 <scope>provided</scope>
             </dependency>
             <dependency><!-- runtime -->
@@ -435,7 +441,7 @@
             <dependency>
                 <groupId>org.webjars.bower</groupId>
                 <artifactId>jquery</artifactId>
-                <version>3.2.1</version>
+                <version>3.3.1</version>
             </dependency>
             <dependency>
                 <groupId>org.webjars.bower</groupId>
@@ -445,7 +451,7 @@
             <dependency>
                 <groupId>org.webjars</groupId>
                 <artifactId>bootstrap</artifactId>
-                <version>4.0.0-beta.2</version>
+                <version>4.0.0</version>
             </dependency>
 
             <!-- Scala JS/Webjar React stack. Non-scala -->
@@ -986,9 +992,33 @@
 
             <!-- Java Testing. -->
             <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${version.junit.jupiter}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${version.junit.jupiter}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <version>${version.junit.vintage}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-runner</artifactId>
+                <version>${version.junit.platform}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.12</version>
+                <version>${version.junit.legacy}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -1379,7 +1409,7 @@
                         <dependency>
                             <groupId>com.vladsch.flexmark</groupId>
                             <artifactId>flexmark-all</artifactId>
-                            <version>0.28.32</version>
+                            <version>0.28.34</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -1678,10 +1708,25 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${version.maven.testing}</version>
                     <dependencies>
+                        <!-- <dependency> -->
+                        <!-- <groupId>org.apache.maven.surefire</groupId> -->
+                        <!-- <artifactId>surefire-junit4</artifactId> -->
+                        <!-- <version>${version.maven.testing}</version> -->
+                        <!-- </dependency> -->
                         <dependency>
-                            <groupId>org.apache.maven.surefire</groupId>
-                            <artifactId>surefire-junit4</artifactId>
-                            <version>${version.maven.testing}</version>
+                            <groupId>org.junit.platform</groupId>
+                            <artifactId>junit-platform-surefire-provider</artifactId>
+                            <version>${version.junit.platform}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.junit.jupiter</groupId>
+                            <artifactId>junit-jupiter-engine</artifactId>
+                            <version>${version.junit.jupiter}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.junit.vintage</groupId>
+                            <artifactId>junit-vintage-engine</artifactId>
+                            <version>${version.junit.vintage}</version>
                         </dependency>
                     </dependencies>
                     <configuration>
@@ -1812,6 +1857,33 @@
     </pluginRepositories>
 
     <profiles>
+
+        <!-- Activate Scalor Maven Plugin version for Eclipse. -->
+        <!-- Required for M2E 1.8 -->
+        <profile>
+            <id>scalor-version</id>
+            <activation>
+                <!-- Eclipse detection: user property set by M2E. -->
+                <property>
+                    <name>m2e.version</name>
+                </property>
+                <!-- Explicit profile activation: user file is present. -->
+                <file>
+                    <exists>.mvn/pom-scalor-version.md</exists>
+                </file>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.carrotgarden.maven</groupId>
+                            <artifactId>scalor-maven-plugin_2.12</artifactId>
+                            <version>LATEST</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
 
         <!-- Publish release revision. -->
         <profile>
@@ -1960,17 +2032,6 @@ version=${revision}
                         <executions>
                             <execution>
                                 <goals>
-                                    <!-- -->
-                                    <goal>eclipse-config</goal>
-                                    <!-- -->
-                                    <goal>register-macro</goal>
-                                    <goal>register-main</goal>
-                                    <goal>register-test</goal>
-                                    <!-- -->
-                                    <goal>compile-macro</goal>
-                                    <goal>compile-main</goal>
-                                    <goal>compile-test</goal>
-                                    <!-- -->
                                 </goals>
                             </execution>
                         </executions>
@@ -2038,17 +2099,6 @@ version=${revision}
                         <executions>
                             <execution>
                                 <goals>
-                                    <!-- -->
-                                    <goal>eclipse-config</goal>
-                                    <!-- -->
-                                    <goal>register-macro</goal>
-                                    <goal>register-main</goal>
-                                    <goal>register-test</goal>
-                                    <!-- -->
-                                    <goal>compile-macro</goal>
-                                    <goal>compile-main</goal>
-                                    <goal>compile-test</goal>
-                                    <!-- -->
                                 </goals>
                             </execution>
                         </executions>
@@ -2116,20 +2166,6 @@ version=${revision}
                         <executions>
                             <execution>
                                 <goals>
-                                    <!-- -->
-                                    <goal>eclipse-config</goal>
-                                    <!-- -->
-                                    <goal>register-macro</goal>
-                                    <goal>register-main</goal>
-                                    <goal>register-test</goal>
-                                    <!-- -->
-                                    <goal>compile-macro</goal>
-                                    <goal>compile-main</goal>
-                                    <goal>compile-test</goal>
-                                    <!-- -->
-                                    <goal>link-scala-js-main</goal>
-                                    <goal>link-scala-js-test</goal>
-                                    <!-- -->
                                 </goals>
                             </execution>
                         </executions>
@@ -2381,9 +2417,15 @@ version=${revision}
             <repositories>
                 <repository>
                     <id>random-scalor</id>
-                    <url>https://dl.bintray.com/random-scalor/maven</url>
+                    <url>http://dl.bintray.com/random-scalor/maven</url>
                 </repository>
             </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>random-scalor</id>
+                    <url>http://dl.bintray.com/random-scalor/maven</url>
+                </pluginRepository>
+            </pluginRepositories>
         </profile>
 
         <!-- Bintray random-maven. -->
@@ -2397,13 +2439,13 @@ version=${revision}
             <repositories>
                 <repository>
                     <id>random-maven</id>
-                    <url>https://dl.bintray.com/random-maven/maven</url>
+                    <url>http://dl.bintray.com/random-maven/maven</url>
                 </repository>
             </repositories>
             <pluginRepositories>
                 <pluginRepository>
                     <id>random-maven</id>
-                    <url>https://dl.bintray.com/random-maven/maven</url>
+                    <url>http://dl.bintray.com/random-maven/maven</url>
                 </pluginRepository>
             </pluginRepositories>
         </profile>
@@ -2513,6 +2555,33 @@ version=${revision}
                             <configuration>
                                 <lifecycleMappingMetadata>
                                     <pluginExecutions>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>com.github.klieber</groupId>
+                                                <artifactId>phantomjs-maven-plugin</artifactId>
+                                                <versionRange>[0,)</versionRange>
+                                                <goals>
+                                                    <goal>install</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <ignore />
+                                            </action>
+                                        </pluginExecution>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>com.github.eirslett</groupId>
+                                                <artifactId>frontend-maven-plugin</artifactId>
+                                                <versionRange>[0,)</versionRange>
+                                                <goals>
+                                                    <goal>install-node-and-npm</goal>
+                                                    <goal>npm</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <ignore />
+                                            </action>
+                                        </pluginExecution>
                                         <pluginExecution>
                                             <pluginExecutionFilter>
                                                 <groupId>org.apache.maven.plugins</groupId>
@@ -2668,6 +2737,22 @@ version=${revision}
                                                     <runOnIncremental>false</runOnIncremental>
                                                     <runOnConfiguration>true</runOnConfiguration>
                                                 </execute>
+                                            </action>
+                                        </pluginExecution>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.apache.maven.plugins</groupId>
+                                                <artifactId>maven-invoker-plugin</artifactId>
+                                                <versionRange>[0,)</versionRange>
+                                                <goals>
+                                                    <goal>install</goal>
+                                                    <goal>integration-test</goal>
+                                                    <goal>verify</goal>
+                                                    <goal>run</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <ignore />
                                             </action>
                                         </pluginExecution>
                                     </pluginExecutions>

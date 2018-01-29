@@ -16,7 +16,7 @@ trait Logging extends util.Logging {
   self : Mojo with eclipse.Context =>
 
   // Lazy, for plexus injector.
-  override lazy val log = Logging.Log( getLog, mojoName, m2e.isPresent )
+  override lazy val log = Logging.Log( getLog, mojoName, hasEclipseContext )
 
   /**
    * Log file list.
@@ -39,6 +39,7 @@ object Logging {
   ) extends util.Logging.AnyLog {
     /**  Work around lack of logging source in M2E "Maven Console". */
     override val context = if ( hasM2E ) "[" + A.maven.name + ":" + mojoName + "] " else ""
+    override def dbug( line : String ) = logger.debug( context + line )
     override def info( line : String ) = logger.info( context + line )
     override def warn( line : String ) = logger.warn( context + line )
     override def fail( line : String ) = logger.error( context + line )

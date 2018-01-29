@@ -5,9 +5,15 @@ set -e -u
 # remove build artifacts on ci host.
 #
 
+wipe_repo() {
+   local path="$1"
+   rm -r -f "$path"/* || true
+}
+
 base=$(cd "${BASH_SOURCE%/*}/.." && pwd)
 
+name="com/carrotgarden"
 
-path="$base/test-repo/com/carrotgarden/"
+wipe_repo "$base/test-repo/$name"
 
-rm -r -f "$path"/* || true
+wipe_repo "$HOME/.m2/repository/$name"

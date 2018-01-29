@@ -88,14 +88,15 @@ trait Hack {
         val source = project.getFolder( relative )
         val result = workspace.validateLinkLocation( source, target )
         val canLink = result.getSeverity != IStatus.ERROR
+        val origin = source.getFullPath
         if ( source.isLinked ) {
-          log.info( s"   already linked: ${source} -> ${target}" )
+          log.info( s"   already linked: ${origin} -> ${target}" )
         } else if ( canLink ) {
-          log.info( s"   creating link : ${source} -> ${target}" )
+          log.info( s"   creating link : ${origin} -> ${target}" )
           val update = IResource.FORCE | IResource.REPLACE
           source.createLink( target, update, monitor )
         } else {
-          log.fail( s"   unable to link: ${source} -> ${target} : ${result}" )
+          log.fail( s"   unable to link: ${origin} -> ${target} : ${result}" )
         }
       }
       withFolderStream( projectFolder, SymlinkFilter(), processLink )

@@ -94,4 +94,75 @@ object Classer {
     }
   }
 
+  import java.lang.reflect.Field
+
+  // https://gist.github.com/carymrobbins/7b8ed52cd6ea186dbdf8
+
+  def prettyPrint(
+    instance :        Any,
+    indentSize :      Int = 2,
+    maxElementWidth : Int = 40,
+    depth :           Int = 0
+  ) : String = {
+
+    val indent = " " * depth * indentSize
+    val fieldIndent = indent + ( " " * indentSize )
+    val thisDepth = prettyPrint( _ : Any, indentSize, maxElementWidth, depth )
+    val nextDepth = prettyPrint( _ : Any, indentSize, maxElementWidth, depth + 1 )
+
+    val replaceMap = Seq(
+      "\n" -> "\\n",
+      "\r" -> "\\r",
+      "\t" -> "\\t",
+      "\"" -> "\\\""
+    )
+
+    instance match {
+
+      // Strings.
+      case s : String =>
+        '"' + replaceMap.foldLeft( s ) { case ( acc, ( c, r ) ) => acc.replace( c, r ) } + '"'
+
+      // Lists
+      case xs : Seq[ _ ] if xs.isEmpty => xs.toString()
+
+      // Lists.
+      case xs : Seq[ _ ] =>
+        // If the Seq is not too long, pretty print on one line.
+        val resultOneLine = xs.map( nextDepth ).toString()
+        if ( resultOneLine.length <= maxElementWidth ) return resultOneLine
+        // Otherwise, build it with newlines and proper field indents.
+        val result = xs.map( x => s"\n$fieldIndent${nextDepth( x )}" ).toString()
+        result.substring( 0, result.length - 1 ) + "\n" + indent + ")"
+
+      // Case classes
+      case kase : Product =>
+        val prefix = kase.productPrefix
+        // We'll use reflection to get the constructor arg names and values.
+        val cls = kase.getClass
+        val fields = cls.getDeclaredFields.filterNot( _.isSynthetic ).map( _.getName )
+        val values = kase.productIterator.toSeq
+        // If we weren't able to match up fields/values, fall back to toString.
+        if ( fields.length != values.length ) return kase.toString
+        fields.zip( values ).toList match {
+          // If there are no fields, just use the normal String representation.
+          case Nil                 => kase.toString
+          // If there is just one field, let's just print it as a wrapper.
+          case ( _, value ) :: Nil => s"$prefix(${thisDepth( value )})"
+          // If there is more than one field, build up the field names and values.
+          case kvps =>
+            val prettyFields = kvps.map { case ( k, v ) => s"$fieldIndent$k = ${nextDepth( v )}" }
+            // If the result is not too long, pretty print on one line.
+            val resultOneLine = s"$prefix(${prettyFields.mkString( ", " )})"
+            if ( resultOneLine.length <= maxElementWidth ) return resultOneLine
+            // Otherwise, build it with newlines and proper field indents.
+            s"$prefix(\n${prettyFields.mkString( ",\n" )}\n$indent)"
+        }
+
+      // Any other type.
+      case _ => instance.toString
+    }
+
+  }
+
 }

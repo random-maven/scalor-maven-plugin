@@ -2,18 +2,13 @@
 # Eclipse
 bin/
 .project
-.settings/
 .classpath
-
-# Maven
-target/
-test-repo/
+.settings/
 
 # Scala IDE
 .cache*
 
-# Scalor plugin
-/.scalor/
-
-# Flatten plugin
-pom.xml.flatten
+# Maven
+target/
+test-repo/
+test-tool/

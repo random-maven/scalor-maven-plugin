@@ -35,8 +35,9 @@
         <version.scala.zinc>1.1.0</version.scala.zinc>
         <version.scala.plugin.macro>2.1.0</version.scala.plugin.macro>
 
+        <!-- Scala.js tool stack. -->
         <version.sjs.epoch>0.6</version.sjs.epoch>
-        <version.sjs.release>${version.sjs.epoch}.21</version.sjs.release>
+        <version.sjs.release>0.6.22</version.sjs.release>
         <version.sjs.library>sjs${version.sjs.epoch}_${version.scala.epoch}</version.sjs.library>
 
         <version.java>1.8</version.java>
@@ -71,12 +72,12 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_${version.scala.epoch}</artifactId>
-            <version>3.0.4</version>
-            <scope>test</scope>
-        </dependency>
+        <!-- <dependency> -->
+        <!-- <groupId>org.scalatest</groupId> -->
+        <!-- <artifactId>scalatest_${version.scala.epoch}</artifactId> -->
+        <!-- <version>3.0.4</version> -->
+        <!-- <scope>test</scope> -->
+        <!-- </dependency> -->
 
     </dependencies>
 
@@ -130,8 +131,6 @@
                     <execution>
                         <goals>
 
-                            <goal>eclipse-config</goal>
-
                             <goal>register-macro</goal>
                             <goal>register-main</goal>
                             <goal>register-test</goal>
@@ -140,8 +139,8 @@
                             <goal>compile-main</goal>
                             <goal>compile-test</goal>
 
-                            <goal>link-scala-js-main</goal>
-                            <goal>link-scala-js-test</goal>
+                            <goal>scala-js-link-main</goal>
+                            <goal>scala-js-link-test</goal>
 
                         </goals>
                     </execution>

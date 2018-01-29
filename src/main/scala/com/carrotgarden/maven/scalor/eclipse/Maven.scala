@@ -304,10 +304,12 @@ object Maven {
       repoSession,
       remoteRepoList
     )
+    
     import define._
     val bridgeList = aether.resolveRoundTrip( defineBridge, stereotypes, scope )
     val compilerList = aether.resolveRoundTrip( defineCompiler, stereotypes, scope )
     val pluginDefineList = aether.resolveRoundTrip( definePluginList, stereotypes, scope )
+    
     DefineResponse(
       bridgeList,
       compilerList,

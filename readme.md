@@ -14,17 +14,27 @@ Similar plugins
 * [scala-maven-plugin](https://github.com/davidB/scala-maven-plugin)
 * [sbt-compiler-maven-plugin](https://github.com/sbt-compiler-maven-plugin/sbt-compiler-maven-plugin)
 
-Plugin features
+### Plugin features
+
+Scala
 * new incremental [Zinc](https://github.com/sbt/zinc)
 * uses static [compiler-bridge](https://github.com/sbt/zinc/tree/1.x/internal/compiler-bridge)
-* [same-project](https://stackoverflow.com/questions/21994764/scala-macros-and-separate-compilation-units) Scala macro build
-* compiles Java and Scala sources
-* compiles and [links Scala.js JavaScrpt](https://github.com/scala-js/scala-js-cli)
-* compiles in 3 scopes: [macro, main, test](http://scala-ide.org/docs/current-user-doc/features/scalacompiler/index.html)
 * auto-discovery of [Scala compiler plugins](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html#definePluginList)
 * cross-scala-version [build with simple setup](https://github.com/random-maven/scalor-maven-plugin/tree/master/src/it/test-cross)
-* brings and installs its own companion [Eclipse plugin](https://github.com/random-maven/scalor-maven-plugin/blob/master/src/main/scala/com/carrotgarden/maven/scalor/EclipsePlugin.scala)
+
+Scala.macro
+* [same-project](https://stackoverflow.com/questions/21994764/scala-macros-and-separate-compilation-units) Scala macro build
+* compiles in 3 scopes: [macro, main, test](http://scala-ide.org/docs/current-user-doc/features/scalacompiler/index.html)
+
+Scala.js
+* compiles and [links Scala.js JavaScrpt](https://github.com/scala-js/scala-js-cli)
+* same-project JS+JVM [JUnit testing](https://github.com/random-scalor/scala-js-junit-tools)
+* auto-provisions Webjars [resources for testing](https://www.webjars.org/) 
+* auto-provisions JavaScript VM [environments for testing](https://www.scala-js.org/doc/project/js-environments.html)
+
+Eclipse and Maven
 * creates custom [Scala installations for Scala IDE](http://scala-ide.org/docs/4.0.x/advancedsetup/scala-installations.html)
+* brings and installs its own companion [Eclipse plugin](https://github.com/random-maven/scalor-maven-plugin/blob/master/src/main/scala/com/carrotgarden/maven/scalor/EclipsePlugin.scala)
 * comprehensive plugin [configuration and logging](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html)
 * provides [identical compiler settings](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html#zincCompileOptions) 
   for Maven and Eclipse
@@ -32,14 +42,24 @@ Plugin features
 Main Maven goals
 
 * [eclipse-config](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html)
-* [clean-main](https://random-maven.github.io/scalor-maven-plugin/2.12/clean-main-mojo.html)
 * [register-main](https://random-maven.github.io/scalor-maven-plugin/2.12/register-main-mojo.html)
 * [compile-main](https://random-maven.github.io/scalor-maven-plugin/2.12/compile-main-mojo.html)
-* [link-scala-js-main](https://random-maven.github.io/scalor-maven-plugin/2.12/link-scala-js-main-mojo.html)
 
 Complete goals reference
 
 * [Maven Goals](https://random-maven.github.io/scalor-maven-plugin/2.12/plugin-info.html)
+
+### Planned features
+
+Scala.js
+* initializer module support
+* incremental Scala.js linker
+
+Eclipse
+* incremental Scala.js linker
+* auto-reload Scala.js web client
+* auto-reload Scala Akka HTTP web server
+* work around crashing Scala IDE presentation compiler
 
 ### Eclipse setup
 
@@ -47,6 +67,7 @@ Prerequisites:
 * [Eclipse 4.7](http://www.eclipse.org/downloads/),
   [Maven M2E 1.8](http://www.eclipse.org/m2e/),
   [Scala IDE 4.7](http://scala-ide.org/).
+* better, use [Maven M2E 1.9](https://repository.takari.io/content/sites/m2e.extras/m2e/1.9.0/N/LATEST/)
 
 Involves two steps:
 
@@ -158,7 +179,12 @@ mvn clean install -P scalor
                                 <dependency>
                                     <groupId>org.scalamacros</groupId>
                                     <artifactId>paradise_${version.scala.release}</artifactId>
-                                    <version>${version.scala.plug.macro}</version>
+                                    <version>${version.scala.plugin.macro}</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.scala-js</groupId>
+                                    <artifactId>scalajs-compiler_${version.scala.release}</artifactId>
+                                    <version>${version.sjs.release}</version>
                                 </dependency>
                             </definePluginList>
 
@@ -172,11 +198,6 @@ mvn clean install -P scalor
                                     <!-- Setup Eclipse plugin. -->
                                     <goal>eclipse-config</goal>
 
-                                    <!-- Remove build state cache. -->
-                                    <goal>clean-macro</goal>
-                                    <goal>clean-main</goal>
-                                    <goal>clean-test</goal>
-
                                     <!-- Add compilation sources. -->
                                     <goal>register-macro</goal>
                                     <goal>register-main</goal>
@@ -187,9 +208,14 @@ mvn clean install -P scalor
                                     <goal>compile-main</goal>
                                     <goal>compile-test</goal>
 
+                                    <!-- Provide test JS-VM. -->
+                                    <goal>scala-js-env-prov-webjars</goal>
+                                    <goal>scala-js-env-prov-nodejs</goal>
+                                    <goal>scala-js-env-conf-nodejs</goal>
+
                                     <!-- Link runtime script. -->
-                                    <goal>link-scala-js-main</goal>
-                                    <goal>link-scala-js-test</goal>
+                                    <goal>scala-js-link-main</goal>
+                                    <goal>scala-js-link-test</goal>
 
                                 </goals>
 

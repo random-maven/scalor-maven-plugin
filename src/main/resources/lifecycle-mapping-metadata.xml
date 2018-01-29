@@ -28,8 +28,9 @@
                 <versionRange>[${project.version}]</versionRange>
                 <goals>
 
-                    <!-- M2E configurator handles all goals but "eclipse-config". -->
+                    <!-- M2E configurator handles all goals. -->
 
+                    <goal>eclipse-config</goal>
                     <goal>clean-macro</goal>
                     <goal>clean-main</goal>
                     <goal>clean-test</goal>
@@ -42,11 +43,18 @@
                     <goal>compile-main</goal>
                     <goal>compile-test</goal>
 
+                    <goal>scala-js-link-main</goal>
+                    <goal>scala-js-link-test</goal>
+
+                    <goal>scala-js-env-prov-nodejs</goal>
+                    <goal>scala-js-env-prov-phantomjs</goal>
+                    <goal>scala-js-env-prov-webjars</goal>
+
+                    <goal>scala-js-env-conf-nodejs</goal>
+                    <goal>scala-js-env-conf-phantomjs</goal>
+
                     <goal>scaladoc-main</goal>
                     <goal>scaladoc-test</goal>
-
-                    <goal>link-scala-js-main</goal>
-                    <goal>link-scala-js-test</goal>
 
                 </goals>
             </pluginExecutionFilter>

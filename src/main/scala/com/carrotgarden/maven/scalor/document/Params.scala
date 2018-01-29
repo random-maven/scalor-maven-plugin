@@ -38,7 +38,7 @@ trait Params {
 </a>
   """ )
   @Parameter()
-  var archiveConfig : MavenArchiveConfiguration = new MavenArchiveConfiguration()
+  var scaladocArchiveConfig : MavenArchiveConfiguration = new MavenArchiveConfiguration()
 
   @Description( """
   Maven project helper.

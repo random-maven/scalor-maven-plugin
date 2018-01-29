@@ -6,8 +6,9 @@ bin/
 .classpath
 
 # Maven
-target*/
+target/
 test-repo/
+test-tool/
 
 # Scala IDE
 .cache*

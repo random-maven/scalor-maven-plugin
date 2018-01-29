@@ -168,7 +168,7 @@ trait ScaladocAnyMojo extends AbstractMojo
     val includes = Array[ String ]( "**/**" ) // FIXME to config
     val excludes = Array[ String ]()
     packager.getArchiver.addDirectory( scaladocOutputFolder, includes, excludes )
-    packager.createArchive( session, project, archiveConfig )
+    packager.createArchive( session, project, scaladocArchiveConfig )
   }
 
   /**

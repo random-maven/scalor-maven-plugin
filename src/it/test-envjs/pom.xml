@@ -1,0 +1,132 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- <parent> -->
+    <!-- <groupId>com.carrotgarden.a</groupId> -->
+    <!-- <artifactId>carrot-a</artifactId> -->
+    <!-- <version>0-SNAPSHOT</version> -->
+    <!-- <relativePath>.mvn</relativePath> -->
+    <!-- </parent> -->
+
+    <groupId>com.carrotgarden.maven</groupId>
+    <artifactId>scalor-maven-plugin-test-envjs</artifactId>
+    <version>${revision}</version>
+
+    <properties>
+
+        <!-- Resource identity sequence. -->
+        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+
+        <!-- Streaming release version. -->
+        <release.epoch>0.0.0</release.epoch>
+        <release.stamp>${maven.build.timestamp}</release.stamp>
+        <revision>${release.epoch}.${release.stamp}</revision>
+
+        <!-- Must override in each cross-version module. -->
+        <version.scala.epoch>2.12</version.scala.epoch>
+        <version.scala.release>2.12.4</version.scala.release>
+
+        <version.scala.zinc>1.1.0</version.scala.zinc>
+        <version.scala.plugin.macro>2.1.0</version.scala.plugin.macro>
+
+        <!-- Scala.js tool stack. -->
+        <version.sjs.epoch>0.6</version.sjs.epoch>
+        <version.sjs.release>0.6.22</version.sjs.release>
+        <version.sjs.library>sjs${version.sjs.epoch}_${version.scala.epoch}</version.sjs.library>
+
+        <version.java>1.8</version.java>
+
+        <maven.compiler.source>${version.java}</maven.compiler.source>
+        <maven.compiler.target>${version.java}</maven.compiler.target>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    </properties>
+
+    <dependencies>
+
+        <!-- Native JS. -->
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery</artifactId>
+            <version>3.3.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Scala.js facade. -->
+
+        <dependency>
+            <groupId>org.scala-js</groupId>
+            <artifactId>scalajs-dom_${version.sjs.library}</artifactId>
+            <version>0.9.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>@project.artifactId@</artifactId>
+                <version>@project.version@</version>
+                <configuration>
+                </configuration>
+                <executions>
+
+                    <execution>
+                        <id>provision-webjars</id>
+                        <goals>
+                            <goal>scala-js-env-prov-webjars</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>provision-nodejs-one</id>
+                        <goals>
+                            <goal>scala-js-env-prov-nodejs</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>provision-nodejs-two</id>
+                        <goals>
+                            <goal>scala-js-env-prov-nodejs</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>configure-nodejs</id>
+                        <goals>
+                            <goal>scala-js-env-conf-nodejs</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>provision-phantomjs-one</id>
+                        <goals>
+                            <goal>scala-js-env-prov-phantomjs</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>provision-phantomjs-two</id>
+                        <goals>
+                            <goal>scala-js-env-prov-phantomjs</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>configure-phantomjs</id>
+                        <goals>
+                            <goal>scala-js-env-conf-phantomjs</goal>
+                        </goals>
+                    </execution>
+
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

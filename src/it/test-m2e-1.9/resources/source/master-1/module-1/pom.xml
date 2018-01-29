@@ -1,0 +1,113 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.carrotgarden.maven</groupId>
+        <artifactId>scalor-test-master-1</artifactId>
+        <version>0.0.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.carrotgarden.maven</groupId>
+    <artifactId>scalor-test-module-1</artifactId>
+    <version>0.0.0-SNAPSHOT</version>
+
+    <description>
+        Module project for Eclipse import tester.
+    </description>
+
+    <properties>
+
+        <version.java>1.8</version.java>
+
+        <version.scala.epoch>2.12</version.scala.epoch>
+        <version.scala.release>2.12.4</version.scala.release>
+
+        <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
+        <version.scala.zinc>1.1.0</version.scala.zinc>
+
+        <maven.compiler.source>${version.java}</maven.compiler.source>
+        <maven.compiler.target>${version.java}</maven.compiler.target>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${version.scala.release}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                    <skipMain>true</skipMain>
+                </configuration>
+            </plugin>
+
+            <plugin>
+
+                <groupId>com.carrotgarden.maven</groupId>
+                <artifactId>scalor-maven-plugin_2.12</artifactId>
+                <!-- FIXME version parameter via invoker plugin -->
+
+                <configuration>
+
+                    <eclipseProjectCommentString>scalor-maven-plugin</eclipseProjectCommentString>
+                    <eclipseRemoveLibraryContainer>true</eclipseRemoveLibraryContainer>
+                    <eclipseRenameLibraryContainer>false</eclipseRenameLibraryContainer>
+
+                    <defineBridge>
+                        <dependency>
+                            <groupId>org.scala-sbt</groupId>
+                            <artifactId>compiler-bridge_${version.scala.epoch}</artifactId>
+                            <version>${version.scala.zinc}</version>
+                        </dependency>
+                    </defineBridge>
+                    <defineCompiler>
+                        <dependency>
+                            <groupId>org.scala-lang</groupId>
+                            <artifactId>scala-compiler</artifactId>
+                            <version>${version.scala.release}</version>
+                        </dependency>
+                    </defineCompiler>
+                    <definePluginList>
+                        <dependency>
+                            <groupId>org.scalamacros</groupId>
+                            <artifactId>paradise_${version.scala.release}</artifactId>
+                            <version>${version.scala.plugin.macro}</version>
+                        </dependency>
+                    </definePluginList>
+
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>eclipse-config</goal>
+                            <goal>register-macro</goal>
+                            <goal>register-main</goal>
+                            <goal>register-test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+</project>

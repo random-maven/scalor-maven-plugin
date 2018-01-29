@@ -1,0 +1,43 @@
+#
+# arkon-maven-extension
+#
+
+# Reduce logging.
+quiet = true
+
+# Ignore download errors for existing files.
+#offline = false
+
+# Ignore "Last-Modified" header, always download.
+fresh = true
+
+# Path list separator character, see below.
+#separator = ;
+
+# Server ID in settings.xml for credentials.
+#serverId = arkon
+
+# Remote repository url
+#serverURL = https://raw.githubusercontent.com
+
+# Repository-relative resource path in the repository.
+#sourceDir = random-maven/arkon/master
+
+# Project-relative local destination folder for download.
+#targetDir = .mvn
+
+# Separator-delimited download resource path list.
+pathList = \
+    pom.xml ; \
+    extensions.xml ; \
+    ci/settings.xml ; \
+    ci/toolchains.xml ; \
+    wrapper/maven-wrapper.jar ; \
+    wrapper/maven-wrapper.properties ; \
+    install.sh ; \
+    package.sh ; \
+    verify.sh ; \
+    site.sh ; \
+    release-bintray.sh ; \
+    release-sonatype.sh ; \
+    github-squash.sh ; \

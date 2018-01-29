@@ -19,12 +19,22 @@ trait Build extends AnyRef
   /**
    * Name of the generated runtime JavaScript.
    */
-  def linkerRuntimeJs : String
+  def linkerRuntimeJS : String
 
   /**
    * Name of the runtime dependency resolution report.
    */
   def linkerRuntimeDeps : String
+
+  /**
+   * Full path of the generated runtime JavaScript.
+   */
+  def linkerRuntimeFile() : File = {
+    if ( !buildTargetFolder.exists() ) {
+      buildTargetFolder.mkdirs()
+    }
+    new File( buildTargetFolder, linkerRuntimeJS ).getAbsoluteFile
+  }
 
 }
 
@@ -40,7 +50,7 @@ trait BuildMain extends Build
   File is packaged inside <a href="#linkerMainTargetFolder"><b>linkerMainTargetFolder</b></a>
   """ )
   @Parameter(
-    property     = "scalor.linkerMainRuntimeJs", //
+    property     = "scalor.linkerMainRuntimeJs",
     defaultValue = "runtime.js"
   )
   var linkerMainRuntimeJs : String = _
@@ -50,12 +60,12 @@ trait BuildMain extends Build
   File is packaged inside <a href="#linkerMainTargetFolder"><b>linkerMainTargetFolder</b></a>
   """ )
   @Parameter(
-    property     = "scalor.linkerMainRuntimeDeps", //
+    property     = "scalor.linkerMainRuntimeDeps",
     defaultValue = "runtime.deps"
   )
   var linkerMainRuntimeDeps : String = _
 
-  override def linkerRuntimeJs = linkerMainRuntimeJs
+  override def linkerRuntimeJS = linkerMainRuntimeJs
   override def linkerRuntimeDeps = linkerMainRuntimeDeps
 
 }
@@ -67,7 +77,7 @@ trait BuildMainDependency extends base.BuildAnyDependency {
   Normally includes build output from scope=[macro,main].
   """ )
   @Parameter(
-    property     = "scalor.linkerMainDependencyFolders", //
+    property     = "scalor.linkerMainDependencyFolders",
     defaultValue = "${project.build.outputDirectory}"
   )
   var linkerMainDependencyFolders : Array[ File ] = Array[ File ]()
@@ -92,7 +102,7 @@ trait BuildMainTarget extends base.BuildAnyTarget {
   Build target directory for the generated runtime JavaScript file with scope=main.
   """ )
   @Parameter(
-    property     = "scalor.linkerMainTargetFolder", //
+    property     = "scalor.linkerMainTargetFolder",
     defaultValue = "${project.build.outputDirectory}/META-INF/resources/script"
   )
   var linkerMainTargetFolder : File = _
@@ -113,7 +123,7 @@ trait BuildTest extends Build
   File is packaged inside <a href="#linkerTestTargetFolder"><b>linkerTestTargetFolder</b></a>
   """ )
   @Parameter(
-    property     = "scalor.linkerTestRuntimeJs", //
+    property     = "scalor.linkerTestRuntimeJs",
     defaultValue = "runtime-test.js"
   )
   var linkerTestRuntimeJs : String = _
@@ -123,12 +133,12 @@ trait BuildTest extends Build
   File is packaged inside <a href="#linkerTestTargetFolder"><b>linkerTestTargetFolder</b></a>
   """ )
   @Parameter(
-    property     = "scalor.linkerTestRuntimeDeps", //
+    property     = "scalor.linkerTestRuntimeDeps",
     defaultValue = "runtime-test.deps"
   )
   var linkerTestRuntimeDeps : String = _
 
-  override def linkerRuntimeJs = linkerTestRuntimeJs
+  override def linkerRuntimeJS = linkerTestRuntimeJs
   override def linkerRuntimeDeps = linkerTestRuntimeDeps
 
 }
@@ -140,7 +150,7 @@ trait BuildTestDependency extends base.BuildAnyDependency {
   Normally includes build output from scope=[macro,main,test].
   """ )
   @Parameter(
-    property     = "scalor.linkerTestDependencyFolders", //
+    property     = "scalor.linkerTestDependencyFolders",
     defaultValue = "${project.build.outputDirectory},${project.build.testOutputDirectory}"
   )
   var linkerTestDependencyFolders : Array[ File ] = Array[ File ]()
@@ -150,7 +160,7 @@ trait BuildTestDependency extends base.BuildAnyDependency {
   """ )
   @Parameter(
     property     = "scalor.linkerTestDependencyScopes",
-    defaultValue = "test"
+    defaultValue = "provided,test"
   )
   var linkerTestDependencyScopes : Array[ String ] = Array[ String ]()
 
@@ -165,7 +175,7 @@ trait BuildTestTarget extends base.BuildAnyTarget {
   Build target directory for the generated runtime JavaScript file with scope=test.
   """ )
   @Parameter(
-    property     = "scalor.linkerTestTargetFolder", //
+    property     = "scalor.linkerTestTargetFolder",
     defaultValue = "${project.build.testOutputDirectory}/META-INF/resources/script-test"
   )
   var linkerTestTargetFolder : File = _

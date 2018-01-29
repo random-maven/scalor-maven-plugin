@@ -14,6 +14,7 @@ import org.eclipse.m2e.core.project.configurator.AbstractBuildParticipant
 import org.eclipse.m2e.core.project.configurator.AbstractBuildParticipant2
 import org.eclipse.core.runtime.SubMonitor
 import com.carrotgarden.maven.scalor.util.Logging
+import org.scalaide.core.internal.project.ScalaProject
 
 /**
  * Assemble M2E project configurator components.
@@ -39,5 +40,32 @@ object Project {
     with ScalaIDE {
 
   }
-  
+
+  import scala.collection.mutable
+
+  /**
+   * Remember managed projects.
+   */
+  trait Tracker {
+    import Tracker._
+
+    private val projectMap = new mutable.HashMap[ IProject, Context ]
+
+    def projectRegister( project : IProject, config : ParamsConfig ) = projectMap.synchronized {
+      projectMap += ( project -> Context( config, ScalaIDE.pluginProject( project ) ) )
+    }
+
+    def projectUnregister( project : IProject ) = projectMap.synchronized {
+      projectMap -= project
+    }
+
+  }
+
+  object Tracker {
+    case class Context(
+      config :  ParamsConfig,
+      project : ScalaProject
+    )
+  }
+
 }

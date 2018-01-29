@@ -37,8 +37,8 @@ object Build {
         case `register-main` if ( hasConf( kind ) ) => true
         case `register-test` if ( hasConf( kind ) ) => true
         // generate runtime.js
-        case `link-scala-js-main` if ( !hasConf( kind ) ) => true
-        case `link-scala-js-test` if ( !hasConf( kind ) ) => true
+        case `scala-js-link-main` if ( !hasConf( kind ) ) => true
+        case `scala-js-link-test` if ( !hasConf( kind ) ) => true
         // ignore the rest
         case _ => false
       }

@@ -98,12 +98,10 @@ trait Order {
   ) = {
     /** This is list by reference. */
     val descriptorList = classpath.getEntryDescriptors
-    val descriptorTest = new ArrayList[ IClasspathEntryDescriptor ]( descriptorList )
-    Collections.sort( descriptorTest, comparator )
-    val hasChange = descriptorList != descriptorTest
-    if ( hasChange ) {
-      Collections.sort( descriptorList, comparator )
-    }
+    /** Order class path entries. */
+    Collections.sort( descriptorList, comparator )
+    /** Notify class path changes. */
+    descriptorList.asScala.foreach { entry => classpath.touchEntry( entry.getPath ) }
   }
 
   /**
@@ -120,11 +118,6 @@ trait Order {
     val mapper = new SettingsRegexMapper( ordering, separator )
     val comparator = ComparatorClasspathRule( mapper )
     reorderClasspath( classpath, comparator, monitor )
-    if ( eclipseLogClasspathOrder ) {
-      classpath.getEntryDescriptors.asScala.foreach { entry =>
-        log.info( s"   ${entry.getPath.toPortableString}" )
-      }
-    }
   }
 
   /**
@@ -138,14 +131,14 @@ trait Order {
   ) = {
     import config._
     if ( eclipseMavenReorder ) {
-      log.info( "Ordering entries inside the .classpath Maven container." )
+      log.info( "Ordering entries inside the Maven container." )
       val configMap = parameterMap( eclipseMavenOrdering, commonSequenceSeparator )
-      val ( field, sort ) = if ( configMap.isEmpty ) {
+      val ( field, order ) = if ( configMap.isEmpty ) {
         ( "artifactId", "ascending" )
       } else {
         configMap.head
       }
-      val comparator = ComparatorArtifact( field, sort )
+      val comparator = ComparatorArtifact( field, order )
       reorderClasspath( classpath, comparator, monitor )
     }
   }
@@ -195,6 +188,10 @@ trait Order {
 
 object Order {
 
+  case class EntryFilterAll() extends IClasspathDescriptor.EntryFilter {
+    override def accept( descriptor : IClasspathEntryDescriptor ) : Boolean = true
+  }
+
   /**
    * Compare by Maven artifact fields.
    */
@@ -208,8 +205,9 @@ object Order {
         case "artifactId" => entry.getArtifactId
         case _            => entry.getArtifactKey.toPortableString
       }
+      entry.getArtifactId
     }
-    def sort = if ( order.startsWith( "asc" ) ) true else false
+    val sort = if ( order.startsWith( "asc" ) ) true else false
     override def compare( e1 : IClasspathEntryDescriptor, e2 : IClasspathEntryDescriptor ) : Int = {
       val t1 = text( e1 )
       val t2 = text( e2 )

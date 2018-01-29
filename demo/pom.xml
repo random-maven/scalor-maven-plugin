@@ -10,34 +10,49 @@
     <description>
     Self-contained, minimal demonstration project. 
     Project feature showcase:
-    * 3-scope build
-    * Scala macro compile
-    * Scala.js runtime.js linker
+    * Scala.js linker
+    * Scala.macro compile
+    * Scala.js compile
+    * Scala.macro JUnit test
+    * Scala.js JUnit test
     </description>
 
     <properties>
 
-        <version.scala.epoch>2.12</version.scala.epoch>
-        <version.scala.release>2.12.4</version.scala.release>
-
-        <version.scala.zinc>1.1.0</version.scala.zinc>
-        <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
-
-        <version.sjs.epoch>0.6</version.sjs.epoch>
-        <version.sjs.release>${version.sjs.epoch}.21</version.sjs.release>
-        <version.sjs.library>sjs${version.sjs.epoch}_${version.scala.epoch}</version.sjs.library>
-
+        <!-- Java epoch. -->
         <version.java>1.8</version.java>
-
         <maven.compiler.source>${version.java}</maven.compiler.source>
         <maven.compiler.target>${version.java}</maven.compiler.target>
 
+        <!-- File format. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Scala epoch. -->
+        <version.scala.epoch>2.12</version.scala.epoch>
+        <version.scala.release>2.12.4</version.scala.release>
+
+        <!-- Scala compiler. -->
+        <version.scala.zinc>1.1.0</version.scala.zinc>
+        <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
+
+        <!-- Scala.js tool stack. -->
+        <version.sjs.epoch>0.6</version.sjs.epoch>
+        <version.sjs.release>0.6.22</version.sjs.release>
+        <version.sjs.library>sjs${version.sjs.epoch}_${version.scala.epoch}</version.sjs.library>
+
+        <!-- JUnit 4/5 Testing -->
+        <version.maven.testing>2.19.1</version.maven.testing><!-- JUnit 5 OK. -->
+        <version.junit.platform>1.0.3</version.junit.platform>
+        <version.junit.jupiter>5.0.3</version.junit.jupiter>
+        <version.junit.vintage>4.12.3</version.junit.vintage>
 
     </properties>
 
     <dependencies>
 
+        <!-- Libraries. -->
+
+        <!-- Scala core. -->
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
@@ -45,6 +60,7 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- Scala.macro support. -->
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-reflect</artifactId>
@@ -52,6 +68,7 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- Scala.js support -->
         <dependency>
             <groupId>org.scala-js</groupId>
             <artifactId>scalajs-library_${version.scala.epoch}</artifactId>
@@ -59,10 +76,94 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--
+            Native JavaScript libraries.
+            Using scope=provided, since deployment is server-specific.
+            Webjars resources are also made available during JS-VM testing.
+        -->
+
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery</artifactId>
+            <version>3.3.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>vue</artifactId>
+            <version>2.5.13</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--
+            Scala.js facade to JavaScript.
+            Using scope=provided, since *.sjsir classes are consumed as runtime.js.
+        -->
+
+        <dependency>
+            <groupId>org.scala-js</groupId>
+            <artifactId>scalajs-dom_${version.sjs.library}</artifactId>
+            <version>0.9.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>be.doeraene</groupId>
+            <artifactId>scalajs-jquery_${version.sjs.library}</artifactId>
+            <version>0.9.2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Testing. -->
+
+        <!--
+            Enable JUnit 4/5 testing.
+            JS tests are using JUnit 4, and JVM tests are using JUnit 5.
+            JS tests are invoked inside JS-VM, and JVM tests are invoked inside JVM.
+        -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${version.junit.jupiter}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-runner</artifactId>
+            <version>${version.junit.platform}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${version.junit.jupiter}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${version.junit.vintage}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--
+            Enable JUnit Scala.js testing.
+            Provides custom JUnit runners, which run JUnit 4 tests inside JS-VM.
+            Note: keep order: after org.junit.* dependencies (see scalajs-junit-test-runtime).
+        -->
+        <dependency>
+            <groupId>com.carrotgarden.sjs</groupId>
+            <artifactId>scala-js-junit-tools</artifactId>
+            <version>1.0.1.20180129202557</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Enable logging of JS-VM output from scala-js-junit-tools. -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
             <scope>test</scope>
         </dependency>
 
@@ -86,17 +187,24 @@
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>scalor-maven-plugin_2.12</artifactId>
-                <version>1.0.3.20180115180433</version>
+                <!-- <version>1.1.0.20180129204730</version> -->
 
                 <configuration>
 
+                    <!-- Extra logging for demostration purposes. -->
                     <zincLogSourcesList>true</zincLogSourcesList>
                     <zincLogProjectClassPath>true</zincLogProjectClassPath>
                     <zincLogCompilerClassPath>true</zincLogCompilerClassPath>
                     <zincLogCompilerPluginList>true</zincLogCompilerPluginList>
-                    <!-- <skipLogReason>true</skipLogReason> -->
-                    <!-- <eclipseLogBuildParticipant>true</eclipseLogBuildParticipant> -->
+                    <linkerLogRuntime>true</linkerLogRuntime>
+                    <linkerLogOptions>true</linkerLogOptions>
+                    <linkerLogClassPath>true</linkerLogClassPath>
+                    <envconfLogConfig>true</envconfLogConfig>
 
+                    <!--
+                        Provide compiler options for Scala.js support.
+                        https://www.scala-js.org/doc/interoperability/sjs-defined-js-classes.html
+                    -->
                     <zincCompileOptions>
                         -P:scalajs:sjsDefinedByDefault
                         -encoding
@@ -107,6 +215,16 @@
                         -deprecation
                         -compileorder:Mixed
                     </zincCompileOptions>
+
+                    <!--
+                        Declare webjars resources for JS-VM testing.
+                        Can select only form configured webjars dependencies.
+                        See result of provisioning in ${project.basedir}/test-tool/webjars.
+                    -->
+                    <envconfWebjarsScriptList>
+                        jquery/jquery.js
+                        vue/vue.js
+                    </envconfWebjarsScriptList>
 
                     <defineBridge>
                         <dependency>
@@ -121,46 +239,101 @@
                             <artifactId>scala-compiler</artifactId>
                             <version>${version.scala.release}</version>
                         </dependency>
-                    </defineCompiler>
-                    <definePluginList>
+                        <!--
+                            Convert JUnit annotations to Scala.js JUnit meta data.
+                            This dependency provides replacement JUnit *.sjsir classes.
+                        -->
                         <dependency>
                             <groupId>org.scala-js</groupId>
-                            <artifactId>scalajs-compiler_${version.scala.release}</artifactId>
+                            <artifactId>scalajs-junit-test-runtime_${version.scala.epoch}</artifactId>
                             <version>${version.sjs.release}</version>
                         </dependency>
+                    </defineCompiler>
+                    <definePluginList>
+                        <!-- Macro type provider support. -->
                         <dependency>
                             <groupId>org.scalamacros</groupId>
                             <artifactId>paradise_${version.scala.release}</artifactId>
                             <version>${version.scala.plugin.macro}</version>
                         </dependency>
+                        <!-- Generate Scala.js *.sjsir classes. -->
+                        <dependency>
+                            <groupId>org.scala-js</groupId>
+                            <artifactId>scalajs-compiler_${version.scala.release}</artifactId>
+                            <version>${version.sjs.release}</version>
+                        </dependency>
+                        <!--
+                            Convert JUnit annotations to Scala.js JUnit meta data.
+                            This plugin does actual conversion of JUnit test classes for JS-VM.
+                        -->
+                        <dependency>
+                            <groupId>org.scala-js</groupId>
+                            <artifactId>scalajs-junit-test-plugin_${version.scala.release}</artifactId>
+                            <version>${version.sjs.release}</version>
+                        </dependency>
                     </definePluginList>
 
                 </configuration>
-
                 <executions>
                     <execution>
                         <goals>
 
+                            <!-- Install Eclipse companion plugin. -->
                             <goal>eclipse-config</goal>
 
-                            <goal>clean-macro</goal>
-                            <goal>clean-main</goal>
-                            <goal>clean-test</goal>
-
+                            <!-- Add Scala sources to the project. -->
                             <goal>register-macro</goal>
                             <goal>register-main</goal>
                             <goal>register-test</goal>
 
+                            <!-- Compile Java and Scala in 3 scopes. -->
                             <goal>compile-macro</goal>
                             <goal>compile-main</goal>
                             <goal>compile-test</goal>
 
-                            <goal>link-scala-js-main</goal>
-                            <goal>link-scala-js-test</goal>
+                            <!-- Generate Scala.js runtime.js JavaScript. -->
+                            <goal>scala-js-link-main</goal>
+                            <goal>scala-js-link-test</goal>
+
+                            <!-- Provide Scala.js JS-VM testing environment. -->
+                            <goal>scala-js-env-prov-webjars</goal>
+                            <goal>scala-js-env-prov-nodejs</goal>
+                            <goal>scala-js-env-conf-nodejs</goal>
 
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- Enable JUnit 4/5 testing for Maven. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${version.maven.testing}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-surefire-provider</artifactId>
+                        <version>${version.junit.platform}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <version>${version.junit.jupiter}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.junit.vintage</groupId>
+                        <artifactId>junit-vintage-engine</artifactId>
+                        <version>${version.junit.vintage}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <runOrder>alphabetical</runOrder>
+                    <includes>
+                        <include>**/*Test.class</include>
+                        <include>**/*Suite.class</include>
+                    </includes>
+                </configuration>
             </plugin>
 
         </plugins>

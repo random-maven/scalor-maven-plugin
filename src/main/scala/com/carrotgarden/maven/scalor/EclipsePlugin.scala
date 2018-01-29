@@ -18,6 +18,7 @@ import org.eclipse.m2e.core.lifecyclemapping.model.IPluginExecutionMetadata
 import org.eclipse.m2e.core.project.configurator.AbstractBuildParticipant
 import org.eclipse.m2e.core.project.configurator.AbstractProjectConfigurator
 import org.eclipse.m2e.core.internal.embedder.IMavenComponentContributor
+import org.eclipse.m2e.jdt.IClasspathManager
 
 /**
  * Eclipse companion plugin installed by this Maven plugin.
@@ -109,12 +110,12 @@ object EclipsePlugin {
       monitor :   IProgressMonitor
     ) : Unit = plugin.tryCore( "Scalor step#1." ) {
       log.context( "step#1" )
-      log.info( s"Configuring dependency classpath." )
+      log.info( s"Configuring container ${IClasspathManager.CONTAINER_ID}." )
       val subMon = monitor.toSub
       val config = cached( paramsConfig( facade, subMon.split( 10 ) ) )
       val assert = cached( assertVersion( config, subMon.split( 10 ) ) )
-      // ensureOrderMaven( facade, config, classpath, subMon.split( 80 ) )
-      // reportClassPath( facade, config, classpath, subMon.split( 80 ) )
+      ensureOrderMaven( facade, config, classpath, subMon.split( 80 ) )
+      reportClassPath( facade, config, classpath, false, subMon.split( 10 ) )
     }
 
     /**
@@ -142,6 +143,7 @@ object EclipsePlugin {
       ensureSourceRoots( request, config, classpath, subMon.split( 20 ) )
       ensureScalaLibrary( request, config, classpath, subMon.split( 20 ) )
       ensureOrderTopLevel( request, config, classpath, subMon.split( 20 ) )
+      reportClassPath( facade, config, classpath, true, subMon.split( 10 ) )
     }
 
     /**
@@ -164,8 +166,10 @@ object EclipsePlugin {
       log.info( s"Configuring project settings." )
       val subMon = monitor.toSub
       val facade = request.getMavenProjectFacade
+      val project = request.getProject
       val config = cached( paramsConfig( facade, subMon.split( 10 ) ) )
       val assert = cached( assertVersion( config, subMon.split( 10 ) ) )
+      plugin.projectRegister( project, config )
       hackSymbolicLinks( request, config, subMon.split( 10 ) )
       ensureProjectComment( request, config, subMon.split( 10 ) )
       ensureProjectNature( request, config, subMon.split( 10 ) )

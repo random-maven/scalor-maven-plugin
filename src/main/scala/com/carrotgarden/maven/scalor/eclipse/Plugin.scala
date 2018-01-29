@@ -22,12 +22,14 @@ object Plugin {
   trait Log extends AnyLog {
     /**  Work around lack of logging source in M2E "Maven Console". */
     override def context( value : String ) = { CTX.value = s"[${A.eclipse.name}:${value}] " }
+    context( A.mojo.`eclipse-config` )
   }
 
   /**
    * Eclipse companion plugin installed by this Maven plugin.
    */
   trait Activator extends runtime.Plugin
+    with Project.Tracker
     with Logging {
 
     import Plugin._
@@ -61,6 +63,7 @@ object Plugin {
      */
     object slf4jLog extends Plugin.Log {
       private lazy val logger = LoggerFactory.getLogger( logId );
+      override def dbug( line : String ) = logger.debug( context() + line )
       override def info( line : String ) = logger.info( context() + line )
       override def warn( line : String ) = logger.warn( context() + line )
       override def fail( line : String ) = logger.error( context() + line )
@@ -72,6 +75,7 @@ object Plugin {
      */
     object eclipseLog extends Plugin.Log {
       import org.eclipse.core.runtime.IStatus._
+      override def dbug( line : String ) = getLog.log( new Status( OK, logId, context() + line ) )
       override def info( line : String ) = getLog.log( new Status( INFO, logId, context() + line ) )
       override def warn( line : String ) = getLog.log( new Status( WARNING, logId, context() + line ) )
       override def fail( line : String ) = getLog.log( new Status( ERROR, logId, context() + line ) )

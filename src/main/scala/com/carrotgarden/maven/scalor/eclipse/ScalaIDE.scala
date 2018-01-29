@@ -37,6 +37,9 @@ import org.scalaide.util.internal.SettingConverterUtil.USE_PROJECT_SETTINGS_PREF
 import org.scalaide.util.internal.SettingConverterUtil.convertNameToProperty
 import org.eclipse.jdt.core.IClasspathAttribute
 import com.carrotgarden.maven.scalor.util.Logging
+import com.carrotgarden.maven.scalor.eclipse.JobHelpers.IJobMatcher
+import org.scalaide.core.internal.ScalaPlugin
+import org.eclipse.core.resources.IProject
 
 /**
  * Provide Scala IDE settings for a project.
@@ -367,24 +370,31 @@ trait ScalaIDE {
     config :  ParamsConfig,
     monitor : IProgressMonitor
   ) : Unit = {
+    import config._
     log.info( s"Configuring Scala IDE." )
     val subMon = monitor.toSub
     reportCustomInstall( request, config, subMon.split( 20 ) )
-    val project = ScalaProject( request.getProject )
+    val project = pluginProject( request.getProject )
     val install = resolveCustomInstall( request, config, subMon.split( 20 ) )
     val name = "Scalor: update project settings for Scala IDE" // Keep name, used in test.
     val scalaJob = scheduleScalaJob( project, name ) {
-      log.context( "step#3+" )
+      log.context( "step#3" )
       log.info( s"Configuring Scala IDE (scheduled job)." )
       persistCustomInstall( request, config, project, install, subMon.split( 20 ) )
       updateProjectScalaIDE( request, config, project, install, subMon.split( 20 ) )
       //      removeScalaLibraryContainer( request, config, project, install, subMon.split( 20 ) )
       //      renameScalaLibraryContainer( request, config, project, install, subMon.split( 20 ) )
     }
-    // FIXME deadlock
-    //    val hasDone = scalaJob.join( 10 * 1000, subMon.split( 10 ) )
-    //    if ( !hasDone ) {
-    //      log.fail( "Configuring Scala IDE (scheduled job) failure." )
+    // FIXME matcher
+    //    val hasComplete = JobHelpers.waitForJobs( new IJobMatcher() {
+    //      override def matches( job : Job ) : Boolean = {
+    //        job == scalaJob
+    //      }
+    //    }, eclipseUpdateJobTimeout * 1000 )
+    //    if ( hasComplete ) {
+    //      log.info( s"Configuraton complete." )
+    //    } else {
+    //      log.fail( s"Configuraton timed out." )
     //    }
   }
 
@@ -394,6 +404,12 @@ object ScalaIDE {
 
   import Maven._
   import com.carrotgarden.maven.scalor.zinc._
+
+  def pluginProject(
+    project : IProject
+  ) : ScalaProject = {
+    ScalaPlugin().getScalaProject( project )
+  }
 
   /**
    * Eclipse resource path for Maven artifact jar file.

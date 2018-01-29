@@ -28,6 +28,7 @@ object Logging {
     def context() : String = CTX.value
     def context( value : String ) : Unit = { CTX.value = s"[${A.maven.name}:${value}] " }
 
+    def dbug( line : String ) : Unit = ()
     def info( line : String ) : Unit = ()
     def warn( line : String ) : Unit = ()
     def fail( line : String ) : Unit = ()

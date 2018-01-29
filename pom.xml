@@ -40,7 +40,7 @@
     <properties>
 
         <!-- Scalor release series. -->
-        <release.epoch>1.0.4</release.epoch>
+        <release.epoch>1.1.0</release.epoch>
 
         <!-- Development releases repository. -->
         <bintray.subject>random-maven</bintray.subject>
@@ -57,6 +57,10 @@
         <version.eclipse.m2e>1.8.1</version.eclipse.m2e>
         <version.eclipse.scala-ide>4.7.1</version.eclipse.scala-ide>
 
+        <!-- Scala.js tool stack. -->
+        <version.sjs.epoch>0.6</version.sjs.epoch>
+        <version.sjs.release>0.6.22</version.sjs.release>
+
         <!-- Eclipse companion plugin properties. -->
         <eclipse.plugin.name>${project.groupId}.${project.artifactId}</eclipse.plugin.name>
         <eclipse.plugin.revision>${project.version}</eclipse.plugin.revision>
@@ -68,6 +72,28 @@
         <eclipse.bundle.version>0.0.0</eclipse.bundle.version><!-- Version is in the identity. -->
 
     </properties>
+
+    <profiles>
+        <profile>
+            <id>tester</id>
+            <activation>
+                <property>
+                    <name>[ACTIVATION:MVELSCRIPT]</name>
+                    <value>
+<![CDATA[
+    if( isdef m2e.version ) {
+        System.out.println("[CODE] m2e.version=" + m2e.version);
+        false
+    } else {
+        System.out.println("[CODE] m2e.version missing");
+        false;
+    }
+]]>
+                    </value>
+                </property>
+            </activation>
+        </profile>
+    </profiles>
 
     <!-- Documentation site folder. -->
     <distributionManagement>
@@ -83,11 +109,48 @@
         <!-- org.scala-ide.sdt -->
         <repository>
             <id>scalor@random-maven</id>
-            <url>https://dl.bintray.com/random-maven/scalor</url>
+            <url>http://dl.bintray.com/random-maven/scalor</url>
         </repository>
     </repositories>
 
     <dependencies>
+
+        <!-- Testing. -->
+
+        <!-- Note: keep order. -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-js</groupId>
+            <artifactId>scalajs-junit-test-runtime_${version.scala.epoch}</artifactId>
+            <version>${version.sjs.release}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Support JUnit 4/5 testing. -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-runner</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Maven. -->
 
@@ -133,11 +196,56 @@
             <version>3.2.0</version>
         </dependency>
 
+        <!-- Maven plugin executor. -->
+
+        <dependency>
+            <groupId>org.twdata.maven</groupId>
+            <artifactId>mojo-executor</artifactId>
+            <version>2.3.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Provision Node.js -->
+        <dependency>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <version>1.6</version>
+        </dependency>
+
+        <!-- Provision Phantom.js -->
+        <dependency>
+            <groupId>com.github.klieber</groupId>
+            <artifactId>phantomjs-maven-plugin</artifactId>
+            <version>0.7</version>
+        </dependency>
+
         <!-- Utility. -->
+
+        <dependency>
+            <groupId>com.lihaoyi</groupId>
+            <artifactId>upickle_${version.scala.epoch}</artifactId>
+            <version>0.5.1</version>
+        </dependency>
 
         <dependency>
             <groupId>org.scala-lang.modules</groupId>
             <artifactId>scala-xml_${version.scala.epoch}</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-locator-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.carrotgarden.sjs</groupId>
+            <artifactId>scala-js-junit-tools</artifactId>
+            <version>1.0.1.20180129202557</version>
         </dependency>
 
         <!-- Scala compiler. -->
@@ -282,17 +390,11 @@
 
         <!-- Testing. -->
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_${version.scala.epoch}</artifactId>
-            <scope>test</scope>
-        </dependency>
+        <!-- <dependency> -->
+        <!-- <groupId>org.scalatest</groupId> -->
+        <!-- <artifactId>scalatest_${version.scala.epoch}</artifactId> -->
+        <!-- <scope>test</scope> -->
+        <!-- </dependency> -->
 
         <dependency>
             <groupId>org.apache.maven.plugin-testing</groupId>
@@ -308,30 +410,6 @@
         </dependency>
 
     </dependencies>
-
-    <profiles>
-        <!-- Activate self-host version for Eclipse. -->
-        <profile>
-            <id>m2e-latest</id>
-            <activation>
-                <!-- Eclipse detection: user property set by M2E. -->
-                <property>
-                    <name>m2e.version</name>
-                </property>
-            </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>com.carrotgarden.maven</groupId>
-                            <artifactId>scalor-maven-plugin_2.12</artifactId>
-                            <version>LATEST</version>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-    </profiles>
 
     <build>
 
@@ -353,6 +431,8 @@
 
                 <configuration>
 
+                    <!-- <eclipseLogClasspathOrder>true</eclipseLogClasspathOrder> -->
+
                     <zincCompileOptions>
                         -feature ; -unchecked ; -deprecation ;
                         -encoding ;
@@ -363,7 +443,6 @@
                         -useScopesCompiler ;
                     </zincCompileOptions>
 
-                    <!-- <prepackLogTransfer>true</prepackLogTransfer> -->
                     <!-- <zincLogProjectClassPath>true</zincLogProjectClassPath> -->
                     <!-- <zincLogProgressRate>true</zincLogProgressRate> -->
                     <!-- <zincLogProgressUnit>true</zincLogProgressUnit> -->
@@ -500,7 +579,7 @@
                 <executions>
                     <execution>
                         <id>default-descriptor</id>
-                        <phase>process-classes</phase>
+                        <phase>process-test-classes</phase>
                         <goals>
                             <goal>descriptor</goal>
                         </goals>
@@ -527,12 +606,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-invoker-plugin</artifactId>
                 <configuration>
+                    <!-- <debug>true</debug> -->
                     <showErrors>true</showErrors>
                     <streamLogs>true</streamLogs>
                     <localRepositoryPath>${project.basedir}/test-repo</localRepositoryPath>
                     <pomIncludes>
                         <include>test-cross/pom.xml</include>
-                        <include>test-m2e/pom.xml</include>
+                        <include>test-m2e-1.8/pom.xml</include>
+                        <include>test-m2e-1.9/pom.xml</include>
                     </pomIncludes>
                 </configuration>
             </plugin>

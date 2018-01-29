@@ -84,7 +84,7 @@ trait EclipseAnyMojo extends AbstractMojo
       reportSkipReason( "Skipping disabled goal execution." )
       return
     }
-    if ( eclipseDetectPresent && !hasEclipse ) {
+    if ( eclipseDetectPresent && !hasEclipseContext ) {
       reportSkipReason( "Skipping non-eclipse build invocation." )
       return
     }

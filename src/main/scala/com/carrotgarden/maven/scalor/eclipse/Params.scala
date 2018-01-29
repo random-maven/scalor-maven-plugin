@@ -22,11 +22,11 @@ trait Params extends AnyRef
   with ParamsLogger
   with ParamsComment
   with ParamsLibrary
+  with ParamsTimeout
   with ParamsPreferences
   with ParamsVersionMaven
   with ParamsVersionScala
-  with ParamsHackSymlinks
-  {
+  with ParamsHackSymlinks {
 
 }
 
@@ -206,6 +206,7 @@ trait ParamsLogger {
 
   @Description( """
   Report all available custom Scala installations persisted by Scala IDE.
+  Provides names and paths of artifacts included in the Scala installations.
   Enablement parameter:
     <a href="#eclipseLogInstallReport"><b>eclipseLogInstallReport</b></a>.
   """ )
@@ -232,6 +233,19 @@ trait ParamsLogger {
     defaultValue = "false"
   )
   var eclipseLogBuildParticipant : Boolean = _
+
+}
+
+trait ParamsTimeout {
+
+  //  @Description( """
+  //  Timeout waiting for background task to complete, seconds.
+  //  """ )
+  //  @Parameter(
+  //    property     = "scalor.eclipseUpdateJobTimeout",
+  //    defaultValue = "30"
+  //  )
+  //  var eclipseUpdateJobTimeout : Int = _
 
 }
 
@@ -421,7 +435,7 @@ item = path ;
 trait ParamsVersionMaven {
 
   @Description( """
-  Verify version of
+  Enable to verify version of
   <a href="http://www.eclipse.org/m2e/">
     Eclipse M2E plugin
   </a> 
@@ -471,7 +485,7 @@ trait ParamsVersionMaven {
 trait ParamsVersionScala {
 
   @Description( """
-  Verify version of 
+  Enable to verify version of
   <a href="http://scala-ide.org/">
     Scala IDE plugin 
   </a> 
