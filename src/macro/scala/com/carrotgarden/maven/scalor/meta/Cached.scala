@@ -15,7 +15,7 @@ case class Cached() {
 
 }
 
-object Cached {
+object Cached { //
 
   def provider[ B : c.WeakTypeTag ]( c : Context )( body : c.Expr[ B ] ) : c.Expr[ B ] = {
     import c.universe._

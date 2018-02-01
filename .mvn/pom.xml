@@ -2013,6 +2013,7 @@ version=${revision}
                                 -compileorder:Mixed
                             </zincCompileOptions>
                             <defineBridge>
+                                <!-- Required Scala bridge. -->
                                 <dependency>
                                     <groupId>org.scala-sbt</groupId>
                                     <artifactId>compiler-bridge_${version.scala.epoch}</artifactId>
@@ -2020,6 +2021,7 @@ version=${revision}
                                 </dependency>
                             </defineBridge>
                             <defineCompiler>
+                                <!-- Required Scala compiler. -->
                                 <dependency>
                                     <groupId>org.scala-lang</groupId>
                                     <artifactId>scala-compiler</artifactId>
@@ -2027,11 +2029,27 @@ version=${revision}
                                 </dependency>
                             </defineCompiler>
                             <definePluginList>
+                                <!-- Macro type provider support. -->
+                                <dependency>
+                                    <groupId>org.scalamacros</groupId>
+                                    <artifactId>paradise_${version.scala.release}</artifactId>
+                                    <version>${version.scala.plugin.macro}</version>
+                                </dependency>
                             </definePluginList>
                         </configuration>
                         <executions>
                             <execution>
                                 <goals>
+                                    <!-- Install Eclipse companion plugin. -->
+                                    <goal>eclipse-config</goal>
+                                    <!-- Add Scala sources to the project. -->
+                                    <goal>register-macro</goal>
+                                    <goal>register-main</goal>
+                                    <goal>register-test</goal>
+                                    <!-- Compile Java and Scala in 3 scopes. -->
+                                    <goal>compile-macro</goal>
+                                    <goal>compile-main</goal>
+                                    <goal>compile-test</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -2040,12 +2058,12 @@ version=${revision}
             </build>
         </profile>
 
-        <!-- Scala.js library project. -->
+        <!-- Scala.js compiler setup. -->
         <profile>
-            <id>scalor-js-lib</id>
+            <id>scalor-js</id>
             <activation>
                 <file>
-                    <exists>.mvn/pom-scalor-js-lib.md</exists>
+                    <exists>.mvn/pom-scalor-js.md</exists>
                 </file>
             </activation>
             <build>
@@ -2075,6 +2093,7 @@ version=${revision}
                                 -compileorder:Mixed
                             </zincCompileOptions>
                             <defineBridge>
+                                <!-- Required Scala bridge. -->
                                 <dependency>
                                     <groupId>org.scala-sbt</groupId>
                                     <artifactId>compiler-bridge_${version.scala.epoch}</artifactId>
@@ -2082,6 +2101,7 @@ version=${revision}
                                 </dependency>
                             </defineBridge>
                             <defineCompiler>
+                                <!-- Required Scala compiler. -->
                                 <dependency>
                                     <groupId>org.scala-lang</groupId>
                                     <artifactId>scala-compiler</artifactId>
@@ -2089,6 +2109,13 @@ version=${revision}
                                 </dependency>
                             </defineCompiler>
                             <definePluginList>
+                                <!-- Macro type provider support. -->
+                                <dependency>
+                                    <groupId>org.scalamacros</groupId>
+                                    <artifactId>paradise_${version.scala.release}</artifactId>
+                                    <version>${version.scala.plugin.macro}</version>
+                                </dependency>
+                                <!-- Generate Scala.js *.sjsir classes. -->
                                 <dependency>
                                     <groupId>org.scala-js</groupId>
                                     <artifactId>scalajs-compiler_${version.scala.release}</artifactId>
@@ -2099,6 +2126,19 @@ version=${revision}
                         <executions>
                             <execution>
                                 <goals>
+                                    <!-- Install Eclipse companion plugin. -->
+                                    <goal>eclipse-config</goal>
+                                    <!-- Add Scala sources to the project. -->
+                                    <goal>register-macro</goal>
+                                    <goal>register-main</goal>
+                                    <goal>register-test</goal>
+                                    <!-- Compile Java and Scala in 3 scopes. -->
+                                    <goal>compile-macro</goal>
+                                    <goal>compile-main</goal>
+                                    <goal>compile-test</goal>
+                                    <!-- Generate Scala.js runtime.js JavaScript. -->
+                                    <goal>scala-js-link-main</goal>
+                                    <goal>scala-js-link-test</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -2107,58 +2147,106 @@ version=${revision}
             </build>
         </profile>
 
-        <!-- Scala.js runtime project. -->
+        <!-- Scala.js JUnit testing. -->
         <profile>
-            <id>scalor-js-run</id>
+            <id>scalor-junit-tools</id>
             <activation>
                 <file>
-                    <exists>.mvn/pom-scalor-js-run.md</exists>
+                    <exists>.mvn/pom-scalor-junit-tools.md</exists>
                 </file>
             </activation>
+            <dependencies>
+                <!--
+                    Enable JUnit 4/5 testing.
+                    JS tests are using JUnit 4, and JVM tests are using JUnit 5.
+                    JS tests are invoked inside JS-VM, and JVM tests are invoked inside JVM.
+                -->
+                <dependency>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter-api</artifactId>
+                    <version>${version.junit.jupiter}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.junit.platform</groupId>
+                    <artifactId>junit-platform-runner</artifactId>
+                    <version>${version.junit.platform}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter-engine</artifactId>
+                    <version>${version.junit.jupiter}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                    <version>${version.junit.vintage}</version>
+                    <scope>test</scope>
+                </dependency>
+                <!--
+                    Enable JUnit Scala.js testing.
+                    Provides custom JUnit runners, which run JUnit 4 tests inside JS-VM.
+                    Note: keep order: after org.junit.* dependencies (see scalajs-junit-test-runtime).
+                -->
+                <dependency>
+                    <groupId>com.carrotgarden.sjs</groupId>
+                    <artifactId>scala-js-junit-tools</artifactId>
+                    <version>1.0.1.20180129202557</version>
+                    <scope>test</scope>
+                </dependency>
+                <!-- Enable logging of JS-VM output from scala-js-junit-tools. -->
+                <dependency>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                    <version>1.2.3</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
-                    <!-- Disable default compiler. -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <skip>true</skip>
-                            <skipMain>true</skipMain>
-                        </configuration>
-                    </plugin>
-                    <!-- Enable alternative compiler. -->
                     <plugin>
                         <groupId>com.carrotgarden.maven</groupId>
                         <artifactId>scalor-maven-plugin_2.12</artifactId>
                         <configuration>
-                            <zincCompileOptions>
-                                -P:scalajs:sjsDefinedByDefault
-                                -encoding
-                                ${project.build.sourceEncoding}
-                                -target:jvm-${version.java}
-                                -feature
-                                -unchecked
-                                -deprecation
-                                -compileorder:Mixed
-                            </zincCompileOptions>
-                            <defineBridge>
-                                <dependency>
-                                    <groupId>org.scala-sbt</groupId>
-                                    <artifactId>compiler-bridge_${version.scala.epoch}</artifactId>
-                                    <version>${version.scala.zinc}</version>
-                                </dependency>
-                            </defineBridge>
                             <defineCompiler>
+                                <!-- Required Scala compiler. -->
                                 <dependency>
                                     <groupId>org.scala-lang</groupId>
                                     <artifactId>scala-compiler</artifactId>
                                     <version>${version.scala.release}</version>
                                 </dependency>
+                                <!--
+                                    Convert JUnit annotations to Scala.js JUnit meta data.
+                                    This dependency provides replacement JUnit *.sjsir classes.
+                                -->
+                                <dependency>
+                                    <groupId>org.scala-js</groupId>
+                                    <artifactId>scalajs-junit-test-runtime_${version.scala.epoch}</artifactId>
+                                    <version>${version.sjs.release}</version>
+                                </dependency>
                             </defineCompiler>
                             <definePluginList>
+                                <!-- Macro type provider support. -->
+                                <dependency>
+                                    <groupId>org.scalamacros</groupId>
+                                    <artifactId>paradise_${version.scala.release}</artifactId>
+                                    <version>${version.scala.plugin.macro}</version>
+                                </dependency>
+                                <!-- Generate Scala.js *.sjsir classes. -->
                                 <dependency>
                                     <groupId>org.scala-js</groupId>
                                     <artifactId>scalajs-compiler_${version.scala.release}</artifactId>
+                                    <version>${version.sjs.release}</version>
+                                </dependency>
+                                <!--
+                                    Convert JUnit annotations to Scala.js JUnit meta data.
+                                    This plugin does actual conversion of JUnit test classes for JS-VM.
+                                -->
+                                <dependency>
+                                    <groupId>org.scala-js</groupId>
+                                    <artifactId>scalajs-junit-test-plugin_${version.scala.release}</artifactId>
                                     <version>${version.sjs.release}</version>
                                 </dependency>
                             </definePluginList>
@@ -2166,6 +2254,10 @@ version=${revision}
                         <executions>
                             <execution>
                                 <goals>
+                                    <!-- Provide Scala.js JS-VM testing environment. -->
+                                    <goal>scala-js-env-prov-webjars</goal>
+                                    <goal>scala-js-env-prov-nodejs</goal>
+                                    <goal>scala-js-env-conf-nodejs</goal>
                                 </goals>
                             </execution>
                         </executions>

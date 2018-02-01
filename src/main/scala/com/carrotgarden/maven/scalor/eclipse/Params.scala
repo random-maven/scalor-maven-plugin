@@ -26,7 +26,71 @@ trait Params extends AnyRef
   with ParamsPreferences
   with ParamsVersionMaven
   with ParamsVersionScala
-  with ParamsHackSymlinks {
+  with ParamsKeeperTasks
+  with ParamsHackSymlinks
+  with ParamsHackPresComp {
+
+}
+
+trait ParamsKeeperTasks {
+
+  //  @Description( """
+  //  Enable various background maintenance tasks.
+  //  Periodicity parameter: <a href="#eclipseKeeperPeriod"><b>eclipseKeeperPeriod</b></a>
+  //  """ )
+  //  @Parameter(
+  //    property     = "scalor.eclipseKeeperActive",
+  //    defaultValue = "true"
+  //  )
+  //  var eclipseKeeperActive : Boolean = _
+  //
+  //  @Description( """
+  //  Period of various background maintenance tasks, milliseconds.
+  //  Enablement parameter: <a href="#eclipseKeeperActive"><b>eclipseKeeperActive</b></a>
+  //  """ )
+  //  @Parameter(
+  //    property     = "scalor.eclipseKeeperPeriod",
+  //    defaultValue = "3000"
+  //  )
+  //  var eclipseKeeperPeriod : Long = _
+
+}
+
+trait ParamsHackPresComp {
+
+  @Description( """
+  Work around spurious crashes of Scala IDE presentation compiler.
+  Specifically, periodically analyze managed Scala IDE project,
+  detect crashed presentation compiler instance, and issue restart.
+  Periodicity parameter: <a href="#eclipsePresentationCompilerPeriod"><b>eclipsePresentationCompilerPeriod</b></a>
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseHackPresentationCompiler",
+    defaultValue = "true"
+  )
+  var eclipseHackPresentationCompiler : Boolean = _
+
+  @Description( """
+  Enable to log presentation compiler compilation units with problems at serverity <code>level=error</code>.
+  These compilation units are monitored by mainenace task and trigger presentation compiler restart requests.
+  Enablement parameter: <a href="#eclipseHackPresentationCompiler"><b>eclipseHackPresentationCompiler</b></a>
+  Periodicity parameter: <a href="#eclipsePresentationCompilerPeriod"><b>eclipsePresentationCompilerPeriod</b></a>
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseLogPresentationCompiler",
+    defaultValue = "true"
+  )
+  var eclipseLogPresentationCompiler : Boolean = _
+
+  @Description( """
+  Period of presentation compiler maintenance task, milliseconds. 
+  Enablement parameter: <a href="#eclipseHackPresentationCompiler"><b>eclipseHackPresentationCompiler</b></a>
+  """ )
+  @Parameter(
+    property     = "scalor.eclipsePresentationCompilerPeriod",
+    defaultValue = "3000"
+  )
+  var eclipsePresentationCompilerPeriod : Long = _
 
 }
 
@@ -150,6 +214,7 @@ trait ParamsLogger {
 
   @Description( """
   Enable to log persisting of configured project Scala IDE settings.
+  Use to review actual stored per-project <code>key=value</code>.
   """ )
   @Parameter(
     property     = "scalor.eclipseLogPersistSettings",
@@ -159,6 +224,7 @@ trait ParamsLogger {
 
   @Description( """
   Enable to log persisting of selected project Scala compiler.
+  Use to review complier title with MD5.
   """ )
   @Parameter(
     property     = "scalor.eclipseLogPersistCompiler",
@@ -168,6 +234,7 @@ trait ParamsLogger {
 
   @Description( """
   Enable to log persisting of custom Scala installation.
+  Use to review complier title with MD5.
   """ )
   @Parameter(
     property     = "scalor.eclipseLogPersistInstall",
@@ -177,6 +244,7 @@ trait ParamsLogger {
 
   @Description( """
   Enable to log class path re-ordering result entries.
+  Use to review actual full class path dump.
   """ )
   @Parameter(
     property     = "scalor.eclipseLogClasspathOrder",
@@ -186,6 +254,7 @@ trait ParamsLogger {
 
   @Description( """
   Enable to log generated resolved custom Scala installation.
+  Use to review installation details, including title, dependencies, etc.
   """ )
   @Parameter(
     property     = "scalor.eclipseLogInstallResolve",
@@ -195,6 +264,7 @@ trait ParamsLogger {
 
   @Description( """
   Report all available custom Scala installations persisted by Eclispe Scala IDE plugin.
+  Provides titles, dependencies, etc., for every custom Scala installation.
   Generated report output file parameter: 
     <a href="#eclipseInstallReportFile"><b>eclipseInstallReportFile</b></a>.
   """ )
@@ -206,7 +276,7 @@ trait ParamsLogger {
 
   @Description( """
   Report all available custom Scala installations persisted by Scala IDE.
-  Provides names and paths of artifacts included in the Scala installations.
+  Provides titles, dependencies, etc., for every custom Scala installation.
   Enablement parameter:
     <a href="#eclipseLogInstallReport"><b>eclipseLogInstallReport</b></a>.
   """ )
@@ -218,6 +288,7 @@ trait ParamsLogger {
 
   @Description( """
   Enable to log effective configuration parameters of Eclipse companion plugin.
+  Use to review full dump of settings transferred from Maven to Eclipse.
   """ )
   @Parameter(
     property     = "scalor.eclipseLogParamsConfig",
@@ -227,6 +298,7 @@ trait ParamsLogger {
 
   @Description( """
   Enable to log M2E build participant executions of Eclipse companion plugin.
+  Use to review actual build actions delegated from Eclipse to Maven plugin goals.
   """ )
   @Parameter(
     property     = "scalor.eclipseLogBuildParticipant",
@@ -621,5 +693,17 @@ object ParamsConfig {
       variableUpdateBlock[ BuildTest ]( paramValue )
     }
   }
+
+  import upickle._
+  import upickle.default._
+
+  /**
+   * Configuration parser.
+   */
+  implicit def codecParamsConfig : ReadWriter[ ParamsConfig ] = macroRW
+
+  def parse( config : String ) : ParamsConfig = read[ ParamsConfig ]( config )
+
+  def unparse( config : ParamsConfig ) : String = write( config )
 
 }

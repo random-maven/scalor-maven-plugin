@@ -169,8 +169,9 @@ object EclipsePlugin {
       val project = request.getProject
       val config = cached( paramsConfig( facade, subMon.split( 10 ) ) )
       val assert = cached( assertVersion( config, subMon.split( 10 ) ) )
-      plugin.projectRegister( project, config )
+      plugin.projectRegister( project, config );
       hackSymbolicLinks( request, config, subMon.split( 10 ) )
+      hackPresentationCompiler( request, config, subMon.split( 10 ) )
       ensureProjectComment( request, config, subMon.split( 10 ) )
       ensureProjectNature( request, config, subMon.split( 10 ) )
       ensureOrderBuilder( request, config, subMon.split( 10 ) )

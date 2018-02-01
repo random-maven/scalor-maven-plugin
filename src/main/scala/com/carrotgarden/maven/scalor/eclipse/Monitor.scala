@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.SubMonitor
 import scala.language.implicitConversions
 
 /**
- * Eclipse background job support.
+ * Eclipse job notification support.
  */
 trait Monitor {
 

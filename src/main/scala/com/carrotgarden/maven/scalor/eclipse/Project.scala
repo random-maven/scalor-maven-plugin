@@ -41,31 +41,4 @@ object Project {
 
   }
 
-  import scala.collection.mutable
-
-  /**
-   * Remember managed projects.
-   */
-  trait Tracker {
-    import Tracker._
-
-    private val projectMap = new mutable.HashMap[ IProject, Context ]
-
-    def projectRegister( project : IProject, config : ParamsConfig ) = projectMap.synchronized {
-      projectMap += ( project -> Context( config, ScalaIDE.pluginProject( project ) ) )
-    }
-
-    def projectUnregister( project : IProject ) = projectMap.synchronized {
-      projectMap -= project
-    }
-
-  }
-
-  object Tracker {
-    case class Context(
-      config :  ParamsConfig,
-      project : ScalaProject
-    )
-  }
-
 }

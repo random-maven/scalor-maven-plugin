@@ -51,11 +51,17 @@ import java.nio.file.DirectoryStream
 import scala.collection.JavaConverters._
 import org.eclipse.core.runtime.IStatus
 import org.eclipse.m2e.core.MavenPlugin
+import org.scalaide.core.IScalaProject
+import org.scalaide.core.compiler.IScalaPresentationCompiler
+import org.scalaide.core.compiler.InteractiveCompilationUnit
+import org.scalaide.core.internal.compiler.ScalaPresentationCompiler
+import scala.collection.mutable
 
 /**
  * Various workarounds.
  */
 trait Hack {
+
   self : Logging with Monitor =>
 
   import Hack._
@@ -101,7 +107,61 @@ trait Hack {
       }
       withFolderStream( projectFolder, SymlinkFilter(), processLink )
     }
+  }
 
+  /**
+   * Globally unique task name.
+   */
+  def prescompTaskName( project : IScalaProject ) : String = {
+    s"Scalor presentation compiler task @ ${project.underlying.getName}"
+  }
+
+  /**
+   * Maintenance business logic.
+   */
+  def prescompTaskBody( project : IScalaProject, hasLog : Boolean ) = {
+    if ( project.underlying.isOpen ) {
+      val errorList = prescompErrorList( project )
+      if ( errorList.isEmpty ) {
+        // nothing to do
+      } else {
+        project.presentationCompiler.askRestart()
+        if ( hasLog ) {
+          log.info( s"units with errors: ${errorList.mkString( ", " )}" )
+        }
+      }
+    } else {
+      // remove tasks for inactive projects
+      Tasker.stopTask( prescompTaskName( project ) )
+    }
+  }
+
+  /**
+   * Work around spurious crashes of Scala IDE presentation compiler.
+   * Specifically, periodically analyze managed Scala IDE project,
+   * detect crashed presentation compiler instance, and issue restart.
+   */
+  def hackPresentationCompiler(
+    request : ProjectConfigurationRequest,
+    config :  ParamsConfig,
+    monitor : IProgressMonitor
+  ) : Unit = {
+    import config._
+    val project = ScalaIDE.pluginProject( request.getProject )
+    // always remove
+    Tasker.stopTask( prescompTaskName( project ) )
+    // optionally schedule
+    if ( eclipseHackPresentationCompiler ) {
+      log.info( "Hacking presentation compiler." )
+      val hasLog = eclipseLogPresentationCompiler
+      val period = eclipsePresentationCompilerPeriod
+      new Tasker.Periodic(
+        name   = prescompTaskName( project ),
+        block  = prescompTaskBody( project, hasLog ),
+        logger = log,
+        period = period
+      )
+    }
   }
 
 }
@@ -125,6 +185,42 @@ object Hack {
     while ( iter.hasNext ) {
       process( iter.next )
     }
+  }
+
+  val serverityError = 2
+
+  /**
+   * Presentation compiler compilation units with errors.
+   */
+  def prescompErrorList( project : IScalaProject ) : Set[ String ] = {
+    project.presentationCompiler.apply {
+      prescompFace : IScalaPresentationCompiler =>
+        val prescomImpl = prescompFace.asInstanceOf[ ScalaPresentationCompiler ]
+        prescompErrorList( prescomImpl )
+    }.getOrElse( Set() )
+  }
+
+  /**
+   * Presentation compiler compilation units with errors.
+   */
+  def prescompErrorList( prescomp : ScalaPresentationCompiler ) : Set[ String ] = {
+    val values = prescomp.unitOfFile.values
+    if ( values.isEmpty ) {
+      return Set()
+    }
+    val result = mutable.SortedSet[ String ]()
+    val valuesIterator = values.iterator
+    while ( valuesIterator.hasNext ) {
+      val compilationUnit = valuesIterator.next
+      val problemsIterator = compilationUnit.problems.iterator
+      while ( problemsIterator.hasNext ) {
+        val compilationProblem = problemsIterator.next
+        if ( compilationProblem.severityLevel >= serverityError ) {
+          result += compilationUnit.source.file.name
+        }
+      }
+    }
+    result.toSet
   }
 
 }

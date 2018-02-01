@@ -36,8 +36,9 @@ Eclipse and Maven
 * creates custom [Scala installations for Scala IDE](http://scala-ide.org/docs/4.0.x/advancedsetup/scala-installations.html)
 * brings and installs its own companion [Eclipse plugin](https://github.com/random-maven/scalor-maven-plugin/blob/master/src/main/scala/com/carrotgarden/maven/scalor/EclipsePlugin.scala)
 * comprehensive plugin [configuration and logging](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html)
-* provides [identical compiler settings](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html#zincCompileOptions) 
-  for Maven and Eclipse
+* provides [identical compiler settings](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html#zincCompileOptions)
+for Maven and Eclipse
+* work around spurious crashes of [Scala IDE presentation compiler](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html#eclipseHackPresentationCompiler)
 
 Main Maven goals
 
@@ -59,7 +60,6 @@ Eclipse
 * incremental Scala.js linker
 * auto-reload Scala.js web client
 * auto-reload Scala Akka HTTP web server
-* work around crashing Scala IDE presentation compiler
 
 ### Eclipse setup
 

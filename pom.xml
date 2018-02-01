@@ -611,6 +611,7 @@
                     <streamLogs>true</streamLogs>
                     <localRepositoryPath>${project.basedir}/test-repo</localRepositoryPath>
                     <pomIncludes>
+                        <include>test-envjs/pom.xml</include>
                         <include>test-cross/pom.xml</include>
                         <include>test-m2e-1.8/pom.xml</include>
                         <include>test-m2e-1.9/pom.xml</include>

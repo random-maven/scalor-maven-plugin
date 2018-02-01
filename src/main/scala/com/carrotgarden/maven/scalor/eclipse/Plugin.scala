@@ -29,7 +29,7 @@ object Plugin {
    * Eclipse companion plugin installed by this Maven plugin.
    */
   trait Activator extends runtime.Plugin
-    with Project.Tracker
+    with Tracker
     with Logging {
 
     import Plugin._
