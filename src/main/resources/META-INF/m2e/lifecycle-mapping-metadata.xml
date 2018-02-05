@@ -25,6 +25,8 @@
             <pluginExecutionFilter>
                 <goals>
 
+                    <goal>eclipse-restart</goal>
+
                     <goal>clean-macro</goal>
                     <goal>clean-main</goal>
                     <goal>clean-test</goal>

@@ -5,7 +5,7 @@ import org.eclipse.core.runtime.IProgressMonitor
 
 import com.carrotgarden.maven.scalor.util
 import util.Params._
-import Params._
+import ParamsConfigBase._
 
 import org.eclipse.core.resources.IResource
 import com.carrotgarden.maven.scalor.util.Logging

@@ -51,6 +51,7 @@ import org.eclipse.aether.impl.LocalRepositoryProvider
 import org.eclipse.aether.impl.SyncContextFactory
 import org.eclipse.aether.impl.RemoteRepositoryManager
 import org.eclipse.aether.internal.impl.DefaultRepositorySystem
+import org.apache.maven.plugin.Mojo
 
 /**
  * Provide M2E infrastructure functions.
@@ -62,9 +63,9 @@ trait Maven {
   import Maven._
 
   /**
-   * Configured value of maven plugin configuration parameter.
+   * Configured value of Maven plugin configuration parameter.
    */
-  def configValue[ T ](
+  def paramExecValue[ T ](
     project :   MavenProject,
     execution : MojoExecution,
     parameter : String,
@@ -76,7 +77,7 @@ trait Maven {
   /**
    * Provide Maven plugin configuration parmeter for a goal.
    */
-  def configValue[ T ](
+  def paramGoalValue[ T ](
     facade :    IMavenProjectFacade,
     goal :      String,
     parameter : String,
@@ -84,18 +85,29 @@ trait Maven {
   )( implicit tag : ClassTag[ T ] ) : T = {
     val project = facade.getMavenProject
     val execution = executionDefinition( facade, goal, monitor ).get
-    configValue( project, execution, parameter, monitor )( tag )
+    paramExecValue( project, execution, parameter, monitor )( tag )
   }
 
   /**
-   * Provide companion Eclipse plugin configuration from Maven plugin configuration.
+   * Provide configuration value for `eclipse-config`.
    */
-  def configValue[ T ](
+  def eclipseConfigValue[ T ](
     facade :    IMavenProjectFacade,
     parameter : String,
     monitor :   IProgressMonitor
   )( implicit tag : ClassTag[ T ] ) : T = {
-    configValue( facade, A.mojo.`eclipse-config`, parameter, monitor )( tag )
+    paramGoalValue( facade, A.mojo.`eclipse-config`, parameter, monitor )( tag )
+  }
+
+  /**
+   * Provide configuration value for `eclipse-restart`.
+   */
+  def eclipseRestartValue[ T ](
+    facade :    IMavenProjectFacade,
+    parameter : String,
+    monitor :   IProgressMonitor
+  )( implicit tag : ClassTag[ T ] ) : T = {
+    paramGoalValue( facade, A.mojo.`eclipse-restart`, parameter, monitor )( tag )
   }
 
 }
@@ -140,7 +152,7 @@ object Maven {
   }
 
   /**
-   * Locate default maven execution for a given maven goal.
+   * Locate default Maven execution for a given Maven goal.
    */
   def executionDefinition(
     facade :  IMavenProjectFacade,
@@ -153,8 +165,8 @@ object Maven {
         execution.getGoal == goal
       }.map { execution =>
         // work around https://bugs.eclipse.org/bugs/show_bug.cgi?id=529319
-        val mojoConfig = execution.getConfiguration
-        val pluginConfig = execution.getPlugin.getConfiguration.asInstanceOf[ Xpp3Dom ]
+        val mojoConfig : Xpp3Dom = execution.getConfiguration
+        val pluginConfig : Xpp3Dom = execution.getPlugin.getConfiguration.asInstanceOf[ Xpp3Dom ]
         val configuration = ( mojoConfig, pluginConfig ) match {
           case ( null, null )               => null
           case ( null, pluginConfig )       => pluginConfig
@@ -236,7 +248,7 @@ object Maven {
   }
 
   import com.carrotgarden.maven.scalor.base.Params._
-  import com.carrotgarden.maven.scalor.util.Classer._
+  import com.carrotgarden.maven.scalor.util.Classer
 
   import org.osgi.framework.Version
 
@@ -262,7 +274,7 @@ object Maven {
 
     if ( requireHack ) {
       val loader = mavenImpl.getProjectRealm( project )
-      withContextLoader[ RepositorySystem ]( loader ) {
+      Classer.withContextLoader[ RepositorySystem ]( loader ) {
         val system = new DefaultRepositorySystem
         import system._
         import mavenImpl._
@@ -304,18 +316,49 @@ object Maven {
       repoSession,
       remoteRepoList
     )
-    
+
     import define._
     val bridgeList = aether.resolveRoundTrip( defineBridge, stereotypes, scope )
     val compilerList = aether.resolveRoundTrip( defineCompiler, stereotypes, scope )
     val pluginDefineList = aether.resolveRoundTrip( definePluginList, stereotypes, scope )
-    
+
     DefineResponse(
       bridgeList,
       compilerList,
       pluginDefineList
     )
 
+  }
+
+  type MojoFunction[ T <: Mojo, U ] = T => U
+
+  /**
+   * Invoke function with resolved/configured mojo .
+   */
+  def withProjectMojo[ T <: Mojo, U ](
+    project :   MavenProject,
+    execution : MojoExecution
+  )(
+    function : MojoFunction[ T, U ]
+  )(
+    implicit
+    tag : ClassTag[ T ]
+  ) : U = {
+    val activator = MavenPluginActivator.getDefault
+    val mavenFace = MavenPlugin.getMaven
+    val mavenImpl = activator.getMaven
+    val session = mavenFace.getExecutionContext.getSession
+    // val projectLoader = mavenImpl.getProjectRealm( project )
+    val pluginLoader = execution.getMojoDescriptor.getPluginDescriptor.getClassRealm
+    Classer.withContextLoader( pluginLoader ) {
+      val klaz = pluginLoader.loadClass( tag.runtimeClass.getName )
+      val mojo = mavenFace.getConfiguredMojo( session, execution, klaz ).asInstanceOf[ T ]
+      try {
+        function( mojo )
+      } finally {
+        mavenFace.releaseMojo( mojo, execution )
+      }
+    }
   }
 
 }

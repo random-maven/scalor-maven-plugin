@@ -57,6 +57,10 @@ case class Folder( root : Path ) {
  */
 object Folder {
 
+  def hasExec( file : File ) = {
+    file.exists && file.isFile && file.canRead && file.canExecute
+  }
+
   def textPath( base : Path, path : Path ) : String = {
     if ( path.isAbsolute() ) {
       path.normalize().toString()
@@ -111,7 +115,7 @@ object Folder {
   }
 
   def ensureFolder( dir : Path ) : Unit = {
-    ensureFolder(dir.toFile) // work around travis ci
+    ensureFolder( dir.toFile ) // work around travis ci
   }
 
   def ensureParent( file : File ) : Unit = {

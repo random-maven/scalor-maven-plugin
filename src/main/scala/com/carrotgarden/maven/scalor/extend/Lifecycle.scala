@@ -16,7 +16,7 @@ import com.carrotgarden.maven.scalor.util.Error._
 
 /**
  * Provide default Maven lifecycle for Scalor plugin.
- * 
+ *
  * FIXME No M2E support https://bugs.eclipse.org/bugs/show_bug.cgi?id=486737
  */
 @Component(
@@ -66,6 +66,7 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
   /**
    * Provide scalor plugin lifecycle.
    */
+  // FIXME use macro to extract executions
   override def afterProjectsRead( session : MavenSession ) = {
     logger.info( "Scalor: extenson lifecycle..." )
     implicit val MS = session
@@ -88,7 +89,6 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
         registerExecution( CLEAN, `clean-test` )
 
         registerExecution( INITIALIZE, `eclipse-config` )
-        registerExecution( INITIALIZE, `scala-js-env-prov-nodejs` )
 
         registerExecution( INITIALIZE, `register-macro` )
         registerExecution( INITIALIZE, `register-main` )
@@ -96,15 +96,27 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
 
         registerExecution( COMPILE, `compile-macro` )
         registerExecution( COMPILE, `compile-main` )
+
+        registerExecution( GENERATE_TEST_RESOURCES, `scala-js-env-prov-nodejs` )
+        registerExecution( GENERATE_TEST_RESOURCES, `scala-js-env-prov-phantomjs` )
+        registerExecution( GENERATE_TEST_RESOURCES, `scala-js-env-prov-webjars` )
+
+        registerExecution( PROCESS_TEST_RESOURCES, `scala-js-env-conf-nodejs` )
+        registerExecution( PROCESS_TEST_RESOURCES, `scala-js-env-conf-phantomjs` )
+
         registerExecution( PROCESS_CLASSES, `scala-js-link-main` )
-        
+
         registerExecution( TEST_COMPILE, `compile-test` )
+
         registerExecution( PROCESS_TEST_CLASSES, `scala-js-link-test` )
-        registerExecution( PROCESS_TEST_CLASSES, `scala-js-env-conf-nodejs` )
+        
+        registerExecution( TEST, `eclipse-restart` )
 
         registerExecution( PACKAGE, `scaladoc-macro` )
         registerExecution( PACKAGE, `scaladoc-main` )
         registerExecution( PACKAGE, `scaladoc-test` )
+        registerExecution( PACKAGE, `report-main` )
+        registerExecution( PACKAGE, `report-test` )
 
       case None =>
         Throw( "Missing scalor plugin." )
@@ -115,7 +127,7 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
 }
 
 /**
- * 
+ *
  */
 object Lifecycle {
   import meta.Macro

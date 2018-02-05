@@ -56,6 +56,8 @@ import org.scalaide.core.compiler.IScalaPresentationCompiler
 import org.scalaide.core.compiler.InteractiveCompilationUnit
 import org.scalaide.core.internal.compiler.ScalaPresentationCompiler
 import scala.collection.mutable
+import com.carrotgarden.maven.scalor.util.Logging.AnyLog
+import com.carrotgarden.maven.scalor.util.Logging.SwitchLogger
 
 /**
  * Various workarounds.
@@ -110,33 +112,6 @@ trait Hack {
   }
 
   /**
-   * Globally unique task name.
-   */
-  def prescompTaskName( project : IScalaProject ) : String = {
-    s"Scalor presentation compiler task @ ${project.underlying.getName}"
-  }
-
-  /**
-   * Maintenance business logic.
-   */
-  def prescompTaskBody( project : IScalaProject, hasLog : Boolean ) = {
-    if ( project.underlying.isOpen ) {
-      val errorList = prescompErrorList( project )
-      if ( errorList.isEmpty ) {
-        // nothing to do
-      } else {
-        project.presentationCompiler.askRestart()
-        if ( hasLog ) {
-          log.info( s"units with errors: ${errorList.mkString( ", " )}" )
-        }
-      }
-    } else {
-      // remove tasks for inactive projects
-      Tasker.stopTask( prescompTaskName( project ) )
-    }
-  }
-
-  /**
    * Work around spurious crashes of Scala IDE presentation compiler.
    * Specifically, periodically analyze managed Scala IDE project,
    * detect crashed presentation compiler instance, and issue restart.
@@ -147,20 +122,14 @@ trait Hack {
     monitor : IProgressMonitor
   ) : Unit = {
     import config._
-    val project = ScalaIDE.pluginProject( request.getProject )
-    // always remove
-    Tasker.stopTask( prescompTaskName( project ) )
-    // optionally schedule
+    // always cancel
+    Tasker.stopTask( eclipsePresentationCompilerTaskName )
+    // optionally reschedule
     if ( eclipseHackPresentationCompiler ) {
       log.info( "Hacking presentation compiler." )
-      val hasLog = eclipseLogPresentationCompiler
-      val period = eclipsePresentationCompilerPeriod
-      new Tasker.Periodic(
-        name   = prescompTaskName( project ),
-        block  = prescompTaskBody( project, hasLog ),
-        logger = log,
-        period = period
-      )
+      val context = PrescompContext( request, config )
+      val manager = PrescompManager( context, log )
+      manager.init()
     }
   }
 
@@ -187,7 +156,66 @@ object Hack {
     }
   }
 
-  val serverityError = 2
+  case class PrescompContext(
+    name :         String,
+    project :      IScalaProject,
+    periodInvoke : Long,
+    hasLogUnits :  Boolean
+  )
+
+  object PrescompContext {
+    def apply(
+      request : ProjectConfigurationRequest,
+      config :  ParamsConfig
+    ) : PrescompContext = {
+      import config._
+      val project = ScalaIDE.pluginProject( request.getProject )
+      new PrescompContext(
+        name         = eclipsePresentationCompilerTaskName,
+        project      = project,
+        periodInvoke = eclipsePresentationCompilerPeriod,
+        hasLogUnits  = eclipseLogPresentationCompiler
+      )
+    }
+  }
+
+  case class PrescompManager(
+    context : PrescompContext,
+    logger :  AnyLog
+  ) extends Tasker.Periodic(
+    context.name,
+    logger,
+    context.periodInvoke
+  ) {
+    import context._
+
+    def hasProject = project.underlying.isOpen
+
+    override def runTask( monitor : IProgressMonitor ) : Unit = {
+      logger.context( "prescomp-manager" )
+      if ( hasProject ) {
+        val errorList = prescompErrorList( project )
+        if ( errorList.isEmpty ) {
+          // nothing to do
+        } else {
+          project.presentationCompiler.askRestart()
+          if ( hasLogUnits ) {
+            logger.info( s"units with errors: ${errorList.mkString( ", " )}" )
+          }
+        }
+      } else {
+        // manager self cancel
+        Tasker.stopTask( name )
+      }
+    }
+
+  }
+
+  object Prescomp {
+
+    val serverityError = 2
+
+  }
 
   /**
    * Presentation compiler compilation units with errors.
@@ -215,7 +243,7 @@ object Hack {
       val problemsIterator = compilationUnit.problems.iterator
       while ( problemsIterator.hasNext ) {
         val compilationProblem = problemsIterator.next
-        if ( compilationProblem.severityLevel >= serverityError ) {
+        if ( compilationProblem.severityLevel >= Prescomp.serverityError ) {
           result += compilationUnit.source.file.name
         }
       }

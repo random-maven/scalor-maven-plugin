@@ -3,6 +3,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- Use parent configuration. -->
     <parent>
         <groupId>com.carrotgarden.a</groupId>
         <artifactId>carrot-a</artifactId>
@@ -12,16 +13,20 @@
     <groupId>com.carrotgarden.maven</groupId>
     <artifactId>scalor-maven-plugin-test-any</artifactId>
     <version>${revision}</version>
-    <packaging>jar</packaging>
 
     <properties>
 
-        <!-- Some version above supported minimum. -->
-        <version.scala211.release>2.11.8</version.scala211.release>
-        <version.scala212.release>2.12.4</version.scala212.release>
-        <version.scala.plugin.macro>2.1.0</version.scala.plugin.macro>
+        <version.supersafe>1.1.3</version.supersafe>
 
     </properties>
+
+    <!-- Verify custom repository compiler plugin resolution. -->
+    <repositories>
+        <repository>
+            <id>artima</id>
+            <url>http://repo.artima.com/releases</url>
+        </repository>
+    </repositories>
 
     <dependencies>
 
@@ -50,17 +55,17 @@
                 <artifactId>@project.artifactId@</artifactId>
                 <version>@project.version@</version>
 
-                <!-- Activate scalor life cycle. -->
+                <!-- Activate full Scalor life cycle. -->
                 <extensions>true</extensions>
 
                 <configuration>
 
-                    <zincCompileOrder>JavaThenScala</zincCompileOrder>
-                    <!-- <eclipseDetectPresent>false</eclipseDetectPresent> -->
-                    <!-- <autoconfLogProperties>true</autoconfLogProperties> -->
-                    <!-- <zincLogBuildClassPath>true</zincLogBuildClassPath> -->
-                    <!-- <zincLogPluginClassPath>true</zincLogPluginClassPath> -->
-                    <!-- <eclipseProjectNamePattern>${project.groupId}:${project.artifactId}</eclipseProjectNamePattern> -->
+                    <!-- Remove select executions form life cycle. -->
+                    <skipLinker>true</skipLinker>
+                    <skipReport>true</skipReport>
+                    <skipScaladoc>true</skipScaladoc>
+                    <skipEnvProv>true</skipEnvProv>
+                    <skipEnvConf>true</skipEnvConf>
 
                     <defineBridge>
                         <dependency>
@@ -83,6 +88,7 @@
                         </dependency>
                     </defineCompiler>
                     <definePluginList>
+                        <!-- Verify duplicate plugin definition. -->
                         <dependency>
                             <groupId>org.scalamacros</groupId>
                             <artifactId>paradise_${version.scala.release}</artifactId>
@@ -93,11 +99,17 @@
                             <artifactId>paradise_${version.scala.release}</artifactId>
                             <version>${version.scala.plugin.macro}</version>
                         </dependency>
-                        <!-- <dependency> -->
-                        <!-- <groupId>org.scalameta</groupId> -->
-                        <!-- <artifactId>paradise_${version.scala.release}</artifactId> -->
-                        <!-- <version>${version.scala.plugin.meta}</version> -->
-                        <!-- </dependency> -->
+                        <!-- Verify dependency w/o sources. -->
+                        <dependency>
+                            <groupId>com.artima.supersafe</groupId>
+                            <artifactId>supersafe_${version.scala.release}</artifactId>
+                            <version>${version.supersafe}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.artima.supersafe</groupId>
+                            <artifactId>supersafe_${version.scala.release}</artifactId>
+                            <version>${version.supersafe}</version>
+                        </dependency>
                     </definePluginList>
 
                 </configuration>

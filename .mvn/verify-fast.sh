@@ -7,6 +7,9 @@ set -e -u
 
 cd "${BASH_SOURCE%/*}/.."
 
-./mvnw.sh clean verify -B -D invoker.test=test-envjs
+#./mvnw.sh clean verify -B -D invoker.test=test-envjs
 
 #./mvnw.sh clean verify -B -D invoker.test=test-cross
+
+./mvnw.sh clean verify -B -D invoker.test=test-any
+

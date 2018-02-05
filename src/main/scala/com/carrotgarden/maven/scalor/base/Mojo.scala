@@ -11,6 +11,7 @@ import com.carrotgarden.maven.scalor.eclipse
 trait Mojo extends AbstractMojo
   with Params
   with Logging
+  with Context
   with Skip
   with SkipMojo
   with eclipse.Context {

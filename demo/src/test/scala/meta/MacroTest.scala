@@ -14,6 +14,8 @@ import org.junit.platform.runner.JUnitPlatform
  */
 @RunWith( classOf[ JUnitPlatform ] )
 class MacroTest extends meta.Macro {
+  
+  //
 
   /**
    * Provide some method.

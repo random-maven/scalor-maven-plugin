@@ -10,7 +10,7 @@ import com.carrotgarden.maven.scalor._
 /**
  * Maven plugin parameters used to control companion Eclipse plugin.
  */
-trait Params extends AnyRef
+trait ParamsConfigBase extends AnyRef
   with base.ParamsAny
   with base.ParamsCompiler
   with base.BuildMacro
@@ -28,7 +28,188 @@ trait Params extends AnyRef
   with ParamsVersionScala
   with ParamsKeeperTasks
   with ParamsHackSymlinks
-  with ParamsHackPresComp {
+  with ParamsHackPresentationCompiler {
+
+}
+trait ParamsRestartBase extends AnyRef
+  with base.ParamsAny
+  with base.BuildTest
+  with ParamsRestartCore {
+
+}
+
+trait ParamsRestartCore {
+
+  @Description( """
+  Enable test application with automatic restart management in Eclipse.
+  Application parameter: <a href="#eclipseAppRestartClass"><b>eclipseAppRestartClass</b></a>
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseRestartEnable",
+    defaultValue = "true"
+  )
+  var eclipseRestartEnable : Boolean = _
+
+  @Description( """
+  Fully qualified class name which represents test application used for auto-restart.
+  This class must be a Scala object with a "main" contract, for example, <code>test/Main.scala</code>:
+<pre>
+package test
+object Main {
+  def main(args: Array[String]): Unit = {
+    while(true) {
+      println("test-main")
+      Thread.sleep(5000)
+    }
+  }
+}
+</pre>
+  Normally, this class should be placed in <code>src/test/scala</code> registered source root.
+  Test application will be restarted after full or incremental build in Eclipse, following a settlement delay. 
+  Test application will also be restarted when it exits or crashes.
+  Test application is launched in a separate JVM.
+  Enablement parameter: <a href="#eclipseRestartEnable"><b>eclipseRestartEnable</b></a>
+  Settlement parameter: <a href="#eclipseRestartPeriodSettle"><b>eclipseRestartPeriodSettle</b></a>
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseRestartMainClass",
+    defaultValue = "test.Main"
+  )
+  var eclipseRestartMainClass : String = _
+
+  @Description( """
+  Working directory used to launch test application. Absolute path.
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseRestartBaseDir",
+    defaultValue = "${project.build.directory}/scalor/test-main"
+  )
+  var eclipseRestartWorkDir : File = _
+
+  @Description( """
+  List of command line arguments for Java executable.
+  See <a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html">options reference<a>.
+  Separator parameter: <a href="#commonSequenceSeparator"><b>commonSequenceSeparator</b></a>.
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseRestartJavaArgs",
+    defaultValue = """
+    -Dscalor.test.app=${project.artifactId} ;
+    -Xms1G ;
+    -Xmx1G ;
+    """
+  )
+  var eclipseRestartJavaArgs : String = _
+
+  @Description( """
+  List of environment variables for Java executable.
+  Separator parameter: <a href="#commonSequenceSeparator"><b>commonSequenceSeparator</b></a>.
+  Mapping parameter: <a href="#commonMappingPattern"><b>commonMappingPattern</b></a>.
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseRestartJavaVars",
+    defaultValue = """
+    HOME=${project.basedir} ;
+    USER=scalor ;
+    """
+  )
+  var eclipseRestartJavaVars : String = _
+
+  @Description( """
+  Eclipse background management job name representing running test application.
+  Canceling this management job in Eclipse UI will terminate running test application.
+  M2E project update in Eclipse UI will re-create both management job and test application.
+  Job name must be unique in Eclipse workspace.
+  Application parameter: <a href="#eclipseRestartMainClass"><b>eclipseRestartMainClass</b></a>
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseRestartTaskName",
+    defaultValue = "Scalor: application restart manager @ ${project.artifactId}"
+  )
+  var eclipseRestartTaskName : String = _
+
+  @Description( """
+  List of regular expressions used to detect test application restart condition.
+  These resources are monitored in folders 
+  included as effective project dependencies resolved by Eclipse/M2E,
+  such as <code>target/classes</code>, <code>target/test-classes</code>,
+  from current project as well as from accessible dependecy projects in the workspace.
+  Normally matches Scala JVM classes, Scala.js IR classes, configuration files.
+  Separator parameter: <a href="#commonSequenceSeparator"><b>commonSequenceSeparator</b></a>.
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseRestartMatchList",
+    defaultValue = """
+    ^.+[.]class$ ;
+    ^.+[.]sjsir$ ;
+    ^.+[.]conf$ ;
+    ^.+[.]js$ ;
+    """
+  )
+  var eclipseRestartMatchList : String = _
+
+  @Description( """
+  Test application change detection settlement time window, milliseconds. 
+  Actual restart will occur only when there are no more resource changes during this delay time window.
+  Application parameter: <a href="#eclipseRestartMainClass"><b>eclipseRestartMainClass</b></a>
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseRestartPeriodSettle",
+    defaultValue = "3000"
+  )
+  var eclipseRestartPeriodSettle : Long = _
+
+  @Description( """
+  Test application wait-before-restart delay time window, milliseconds.
+  Used as delay for application restart after an exit or crash, to prevent restart flood.  
+  Application parameter: <a href="#eclipseRestartMainClass"><b>eclipseRestartMainClass</b></a>
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseRestartPeriodPrevent",
+    defaultValue = "3000"
+  )
+  var eclipseRestartPeriodPrevent : Long = _
+
+  @Description( """
+  Restart management task checks invocation period, milliseconds.
+  Defines frequency of test application liveness checks and resource change detection checks. 
+  Application parameter: <a href="#eclipseRestartMainClass"><b>eclipseRestartMainClass</b></a>
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseRestartPeriodInvoke",
+    defaultValue = "1000"
+  )
+  var eclipseRestartPeriodInvoke : Long = _
+
+  @Description( """
+  Enable to log command used to launch managed test application.
+  Includes Java executable path, executable arguments, effective dependency class path, main class name. 
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseRestartLogCommand",
+    defaultValue = "false"
+  )
+  var eclipseRestartLogCommand : Boolean = _
+
+  @Description( """
+  Enable to log list of changed resources which have triggred test application restart.
+  Detector parameter: <a href="#eclipseRestartMatchList"><b>eclipseRestartMatchList</b></a>
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseRestartLogDetected",
+    defaultValue = "true"
+  )
+  var eclipseRestartLogDetected : Boolean = _
+
+  @Description( """
+  Enable to log all resource change events in the Eclipse workspace. 
+  Generates execessive logging, use only for problem discovery.
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseRestartLogChanged",
+    defaultValue = "false"
+  )
+  var eclipseRestartLogChanged : Boolean = _
 
 }
 
@@ -56,7 +237,7 @@ trait ParamsKeeperTasks {
 
 }
 
-trait ParamsHackPresComp {
+trait ParamsHackPresentationCompiler {
 
   @Description( """
   Work around spurious crashes of Scala IDE presentation compiler.
@@ -91,6 +272,19 @@ trait ParamsHackPresComp {
     defaultValue = "3000"
   )
   var eclipsePresentationCompilerPeriod : Long = _
+
+  @Description( """
+  Eclipse background job name representing presentation compiler work around process.
+  Canceling this job will terminate presentation compiler work around process.
+  M2E project update will re-create management job.
+  Job name must be unique in Eclipse workspace.
+  Enablement parameter: <a href="#eclipseHackPresentationCompiler"><b>eclipseHackPresentationCompiler</b></a>
+  """ )
+  @Parameter(
+    property     = "scalor.eclipsePresentationCompilerTaskName",
+    defaultValue = "Scalor: presenation compiler manager @ ${project.artifactId}"
+  )
+  var eclipsePresentationCompilerTaskName : String = _
 
 }
 
@@ -601,7 +795,7 @@ trait ParamsVersionScala {
 
 }
 
-object Params extends Params {
+object ParamsConfigBase extends ParamsConfigBase {
   // Ensure variables have default values.
 }
 
@@ -609,9 +803,9 @@ import meta.Macro._
 import ParamsConfig._
 
 /**
- * Expose updatable parameter values.
+ * Expose updatable parameter values for `eclipse-config`.
  */
-case class ParamsConfig() extends Params
+case class ParamsConfig() extends ParamsConfigBase
   with VariableCount
   with VariableReport
   with VariableUpdate {
@@ -619,20 +813,20 @@ case class ParamsConfig() extends Params
   /**
    * Number of variable values.
    */
-  override def paramsCount = variableCount[ Params ]
+  override def paramsCount = variableCount[ ParamsConfigBase ]
 
   /**
    * Report class variable values via macro.
    */
   override def reportParams( reportValue : ReportFun ) : Unit = {
-    variableReportBlock[ Params ]( reportValue )
+    variableReportBlock[ ParamsConfigBase ]( reportValue )
   }
 
   /**
    * Update class variable values via macro.
    */
   override def updateParams( paramValue : UpdateFun ) : Unit = {
-    variableUpdateBlock[ Params ]( paramValue )
+    variableUpdateBlock[ ParamsConfigBase ]( paramValue )
   }
 
   /**
@@ -705,5 +899,29 @@ object ParamsConfig {
   def parse( config : String ) : ParamsConfig = read[ ParamsConfig ]( config )
 
   def unparse( config : ParamsConfig ) : String = write( config )
+
+}
+
+/**
+ * Expose updatable parameter values for `eclipse-restart`.
+ */
+case class ParamsRestart() extends ParamsRestartBase
+  with VariableCount
+  with VariableReport
+  with VariableUpdate {
+
+  override def paramsCount = variableCount[ ParamsRestartBase ]
+
+  override def reportParams( reportValue : ReportFun ) : Unit = {
+    variableReportBlock[ ParamsRestartBase ]( reportValue )
+  }
+
+  override def updateParams( paramValue : UpdateFun ) : Unit = {
+    variableUpdateBlock[ ParamsRestartBase ]( paramValue )
+  }
+
+}
+
+object ParamsRestart {
 
 }

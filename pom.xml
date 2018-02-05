@@ -57,7 +57,7 @@
         <version.eclipse.m2e>1.8.1</version.eclipse.m2e>
         <version.eclipse.scala-ide>4.7.1</version.eclipse.scala-ide>
 
-        <!-- Scala.js tool stack. -->
+        <!-- Scala.js tools stack. -->
         <version.sjs.epoch>0.6</version.sjs.epoch>
         <version.sjs.release>0.6.22</version.sjs.release>
 
@@ -72,28 +72,6 @@
         <eclipse.bundle.version>0.0.0</eclipse.bundle.version><!-- Version is in the identity. -->
 
     </properties>
-
-    <profiles>
-        <profile>
-            <id>tester</id>
-            <activation>
-                <property>
-                    <name>[ACTIVATION:MVELSCRIPT]</name>
-                    <value>
-<![CDATA[
-    if( isdef m2e.version ) {
-        System.out.println("[CODE] m2e.version=" + m2e.version);
-        false
-    } else {
-        System.out.println("[CODE] m2e.version missing");
-        false;
-    }
-]]>
-                    </value>
-                </property>
-            </activation>
-        </profile>
-    </profiles>
 
     <!-- Documentation site folder. -->
     <distributionManagement>
@@ -152,7 +130,20 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Maven. -->
+        <dependency>
+            <groupId>org.apache.maven.plugin-testing</groupId>
+            <artifactId>maven-plugin-testing-harness</artifactId>
+            <version>3.3.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Maven core. -->
 
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -203,6 +194,7 @@
             <artifactId>mojo-executor</artifactId>
             <version>2.3.0</version>
             <exclusions>
+                <!-- Provided by maven-core in Maven 3.5. -->
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-simple</artifactId>
@@ -222,6 +214,18 @@
             <groupId>com.github.klieber</groupId>
             <artifactId>phantomjs-maven-plugin</artifactId>
             <version>0.7</version>
+            <exclusions>
+                <!-- Provided by maven-resolver-api in Maven 3.5. -->
+                <exclusion>
+                    <groupId>org.eclipse.aether</groupId>
+                    <artifactId>aether-api</artifactId>
+                </exclusion>
+                <!-- Provided by maven-resolver-util in Maven 3.5. -->
+                <exclusion>
+                    <groupId>org.eclipse.aether</groupId>
+                    <artifactId>aether-util</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Utility. -->
@@ -279,7 +283,11 @@
             <version>${version.sjs.release}</version>
         </dependency>
 
-        <!-- Eclipse platform. Note: scope=provided. -->
+        <!--
+            Eclipse platform.
+            Using scope=provided, since Eclipse companion plugin
+            is activated only inside Eclipse with Maven M2E and Scala IDE.
+        -->
 
         <dependency>
             <groupId>org.osgi</groupId>
@@ -388,27 +396,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Testing. -->
-
-        <!-- <dependency> -->
-        <!-- <groupId>org.scalatest</groupId> -->
-        <!-- <artifactId>scalatest_${version.scala.epoch}</artifactId> -->
-        <!-- <scope>test</scope> -->
-        <!-- </dependency> -->
-
-        <dependency>
-            <groupId>org.apache.maven.plugin-testing</groupId>
-            <artifactId>maven-plugin-testing-harness</artifactId>
-            <version>3.3.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <build>
@@ -431,8 +418,6 @@
 
                 <configuration>
 
-                    <!-- <eclipseLogClasspathOrder>true</eclipseLogClasspathOrder> -->
-
                     <zincCompileOptions>
                         -feature ; -unchecked ; -deprecation ;
                         -encoding ;
@@ -443,6 +428,7 @@
                         -useScopesCompiler ;
                     </zincCompileOptions>
 
+                    <!-- <eclipseLogClasspathOrder>true</eclipseLogClasspathOrder> -->
                     <!-- <zincLogProjectClassPath>true</zincLogProjectClassPath> -->
                     <!-- <zincLogProgressRate>true</zincLogProgressRate> -->
                     <!-- <zincLogProgressUnit>true</zincLogProgressUnit> -->
@@ -587,7 +573,7 @@
                 </executions>
             </plugin>
 
-            <!-- Package as Maven life cycle extension. -->
+            <!-- Package plugin as Maven life cycle extension. -->
             <plugin>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-component-metadata</artifactId>
@@ -611,10 +597,11 @@
                     <streamLogs>true</streamLogs>
                     <localRepositoryPath>${project.basedir}/test-repo</localRepositoryPath>
                     <pomIncludes>
-                        <include>test-envjs/pom.xml</include>
-                        <include>test-cross/pom.xml</include>
-                        <include>test-m2e-1.8/pom.xml</include>
-                        <include>test-m2e-1.9/pom.xml</include>
+                        <include>test-any</include>
+                        <include>test-envjs</include>
+                        <include>test-cross</include>
+                        <include>test-m2e-1.8</include>
+                        <include>test-m2e-1.9</include>
                     </pomIncludes>
                 </configuration>
             </plugin>

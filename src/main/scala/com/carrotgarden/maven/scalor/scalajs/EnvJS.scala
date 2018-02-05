@@ -303,7 +303,7 @@ trait EnvProvNodejs extends EnvProvAny {
   """ )
   @Parameter(
     property     = "scalor.envprovNodejsVersion",
-    defaultValue = "9.4.0"
+    defaultValue = "9.5.0"
   )
   var envprovNodejsVersion : String = _
 

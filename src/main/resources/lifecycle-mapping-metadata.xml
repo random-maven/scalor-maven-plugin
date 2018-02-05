@@ -31,6 +31,8 @@
                     <!-- M2E configurator handles all goals. -->
 
                     <goal>eclipse-config</goal>
+                    <goal>eclipse-restart</goal>
+                    
                     <goal>clean-macro</goal>
                     <goal>clean-main</goal>
                     <goal>clean-test</goal>

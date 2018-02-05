@@ -7,6 +7,7 @@ import org.eclipse.m2e.core.project.IMavenProjectFacade
 
 import com.carrotgarden.maven.scalor.util.Classer.primitiveWrap
 import com.carrotgarden.maven.scalor.util.Logging
+import org.eclipse.core.runtime.SubMonitor
 
 /**
  * Extract plugin configuration parameters.
@@ -16,7 +17,7 @@ trait Config {
   self : Monitor with Maven with Logging =>
 
   /**
-   * Extract plugin configuration parameters.
+   * Extract plugin configuration parameters for `eclipse-config`.
    */
   def paramsConfig(
     facade :  IMavenProjectFacade,
@@ -49,7 +50,7 @@ trait Config {
       subValue.split( 1 )
       // M2E expression evaluation needs java type
       val javaType = primitiveWrap( klaz )
-      configValue( facade, name, monitor )( ClassTag( javaType ) )
+      eclipseConfigValue( facade, name, monitor )( ClassTag( javaType ) )
     }
 
     config.update( paramValue )
@@ -63,5 +64,38 @@ trait Config {
 
     config
   }
+
+  /**
+   * Extract plugin configuration parameters for `eclipse-restart`.
+   */
+  def paramsRestart(
+    facade :  IMavenProjectFacade,
+    monitor : IProgressMonitor
+  ) : ParamsRestart = {
+
+    val restart = ParamsRestart()
+
+    /**
+     * Evaluate named parameter from this plugin configuration.
+     */
+    def paramValue( name : String, klaz : Class[ _ ] ) : Object = {
+      // M2E expression evaluation needs java type
+      val javaType = primitiveWrap( klaz )
+      eclipseRestartValue( facade, name, monitor )( ClassTag( javaType ) )
+    }
+
+    restart.updateParams( paramValue )
+
+    restart
+  }
+
+}
+
+object Config {
+
+  case class Context(
+    config :  ParamsConfig,
+    restart : Option[ ParamsRestart ] = None
+  )
 
 }

@@ -36,4 +36,20 @@ object Logging {
 
   }
 
+  /**
+   * Empty logger.
+   */
+  case object NoopLogger extends AnyLog
+
+  /**
+   * Logger which uses context switch.
+   */
+  case class SwitchLogger( log : AnyLog, name : String ) extends AnyLog {
+    override def dbug( line : String ) : Unit = { log.context( name ); log.dbug( line ) }
+    override def info( line : String ) : Unit = { log.context( name ); log.info( line ) }
+    override def warn( line : String ) : Unit = { log.context( name ); log.warn( line ) }
+    override def fail( line : String ) : Unit = { log.context( name ); log.fail( line ) }
+    override def fail( line : String, error : Throwable ) : Unit = { log.context( name ); log.fail( line, error ) }
+  }
+
 }

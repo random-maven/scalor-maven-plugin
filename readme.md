@@ -28,9 +28,9 @@ Scala.macro
 
 Scala.js
 * compiles and [links Scala.js JavaScrpt](https://github.com/scala-js/scala-js-cli)
-* same-project JS+JVM [JUnit testing](https://github.com/random-scalor/scala-js-junit-tools)
+* same-project JS-VM + JVM [JUnit testing](https://github.com/random-scalor/scala-js-junit-tools)
 * auto-provisions Webjars [resources for testing](https://www.webjars.org/) 
-* auto-provisions JavaScript VM [environments for testing](https://www.scala-js.org/doc/project/js-environments.html)
+* auto-provisions JavaScript [JS-VM environments for testing](https://www.scala-js.org/doc/project/js-environments.html)
 
 Eclipse and Maven
 * creates custom [Scala installations for Scala IDE](http://scala-ide.org/docs/4.0.x/advancedsetup/scala-installations.html)
@@ -39,8 +39,9 @@ Eclipse and Maven
 * provides [identical compiler settings](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html#zincCompileOptions)
 for Maven and Eclipse
 * work around spurious crashes of [Scala IDE presentation compiler](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html#eclipseHackPresentationCompiler)
+* auto-restart test application [after full or incremental build in Eclipse](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-restart-mojo.html)
 
-Main Maven goals
+Primary Maven goals
 
 * [eclipse-config](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html)
 * [register-main](https://random-maven.github.io/scalor-maven-plugin/2.12/register-main-mojo.html)
@@ -59,7 +60,6 @@ Scala.js
 Eclipse
 * incremental Scala.js linker
 * auto-reload Scala.js web client
-* auto-reload Scala Akka HTTP web server
 
 ### Eclipse setup
 
@@ -198,6 +198,9 @@ mvn clean install -P scalor
                                     <!-- Setup Eclipse plugin. -->
                                     <goal>eclipse-config</goal>
 
+                                    <!-- Manage test application. -->
+                                    <goal>eclipse-restart</goal>
+
                                     <!-- Add compilation sources. -->
                                     <goal>register-macro</goal>
                                     <goal>register-main</goal>
@@ -213,7 +216,7 @@ mvn clean install -P scalor
                                     <goal>scala-js-env-prov-nodejs</goal>
                                     <goal>scala-js-env-conf-nodejs</goal>
 
-                                    <!-- Link runtime script. -->
+                                    <!-- Link runtime JS script. -->
                                     <goal>scala-js-link-main</goal>
                                     <goal>scala-js-link-test</goal>
 

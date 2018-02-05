@@ -3,6 +3,8 @@ package com.carrotgarden.maven.scalor.util
 import scala.util.{ Either, Failure, Left, Right, Success, Try }
 
 import scala.language.implicitConversions
+import java.io.StringWriter
+import java.io.PrintWriter
 
 /**
  * Errors support.
@@ -39,6 +41,13 @@ object Error {
       try Success( block ) catch {
         case error : Throwable => Failure( error )
       }
+  }
+
+  def reportStackTrace( error : Throwable ) : String = {
+    val wirter = new StringWriter()
+    val printer = new PrintWriter( wirter )
+    error.printStackTrace( printer )
+    wirter.toString
   }
 
 }

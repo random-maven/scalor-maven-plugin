@@ -8,7 +8,7 @@ import java.io.File
 
 import org.eclipse.core.runtime.IProgressMonitor
 
-import Params._
+import ParamsConfigBase._
 import Maven._
 
 import org.apache.maven.plugin.MojoExecution

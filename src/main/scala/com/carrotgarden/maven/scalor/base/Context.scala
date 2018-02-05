@@ -1,24 +1,40 @@
 package com.carrotgarden.maven.scalor.base
 
-import Context._
+import org.apache.maven.plugin.AbstractMojo
 
 /**
- * Plugins context for (plugin, project) as configuration store.
+ * Plugin state storage during Maven session.
  *
- * Persisted for the duration of Maven session.
+ * Available in Maven and Eclispe.
  *
- * Available for Maven and Eclipse.
+ * Maven session duration:
+ * - Maven: single build invocation
+ * - Eclipse: between project configuration updates
  */
-case class Context( context : PluginContext ) {
+trait Context {
 
-}
+  self : AbstractMojo =>
 
-object Context {
+  /**
+   *  Plugin container context.
+   */
+  def pluginContext = getPluginContext.asInstanceOf[ java.util.Map[ String, Object ] ]
 
-  type PluginContext = java.util.Map[ String, Object ]
-  
-  object key {
-    
+  /**
+   * Extract plugin build state.
+   */
+  def pluginExtract[ T <: Object ]( key : String ) : Option[ T ] = {
+    Option( pluginContext.get( key ).asInstanceOf[ T ] )
+  }
+
+  /**
+   * Persist plugin build state.
+   */
+  def pluginPersist[ T <: Object ]( key : String, option : Option[ T ] = None ) : Unit = {
+    option match {
+      case Some( value ) => pluginContext.put( key, value )
+      case None          => pluginContext.remove( key )
+    }
   }
 
 }

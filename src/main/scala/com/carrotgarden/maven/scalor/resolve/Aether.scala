@@ -1,38 +1,32 @@
 package com.carrotgarden.maven.scalor.resolve
 
-import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.util.ArrayList
-import java.util.Collection
+import java.util.Collections
 import java.util.LinkedList
 import java.util.List
+import java.util.Set
 
+import scala.collection.JavaConverters.asScalaBufferConverter
+import scala.collection.JavaConverters.bufferAsJavaListConverter
+import scala.collection.JavaConverters.seqAsJavaListConverter
+
+import org.apache.maven.RepositoryUtils
 import org.eclipse.aether.RepositorySystem
 import org.eclipse.aether.RepositorySystemSession
 import org.eclipse.aether.artifact.Artifact
+import org.eclipse.aether.artifact.ArtifactTypeRegistry
+import org.eclipse.aether.artifact.DefaultArtifact
 import org.eclipse.aether.collection.CollectRequest
 import org.eclipse.aether.graph.Dependency
 import org.eclipse.aether.graph.DependencyFilter
-import org.eclipse.aether.repository.Authentication
-import org.eclipse.aether.repository.LocalRepository
+import org.eclipse.aether.graph.DependencyNode
 import org.eclipse.aether.repository.RemoteRepository
-import org.eclipse.aether.resolution.ArtifactResult
 import org.eclipse.aether.resolution.DependencyRequest
-import org.eclipse.aether.resolution.DependencyResolutionException
-import org.eclipse.aether.resolution.DependencyResult
-import org.eclipse.aether.util.filter.DependencyFilterUtils
-import org.eclipse.aether.util.repository.DefaultMirrorSelector
 import org.eclipse.aether.util.artifact.JavaScopes
-import org.eclipse.aether.artifact.DefaultArtifact
+import org.eclipse.aether.util.filter.DependencyFilterUtils
+import org.eclipse.aether.graph.Exclusion
 
-import scala.collection.JavaConverters._
-import java.util.Collections
-
-import DependencyFilterUtils._
-import org.eclipse.aether.artifact.ArtifactTypeRegistry
-import org.apache.maven.RepositoryUtils
+import scala.collection.immutable
+import org.eclipse.aether.resolution.ArtifactRequest
 
 /**
  * Shared Maven/Eclipse artifact resolver.
@@ -45,37 +39,76 @@ trait Aether {
   val repoSession : RepositorySystemSession
   val remoteRepoList : List[ RemoteRepository ]
 
-  def localRepoFolder = repoSession.getLocalRepository.getBasedir
+  /**
+   * Convert artifact into dependency with options.
+   */
+  def dependencyFrom(
+    artifact :         Artifact,
+    scope :            String           = JavaScopes.COMPILE,
+    optional :         Boolean          = false,
+    exclusions :       Set[ Exclusion ] = Collections.emptySet(),
+    classifierOption : Option[ String ] = None,
+    extensionOption :  Option[ String ] = None,
+    versionOption :    Option[ String ] = None
+  ) = {
+    import artifact._
+    val classifier = if ( classifierOption.isDefined ) classifierOption.get else getClassifier
+    val extension = if ( extensionOption.isDefined ) extensionOption.get else getExtension
+    val version = if ( versionOption.isDefined ) versionOption.get else getVersion
+    // DefaultArtifact( String groupId, String artifactId, String classifier, String extension, String version )
+    val clone = new DefaultArtifact( getGroupId, getArtifactId, classifier, extension, version )
+    new Dependency( clone, scope, optional, exclusions )
+  }
 
   /**
-   * Resolve all transitive dependencies for all artifacts, filtered by scope.
+   * Download optional artifact.
    */
-  def resolveArtifact(
-    list :  List[ Artifact ],
-    scope : String
-  ) : List[ Artifact ] = {
-    list.asScala.toList match {
-      case Nil =>
-        list
-      case head :: tail =>
-        val list = tail.map { artifact => dependencyFrom( artifact, scope ) }
-        resolveFiltered( head, list.asJava, scope )
+  def downloadOptional(
+    request : ArtifactRequest
+  ) : Option[ Artifact ] = {
+    try {
+      val result = repoSystem.resolveArtifact( repoSession, request )
+      Some( result.getArtifact )
+    } catch {
+      case error : Throwable => None
     }
   }
 
-  def resolveDependency(
-    list :  List[ Dependency ],
-    scope : String
+  /**
+   * Download required artifacts.
+   */
+  def downloadRequired(
+    request : DependencyRequest
   ) : List[ Artifact ] = {
-    list.asScala.toList match {
-      case Nil =>
-        Collections.emptyList()
-      case head :: tail =>
-        resolveFiltered( artifactFrom( head ), list, scope )
-    }
+    val resolveResult = repoSystem.resolveDependencies( repoSession, request )
+    val resultList = resolveResult.getArtifactResults
+    resultList.asScala.map( _.getArtifact ).asJava
   }
 
-  import scala.collection.immutable
+  /**
+   * Create dependency request.
+   */
+  def requestDepends(
+    collect : CollectRequest,
+    filter :  DependencyFilter
+  ) : DependencyRequest = {
+    val request = new DependencyRequest()
+    request.setCollectRequest( collect )
+    request.setFilter( filter )
+    request
+  }
+
+  /**
+   * Create collect request.
+   */
+  def requestCollect(
+    dependencies : List[ Dependency ]
+  ) : CollectRequest = {
+    val request = new CollectRequest()
+    request.setDependencies( dependencies )
+    request.setRepositories( remoteRepoList )
+    request
+  }
 
   /**
    * Resolve both binary jars and source jars.
@@ -84,13 +117,44 @@ trait Aether {
     binaryDeps : List[ Dependency ],
     scope :      String
   ) : List[ Artifact ] = {
-    val binaryList = resolveDependency( binaryDeps, scope ).asScala
+    // all binary dependencies are required
+    val binaryList = resolveRequired( binaryDeps, scope ).asScala
+    // source dependency derived from binary
     val sourceDeps = binaryList.map { binary =>
       dependencyFrom( binary, classifierOption = Some( "sources" ) )
-    }.asJava
-    val sourceList = resolveDependency( sourceDeps, scope ).asScala
+    }
+    // all source dependencies are optional
+    val sourceList = sourceDeps.flatMap { source =>
+      resolveOptional( source )
+    }
     val resultList = binaryList ++ sourceList
-    resultList.distinct.sortBy( _.toString ).asJava
+    resultList.distinct.sortBy( _.getFile.getAbsolutePath ).asJava
+  }
+
+  /**
+   * Resolve single direct dependency.
+   */
+  def resolveOptional(
+    dependency : Dependency
+  ) : Option[ Artifact ] = {
+    val source = dependency.getArtifact
+    val request = new ArtifactRequest()
+    request.setArtifact( source )
+    request.setRepositories( remoteRepoList )
+    downloadOptional( request )
+  }
+
+  /**
+   * Resolve all transitive dependencies.
+   */
+  def resolveRequired(
+    list :   List[ Dependency ],
+    scope :  String             = JavaScopes.COMPILE,
+    filter : DependencyFilter   = filterCompile
+  ) : List[ Artifact ] = {
+    val collectRequest = requestCollect( list )
+    val dependsRequest = requestDepends( collectRequest, filter )
+    downloadRequired( dependsRequest )
   }
 
   /**
@@ -111,99 +175,20 @@ trait Aether {
     artifactList
   }
 
-  /**
-   * List of transitive dependencies of the artifact.
-   */
-  def resolveScoped(
-    root :  Artifact,
-    list :  List[ Dependency ] = Collections.emptyList(),
-    scope : String             = JavaScopes.COMPILE
-  ) : List[ Artifact ] = {
-    val filter = classpathFilter( scope )
-    resolveFiltered( root, list, scope, filter )
-  }
-
-  /**
-   * List of transitive dependencies of the artifact.
-   */
-  def resolveFiltered(
-    root :   Artifact,
-    list :   List[ Dependency ] = Collections.emptyList(),
-    scope :  String             = JavaScopes.COMPILE,
-    filter : DependencyFilter   = filterCompile
-  ) : List[ Artifact ] = {
-    val dependency = dependencyFrom( root, scope )
-    val collectRequest = requestCollect( dependency )
-    collectRequest.setDependencies( list )
-    val dependsRequest = requestDepends( collectRequest, filter )
-    fetchDepends( dependsRequest )
-  }
-
-  /**
-   * Convert artifact to dependency in scope.
-   */
-  def dependencyFrom(
-    artifact :         Artifact,
-    scope :            String           = JavaScopes.COMPILE,
-    classifierOption : Option[ String ] = None,
-    extensionOption :  Option[ String ] = None,
-    versionOption :    Option[ String ] = None
-  ) = {
-    import artifact._
-    val classifier = if ( classifierOption.isDefined ) classifierOption.get else getClassifier
-    val extension = if ( extensionOption.isDefined ) extensionOption.get else getExtension
-    val version = if ( versionOption.isDefined ) versionOption.get else getVersion
-    // DefaultArtifact( String groupId, String artifactId, String classifier, String extension, String version )
-    val clone = new DefaultArtifact( getGroupId, getArtifactId, classifier, extension, version )
-    new Dependency( clone, scope )
-  }
-
-  def artifactFrom(
-    dependency : Dependency
-  ) = dependency.getArtifact
-
-  /**
-   * Fetch dependencies.
-   */
-  def fetchDepends(
-    request : DependencyRequest
-  ) : List[ Artifact ] = {
-    val artifactList = new LinkedList[ Artifact ]()
-    val resolveResult = repoSystem.resolveDependencies( repoSession, request )
-    val resultList = resolveResult.getArtifactResults
-    for ( result <- resultList.asScala ) {
-      artifactList.add( result.getArtifact )
-    }
-    artifactList
-  }
-
-  /**
-   * Create dependency request.
-   */
-  def requestDepends(
-    collect : CollectRequest,
-    filter :  DependencyFilter
-  ) : DependencyRequest = {
-    new DependencyRequest( collect, filter )
-  }
-
-  /**
-   * Create collect request.
-   */
-  def requestCollect( root : Dependency ) : CollectRequest = {
-    val request = new CollectRequest()
-    request.setRoot( root )
-    for ( repo <- remoteRepoList.asScala ) {
-      request.addRepository( repo )
-    }
-    request
-  }
-
 }
 
 object Aether {
 
-  val filterCompile = classpathFilter( JavaScopes.COMPILE )
+  val filterCompile = DependencyFilterUtils.classpathFilter( JavaScopes.COMPILE )
+
+  val filterOptional = new DependencyFilter {
+    override def accept(
+      node :    DependencyNode,
+      parents : List[ DependencyNode ]
+    ) : Boolean = {
+      !node.getDependency.isOptional
+    }
+  }
 
 }
 

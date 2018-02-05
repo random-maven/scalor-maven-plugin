@@ -187,7 +187,7 @@
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>scalor-maven-plugin_2.12</artifactId>
-                <version>1.1.1.20180201164756</version>
+                <!-- <version>1.1.1.20180201164756</version> -->
 
                 <configuration>
 
@@ -280,6 +280,9 @@
 
                             <!-- Install Eclipse companion plugin. -->
                             <goal>eclipse-config</goal>
+
+                            <!-- Manage test application restart. -->
+                            <goal>eclipse-restart</goal>
 
                             <!-- Add Scala sources to the project. -->
                             <goal>register-macro</goal>

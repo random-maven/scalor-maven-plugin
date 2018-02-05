@@ -83,16 +83,24 @@ object EclipsePlugin {
     lazy val cached = meta.Cached()
 
     /**
-     * M2E build participant enables executions.
+     * M2E build participant implements executions.
      */
+    // FIXME redo
     override def getBuildParticipant(
       facade :    IMavenProjectFacade,
       execution : MojoExecution,
       metadata :  IPluginExecutionMetadata
-    ) : AbstractBuildParticipant = {
+    ) : AbstractBuildParticipant = plugin.tryCore( "Scalor build." ) {
+      log.context( "build" )
       val subMon = SubMonitor.convert( null )
       val config = cached( paramsConfig( facade, subMon ) )
-      new eclipse.Build.Participant( log, config, execution )
+      val restart = if ( execution.getGoal == A.mojo.`eclipse-restart` )
+        Some( cached( paramsRestart( facade, subMon ) ) ) else None
+      val context = eclipse.Config.Context(
+        config  = config,
+        restart = restart
+      )
+      new eclipse.Build.Participant( log, context, execution )
     }
 
     /**

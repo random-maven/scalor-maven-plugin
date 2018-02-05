@@ -35,6 +35,7 @@ Note: controlled OSGI environment.
 case class Wiring(
   buildContext :    BuildContext,
   metaRuntime :     Meta         = Meta( "org.eclipse.equinox.common", "org.eclipse.core.runtime" ),
+  metaRuntimeJobs : Meta         = Meta( "org.eclipse.core.jobs", "org.eclipse.core.runtime.jobs" ),
   metaResources :   Meta         = Meta( "org.eclipse.core.resources", "org.eclipse.core.resources" ),
   metaMavenCore :   Meta         = Meta( "org.eclipse.m2e.core", "org.eclipse.m2e.core" ),
   metaMavenCoreUI : Meta         = Meta( "org.eclipse.m2e.core.ui", "org.eclipse.m2e.core.ui" ),
@@ -84,6 +85,7 @@ case class Wiring(
 
     // provide eclipse runtime plugin
     val bundleRuntime = importBundle( metaRuntime )
+    val bundleRuntimeJobs = importBundle( metaRuntimeJobs )
 
     // provide eclipse resources plugin
     val bundleResources = importBundle( metaResources )

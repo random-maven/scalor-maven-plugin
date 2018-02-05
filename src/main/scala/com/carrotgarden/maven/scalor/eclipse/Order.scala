@@ -3,7 +3,7 @@ package com.carrotgarden.maven.scalor.eclipse
 import com.carrotgarden.maven.scalor.util
 
 import util.Params._
-import Params._
+import ParamsConfigBase._
 
 import scala.collection.JavaConverters._
 

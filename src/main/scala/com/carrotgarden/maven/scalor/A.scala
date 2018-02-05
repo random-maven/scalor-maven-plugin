@@ -48,9 +48,9 @@ object A {
    */
   object mojo {
 
-    final val `auto-conf` = "auto-conf"
-
     final val `eclipse-config` = "eclipse-config"
+
+    final val `eclipse-restart` = "eclipse-restart"
 
     final val `clean-macro` = "clean-macro"
     final val `clean-main` = "clean-main"

@@ -1,30 +1,32 @@
 package com.carrotgarden.maven.scalor
 
+import com.carrotgarden.maven.tools.Description
+
 import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugins.annotations._
-import com.carrotgarden.maven.tools.Description
 
 import A.mojo._
 
+import base.Params._
 import util.OSGI._
 import util.Error._
 import util.Params._
 import util.Classer._
 import util.Props._
 
-import eclipse.Wiring._
 import eclipse.Plugin
-
-import base.Params._
+import eclipse.Wiring._
 
 import scala.util.Success
 import scala.util.Failure
-
 import scala.collection.JavaConverters._
 
-import org.eclipse.m2e.core.ui.internal.UpdateMavenProjectJob
+import java.io.File
+import java.net.URLClassLoader
+
 import org.eclipse.core.resources.IProject
-import org.eclipse.core.runtime
+import org.eclipse.m2e.core.ui.internal.UpdateMavenProjectJob
+import org.apache.maven.plugin.descriptor.PluginDescriptor
 
 /**
  * Shared Eclipse mojo interface.
@@ -88,12 +90,6 @@ trait EclipseAnyMojo extends AbstractMojo
       reportSkipReason( "Skipping non-eclipse build invocation." )
       return
     }
-    if ( hasIncremental ) {
-      reportSkipReason( "Skipping incremental build invocation." )
-      return
-    }
-    reportHandle
-    resolveHandle
     performEclipse
   }
 
@@ -109,11 +105,20 @@ Install companion Eclipse plugin provided by this Maven plugin when running unde
 )
 class EclipseConfigMojo extends EclipseAnyMojo
   with base.ParamsCompiler
-  with eclipse.Params {
+  with eclipse.ParamsConfigBase {
 
   override def mojoName = `eclipse-config`
 
-  override def performEclipse = {
+  override def performEclipse : Unit = {
+
+    if ( hasIncremental ) {
+      reportSkipReason( "Skipping incremental build invocation." )
+      return
+    }
+
+    reportHandle
+    resolveHandle
+
     log.info( "Configuring companion Eclipse plugin:" )
     val handle = resolveHandle
 
@@ -156,10 +161,26 @@ class EclipseConfigMojo extends EclipseAnyMojo
 
       val updateName = s"Updating: ${project.getArtifactId} from: ${pluginId}"
       updateJob.setName( updateName )
-      updateJob.setPriority(10)
-      updateJob.schedule(1 * 1000)
+      updateJob.setPriority( 10 )
+      updateJob.schedule( 1 * 1000 )
     }
 
   }
 
+}
+
+@Description( """
+Manage test application restart after full or incremental build in Eclispe/M2E.
+""" )
+@Mojo(
+  name                         = `eclipse-restart`,
+  defaultPhase                 = LifecyclePhase.TEST,
+  requiresDependencyResolution = ResolutionScope.TEST
+)
+class EclipseRestartMojo extends EclipseAnyMojo
+  with eclipse.ParamsRestartBase {
+  override def mojoName = `eclipse-restart`
+  override def performEclipse : Unit = {
+    log.fail( s"Design failure: must be invoked by Eclipse build participant." )
+  }
 }

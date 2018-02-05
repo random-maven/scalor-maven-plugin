@@ -7,6 +7,7 @@ import com.carrotgarden.maven.scalor.base
 import com.carrotgarden.maven.scalor.util.Error.TryHard
 import com.carrotgarden.maven.tools.Description
 import org.apache.maven.execution.MavenSession
+import java.io.File
 
 /**
  * Eclipse/Maven (M2E) build integration context.
@@ -40,17 +41,17 @@ trait Context {
   /**
    * Extract incremental build state.
    */
-  def contextExtract[ T ]( key : String ) : Option[ T ] = {
+  def contextExtract[ T <: Object ]( key : String ) : Option[ T ] = {
     Option( buildContext.getValue( key ).asInstanceOf[ T ] )
   }
 
   /**
    * Persist incremental build state.
    */
-  def contextPersist[ T ]( key : String, option : Option[ T ] = None ) : Unit = {
+  def contextPersist[ T <: Object ]( key : String, option : Option[ T ] = None ) : Unit = {
     option match {
-      case None          => buildContext.setValue( key, null )
       case Some( value ) => buildContext.setValue( key, value )
+      case None          => buildContext.setValue( key, null )
     }
   }
 
