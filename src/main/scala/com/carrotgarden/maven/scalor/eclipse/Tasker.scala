@@ -70,7 +70,7 @@ object Tasker {
      * Core implementation of periodic job.
      */
     override def run( monitor : IProgressMonitor ) : IStatus = {
-      logger.context( name )
+      // logger.context( name )
       try {
         runTask( monitor )
       } catch {

@@ -29,7 +29,7 @@ trait Linker {
   /**
    * Invoke single linker run.
    */
-  def performLink( options : Options, classpath : Seq[ File ], runtime : File ) : Unit = {
+  def performLinker( options : Options, classpath : Array[ File ], runtime : File ) : Unit = {
     val id = linkerId( options )
     val engine = contextExtract[ Engine ]( id ).getOrElse {
       val engine = Linker( options ); contextPersist( id, Some( engine ) ); engine
@@ -52,7 +52,7 @@ object Linker {
     /**
      * Invoke single linker run.
      */
-    def link( classpath : Seq[ File ], runtime : File, logger : Logger ) = {
+    def link( classpath : Array[ File ], runtime : File, logger : Logger ) = {
       val collected = IRFileCache.IRContainer.fromClasspath( classpath )
       val extracted = cache.cached( collected )
       val result = WritableFileVirtualJSFile( runtime )

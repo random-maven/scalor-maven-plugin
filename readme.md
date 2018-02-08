@@ -6,9 +6,9 @@ Build integrator for Java, Scala, Scala.macro, Scala.js, Eclipse and Maven.
 [![Apache License, Version 2.0, January 2004](https://img.shields.io/github/license/mojohaus/versions-maven-plugin.svg?label=License)](http://www.apache.org/licenses/)
 [![Travis Status](https://travis-ci.org/random-maven/scalor-maven-plugin.svg?branch=master)](https://travis-ci.org/random-maven/scalor-maven-plugin/builds)
 
-##### Install Scalor Plugin 1.X for Scala IDE 4.7
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.carrotgarden.maven/scalor-maven-plugin_2.12/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/com.carrotgarden.maven/scalor-maven-plugin_2.12)
-[![Download](https://api.bintray.com/packages/random-maven/maven/scalor-maven-plugin_2.12/images/download.svg)](https://bintray.com/random-maven/maven/scalor-maven-plugin_2.12/_latestVersion)
+| Install | Production Release | Development Release |
+| ----------------------------------- | ------------------ | ------------------- |
+| <h5> Scalor Plugin 1.X for Scala IDE 4.7 </h5> | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.carrotgarden.maven/scalor-maven-plugin_2.12/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/com.carrotgarden.maven/scalor-maven-plugin_2.12)  | [![Download](https://api.bintray.com/packages/random-maven/maven/scalor-maven-plugin_2.12/images/download.svg)](https://bintray.com/random-maven/maven/scalor-maven-plugin_2.12/_latestVersion) |
 
 Similar plugins
 * [scala-maven-plugin](https://github.com/davidB/scala-maven-plugin)
@@ -33,13 +33,13 @@ Scala.js
 * auto-provisions JavaScript [JS-VM environments for testing](https://www.scala-js.org/doc/project/js-environments.html)
 
 Eclipse and Maven
+* brings and installs companion [Eclipse plugin](https://github.com/random-maven/scalor-maven-plugin/blob/master/src/main/scala/com/carrotgarden/maven/scalor/EclipsePlugin.scala)
 * creates custom [Scala installations for Scala IDE](http://scala-ide.org/docs/4.0.x/advancedsetup/scala-installations.html)
-* brings and installs its own companion [Eclipse plugin](https://github.com/random-maven/scalor-maven-plugin/blob/master/src/main/scala/com/carrotgarden/maven/scalor/EclipsePlugin.scala)
-* comprehensive plugin [configuration and logging](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html)
+* exposes comprehensive [configuration and logging](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html)
 * provides [identical compiler settings](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html#zincCompileOptions)
 for Maven and Eclipse
-* work around spurious crashes of [Scala IDE presentation compiler](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html#eclipseHackPresentationCompiler)
-* auto-restart test application [after full or incremental build in Eclipse](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-restart-mojo.html)
+* works around spurious crashes of [Scala IDE presentation compiler](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-prescomp-mojo.html)
+* auto-restarts test application [after full or incremental build in Eclipse](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-restart-mojo.html)
 
 Primary Maven goals
 
@@ -200,6 +200,9 @@ mvn clean install -P scalor
 
                                     <!-- Manage test application. -->
                                     <goal>eclipse-restart</goal>
+
+                                    <!-- Manage presentation compiler. -->
+                                    <goal>eclipse-prescomp</goal>
 
                                     <!-- Add compilation sources. -->
                                     <goal>register-macro</goal>

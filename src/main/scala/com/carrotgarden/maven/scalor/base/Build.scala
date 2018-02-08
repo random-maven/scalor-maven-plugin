@@ -127,6 +127,7 @@ trait BuildMacroSources extends BuildAnySources {
 
   @Description( """
   Java source root folders to be included in compilation scope=macro.
+  Normally uses <code>src/macro/java</code>.
   """ )
   @Parameter(
     property     = "scalor.buildMacroSourceJavaFolders",
@@ -136,6 +137,7 @@ trait BuildMacroSources extends BuildAnySources {
 
   @Description( """
   Scala source root folders to be included in compilation scope=macro.
+  Normally uses <code>src/macro/scala</code>.
   """ )
   @Parameter(
     property     = "scalor.buildMacroSourceScalaFolders",
@@ -187,7 +189,7 @@ trait BuildMainDependency extends BuildAnyDependency {
   @Description( """
   Project folders containing build classes
   which are dependency for compilation scope=main.
-  Normally includes folder scope=[macro]
+  Normally includes folder scope=[macro] (<code>target/classes</code>).
   """ )
   @Parameter(
     property     = "scalor.buildMainDependencyFolders",
@@ -215,6 +217,7 @@ trait BuildMainSources extends BuildAnySources {
 
   @Description( """
   Java source root folders to be included in compilation scope=main.
+  Normally uses <code>src/main/java</code>.
   """ )
   @Parameter(
     property     = "scalor.buildMainSourceJavaFolders",
@@ -224,6 +227,7 @@ trait BuildMainSources extends BuildAnySources {
 
   @Description( """
   Scala source root folders to be included in compilation scope=main.
+  Normally uses <code>src/main/scala</code>.
   """ )
   @Parameter(
     property     = "scalor.buildMainSourceScalaFolders",
@@ -261,6 +265,7 @@ trait BuildMainTarget extends BuildAnyTarget {
 
   @Description( """
   Build target folder with result classes of compilation scope=[macro,main].
+  Normally uses <code>target/classes</code>.
   """ )
   @Parameter(
     property     = "scalor.buildMainTargetFolder",
@@ -289,7 +294,7 @@ trait BuildTestDependency extends BuildAnyDependency {
   @Description( """
   Project folders containing build classes
   which are dependency for compilation scope=test.
-  Normally includes folder scope=[macro,main].
+  Normally includes folder scope=[macro,main] (<code>target/classes</code>).
   """ )
   @Parameter(
     property     = "scalor.buildTestDependencyFolders",
@@ -317,6 +322,7 @@ trait BuildTestSources extends BuildAnySources {
 
   @Description( """
   Java source root folders to be included in compilation scope=test.
+  Normally uses <code>src/test/java</code>.
   """ )
   @Parameter(
     property     = "scalor.buildTestSourceJavaFolders",
@@ -326,6 +332,7 @@ trait BuildTestSources extends BuildAnySources {
 
   @Description( """
   Scala source root folders to be included in compilation scope=test.
+  Normally uses <code>src/test/scala</code>.
   """ )
   @Parameter(
     property     = "scalor.buildTestSourceScalaFolders",
@@ -363,6 +370,7 @@ trait BuildTestTarget extends BuildAnyTarget {
 
   @Description( """
   Build target folder with result classes of compilation scope=test.
+  Normally uses <code>target/test-classes</code>.
   """ )
   @Parameter(
     property     = "scalor.buildTestTargetFolder",

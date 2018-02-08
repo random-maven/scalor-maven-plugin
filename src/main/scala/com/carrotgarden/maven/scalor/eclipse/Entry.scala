@@ -24,18 +24,19 @@ import org.eclipse.m2e.core.project.configurator.AbstractProjectConfigurator
 import org.eclipse.jdt.core.IClasspathAttribute
 import com.carrotgarden.maven.scalor.base.Build.Param
 import org.scalaide.core.SdtConstants
-import com.carrotgarden.maven.scalor.base.ParamsProjectUnit
 import java.nio.file.Files
 import java.nio.file.Paths
 import org.eclipse.m2e.core.project.IMavenProjectFacade
 import com.carrotgarden.maven.scalor.util.Logging
+
+import util.Option.convert._
 
 /**
  * Manage eclipse .classpath file class path entries.
  */
 trait Entry {
 
-  self : Logging with Monitor with Maven with Base.Conf =>
+  self : Monitor with Maven with Base.Conf =>
 
   /**
    * Provide container class path entry instance.
@@ -48,19 +49,19 @@ trait Entry {
    * Generate .classpath source[path] -> target[output] entry.
    */
   def configurePathEntry(
-    request :      ProjectConfigurationRequest,
-    classpath :    IClasspathDescriptor,
+    context :      Config.SetupContext,
     sourceFolder : String, // absolute
     targetFolder : String, // absolute
     monitor :      IProgressMonitor,
-    attribMap :    Map[ String, String ]       = Map(),
-    generated :    Boolean                     = false
+    attribMap :    Map[ String, String ] = Map(),
+    generated :    Boolean               = false
   ) = {
+    import context._
     import util.Folder._
     val project = request.getProject
     val sourcePath = projectFolder( project, sourceFolder ).getFullPath
     val targetPath = projectFolder( project, targetFolder ).getFullPath
-    log.info( s"   ${sourcePath} -> ${targetPath}" )
+    logger.info( s"   ${sourcePath} -> ${targetPath}" )
     val entry = classpath.addSourceEntry( sourcePath, targetPath, generated )
     attribMap.foreach {
       case ( key, value ) => entry.setClasspathAttribute( key, value )
@@ -71,13 +72,13 @@ trait Entry {
   Path convention: resolve as absolute.
   """ )
   def ensureSourceRoots(
-    request :    ProjectConfigurationRequest,
-    classpath :  IClasspathDescriptor,
+    context :    Config.SetupContext,
     sourceList : Seq[ String ],
     target :     String,
     attribMap :  Map[ String, String ],
     monitor :    IProgressMonitor
   ) : Unit = {
+    import context._
     import util.Folder
     @Description( """
     Project source/target folders are project-contained.
@@ -86,23 +87,22 @@ trait Entry {
     val targetFolder = basedir.absolute( Paths.get( target ) ).toString
     sourceList.foreach { source =>
       val sourceFolder = basedir.absolute( Paths.get( source ) ).toString
-      configurePathEntry( request, classpath, sourceFolder, targetFolder, monitor, attribMap )
+      configurePathEntry( context, sourceFolder, targetFolder, monitor, attribMap )
     }
   }
 
   def ensureSourceRoots(
-    request :   ProjectConfigurationRequest,
-    classpath : IClasspathDescriptor,
+    context :   Config.SetupContext,
     build :     base.Build,
     attribMap : Map[ String, String ],
     monitor :   IProgressMonitor
   ) : Unit = {
     import build._
     val resourceList = buildResourceFolders.map( _.getDirectory )
-    val sourceList = buildSourceFolders.map( _.getAbsolutePath )
-    val target = buildTargetFolder.getAbsolutePath
-    ensureSourceRoots( request, classpath, resourceList, target, attribMap, monitor )
-    ensureSourceRoots( request, classpath, sourceList, target, attribMap, monitor )
+    val sourceList = buildSourceFolders.map( _.getCanonicalPath )
+    val target = buildTargetFolder.getCanonicalPath
+    ensureSourceRoots( context, resourceList, target, attribMap, monitor )
+    ensureSourceRoots( context, sourceList, target, attribMap, monitor )
   }
 
   /**
@@ -111,11 +111,10 @@ trait Entry {
    * Note: register-* goals must be executed before this.
    */
   def ensureSourceRoots(
-    request :   ProjectConfigurationRequest,
-    config :    ParamsConfig,
-    classpath : IClasspathDescriptor,
-    monitor :   IProgressMonitor
+    context : Config.SetupContext,
+    monitor : IProgressMonitor
   ) : Unit = {
+    import context._
     import Param._
     val attribAny = Map(
       attrib.optional -> "true"
@@ -124,28 +123,28 @@ trait Entry {
     val attribMacro = attribAny + ( attrib.scope -> scope.`macro` )
     val attribMain = attribAny + ( attrib.scope -> scope.`main` )
     val attribTest = attribAny + ( attrib.scope -> scope.`test` )
-    ensureSourceRoots( request, classpath, config.buildMacro, attribMacro, monitor )
-    ensureSourceRoots( request, classpath, config.buildMain, attribMain, monitor )
-    ensureSourceRoots( request, classpath, config.buildTest, attribTest, monitor )
+    ensureSourceRoots( context, config.buildMacro, attribMacro, monitor )
+    ensureSourceRoots( context, config.buildMain, attribMain, monitor )
+    ensureSourceRoots( context, config.buildTest, attribTest, monitor )
   }
 
   /**
    * Re-create class path entry for given container id.
    */
   def ensureContainer(
-    request :     ProjectConfigurationRequest,
-    classpath :   IClasspathDescriptor,
+    context :     Config.SetupContext,
     hasRemove :   Boolean,
     containerId : String,
     monitor :     IProgressMonitor
   ) = {
+    import context._
     val entry = containerEntry( containerId )
     val path = entry.getPath
     if ( hasRemove ) {
-      log.info( s"Deleting container ${containerId}." )
+      logger.info( s"Deleting container ${containerId}." )
       classpath.removeEntry( path )
     } else {
-      log.info( s"Creating container ${containerId}." )
+      logger.info( s"Creating container ${containerId}." )
       classpath.removeEntry( path )
       classpath.addEntry( entry )
     }
@@ -155,23 +154,24 @@ trait Entry {
    * Log class path entries.
    */
   def reportClassPath(
-    facade :    IMavenProjectFacade,
-    config :    ParamsConfig,
-    classpath : IClasspathDescriptor,
+    context :   Config.SetupContext,
     useOutput : Boolean,
     monitor :   IProgressMonitor
   ) : Unit = {
+    import context._
     import config._
     if ( eclipseLogClasspathOrder ) {
+      val report = new StringBuffer()
       classpath.getEntryDescriptors.asScala.foreach { entry =>
         if ( useOutput ) {
           val output = Option( entry.getOutputLocation )
             .map( path => s" -> ${path}" ).getOrElse( "" )
-          log.info( s"   ${entry.getPath}${output}" )
+          report.append( s"   ${entry.getPath}${output}\n" )
         } else {
-          log.info( s"   ${entry.getPath}" )
+          report.append( s"   ${entry.getPath}\n" )
         }
       }
+      logger.info( s"\n${report}" )
     }
   }
 
@@ -179,15 +179,13 @@ trait Entry {
    * Create/Delete Scala IDE scala-library container.
    */
   def ensureScalaLibrary(
-    request :   ProjectConfigurationRequest,
-    config :    ParamsConfig,
-    classpath : IClasspathDescriptor,
-    monitor :   IProgressMonitor
+    context : Config.SetupContext,
+    monitor : IProgressMonitor
   ) = {
+    import context._
     import config._
     ensureContainer(
-      request,
-      classpath,
+      context,
       hasRemove   = eclipseRemoveLibraryContainer,
       containerId = SdtConstants.ScalaLibContId,
       monitor

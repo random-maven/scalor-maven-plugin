@@ -21,9 +21,9 @@ import scala.language.implicitConversions
  */
 case class Folder( root : Path ) {
 
-  require( root.isAbsolute(), "Expecting absolute base." )
+  require( root.isAbsolute, "Expecting absolute base." )
 
-  lazy val base = root.toAbsolutePath().normalize()
+  lazy val base = root.toAbsolutePath.normalize
 
   /**
    * Match absolute normalized path.
@@ -41,14 +41,14 @@ case class Folder( root : Path ) {
    * Absolute normalized path.
    */
   def absolute( path : Path ) : Path =
-    if ( path.isAbsolute() ) path.normalize()
-    else base.resolve( path ).toAbsolutePath().normalize()
+    if ( path.isAbsolute ) path.normalize
+    else base.resolve( path ).toAbsolutePath.normalize
 
   /**
    * Relative normalized path.
    */
   def relative( path : Path ) : Path =
-    base.relativize( path ).normalize()
+    base.relativize( path ).normalize
 
 }
 
@@ -65,7 +65,7 @@ object Folder {
     if ( path.isAbsolute() ) {
       path.normalize().toString()
     } else {
-      base.resolve( path ).toAbsolutePath().normalize().toString()
+      base.resolve( path ).toAbsolutePath.normalize.toString
     }
   }
 
@@ -80,17 +80,17 @@ object Folder {
    * Enforce path resolution.
    * Absolute path does not resolve symbolic links.
    */
-  def ensureAbsoluteFile( file : File ) : File = {
-    file.getAbsoluteFile
-  }
+//  def ensureAbsoluteFile( file : File ) : File = {
+//    file.getCanonicalFile
+//  }
 
   /**
    * Enforce path resolution.
    * Absolute path does not resolve symbolic links.
    */
-  def ensureAbsolutePath( file : File ) : String = {
-    file.getAbsolutePath
-  }
+//  def ensureAbsolutePath( file : File ) : String = {
+//    file.getCanonicalPath
+//  }
 
   /**
    * Enforce path resolution.
@@ -142,7 +142,7 @@ object Folder {
     var limit = list.length
     while ( index < limit ) {
       val file = list( index ); index += 1
-      if ( file.isFile() && regex.matcher( ensureAbsolutePath( file ) ).matches() ) {
+      if ( file.isFile() && regex.matcher( file.getCanonicalPath ).matches() ) {
         fileList.add( file )
       } else if ( file.isDirectory() ) {
         fileCollectByRegex( file, regex, fileList )

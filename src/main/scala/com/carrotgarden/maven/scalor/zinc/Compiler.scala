@@ -115,7 +115,7 @@ trait Compiler {
       val param = meta.Macro.nameOf( zincLogActiveLevel )
       val value = zincLogActiveLevel
       val default = Level.Debug
-      log.fail( s"Invalid ${param}=${value}, using ${default}" )
+      logger.fail( s"Invalid ${param}=${value}, using ${default}" )
       default
     }
   }
@@ -132,7 +132,7 @@ trait Compiler {
       case _ =>
         val param = meta.Macro.nameOf( zincStateStoreType )
         val value = zincStateStoreType
-        log.fail( s"Unknown store type ${param}=${value}, using 'binary'." )
+        logger.fail( s"Unknown store type ${param}=${value}, using 'binary'." )
         FileAnalysisStore.binary( cacheFile )
     }
   }
@@ -144,20 +144,21 @@ trait Compiler {
 
     // Assemble required build context.
     val buildSources : Array[ File ] =
-      zincBuildSources.map( ensureCanonicalFile( _ ) )
+      zincBuildSources.map( _.getCanonicalFile )
     val buildClassPath : Array[ File ] =
-      zincBuildClassPath.map( ensureCanonicalFile( _ ) )
+      zincBuildClassPath.map( _.getCanonicalFile )
     val buildCacheFile : File =
-      ensureCanonicalFile( zincBuildCache )
+      zincBuildCache.getCanonicalFile
     val buildOutputFolder : File =
-      ensureCanonicalFile( zincBuildTarget )
+      zincBuildTarget.getCanonicalFile
 
     // Ensure output locations.
     ensureParent( buildCacheFile )
     ensureFolder( buildOutputFolder )
 
     // Provide compiler installation.
-    val compilerInstall = resolveCustomInstall()
+    val compilerInstall =
+      resolveCustomInstall()
     val compilerClassPath : Array[ File ] =
       compilerInstall.zincJars.map( Module.fileFrom( _ ) ).toArray
     val compilerPluginList : Array[ File ] =
@@ -176,28 +177,23 @@ trait Compiler {
 
     // Provide user reporting.
     if ( zincLogSourcesList ) {
-      log.info( "Sources list:" )
-      reportFileList( buildSources )
+      loggerReportFileList( "Sources list:", buildSources )
     }
     if ( zincLogProjectClassPath ) {
-      log.info( "Build class path:" )
-      reportFileList( buildClassPath )
+      loggerReportFileList( "Build class path:", buildClassPath )
     }
     if ( zincLogCompilerClassPath ) {
-      log.info( "Compiler class path:" )
-      reportFileList( compilerClassPath )
+      loggerReportFileList( "Compiler class path:", compilerClassPath )
     }
     if ( zincLogCompilerPluginList ) {
-      log.info( "Compiler plugin list:" )
-      reportFileList( compilerPluginList )
+      loggerReportFileList( "Compiler plugin list:", compilerPluginList )
     }
     if ( zincLogCompileOptions ) {
-      log.info( "Compiler options report:" )
       val reportFile = zincCompileOptionsReport
       val reportText = optionsConfig.reportFun()
       ensureParent( reportFile )
       persistString( reportFile, reportText )
-      log.info( s"   ${reportFile}" )
+      logger.info( s"Compiler options report: ${reportFile}" )
     }
 
     // Verify dependency version consistency.
@@ -229,13 +225,13 @@ trait Compiler {
     )
 
     // Compilation status logger.
-    val logger = Logging.Logger( log, zincLoggerLevel )
+    val cologger = Logging.Logger( logger, zincLoggerLevel )
 
     // Compilation problem reporter.
-    val reporter = Logging.Reporter( maxErrors, logger )
+    val reporter = Logging.Reporter( maxErrors, cologger )
 
     // Compilation progress printer.
-    val progress = Logging.Progress( log, zincLogProgressUnit, zincLogProgressRate )
+    val progress = Logging.Progress( logger, zincLogProgressUnit, zincLogProgressRate )
 
   }
 
@@ -309,10 +305,10 @@ trait Compiler {
       }
     }
 
-    log.info( s"Invoking Zinc compiler: ${scalaInstance.version}" )
+    logger.info( s"Invoking Zinc compiler: ${scalaInstance.version}" )
 
     // Run compiler invocation.
-    val resultNext = incremental.compile( inputsNext, logger )
+    val resultNext = incremental.compile( inputsNext, cologger )
 
     // Persist next state.
     val contentNext = AnalysisContents.create( resultNext.analysis, resultNext.setup )
@@ -325,15 +321,15 @@ trait Compiler {
   def zincPerformDocument( outputDirectory : File, options : Seq[ String ] ) : Unit = {
     val context = Context(); import context._
 
-    log.info( s"Invoking Zinc compiler: ${scalaInstance.version}" )
-    
+    logger.info( s"Invoking Zinc compiler: ${scalaInstance.version}" )
+
     // Generate scaladoc.
     scalaCompiler.doc(
       sources         = buildSources,
       classpath       = buildClassPath,
       outputDirectory = outputDirectory,
       options         = options,
-      log             = logger,
+      log             = cologger,
       reporter        = reporter
     )
   }
@@ -347,7 +343,7 @@ object Compiler {
   /**
    * Scala compiler argument: plugin stanza: activate plugin by jar path.
    */
-  def pluginStanza( file : File ) = Array[ String ]( "-Xplugin", ensureCanonicalPath( file ) )
+  def pluginStanza( file : File ) = Array[ String ]( "-Xplugin", file.getCanonicalPath )
 
   /**
    * Convert into Zinc scala compiler installation format.

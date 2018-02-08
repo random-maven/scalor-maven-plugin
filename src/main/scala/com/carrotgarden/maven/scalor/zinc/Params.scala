@@ -140,18 +140,18 @@ trait ParamsCompileOptions extends AnyRef
   @Parameter(
     property     = "scalor.zincCompileOptions",
     defaultValue = """
-    -feature ; -unchecked ; -deprecation ;  
-    -encoding ; ${project.build.sourceEncoding} ;
-    -target:jvm-${maven.compiler.target} ;
-    -Xmaxerrs ; 10 ; 
-    -compileorder:Mixed ;
-    -useScopesCompiler ;
+    -feature ★ -unchecked ★ -deprecation ★  
+    -encoding ★ ${project.build.sourceEncoding} ★
+    -target:jvm-${maven.compiler.target} ★
+    -Xmaxerrs ★ 10 ★ 
+    -compileorder:Mixed ★
+    -useScopesCompiler ★
     """
   )
   var zincCompileOptions : String = _
 
   def parseCompileOptions : Array[ String ] = {
-    parseCommonList( zincCompileOptions, commonSequenceSeparator )
+    parseCommonList( zincCompileOptions )
   }
 
 }

@@ -41,6 +41,8 @@ import com.carrotgarden.maven.scalor.eclipse.JobHelpers.IJobMatcher
 import org.scalaide.core.internal.ScalaPlugin
 import org.eclipse.core.resources.IProject
 
+import util.Option.convert._
+
 /**
  * Provide Scala IDE settings for a project.
  *
@@ -48,7 +50,7 @@ import org.eclipse.core.resources.IProject
  */
 trait ScalaIDE {
 
-  self : Logging with Maven with Props with Monitor =>
+  self : Maven with Props with Monitor =>
 
   import ScalaIDE._
   import com.carrotgarden.maven.scalor.zinc.Module
@@ -74,7 +76,6 @@ trait ScalaIDE {
    * Build artifact module type detector from maven plugin parameters.
    */
   def moduleDetector(
-    request : ProjectConfigurationRequest,
     config :  ParamsConfig,
     monitor : IProgressMonitor
   ) : Module.Detector = {
@@ -92,16 +93,16 @@ trait ScalaIDE {
    * Report all available custom Scala installations persisted by Scala IDE.
    */
   def reportCustomInstall(
-    request : ProjectConfigurationRequest,
-    config :  ParamsConfig,
+    context : Config.SetupContext,
     monitor : IProgressMonitor
   ) : Unit = {
+    import context._
     import config._
     if ( eclipseLogInstallReport ) {
       import util.Folder._
-      log.info( s"Producing custom Scala installation report." )
-      val reportFile = ensureCanonicalFile( eclipseInstallReportFile )
-      log.info( s"   ${reportFile}" )
+      logger.info( s"Producing custom Scala installation report." )
+      val reportFile = eclipseInstallReportFile.getCanonicalFile
+      logger.info( s"   ${reportFile}" )
       ensureParent( reportFile )
       val reportText = ScalaInstallation.customInstallations.map( report( _ ) ).mkString
       persistString( reportFile, reportText )
@@ -112,15 +113,15 @@ trait ScalaIDE {
    * Build custom Scala compiler installation from Scalor plugin definitions.
    */
   def resolveCustomInstall(
-    request : ProjectConfigurationRequest,
-    config :  ParamsConfig,
+    context : Config.SetupContext,
     monitor : IProgressMonitor
   ) : ScalaInstall = {
     import Maven._
     import com.carrotgarden.maven.scalor.base.Params._
+    import context._
     import config._
-    log.info( s"Resolving custom Scala installation." )
-    val detector = moduleDetector( request, config, monitor )
+    logger.info( s"Resolving custom Scala installation." )
+    val detector = moduleDetector( config, monitor )
     val facade = request.getMavenProjectFacade
     val defineRequest = base.Params.DefineRequest(
       convert( defineBridge ), convert( defineCompiler ), convert( definePluginList )
@@ -129,7 +130,7 @@ trait ScalaIDE {
     val install = ScalaInstall( zincScalaInstallTitle, detector, defineResponse ).withTitleDigest
     if ( eclipseLogInstallResolve ) {
       val scalaInstallation = installFrom( facade, install )
-      log.info( "Custom Scala installation report:\n" + report( scalaInstallation ) )
+      logger.info( "Custom Scala installation report:\n" + report( scalaInstallation ) )
     }
     install
   }
@@ -138,24 +139,23 @@ trait ScalaIDE {
    * Ensure plugin custom Scala installation is persisted to disk by Scala IDE.
    */
   def persistCustomInstall(
-    request : ProjectConfigurationRequest,
-    config :  ParamsConfig,
-    project : ScalaProject,
+    context : Config.SetupContext,
     install : ScalaInstall,
     monitor : IProgressMonitor
   ) : Unit = {
+    import context._
     import config._
     import org.scalaide.core.internal.project.ScalaInstallation._
-    log.info( "Persisting custom Scala installation." )
+    logger.info( "Persisting custom Scala installation." )
     val scalaInstallation = installFrom( request.getMavenProjectFacade, install )
     val current = customInstallations.find( _.label == scalaInstallation.label )
     if ( current.isDefined ) {
       if ( eclipseLogPersistInstall ) {
-        log.info( "   custom installation is already present: " + report( current.get.label ) )
+        logger.info( "   custom installation is already present: " + report( current.get.label ) )
       }
     } else {
       if ( eclipseLogPersistInstall ) {
-        log.info( "   registering custom Scala installation: " + report( scalaInstallation.label ) )
+        logger.info( "   registering custom Scala installation: " + report( scalaInstallation.label ) )
       }
       customInstallations += scalaInstallation
       installationsTracker.saveInstallationsState( availableInstallations )
@@ -166,13 +166,12 @@ trait ScalaIDE {
    * Convert compiler settings from Maven plugin format to Scala compiler format.
    */
   def provideConfiguredSettings(
-    request : ProjectConfigurationRequest,
-    config :  ParamsConfig,
-    project : ScalaProject,
+    context : Config.SetupContext,
     install : ScalaInstall,
     monitor : IProgressMonitor
   ) : nsc.Settings = {
-    log.info( s"Providing configured settings." )
+    import context._
+    logger.info( s"Providing configured settings." )
     import com.carrotgarden.maven.scalor.zinc.Compiler._
     import config._
     val zincArgs =
@@ -180,7 +179,8 @@ trait ScalaIDE {
     val pluginArgs = install.pluginDefineList
       .flatMap( module => pluginStanza( module.binaryArtifact.getFile ).toList )
     val argsList = zincArgs ++ pluginArgs
-    val settings = Settings( log.fail )
+    val project = pluginProject( request.getProject )
+    val settings = Settings( logger.fail )
     settings.makeBuildMangerSettings()
     settings.makeCompilationScopeSettings( project )
     settings.makeScalorPluginSettings( install.title )
@@ -192,21 +192,21 @@ trait ScalaIDE {
    * Change project compiler selection to the custom Scala installation.
    */
   def persistCompilerSelection(
-    request : ProjectConfigurationRequest,
-    config :  ParamsConfig,
-    project : ScalaProject,
+    context : Config.SetupContext,
     install : ScalaInstall,
     monitor : IProgressMonitor
   ) = {
+    import context._
     import config._
-    log.info( s"Persisting compiler selection." )
-    val scalaInstallation = installFrom( request.getMavenProjectFacade, install )
+    logger.info( s"Persisting compiler selection." )
+    val project = pluginProject( request.getProject )
+    val scalaInstallation = installFrom( facade, install )
     val installationChoice = ScalaInstallationChoice( scalaInstallation )
     val store = project.projectSpecificStorage
     store.setValue( SCALA_DESIRED_INSTALLATION, installationChoice.toString )
     project.setDesiredInstallation( installationChoice, "Persisting compiler selection" )
     if ( eclipseLogPersistCompiler ) {
-      log.info( s"   ${report( scalaInstallation.label )}" )
+      logger.info( s"   ${report( scalaInstallation.label )}" )
     }
   }
 
@@ -215,15 +215,15 @@ trait ScalaIDE {
    * Use this feature to remove manual user provided Eclipse UI configuration settings.
    */
   def resetSettingsStorage(
-    request :  ProjectConfigurationRequest,
-    config :   ParamsConfig,
+    context :  Config.SetupContext,
     store :    IPersistentPreferenceStore,
     settings : nsc.Settings,
     monitor :  IProgressMonitor
   ) = {
+    import context._
     import config._
     if ( eclipseResetPreferences ) {
-      log.info( s"Resetting preferences to default." )
+      logger.info( s"Resetting preferences to default." )
       for {
         basic <- settings.visibleSettings.toList.sortBy( _.name )
         entry = basic.asInstanceOf[ nsc.Settings#Setting ]
@@ -238,14 +238,14 @@ trait ScalaIDE {
    * Update project persisted settings from configured Scala compiler settings.
    */
   def persistConfiguredSettings(
-    request :  ProjectConfigurationRequest,
-    config :   ParamsConfig,
+    context :  Config.SetupContext,
     store :    IPersistentPreferenceStore,
     settings : nsc.Settings,
     monitor :  IProgressMonitor
   ) = {
+    import context._
     import config._
-    log.info( s"Persisting configured settings." )
+    logger.info( s"Persisting configured settings." )
     val skipList = List(
       "d" // destination folder, injected by default
     )
@@ -260,7 +260,7 @@ trait ScalaIDE {
         case plain                                   => plain.value.toString
       }
       if ( eclipseLogPersistSettings ) {
-        log.info( s"   ${key}=${value}" )
+        logger.info( s"   ${key}=${value}" )
       }
       store.setValue( key, value )
     }
@@ -286,15 +286,15 @@ trait ScalaIDE {
    * Remove Scala Library container from project class path.
    */
   def removeScalaLibraryContainer(
-    request : ProjectConfigurationRequest,
-    config :  ParamsConfig,
-    project : ScalaProject,
+    context : Config.SetupContext,
     install : ScalaInstall,
     monitor : IProgressMonitor
   ) = {
+    import context._
     import config._
     if ( eclipseRemoveLibraryContainer ) {
-      log.info( "Removing Scala Library container." )
+      logger.info( "Removing Scala Library container." )
+      val project = pluginProject( request.getProject )
       val javaProject = project.javaProject
       val containerPath = new Path( SdtConstants.ScalaLibContId )
       val source = javaProject.getRawClasspath.toList
@@ -307,15 +307,15 @@ trait ScalaIDE {
    * Rename Scala Library container in Eclipse UI.
    */
   def renameScalaLibraryContainer(
-    request : ProjectConfigurationRequest,
-    config :  ParamsConfig,
-    project : ScalaProject,
+    context : Config.SetupContext,
     install : ScalaInstall,
     monitor : IProgressMonitor
   ) : Unit = {
+    import context._
     import config._
     if ( !eclipseRemoveLibraryContainer && eclipseRenameLibraryContainer ) {
-      log.info( "Renaming Scala Library container." )
+      logger.info( "Renaming Scala Library container." )
+      val project = pluginProject( request.getProject )
       val description = s"Scala Library @ ${install.title}"
       val javaProject = project.javaProject
       val containerPath = new Path( SdtConstants.ScalaLibContId )
@@ -336,20 +336,20 @@ trait ScalaIDE {
    * Update Scala IDE Scala compiler settings for the current project.
    */
   def updateProjectScalaIDE(
-    request : ProjectConfigurationRequest,
-    config :  ParamsConfig,
-    project : ScalaProject,
+    context : Config.SetupContext,
     install : ScalaInstall,
     monitor : IProgressMonitor
   ) : Unit = {
-    log.info( s"Updating project Scala settings." )
+    import context._
+    logger.info( s"Updating project Scala settings." )
     val subMon = monitor.toSub
-    val settings = provideConfiguredSettings( request, config, project, install, subMon.split( 20 ) )
+    val settings = provideConfiguredSettings( context, install, subMon.split( 20 ) )
+    val project = pluginProject( request.getProject )
     val store = project.projectSpecificStorage
-    resetSettingsStorage( request, config, store, settings, subMon.split( 20 ) )
+    resetSettingsStorage( context, store, settings, subMon.split( 20 ) )
     store.setValue( USE_PROJECT_SETTINGS_PREFERENCE, true )
-    persistCompilerSelection( request, config, project, install, subMon.split( 20 ) )
-    persistConfiguredSettings( request, config, store, settings, subMon.split( 20 ) )
+    persistCompilerSelection( context, install, subMon.split( 20 ) )
+    persistConfiguredSettings( context, store, settings, subMon.split( 20 ) )
     store.save()
     // TODO
     // persistSettingsComment( request, config, store )
@@ -366,22 +366,21 @@ trait ScalaIDE {
    * ${project.basedir}/.settings/org.scala-ide.sdt.core.prefs
    */
   def configureScalaIDE(
-    request : ProjectConfigurationRequest,
-    config :  ParamsConfig,
+    context : Config.SetupContext,
     monitor : IProgressMonitor
   ) : Unit = {
+    import context._
     import config._
-    log.info( s"Configuring Scala IDE." )
+    logger.info( s"Configuring Scala IDE." )
     val subMon = monitor.toSub
-    reportCustomInstall( request, config, subMon.split( 20 ) )
+    reportCustomInstall( context, subMon.split( 20 ) )
+    val install = resolveCustomInstall( context, subMon.split( 20 ) )
     val project = pluginProject( request.getProject )
-    val install = resolveCustomInstall( request, config, subMon.split( 20 ) )
     val name = "Scalor: update project settings for Scala IDE" // Keep name, used in test.
     val scalaJob = scheduleScalaJob( project, name ) {
-      log.context( "step#3" )
-      log.info( s"Configuring Scala IDE (scheduled job)." )
-      persistCustomInstall( request, config, project, install, subMon.split( 20 ) )
-      updateProjectScalaIDE( request, config, project, install, subMon.split( 20 ) )
+      logger.info( s"Configuring Scala IDE (scheduled job)." )
+      persistCustomInstall( context, install, subMon.split( 20 ) )
+      updateProjectScalaIDE( context, install, subMon.split( 20 ) )
       //      removeScalaLibraryContainer( request, config, project, install, subMon.split( 20 ) )
       //      renameScalaLibraryContainer( request, config, project, install, subMon.split( 20 ) )
     }
@@ -416,7 +415,7 @@ object ScalaIDE {
    */
   def pathFrom( artifact : Artifact ) = {
     import util.Folder._
-    new Path( ensureCanonicalPath( artifact.getFile ) )
+    new Path( artifact.getFile.getCanonicalPath )
   }
 
   /**
@@ -432,7 +431,10 @@ object ScalaIDE {
   /**
    * Convert installation from this plugin format to Scala IDE format.
    */
-  def installFrom( facade : IMavenProjectFacade, install : ScalaInstall ) = {
+  def installFrom(
+    facade :  IMavenProjectFacade,
+    install : ScalaInstall
+  ) = {
     import com.carrotgarden.maven.scalor.util.Error._
     new LabeledScalaInstallation {
       override val label = CustomScalaInstallationLabel( install.title )
@@ -446,7 +448,9 @@ object ScalaIDE {
 
   }
 
-  def report( module : ScalaModule ) = {
+  def report(
+    module : ScalaModule
+  ) = {
     import util.Folder._
     import module._
     val text = new StringBuffer
@@ -457,7 +461,7 @@ object ScalaIDE {
       text.append( ": " )
       path match {
         case Some( path ) =>
-          text.append( ensureCanonicalPath( path.toFile ) )
+          text.append( path.toFile.getCanonicalFile )
         case None =>
           text.append( "<missing>" )
       }
@@ -468,7 +472,9 @@ object ScalaIDE {
     text.toString
   }
 
-  def report( install : LabeledScalaInstallation ) : String = {
+  def report(
+    install : LabeledScalaInstallation
+  ) : String = {
     import install._
     val text = new StringBuffer
     def spacer = text.append( "   " )
@@ -505,7 +511,9 @@ object ScalaIDE {
     text.toString
   }
 
-  def report( label : ScalaInstallationLabel ) = label match {
+  def report(
+    label : ScalaInstallationLabel
+  ) = label match {
     case CustomScalaInstallationLabel( title ) => title
     case _                                     => label.toString
   }

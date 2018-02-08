@@ -57,14 +57,16 @@ import org.scalaide.core.compiler.InteractiveCompilationUnit
 import org.scalaide.core.internal.compiler.ScalaPresentationCompiler
 import scala.collection.mutable
 import com.carrotgarden.maven.scalor.util.Logging.AnyLog
-import com.carrotgarden.maven.scalor.util.Logging.SwitchLogger
+import com.carrotgarden.maven.scalor.util.Logging.ContextLogger
+
+import util.Option.convert._
 
 /**
  * Various workarounds.
  */
 trait Hack {
 
-  self : Logging with Monitor =>
+  self : Monitor =>
 
   import Hack._
 
@@ -75,13 +77,13 @@ trait Hack {
    */
   // http://help.eclipse.org/oxygen/index.jsp?topic=/org.eclipse.platform.doc.isv/guide/resInt_linked.htm
   def hackSymbolicLinks(
-    request : ProjectConfigurationRequest,
-    config :  ParamsConfig,
+    context :  Config.SetupContext,
     monitor : IProgressMonitor
   ) : Unit = {
+    import context._
     import config._
     if ( eclipseHackSymbolicLinks ) {
-      log.info( "Hacking .project symbolic links." )
+      logger.info( "Hacking .project symbolic links." )
       val project = request.getProject
       val workspace = project.getWorkspace
       val projectRoot = project.getLocation
@@ -98,38 +100,16 @@ trait Hack {
         val canLink = result.getSeverity != IStatus.ERROR
         val origin = source.getFullPath
         if ( source.isLinked ) {
-          log.info( s"   already linked: ${origin} -> ${target}" )
+          logger.info( s"   already linked: ${origin} -> ${target}" )
         } else if ( canLink ) {
-          log.info( s"   creating link : ${origin} -> ${target}" )
+          logger.info( s"   creating link : ${origin} -> ${target}" )
           val update = IResource.FORCE | IResource.REPLACE
           source.createLink( target, update, monitor )
         } else {
-          log.fail( s"   unable to link: ${origin} -> ${target} : ${result}" )
+          logger.fail( s"   unable to link: ${origin} -> ${target} : ${result}" )
         }
       }
       withFolderStream( projectFolder, SymlinkFilter(), processLink )
-    }
-  }
-
-  /**
-   * Work around spurious crashes of Scala IDE presentation compiler.
-   * Specifically, periodically analyze managed Scala IDE project,
-   * detect crashed presentation compiler instance, and issue restart.
-   */
-  def hackPresentationCompiler(
-    request : ProjectConfigurationRequest,
-    config :  ParamsConfig,
-    monitor : IProgressMonitor
-  ) : Unit = {
-    import config._
-    // always cancel
-    Tasker.stopTask( eclipsePresentationCompilerTaskName )
-    // optionally reschedule
-    if ( eclipseHackPresentationCompiler ) {
-      log.info( "Hacking presentation compiler." )
-      val context = PrescompContext( request, config )
-      val manager = PrescompManager( context, log )
-      manager.init()
     }
   }
 
@@ -154,101 +134,6 @@ object Hack {
     while ( iter.hasNext ) {
       process( iter.next )
     }
-  }
-
-  case class PrescompContext(
-    name :         String,
-    project :      IScalaProject,
-    periodInvoke : Long,
-    hasLogUnits :  Boolean
-  )
-
-  object PrescompContext {
-    def apply(
-      request : ProjectConfigurationRequest,
-      config :  ParamsConfig
-    ) : PrescompContext = {
-      import config._
-      val project = ScalaIDE.pluginProject( request.getProject )
-      new PrescompContext(
-        name         = eclipsePresentationCompilerTaskName,
-        project      = project,
-        periodInvoke = eclipsePresentationCompilerPeriod,
-        hasLogUnits  = eclipseLogPresentationCompiler
-      )
-    }
-  }
-
-  case class PrescompManager(
-    context : PrescompContext,
-    logger :  AnyLog
-  ) extends Tasker.Periodic(
-    context.name,
-    logger,
-    context.periodInvoke
-  ) {
-    import context._
-
-    def hasProject = project.underlying.isOpen
-
-    override def runTask( monitor : IProgressMonitor ) : Unit = {
-      logger.context( "prescomp-manager" )
-      if ( hasProject ) {
-        val errorList = prescompErrorList( project )
-        if ( errorList.isEmpty ) {
-          // nothing to do
-        } else {
-          project.presentationCompiler.askRestart()
-          if ( hasLogUnits ) {
-            logger.info( s"units with errors: ${errorList.mkString( ", " )}" )
-          }
-        }
-      } else {
-        // manager self cancel
-        Tasker.stopTask( name )
-      }
-    }
-
-  }
-
-  object Prescomp {
-
-    val serverityError = 2
-
-  }
-
-  /**
-   * Presentation compiler compilation units with errors.
-   */
-  def prescompErrorList( project : IScalaProject ) : Set[ String ] = {
-    project.presentationCompiler.apply {
-      prescompFace : IScalaPresentationCompiler =>
-        val prescomImpl = prescompFace.asInstanceOf[ ScalaPresentationCompiler ]
-        prescompErrorList( prescomImpl )
-    }.getOrElse( Set() )
-  }
-
-  /**
-   * Presentation compiler compilation units with errors.
-   */
-  def prescompErrorList( prescomp : ScalaPresentationCompiler ) : Set[ String ] = {
-    val values = prescomp.unitOfFile.values
-    if ( values.isEmpty ) {
-      return Set()
-    }
-    val result = mutable.SortedSet[ String ]()
-    val valuesIterator = values.iterator
-    while ( valuesIterator.hasNext ) {
-      val compilationUnit = valuesIterator.next
-      val problemsIterator = compilationUnit.problems.iterator
-      while ( problemsIterator.hasNext ) {
-        val compilationProblem = problemsIterator.next
-        if ( compilationProblem.severityLevel >= Prescomp.serverityError ) {
-          result += compilationUnit.source.file.name
-        }
-      }
-    }
-    result.toSet
   }
 
 }

@@ -4,11 +4,14 @@ import org.apache.maven.plugin.MojoExecution
 import org.eclipse.core.resources.IProject
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.m2e.core.project.configurator.MojoExecutionBuildParticipant
+import com.carrotgarden.maven.scalor.util
 import com.carrotgarden.maven.scalor.util.Logging
 import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.Status
 import org.eclipse.core.runtime.IStatus
 import org.eclipse.m2e.core.project.IMavenProjectFacade
+
+import util.Option.convert._
 
 /**
  * M2E build support.
@@ -19,22 +22,20 @@ object Build {
    * Project build participant.
    */
   case class Participant(
-    log :                Logging.AnyLog,
-    context :            Config.Context,
-    execution :          MojoExecution,
-    runOnIncremental :   Boolean        = true,
-    runOnConfiguration : Boolean        = true
-  ) extends MojoExecutionBuildParticipant( execution, runOnIncremental, runOnConfiguration )
-    with Restart {
+    context : Config.BuildContext
+  ) extends MojoExecutionBuildParticipant( context.execution, true, true )
+    with Restart
+    with Prescomp {
+    import context._
 
     import Participant._
     import com.carrotgarden.maven.scalor.A.mojo._
 
     /** Current plugin goal. */
-    def goal = execution.getGoal
+    def goal = getMojoExecution.getGoal
 
     /** Current plugin project. */
-     def facade = getMavenProjectFacade
+    def facade = getMavenProjectFacade
 
     /**
      * Enablement of Maven executions for Eclispe build type.
@@ -42,50 +43,62 @@ object Build {
     override def appliesToBuildKind( kind : Int ) : Boolean = {
       try {
         goal match {
+
           // add sources to project, during configuration
           case `register-macro` if ( hasBuildConf( kind ) ) => true
           case `register-main` if ( hasBuildConf( kind ) ) => true
           case `register-test` if ( hasBuildConf( kind ) ) => true
+
           // generate runtime.js, during both full and incremental
           case `scala-js-link-main` if ( hasBuildMake( kind ) ) => true
           case `scala-js-link-test` if ( hasBuildMake( kind ) ) => true
-          // configure test application, only during full build
+
+          // manage test application, only during full build
           case `eclipse-restart` if ( hasBuildFull( kind ) ) => true
-          // ignore the rest
+
+          // manage presentation compiler, only during full build
+          case `eclipse-prescomp` if ( hasBuildFull( kind ) ) => true
+
+          // always ignore the rest
           case _ => false
         }
       } catch {
         case error : Throwable =>
-          log.fail( s"Participant check error", error )
+          logger.fail( s"Participant check error", error )
           throw error
       }
     }
 
     /**
      * Invocations of executions for build type.
+     *
+     * Each goal can execute in Eclipse or delegate to Maven.
      */
     override def build( kind : Int, monitor : IProgressMonitor ) : java.util.Set[ IProject ] = {
       import context.config._
       try {
         if ( eclipseLogBuildParticipant ) {
-          log.context( "build" )
+          // log.context( "build-participant" )
           val mode = renderMode( kind )
           val exec = appliesToBuildKind( kind )
-          log.info( s"participant=${goal} mode=${mode} exec=${exec}" )
+          logger.info( s"participant=${goal} mode=${mode} exec=${exec}" )
         }
-        // execute in Eclipse or delegate to Maven
         goal match {
-          case `eclipse-restart` =>
-            val restart = context.restart.get
-            restartEnsure( kind, monitor, log, restart, facade, execution )
+          // execute in Eclipse
+          case `eclipse-restart` if appliesToBuildKind( kind ) =>
+            restartEnsure( context, monitor )
+            null
+          // execute in Eclipse
+          case `eclipse-prescomp` if appliesToBuildKind( kind ) =>
+            prescompEnsure( context, monitor )
             null
           case _ =>
-            // delegate to Maven mojo
+            // delegate to Maven
             super.build( kind, monitor )
         }
       } catch {
         case error : Throwable =>
-          log.fail( s"Participant build error", error )
+          logger.fail( s"Participant build error", error )
           throw error
       }
     }

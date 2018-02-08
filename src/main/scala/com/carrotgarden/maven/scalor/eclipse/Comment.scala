@@ -10,12 +10,14 @@ import ParamsConfigBase._
 import org.eclipse.core.resources.IResource
 import com.carrotgarden.maven.scalor.util.Logging
 
+import util.Option.convert._
+
 /**
  * Provide eclipse .project file comment.
  */
 trait Comment {
 
-  self : Logging with Maven =>
+  self : Maven =>
 
   import Maven._
   import IResource._
@@ -23,13 +25,13 @@ trait Comment {
   /**
    */
   def ensureProjectComment(
-    request : ProjectConfigurationRequest,
-    config :  ParamsConfig,
+    context : Config.SetupContext,
     monitor : IProgressMonitor
   ) : Unit = {
+    import context._
     import config._
     if ( eclipseProjectCommentApply ) {
-      log.info( "Applying Eclipse .project comment." )
+      logger.info( "Applying Eclipse .project comment." )
       val project = request.getProject
       val description = project.getDescription
       description.setComment( eclipseProjectCommentString )

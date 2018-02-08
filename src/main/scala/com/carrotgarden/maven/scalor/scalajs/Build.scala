@@ -33,7 +33,7 @@ trait Build extends AnyRef
     if ( !buildTargetFolder.exists() ) {
       buildTargetFolder.mkdirs()
     }
-    new File( buildTargetFolder, linkerRuntimeJS ).getAbsoluteFile
+    new File( buildTargetFolder, linkerRuntimeJS ).getCanonicalFile
   }
 
 }

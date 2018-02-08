@@ -9,12 +9,17 @@
 
     <description>
     Self-contained, minimal demonstration project. 
-    Project feature showcase:
+    Project feature highlights:
     * Scala.js linker
     * Scala.macro compile
     * Scala.js compile
     * Scala.macro JUnit test
     * Scala.js JUnit test
+    * Provision Node.js test JS-VM
+    * Provision Webjars for test JS-VM
+    * Setup Eclipse plugin in M2E
+    * Manage test application restart in M2E
+    * Manage presentation compiler work-around in M2E
     </description>
 
     <properties>
@@ -32,7 +37,7 @@
         <version.scala.release>2.12.4</version.scala.release>
 
         <!-- Scala compiler. -->
-        <version.scala.zinc>1.1.0</version.scala.zinc>
+        <version.scala.zinc>1.1.1</version.scala.zinc>
         <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
 
         <!-- Scala.js tool stack. -->
@@ -187,11 +192,11 @@
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>scalor-maven-plugin_2.12</artifactId>
-                <version>1.1.2.20180205212801</version>
+                <!-- <version>1.1.2.20180205212801</version> -->
 
                 <configuration>
 
-                    <!-- Extra logging for demostration purposes. -->
+                    <!-- Extra logging for demonstration purposes. -->
                     <zincLogSourcesList>true</zincLogSourcesList>
                     <zincLogProjectClassPath>true</zincLogProjectClassPath>
                     <zincLogCompilerClassPath>true</zincLogCompilerClassPath>
@@ -200,6 +205,7 @@
                     <linkerLogOptions>true</linkerLogOptions>
                     <linkerLogClassPath>true</linkerLogClassPath>
                     <envconfLogConfig>true</envconfLogConfig>
+                    <!-- <eclipseLogBuildParticipant>true</eclipseLogBuildParticipant> -->
 
                     <!--
                         Provide compiler options for Scala.js support.
@@ -283,6 +289,9 @@
 
                             <!-- Manage test application restart. -->
                             <goal>eclipse-restart</goal>
+
+                            <!-- Manage Scala IDE presentation compiler. -->
+                            <goal>eclipse-prescomp</goal>
 
                             <!-- Add Scala sources to the project. -->
                             <goal>register-macro</goal>

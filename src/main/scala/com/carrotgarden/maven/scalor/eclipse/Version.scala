@@ -16,15 +16,15 @@ import org.scalaide.core.internal.ScalaPlugin
 import org.osgi.framework.Bundle
 import org.eclipse.m2e.core.ui.internal.M2EUIPluginActivator
 import com.carrotgarden.maven.scalor.util.Logging
+import com.carrotgarden.maven.scalor.util.Logging.AnyLog
 
 /**
  * Version verification support.
  */
 trait Version {
 
-  self : Logging =>
-
   def assertVersion(
+    logger :       AnyLog,
     config :       ParamsConfig,
     hasCheck :     Boolean,
     hasError :     Boolean,
@@ -36,21 +36,21 @@ trait Version {
   ) : Unit = {
     import config._
     if ( hasCheck ) {
-      log.info( s"Verifying ${pluginName} version." )
+      logger.info( s"Verifying ${pluginName} version." )
       val range = rangeFrom( paramValue ) match {
         case Success( range ) =>
           range
         case Failure( error ) =>
           val message = s"Invalid version range in ${paramName}=${paramValue} [${error.getMessage}]"
-          log.fail( message )
+          logger.fail( message )
           Throw( message )
       }
       val version = pluginBundle.getVersion
       if ( range.includes( version ) ) {
-        log.info( s"   version ${version} is in range ${range}" )
+        logger.info( s"   version ${version} is in range ${range}" )
       } else {
         val message = s"${pluginName} version ${version} is out of range ${range}."
-        log.fail( message )
+        logger.fail( message )
         if ( hasError ) {
           Throw( message )
         }
@@ -62,11 +62,13 @@ trait Version {
    * Verify Eclipse M2E plugin version.
    */
   def assertVersionMaven(
+    logger :  AnyLog,
     config :  ParamsConfig,
     monitor : IProgressMonitor
   ) : Unit = {
     import config._
     assertVersion(
+      logger,
       config,
       hasCheck     = eclipseMavenPluginVersionCheck,
       hasError     = eclipseMavenPluginVersionError,
@@ -82,11 +84,13 @@ trait Version {
    * Verify Scala IDE plugin version.
    */
   def assertVersionScala(
+    logger :  AnyLog,
     config :  ParamsConfig,
     monitor : IProgressMonitor
   ) : Unit = {
     import config._
     assertVersion(
+      logger,
       config,
       hasCheck     = eclipseScalaPluginVersionCheck,
       hasError     = eclipseScalaPluginVersionError,
@@ -102,11 +106,12 @@ trait Version {
    * Verify required Eclipse Platform plugins versions.
    */
   def assertVersion(
+    logger :  AnyLog,
     config :  ParamsConfig,
     monitor : IProgressMonitor
   ) : Unit = {
-    assertVersionMaven( config, monitor )
-    assertVersionScala( config, monitor )
+    assertVersionMaven( logger, config, monitor )
+    assertVersionScala( logger, config, monitor )
   }
 
   def rangeFrom( range : String ) = TryHard {

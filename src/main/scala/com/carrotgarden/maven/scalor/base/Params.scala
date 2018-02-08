@@ -8,18 +8,14 @@ import java.util.Collections
 import org.apache.maven.artifact.Artifact
 import org.apache.maven.execution.MavenSession
 import org.apache.maven.model.Dependency
+import org.apache.maven.plugin.BuildPluginManager
 import org.apache.maven.plugin.MojoExecution
 import org.apache.maven.plugins.annotations.Component
 import org.apache.maven.plugins.annotations.Parameter
 import org.apache.maven.project.MavenProject
-
-import scala.collection.JavaConverters._
-
-import com.carrotgarden.maven.tools.Description
 import org.apache.maven.toolchain.ToolchainManager
 
-import com.carrotgarden.maven.scalor.util
-import org.apache.maven.plugin.BuildPluginManager
+import com.carrotgarden.maven.tools.Description
 
 /**
  * Shared mojo execution configuration parameters.
@@ -125,7 +121,7 @@ trait ParamsProject {
    */
   // FIXME switch to aether
   def projectClassPath( bucket : Scope.Bucket = Scope.Select.Test ) : Array[ File ] = {
-    import util.Folder._
+    import com.carrotgarden.maven.scalor.util.Folder._
     val list = new ArrayList[ File ]()
     val iter = project.getArtifacts.iterator
     while ( iter.hasNext ) {
@@ -138,7 +134,7 @@ trait ParamsProject {
         if ( hasResolve && hasBucket ) {
           val file = artifact.getFile
           if ( file != null ) {
-            list.add( ensureCanonicalFile( file ) )
+            list.add( file.getCanonicalFile )
           }
         }
       }
@@ -148,7 +144,7 @@ trait ParamsProject {
 
 }
 
-case class ParamsProjectUnit( proj : MavenProject ) extends ParamsProject {
+case class ParamsProjctUnit( proj : MavenProject ) extends ParamsProject {
   project = proj
 }
 
@@ -161,43 +157,48 @@ trait ParamsAny {
   Common separator for plugin configuration list values provided in <code>pom.xml</code>.
   Separator regular expression is used as follows:
 <pre>
-  options.split( separator ).map( _.trim ).filterNot( _.isEmpty )
+  options.split( commonSequenceSeparator ).map( _.trim ).filterNot( _.isEmpty )
 </pre>
   Note: <code>&lt;![CDATA[ ... ]]&gt;</code> brackets can help preserve text entries in <code>pom.xml</code>.
+  Note: to insert unicode symbol in Eclipse/GTK, type CTRL+SHIFT+U, then XXXX - a 4-hex-digit unicode value.
+  For example, for star ★, use hex code 2605.
   """ )
   @Parameter(
     property     = "scalor.commonSequenceSeparator",
-    defaultValue = """[;\n]+"""
+    defaultValue = """[★\n]+"""
   )
   var commonSequenceSeparator : String = _
 
   @Description( """
   Common regular expression for plugin configuration map values provided in <code>pom.xml</code>.
-  Normally uses format:
+  Normally uses format: <code>key=value</code>.
+  Must define exactly two regex capture groups.
+  Mapping regular expression is used as follows:
 <pre>
-  key = value
+  case commonMappingPattern.r( key, value ) => ( key, value )
 </pre>
   Note: <code>&lt;![CDATA[ ... ]]&gt;</code> brackets can help preserve text entries in <code>pom.xml</code>.
   """ )
   @Parameter(
     property     = "scalor.commonMappingPattern",
-    defaultValue = """\s*([^\s]+)\s*=\s*([^\s]+)\s*"""
+    defaultValue = """\s*([^=\s]+)\s*=\s*([^\s]+)\s*"""
   )
   var commonMappingPattern : String = _
 
   /**
    * Produce clean options list.
    */
-  def parseCommonList( options : String, separator : String ) : Array[ String ] = {
+  def parseCommonList( options : String ) : Array[ String ] = {
+    val separator = commonSequenceSeparator
     options.split( separator ).map( _.trim ).filterNot( _.isEmpty )
   }
 
   /**
    * Produce clean options mapping.
    */
-  def parseCommonMapping( options : String, separator : String ) : Map[ String, String ] = {
+  def parseCommonMapping( options : String ) : Map[ String, String ] = {
     val regexKeyValue = commonMappingPattern.r
-    val termList = parseCommonList( options, separator )
+    val termList = parseCommonList( options )
     val entryList = termList.collect {
       case regexKeyValue( key, value ) => ( key, value )
     }
@@ -219,8 +220,6 @@ trait ParamsCompiler extends AnyRef
  * Provide required dependency definitions.
  */
 trait ParamsDefine {
-
-  import Params._
 
   @Description( """
   Provide required Scala compiler bridge dependency.

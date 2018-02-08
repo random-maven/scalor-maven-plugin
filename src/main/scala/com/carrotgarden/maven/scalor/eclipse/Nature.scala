@@ -7,14 +7,18 @@ import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
 import org.eclipse.jdt.core.JavaCore
 import org.scalaide.core.SdtConstants
 import org.eclipse.core.resources.IResource
+
+import com.carrotgarden.maven.scalor.util
 import com.carrotgarden.maven.scalor.util.Logging
+
+import util.Option.convert._
 
 /**
  * Provide eclipse .project file natures.
  */
 trait Nature {
 
-  self : Logging with Monitor =>
+  self : Monitor =>
 
   import Nature._
 
@@ -27,7 +31,6 @@ trait Nature {
     deleteList : Array[ String ],
     monitor :    IProgressMonitor
   ) : Unit = {
-    log.info( "Ensuring project natures." )
     val description = project.getDescription
     val natureList = ArrayBuffer( description.getNatureIds : _* )
     var hasChange = false
@@ -52,10 +55,11 @@ trait Nature {
    * Provide eclipse .project descriptor natures.
    */
   def ensureProjectNature(
-    request : ProjectConfigurationRequest,
-    config :  ParamsConfig,
+    context : Config.SetupContext,
     monitor : IProgressMonitor
   ) : Unit = {
+    import context._
+    logger.info( "Ensuring required .project natures." )
     val createList = Array[ String ]( javaNatureId, scalaNatureId ) // XXX
     val deleteList = Array[ String ]()
     val project = request.getProject

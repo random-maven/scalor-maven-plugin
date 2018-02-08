@@ -58,12 +58,12 @@ trait EclipseAnyMojo extends AbstractMojo
    */
   def reportHandle = wiringHandle match {
     case Success( handle ) =>
-      log.info( "Using Eclipse platform plugins:" )
-      log.info( s"   ${handle.resourcesPlugin.getBundle}" )
-      log.info( s"   ${handle.mavenPlugin.getBundle}" )
-      log.info( s"   ${handle.mavenPluginUI.getBundle}" )
+      logger.info( "Using Eclipse platform plugins:" )
+      logger.info( s"   ${handle.resourcesPlugin.getBundle}" )
+      logger.info( s"   ${handle.mavenPlugin.getBundle}" )
+      logger.info( s"   ${handle.mavenPluginUI.getBundle}" )
     case Failure( error ) =>
-      log.fail( "Required Eclipse plugin is missing: " + error )
+      logger.fail( "Required Eclipse plugin is missing: " + error )
   }
 
   /**
@@ -119,7 +119,7 @@ class EclipseConfigMojo extends EclipseAnyMojo
     reportHandle
     resolveHandle
 
-    log.info( "Configuring companion Eclipse plugin:" )
+    logger.info( "Configuring companion Eclipse plugin:" )
     val handle = resolveHandle
 
     val descriptorUrl = Plugin.Config.pluginPropertiesUrl
@@ -127,8 +127,8 @@ class EclipseConfigMojo extends EclipseAnyMojo
 
     val pluginId = descriptorProps.getProperty( Plugin.Config.key.pluginId )
     val pluginLocation = Plugin.Config.location
-    log.info( "   pluginId: " + pluginId )
-    log.info( "   location: " + pluginLocation )
+    logger.info( "   pluginId: " + pluginId )
+    logger.info( "   location: " + pluginLocation )
 
     val bundleContext = handle.bundleM2E.getBundleContext
 
@@ -143,10 +143,10 @@ class EclipseConfigMojo extends EclipseAnyMojo
         val pluginBundle = bundleContext.getBundle( pluginLocation )
         ( "Companion plugin installed in Eclipse", pluginBundle, true )
       }
-    log.info( installMessage + ": " + pluginBundle )
+    logger.info( installMessage + ": " + pluginBundle )
 
     if ( needProjectUpdate ) {
-      log.info( "Scheduling project update in Eclipse to invoke M2E project configurator." )
+      logger.info( "Scheduling project update in Eclipse to invoke M2E project configurator." )
       val projectList = handle.workspace.getRoot.getProjects
       val currentProject = projectWithBase( projectList, project.getBasedir )
 
@@ -170,7 +170,8 @@ class EclipseConfigMojo extends EclipseAnyMojo
 }
 
 @Description( """
-Manage test application restart after full or incremental build in Eclispe/M2E.
+Manage test application process restart after full or incremental build in Eclispe/M2E.
+Requires "eclipse-config".
 """ )
 @Mojo(
   name                         = `eclipse-restart`,
@@ -181,6 +182,23 @@ class EclipseRestartMojo extends EclipseAnyMojo
   with eclipse.ParamsRestartBase {
   override def mojoName = `eclipse-restart`
   override def performEclipse : Unit = {
-    log.fail( s"Design failure: must be invoked by Eclipse build participant." )
+    logger.fail( s"Design failure: must be invoked by Eclipse build participant." )
+  }
+}
+
+@Description( """
+Manage Scala IDE Scala presentation compiler work-around process in Eclispe/M2E.
+Requires "eclipse-config".
+""" )
+@Mojo(
+  name                         = `eclipse-prescomp`,
+  defaultPhase                 = LifecyclePhase.TEST,
+  requiresDependencyResolution = ResolutionScope.TEST
+)
+class EclipsePrescompMojo extends EclipseAnyMojo
+  with eclipse.ParamsPrescompBase {
+  override def mojoName = `eclipse-prescomp`
+  override def performEclipse : Unit = {
+    logger.fail( s"Design failure: must be invoked by Eclipse build participant." )
   }
 }

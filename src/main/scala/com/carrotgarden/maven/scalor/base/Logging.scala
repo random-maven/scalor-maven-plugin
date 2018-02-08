@@ -16,16 +16,17 @@ trait Logging extends util.Logging {
   self : Mojo with eclipse.Context =>
 
   // Lazy, for plexus injector.
-  override lazy val log = Logging.Log( getLog, mojoName, hasEclipseContext )
+  override lazy val log = Logging.Log( getLog, hasEclipseContext )
+
+  lazy val logger = log.branch( mojoName )
 
   /**
    * Log file list.
    */
-  def reportFileList( fileList : Array[ File ] ) = {
-    import util.Folder._
-    fileList.sorted.foreach {
-      file => log.info( "   " + ensureCanonicalFile( file ) )
-    }
+  def loggerReportFileList( title : String, fileList : Array[ File ] ) = {
+    val array = fileList.map( _.getCanonicalPath ).sorted
+    val report = util.Text.reportArray( array )
+    logger.info( s"${title}\n${report}" )
   }
 
 }
@@ -33,17 +34,21 @@ trait Logging extends util.Logging {
 object Logging {
 
   case class Log(
-    logger :   org.apache.maven.plugin.logging.Log,
-    mojoName : String,
-    hasM2E :   Boolean
+    logger : org.apache.maven.plugin.logging.Log,
+    hasM2E : Boolean
   ) extends util.Logging.AnyLog {
-    /**  Work around lack of logging source in M2E "Maven Console". */
-    override val context = if ( hasM2E ) "[" + A.maven.name + ":" + mojoName + "] " else ""
-    override def dbug( line : String ) = logger.debug( context + line )
-    override def info( line : String ) = logger.info( context + line )
-    override def warn( line : String ) = logger.warn( context + line )
-    override def fail( line : String ) = logger.error( context + line )
-    override def fail( line : String, error : Throwable ) = logger.error( context + line, error )
+    override val founder = this
+    override val context = A.maven.name
+    override def text( line : String ) = if ( hasM2E ) {
+      s"[${context}] ${line}"
+    } else {
+      line
+    }
+    override def dbug( line : String ) = logger.debug( text( line ) )
+    override def info( line : String ) = logger.info( text( line ) )
+    override def warn( line : String ) = logger.warn( text( line ) )
+    override def fail( line : String ) = logger.error( text( line ) )
+    override def fail( line : String, error : Throwable ) = logger.error( text( line ), error )
   }
 
 }

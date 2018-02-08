@@ -14,15 +14,24 @@ import org.slf4j.LoggerFactory
 import com.carrotgarden.maven.scalor.util
 import com.carrotgarden.maven.scalor.util.Logging
 import com.carrotgarden.maven.scalor.A
+import scala.collection.concurrent.TrieMap
 
 object Plugin {
 
   import Logging._
 
+  val loggerMemento = TrieMap[ String, AnyLog ]()
+
   trait Log extends AnyLog {
-    /**  Work around lack of logging source in M2E "Maven Console". */
-    override def context( value : String ) = { CTX.value = s"[${A.eclipse.name}:${value}] " }
-    context( A.mojo.`eclipse-config` )
+
+    override val founder = this
+
+    override val context = A.eclipse.name
+
+    override def branch( context : String ) : AnyLog = {
+      loggerMemento.getOrElseUpdate( context, ContextLogger( founder, context ) )
+    }
+
   }
 
   /**
@@ -63,11 +72,11 @@ object Plugin {
      */
     object slf4jLog extends Plugin.Log {
       private lazy val logger = LoggerFactory.getLogger( logId );
-      override def dbug( line : String ) = logger.debug( context() + line )
-      override def info( line : String ) = logger.info( context() + line )
-      override def warn( line : String ) = logger.warn( context() + line )
-      override def fail( line : String ) = logger.error( context() + line )
-      override def fail( line : String, error : Throwable ) = logger.error( context() + line, error )
+      override def dbug( line : String ) = logger.debug( text( line ) )
+      override def info( line : String ) = logger.info( text( line ) )
+      override def warn( line : String ) = logger.warn( text( line ) )
+      override def fail( line : String ) = logger.error( text( line ) )
+      override def fail( line : String, error : Throwable ) = logger.error( text( line ), error )
     }
 
     /**
@@ -75,11 +84,11 @@ object Plugin {
      */
     object eclipseLog extends Plugin.Log {
       import org.eclipse.core.runtime.IStatus._
-      override def dbug( line : String ) = getLog.log( new Status( OK, logId, context() + line ) )
-      override def info( line : String ) = getLog.log( new Status( INFO, logId, context() + line ) )
-      override def warn( line : String ) = getLog.log( new Status( WARNING, logId, context() + line ) )
-      override def fail( line : String ) = getLog.log( new Status( ERROR, logId, context() + line ) )
-      override def fail( line : String, error : Throwable ) = getLog.log( new Status( ERROR, logId, context() + line, error ) )
+      override def dbug( line : String ) = getLog.log( new Status( OK, logId, text( line ) ) )
+      override def info( line : String ) = getLog.log( new Status( INFO, logId, text( line ) ) )
+      override def warn( line : String ) = getLog.log( new Status( WARNING, logId, text( line ) ) )
+      override def fail( line : String ) = getLog.log( new Status( ERROR, logId, text( line ) ) )
+      override def fail( line : String, error : Throwable ) = getLog.log( new Status( ERROR, logId, text( line ), error ) )
     }
 
     /**

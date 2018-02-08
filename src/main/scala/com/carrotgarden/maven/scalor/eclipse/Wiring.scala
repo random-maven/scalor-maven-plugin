@@ -45,7 +45,7 @@ case class Wiring(
   /**
    * Connect this Maven plugin to host Eclipse plugins.
    */
-  def setup[ T ] : Handle = {
+  def setup: Handle = {
 
     /**
      * Keep order:
@@ -138,7 +138,7 @@ object Wiring {
   )
 
   /**
-   * Find eclipse project with matching base directory.
+   * Find Eclipse project with matching base directory.
    */
   def projectWithBase( projectList : Array[ IProject ], baseDir : File ) : IProject = {
     import util.Folder._

@@ -21,35 +21,28 @@ object Logging {
    */
   trait AnyLog {
 
-    /**
-     *  Thread-local logger context.
-     */
-    val CTX = new DynamicVariable[ String ]( s"[${A.maven.name}] " )
-    def context() : String = CTX.value
-    def context( value : String ) : Unit = { CTX.value = s"[${A.maven.name}:${value}] " }
+    val context : String
+    val founder : AnyLog
 
-    def dbug( line : String ) : Unit = ()
-    def info( line : String ) : Unit = ()
-    def warn( line : String ) : Unit = ()
-    def fail( line : String ) : Unit = ()
-    def fail( line : String, error : Throwable ) : Unit = ()
+    def text( line : String ) = s"[${context}] ${line}"
+
+    def dbug( line : String ) : Unit = founder.dbug( text( line ) )
+    def info( line : String ) : Unit = founder.info( text( line ) )
+    def warn( line : String ) : Unit = founder.warn( text( line ) )
+    def fail( line : String ) : Unit = founder.fail( text( line ) )
+    def fail( line : String, error : Throwable ) : Unit = founder.fail( text( line ), error )
+
+    def branch( context : String ) : AnyLog = ContextLogger( founder, context )
 
   }
 
   /**
-   * Empty logger.
+   * Logger which defines separate context.
    */
-  case object NoopLogger extends AnyLog
-
-  /**
-   * Logger which uses context switch.
-   */
-  case class SwitchLogger( log : AnyLog, name : String ) extends AnyLog {
-    override def dbug( line : String ) : Unit = { log.context( name ); log.dbug( line ) }
-    override def info( line : String ) : Unit = { log.context( name ); log.info( line ) }
-    override def warn( line : String ) : Unit = { log.context( name ); log.warn( line ) }
-    override def fail( line : String ) : Unit = { log.context( name ); log.fail( line ) }
-    override def fail( line : String, error : Throwable ) : Unit = { log.context( name ); log.fail( line, error ) }
+  case class ContextLogger(
+    override val founder : AnyLog,
+    override val context : String
+  ) extends AnyLog {
   }
 
 }

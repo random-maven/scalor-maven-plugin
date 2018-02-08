@@ -41,8 +41,8 @@ trait CleanAnyMojo extends AbstractMojo
 
   def performClean() : Unit = {
     resouceList.foreach { file =>
-      val path = ensureCanonicalFile( file )
-      log.info( s"Deleting ${path}" )
+      val path =  file.getCanonicalFile
+      logger.info( s"Deleting ${path}" )
       path.delete
     }
   }

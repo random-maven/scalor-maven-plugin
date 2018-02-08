@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="Date-Revision-yyyymmdd" content="20180208" />
     <meta http-equiv="Content-Language" content="en" />
-    <title>Scalor Maven Plugin 2.12 &#x2013; scalor:scala-js-env-prov-webjars</title>
+    <title>Scalor Maven Plugin 2.12 &#x2013; scalor:eclipse-prescomp</title>
     <link rel="stylesheet" href="./css/apache-maven-fluido-1.6.min.css" />
     <link rel="stylesheet" href="./css/site.css" />
     <link rel="stylesheet" href="./css/print.css" media="print" />
@@ -34,7 +34,7 @@
         <ul class="breadcrumb">
         <li class=""><a href="./" title="Scalor Maven Plugin">Scalor Maven Plugin</a><span class="divider">/</span></li>
       <li class=""><a href="./" title="Scalor Maven Plugin 2.12">Scalor Maven Plugin 2.12</a><span class="divider">/</span></li>
-    <li class="active ">scalor:scala-js-env-prov-webjars</li>
+    <li class="active ">scalor:eclipse-prescomp</li>
         <li id="publishDate" class="pull-right"><span class="divider">|</span> Last Published: 2018-02-08</li>
           <li id="projectVersion" class="pull-right">Version: 1.2.0.20180208154654</li>
         </ul>
@@ -60,16 +60,16 @@
 
   
     <div class="section">
-<h2><a name="scalor:scala-js-env-prov-webjars"></a>scalor:scala-js-env-prov-webjars</h2>
+<h2><a name="scalor:eclipse-prescomp"></a>scalor:eclipse-prescomp</h2>
       
 <p><b>Full name</b>:</p>
       
-<p>com.carrotgarden.maven:scalor-maven-plugin_2.12:1.2.0.20180208154654:scala-js-env-prov-webjars</p>
+<p>com.carrotgarden.maven:scalor-maven-plugin_2.12:1.2.0.20180208154654:eclipse-prescomp</p>
       
 <p><b>Description</b>:</p>
       
-<div>Provision Scala.js JavaScript VM environment for testing: install
-Webjars resources discovered from build classpath.</div>
+<div>Manage Scala IDE Scala presentation compiler work-around process in
+Eclispe/M2E. Requires &quot;eclipse-config&quot;.</div>
       
 <p><b>Attributes</b>:</p>
       
@@ -79,7 +79,7 @@ Webjars resources discovered from build classpath.</div>
         
 <li>Requires dependency resolution of artifacts in scope: <tt>test</tt>.</li>
         
-<li>Binds by default to the <a class="externalLink" href="http://maven.apache.org/ref/current/maven-core/lifecycles.html">lifecycle phase</a>: <tt>generate-test-resources</tt>.</li>
+<li>Binds by default to the <a class="externalLink" href="http://maven.apache.org/ref/current/maven-core/lifecycles.html">lifecycle phase</a>: <tt>test</tt>.</li>
       </ul>
       
 <div class="section">
@@ -100,95 +100,94 @@ Webjars resources discovered from build classpath.</div>
           
 <tr class="b">
             
-<td><b><a href="#commonMappingPattern">commonMappingPattern</a></b></td>
-            
-<td><tt>String</tt></td>
-            
-<td><tt>-</tt></td>
-            
-<td>Common regular expression for plugin configuration map values
-provided in <tt>pom.xml</tt>. Normally uses format:
-<tt>key=value</tt>. Must define exactly two regex capture
-groups. Mapping regular expression is used as follows: 
-
-<div>
-<pre>
-  case commonMappingPattern.r( key, value ) =&gt; ( key, value )
-</pre></div>
-
-Note: <tt>&lt;![CDATA[ ... ]]&gt;</tt> brackets can help
-preserve text entries in <tt>pom.xml</tt>.<br /><b>Default value is</b>: <tt>\s*([^=\s]+)\s*=\s*([^\s]+)\s*</tt>.<br /><b>User property is</b>: <tt>scalor.commonMappingPattern</tt>.<br /></td>
-          </tr>
-          
-<tr class="a">
-            
-<td><b><a href="#commonSequenceSeparator">commonSequenceSeparator</a></b></td>
-            
-<td><tt>String</tt></td>
-            
-<td><tt>-</tt></td>
-            
-<td>Common separator for plugin configuration list values provided in
-<tt>pom.xml</tt>. Separator regular expression is used as
-follows: 
-
-<div>
-<pre>
-  options.split( commonSequenceSeparator ).map( _.trim ).filterNot( _.isEmpty )
-</pre></div>
-
-Note: <tt>&lt;![CDATA[ ... ]]&gt;</tt> brackets can help
-preserve text entries in <tt>pom.xml</tt>. Note: to insert
-unicode symbol in Eclipse/GTK, type CTRL+SHIFT+U, then XXXX - a
-4-hex-digit unicode value. For example, for star &#x2605;, use hex code
-2605.<br /><b>Default value is</b>: <tt>[&#x2605;\n]+</tt>.<br /><b>User property is</b>: <tt>scalor.commonSequenceSeparator</tt>.<br /></td>
-          </tr>
-          
-<tr class="b">
-            
-<td><b><a href="#envprovForce">envprovForce</a></b></td>
+<td><b><a href="#eclipseDetectPresent">eclipseDetectPresent</a></b></td>
             
 <td><tt>boolean</tt></td>
             
 <td><tt>-</tt></td>
             
-<td>Flag to force environment provisioning. 
-
-<div>
-<pre>
-false - use auto-detection
-true  - skip detection of installed resources
-</pre></div><br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>scalor.envprovForce</tt>.<br /></td>
+<td>Invoke Eclipse executions only when runnting inside Eclipse/M2E.
+When <tt>false</tt>, force executions regardless of the Eclipse
+detection state.<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>User property is</b>: <tt>scalor.eclipseDetectPresent</tt>.<br /></td>
           </tr>
           
 <tr class="a">
             
-<td><b><a href="#envprovTestToolFolder">envprovTestToolFolder</a></b></td>
+<td><b><a href="#eclipsePrescompEnable">eclipsePrescompEnable</a></b></td>
             
-<td><tt>File</tt></td>
+<td><tt>boolean</tt></td>
             
 <td><tt>-</tt></td>
             
-<td>Scala.js test-tool installaton folder used for testing. Contains
-provisioned Node.js, Phantom.js, Webjars, etc. Normally this folder
-should be excluded from source control and should not be a part of
-any <tt>clean</tt> execution. Absolute path. When changing,
-make sure to replace <tt>test-tool</tt> references elsewhere.<br /><b>Default value is</b>: <tt>${project.basedir}/test-tool</tt>.<br /><b>User property is</b>: <tt>scalor.envprovTestToolFolder</tt>.<br /></td>
+<td>Enable to work around spurious crashes of Scala IDE presentation
+compiler. Specifically, periodically analyze managed Scala IDE
+project, detect crashed presentation compiler instance, and issue
+restart. Periodicity parameter: <a href="#eclipsePrescompPeriodInvoke"><b>eclipsePrescompPeriodInvoke</b></a>.<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>User property is</b>: <tt>scalor.eclipsePrescompEnable</tt>.<br /></td>
           </tr>
           
 <tr class="b">
             
-<td><b><a href="#envprovWebjarsFolder">envprovWebjarsFolder</a></b></td>
+<td><b><a href="#eclipsePrescompLogErrorUnits">eclipsePrescompLogErrorUnits</a></b></td>
+            
+<td><tt>boolean</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>Enable to log presentation compiler compilation units with problems
+at serverity <tt>level=error</tt>. These compilation units are
+monitored by mainenace task and trigger presentation compiler
+restart requests. Enablement parameter: <a href="#eclipsePrescompEnable"><b>eclipsePrescompEnable</b></a>.
+Periodicity parameter: <a href="#eclipsePrescompPeriodInvoke"><b>eclipsePrescompPeriodInvoke</b></a>.<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>User property is</b>: <tt>scalor.eclipsePrescompLogErrorUnits</tt>.<br /></td>
+          </tr>
+          
+<tr class="a">
+            
+<td><b><a href="#eclipsePrescompLogParameters">eclipsePrescompLogParameters</a></b></td>
+            
+<td><tt>boolean</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>Enable to log in Eclipse/M2E effective configuration parameters for
+this Maven execution.<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>scalor.eclipsePrescompLogParameters</tt>.<br /></td>
+          </tr>
+          
+<tr class="b">
+            
+<td><b><a href="#eclipsePrescompPeriodInvoke">eclipsePrescompPeriodInvoke</a></b></td>
+            
+<td><tt>long</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>Period of presentation compiler maintenance job invocations,
+milliseconds. Defines frequency of presentation compiler liveness
+checks. Enablement parameter: <a href="#eclipsePrescompEnable"><b>eclipsePrescompEnable</b></a>.<br /><b>Default value is</b>: <tt>3000</tt>.<br /><b>User property is</b>: <tt>scalor.eclipsePrescompPeriodInvoke</tt>.<br /></td>
+          </tr>
+          
+<tr class="a">
+            
+<td><b><a href="#eclipsePrescompTaskName">eclipsePrescompTaskName</a></b></td>
             
 <td><tt>String</tt></td>
             
 <td><tt>-</tt></td>
             
-<td>A folder inside <a href="#envprovTestToolFolder"><b>envprovTestToolFolder</b></a>
-which contains extracted Webjars. Relative path.<br /><b>Default value is</b>: <tt>webjars</tt>.<br /><b>User property is</b>: <tt>scalor.envprovWebjarsFolder</tt>.<br /></td>
+<td>Name of Eclipse background job representing Scala IDE presentation
+compiler work-around process. Canceling this job in Eclipse UI will
+terminate presentation compiler work-around process. M2E project
+update or clean/build in Eclipse UI will re-create management job.
+Job name must be unique in Eclipse workspace. Enablement parameter:
+<a href="#eclipsePrescompEnable"><b>eclipsePrescompEnable</b></a>.
+To review current background jobs in Eclipse, navigate: 
+
+<div>
+<pre>
+Eclipse -&gt; Window -&gt; Show View -&gt; Progress 
+</pre></div><br /><b>Default value is</b>: <tt>Scalor: presenation compiler manager @ ${project.artifactId}</tt>.<br /><b>User property is</b>: <tt>scalor.eclipsePrescompTaskName</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#skip">skip</a></b></td>
             
@@ -199,18 +198,18 @@ which contains extracted Webjars. Relative path.<br /><b>Default value is</b>: <
 <td>Force to skip all executions of this plugin.<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>scalor.skip</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
-<td><b><a href="#skipEnvProv">skipEnvProv</a></b></td>
+<td><b><a href="#skipEclipse">skipEclipse</a></b></td>
             
 <td><tt>boolean</tt></td>
             
 <td><tt>-</tt></td>
             
-<td>Flag to skip environment provisioning.<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>scalor.skipEnvProv</tt>.<br /></td>
+<td>Flag to skip goal execution: <tt>eclipse-*</tt>.<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>scalor.skipEclipse</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#skipLogReason">skipLogReason</a></b></td>
             
@@ -221,7 +220,7 @@ which contains extracted Webjars. Relative path.<br /><b>Default value is</b>: <
 <td>Enable logging of reason for skipping an execution.<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>scalor.skipLogReason</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#skipPackagingList">skipPackagingList</a></b></td>
             
@@ -237,67 +236,11 @@ which contains extracted Webjars. Relative path.<br /><b>Default value is</b>: <
 <div class="section">
 <h3><a name="Parameter_Details"></a>Parameter Details</h3>
         
-<p><b><a name="commonMappingPattern">commonMappingPattern</a>:</b></p>
+<p><b><a name="eclipseDetectPresent">eclipseDetectPresent</a>:</b></p>
         
-<div>Common regular expression for plugin configuration map values
-provided in <tt>pom.xml</tt>. Normally uses format:
-<tt>key=value</tt>. Must define exactly two regex capture
-groups. Mapping regular expression is used as follows: 
-
-<div>
-<pre>
-  case commonMappingPattern.r( key, value ) =&gt; ( key, value )
-</pre></div>
-
-Note: <tt>&lt;![CDATA[ ... ]]&gt;</tt> brackets can help
-preserve text entries in <tt>pom.xml</tt>.</div>
-        
-<ul>
-          
-<li><b>Type</b>: <tt>java.lang.String</tt></li>
-          
-<li><b>Required</b>: <tt>No</tt></li>
-          
-<li><b>User Property</b>: <tt>scalor.commonMappingPattern</tt></li>
-          
-<li><b>Default</b>: <tt>\s*([^=\s]+)\s*=\s*([^\s]+)\s*</tt></li>
-        </ul><hr />
-<p><b><a name="commonSequenceSeparator">commonSequenceSeparator</a>:</b></p>
-        
-<div>Common separator for plugin configuration list values provided in
-<tt>pom.xml</tt>. Separator regular expression is used as
-follows: 
-
-<div>
-<pre>
-  options.split( commonSequenceSeparator ).map( _.trim ).filterNot( _.isEmpty )
-</pre></div>
-
-Note: <tt>&lt;![CDATA[ ... ]]&gt;</tt> brackets can help
-preserve text entries in <tt>pom.xml</tt>. Note: to insert
-unicode symbol in Eclipse/GTK, type CTRL+SHIFT+U, then XXXX - a
-4-hex-digit unicode value. For example, for star &#x2605;, use hex code
-2605.</div>
-        
-<ul>
-          
-<li><b>Type</b>: <tt>java.lang.String</tt></li>
-          
-<li><b>Required</b>: <tt>No</tt></li>
-          
-<li><b>User Property</b>: <tt>scalor.commonSequenceSeparator</tt></li>
-          
-<li><b>Default</b>: <tt>[&#x2605;\n]+</tt></li>
-        </ul><hr />
-<p><b><a name="envprovForce">envprovForce</a>:</b></p>
-        
-<div>Flag to force environment provisioning. 
-
-<div>
-<pre>
-false - use auto-detection
-true  - skip detection of installed resources
-</pre></div></div>
+<div>Invoke Eclipse executions only when runnting inside Eclipse/M2E.
+When <tt>false</tt>, force executions regardless of the Eclipse
+detection state.</div>
         
 <ul>
           
@@ -305,32 +248,90 @@ true  - skip detection of installed resources
           
 <li><b>Required</b>: <tt>No</tt></li>
           
-<li><b>User Property</b>: <tt>scalor.envprovForce</tt></li>
+<li><b>User Property</b>: <tt>scalor.eclipseDetectPresent</tt></li>
           
-<li><b>Default</b>: <tt>false</tt></li>
+<li><b>Default</b>: <tt>true</tt></li>
         </ul><hr />
-<p><b><a name="envprovTestToolFolder">envprovTestToolFolder</a>:</b></p>
+<p><b><a name="eclipsePrescompEnable">eclipsePrescompEnable</a>:</b></p>
         
-<div>Scala.js test-tool installaton folder used for testing. Contains
-provisioned Node.js, Phantom.js, Webjars, etc. Normally this folder
-should be excluded from source control and should not be a part of
-any <tt>clean</tt> execution. Absolute path. When changing,
-make sure to replace <tt>test-tool</tt> references elsewhere.</div>
+<div>Enable to work around spurious crashes of Scala IDE presentation
+compiler. Specifically, periodically analyze managed Scala IDE
+project, detect crashed presentation compiler instance, and issue
+restart. Periodicity parameter: <a href="#eclipsePrescompPeriodInvoke"><b>eclipsePrescompPeriodInvoke</b></a>.</div>
         
 <ul>
           
-<li><b>Type</b>: <tt>java.io.File</tt></li>
+<li><b>Type</b>: <tt>boolean</tt></li>
           
 <li><b>Required</b>: <tt>No</tt></li>
           
-<li><b>User Property</b>: <tt>scalor.envprovTestToolFolder</tt></li>
+<li><b>User Property</b>: <tt>scalor.eclipsePrescompEnable</tt></li>
           
-<li><b>Default</b>: <tt>${project.basedir}/test-tool</tt></li>
+<li><b>Default</b>: <tt>true</tt></li>
         </ul><hr />
-<p><b><a name="envprovWebjarsFolder">envprovWebjarsFolder</a>:</b></p>
+<p><b><a name="eclipsePrescompLogErrorUnits">eclipsePrescompLogErrorUnits</a>:</b></p>
         
-<div>A folder inside <a href="#envprovTestToolFolder"><b>envprovTestToolFolder</b></a>
-which contains extracted Webjars. Relative path.</div>
+<div>Enable to log presentation compiler compilation units with problems
+at serverity <tt>level=error</tt>. These compilation units are
+monitored by mainenace task and trigger presentation compiler
+restart requests. Enablement parameter: <a href="#eclipsePrescompEnable"><b>eclipsePrescompEnable</b></a>.
+Periodicity parameter: <a href="#eclipsePrescompPeriodInvoke"><b>eclipsePrescompPeriodInvoke</b></a>.</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>boolean</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>scalor.eclipsePrescompLogErrorUnits</tt></li>
+          
+<li><b>Default</b>: <tt>true</tt></li>
+        </ul><hr />
+<p><b><a name="eclipsePrescompLogParameters">eclipsePrescompLogParameters</a>:</b></p>
+        
+<div>Enable to log in Eclipse/M2E effective configuration parameters for
+this Maven execution.</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>boolean</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>scalor.eclipsePrescompLogParameters</tt></li>
+          
+<li><b>Default</b>: <tt>false</tt></li>
+        </ul><hr />
+<p><b><a name="eclipsePrescompPeriodInvoke">eclipsePrescompPeriodInvoke</a>:</b></p>
+        
+<div>Period of presentation compiler maintenance job invocations,
+milliseconds. Defines frequency of presentation compiler liveness
+checks. Enablement parameter: <a href="#eclipsePrescompEnable"><b>eclipsePrescompEnable</b></a>.</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>long</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>scalor.eclipsePrescompPeriodInvoke</tt></li>
+          
+<li><b>Default</b>: <tt>3000</tt></li>
+        </ul><hr />
+<p><b><a name="eclipsePrescompTaskName">eclipsePrescompTaskName</a>:</b></p>
+        
+<div>Name of Eclipse background job representing Scala IDE presentation
+compiler work-around process. Canceling this job in Eclipse UI will
+terminate presentation compiler work-around process. M2E project
+update or clean/build in Eclipse UI will re-create management job.
+Job name must be unique in Eclipse workspace. Enablement parameter:
+<a href="#eclipsePrescompEnable"><b>eclipsePrescompEnable</b></a>.
+To review current background jobs in Eclipse, navigate: 
+
+<div>
+<pre>
+Eclipse -&gt; Window -&gt; Show View -&gt; Progress 
+</pre></div></div>
         
 <ul>
           
@@ -338,9 +339,9 @@ which contains extracted Webjars. Relative path.</div>
           
 <li><b>Required</b>: <tt>No</tt></li>
           
-<li><b>User Property</b>: <tt>scalor.envprovWebjarsFolder</tt></li>
+<li><b>User Property</b>: <tt>scalor.eclipsePrescompTaskName</tt></li>
           
-<li><b>Default</b>: <tt>webjars</tt></li>
+<li><b>Default</b>: <tt>Scalor: presenation compiler manager @ ${project.artifactId}</tt></li>
         </ul><hr />
 <p><b><a name="skip">skip</a>:</b></p>
         
@@ -356,9 +357,9 @@ which contains extracted Webjars. Relative path.</div>
           
 <li><b>Default</b>: <tt>false</tt></li>
         </ul><hr />
-<p><b><a name="skipEnvProv">skipEnvProv</a>:</b></p>
+<p><b><a name="skipEclipse">skipEclipse</a>:</b></p>
         
-<div>Flag to skip environment provisioning.</div>
+<div>Flag to skip goal execution: <tt>eclipse-*</tt>.</div>
         
 <ul>
           
@@ -366,7 +367,7 @@ which contains extracted Webjars. Relative path.</div>
           
 <li><b>Required</b>: <tt>No</tt></li>
           
-<li><b>User Property</b>: <tt>scalor.skipEnvProv</tt></li>
+<li><b>User Property</b>: <tt>scalor.skipEclipse</tt></li>
           
 <li><b>Default</b>: <tt>false</tt></li>
         </ul><hr />

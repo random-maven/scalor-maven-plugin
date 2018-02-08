@@ -31,7 +31,7 @@ object Module {
 
   def fileFrom( module : Module ) : File = {
     import Folder._
-    ensureCanonicalFile( module.binaryArtifact.getFile )
+    module.binaryArtifact.getFile.getCanonicalFile
   }
 
   def versionFrom( module : Module ) : String = {
@@ -42,8 +42,8 @@ object Module {
     import Folder._
     import module._
     Seq(
-      ensureCanonicalPath( binaryArtifact.getFile ),
-      sourceArtifact.map( artifact => ensureCanonicalPath( artifact.getFile ) ).getOrElse( "" )
+      binaryArtifact.getFile.getCanonicalPath,
+      sourceArtifact.map( _.getFile.getCanonicalPath ).getOrElse( "" )
     )
   }
 

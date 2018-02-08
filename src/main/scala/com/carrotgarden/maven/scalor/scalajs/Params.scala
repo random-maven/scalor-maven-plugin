@@ -74,7 +74,7 @@ trait ParamsOptsAny extends base.ParamsAny {
   @Parameter(
     property     = "scalor.linkerEnvVarListCI",
     defaultValue = """
-    CONTINUOUS_INTEGRATION ; JENKINS_HOME ; HUDSON_HOME ;  
+    CONTINUOUS_INTEGRATION ★ JENKINS_HOME ★ HUDSON_HOME ★  
     """
   )
   var linkerEnvVarListCI : String = _
@@ -83,7 +83,7 @@ trait ParamsOptsAny extends base.ParamsAny {
    * Linker engine options for detected IDE vs CI mode.
    */
   def linkerOptions : String = {
-    val varsList = parseCommonList( linkerEnvVarListCI, commonSequenceSeparator )
+    val varsList = parseCommonList( linkerEnvVarListCI )
     val hasCI = varsList.find( name => System.getenv.get( name ) != null ).isDefined
     if ( hasCI ) linkerOptionsProduction else linkerOptionsDevelopment
   }

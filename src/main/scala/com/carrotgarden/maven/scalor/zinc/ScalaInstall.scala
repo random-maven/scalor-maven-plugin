@@ -99,7 +99,7 @@ object ScalaInstall {
     module : String, regex : String
   ) = {
     val helpText = "Can not resolve Scala installaton."
-    val listLine = list.mkString( "[ ", " ; ", " ]" )
+    val listLine = list.mkString( "[ ", ", ", " ]" )
     Throw( s"${helpText} Missing module '${module}' with regex '${regex}' in list ${listLine}." )
   }
 

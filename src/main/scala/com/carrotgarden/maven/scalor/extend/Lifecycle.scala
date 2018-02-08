@@ -111,6 +111,7 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
         registerExecution( PROCESS_TEST_CLASSES, `scala-js-link-test` )
         
         registerExecution( TEST, `eclipse-restart` )
+        registerExecution( TEST, `eclipse-prescomp` )
 
         registerExecution( PACKAGE, `scaladoc-macro` )
         registerExecution( PACKAGE, `scaladoc-main` )

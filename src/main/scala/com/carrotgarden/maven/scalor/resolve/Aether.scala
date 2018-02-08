@@ -128,7 +128,7 @@ trait Aether {
       resolveOptional( source )
     }
     val resultList = binaryList ++ sourceList
-    resultList.distinct.sortBy( _.getFile.getAbsolutePath ).asJava
+    resultList.distinct.sortBy( _.getFile.getCanonicalPath ).asJava
   }
 
   /**

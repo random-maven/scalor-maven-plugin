@@ -49,7 +49,7 @@
         <version.protobuf>3.5.1</version.protobuf>
         <version.snappy>1.1.7.1</version.snappy>
         <version.lucene>7.2.1</version.lucene>
-        <version.amazon.sdk>1.11.271</version.amazon.sdk>
+        <version.amazon.sdk>1.11.273</version.amazon.sdk>
         <version.sigar>1.6.5.132</version.sigar>
         <version.aspectj>1.8.13</version.aspectj>
         <version.bouncy>1.59</version.bouncy>
@@ -68,12 +68,13 @@
         <version.scala.mock>3.6.0</version.scala.mock>
         <version.specs2>4.0.2-291bdf5-20171123131811</version.specs2>
         <version.scalaz>7.3.0-M18</version.scalaz>
-        <version.kamon>1.0.0</version.kamon>
+        <version.kamon>1.0.1</version.kamon>
         <version.scalatest>3.0.5</version.scalatest>
         <version.scalacheck>1.13.5</version.scalacheck>
-        <version.scala.plugin.meta>3.0.0-M10</version.scala.plugin.meta>
+        <version.scala.meta>3.2.0</version.scala.meta>
+        <version.scala.plugin.meta>3.0.0-M11</version.scala.plugin.meta>
         <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
-        <version.scala.zinc>1.1.0</version.scala.zinc>
+        <version.scala.zinc>1.1.1</version.scala.zinc>
 
         <!-- Scala.js stack. -->
         <version.sjs.epoch>0.6</version.sjs.epoch>
@@ -100,7 +101,7 @@
 
         <!-- Database providers. -->
         <version.slick>3.2.1</version.slick>
-        <version.hikari>2.7.6</version.hikari>
+        <version.hikari>2.7.7</version.hikari>
         <version.postgres>42.2.1</version.postgres>
 
         <!-- Carrot Garden internal repository. -->
@@ -159,7 +160,7 @@
             <dependency>
                 <groupId>org.scala-lang.modules</groupId>
                 <artifactId>scala-parser-combinators_${version.scala.epoch}</artifactId>
-                <version>1.0.6</version>
+                <version>1.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.scala-lang.modules</groupId>
@@ -225,13 +226,13 @@
             <dependency><!-- runtime -->
                 <groupId>org.scalameta</groupId>
                 <artifactId>scalameta_${version.scala.epoch}</artifactId>
-                <version>2.1.7</version>
+                <version>${version.scala.meta}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
+            <dependency><!-- runtime -->
                 <groupId>org.scalameta</groupId>
                 <artifactId>contrib_${version.scala.epoch}</artifactId>
-                <version>2.1.7</version>
+                <version>${version.scala.meta}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency><!-- runtime -->
@@ -240,13 +241,13 @@
                 <version>0.1.7</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
+            <dependency><!-- runtime -->
                 <groupId>org.scala-sbt</groupId>
                 <artifactId>zinc_${version.scala.epoch}</artifactId>
                 <version>${version.scala.zinc}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
+            <dependency><!-- runtime -->
                 <groupId>org.scala-sbt</groupId>
                 <artifactId>compiler-bridge_${version.scala.epoch}</artifactId>
                 <version>${version.scala.zinc}</version>
@@ -881,7 +882,7 @@
             <dependency>
                 <groupId>org.logback-extensions</groupId>
                 <artifactId>logback-ext-loggly</artifactId>
-                <version>0.1.4</version>
+                <version>0.1.5</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback.contrib</groupId>
@@ -1044,7 +1045,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
-                <version>4.4.8</version>
+                <version>4.4.9</version>
                 <exclusions>
                     <!-- Requires logback bridge. -->
                     <exclusion>
@@ -1056,7 +1057,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.4</version>
+                <version>4.5.5</version>
                 <exclusions>
                     <!-- Requires logback bridge. -->
                     <exclusion>
@@ -1310,7 +1311,7 @@
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
-                <version>3.5.3</version>
+                <version>3.5.4</version>
             </dependency>
             <dependency>
                 <groupId>com.mattbertolini</groupId>
@@ -1409,7 +1410,7 @@
                         <dependency>
                             <groupId>com.vladsch.flexmark</groupId>
                             <artifactId>flexmark-all</artifactId>
-                            <version>0.28.34</version>
+                            <version>0.30.0</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -1465,7 +1466,7 @@
                         <dependency>
                             <groupId>net.sf.saxon</groupId>
                             <artifactId>Saxon-HE</artifactId>
-                            <version>9.8.0-7</version>
+                            <version>9.8.0-8</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -2834,7 +2835,7 @@ version=${revision}
                                                 </goals>
                                             </pluginExecutionFilter>
                                             <action>
-                                                <ignore/>
+                                                <ignore />
                                             </action>
                                         </pluginExecution>
                                         <pluginExecution>
@@ -5622,7 +5623,7 @@ version=${revision}
             </build>
         </profile>
 
-        <!-- Attach javadocs for deployment. -->
+        <!-- Attach javadoc/scaladoc for deployment. -->
         <profile>
             <id>attach-javadoc</id>
             <activation>
@@ -5631,22 +5632,36 @@ version=${revision}
                 </file>
             </activation>
             <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <!-- Override default execution id. -->
-                                <id>attach-javadoc</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <!-- Override default execution id. -->
+                                    <id>attach-javadoc</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>jar</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <plugin>
+                            <groupId>com.carrotgarden.maven</groupId>
+                            <artifactId>scalor-maven-plugin_2.12</artifactId>
+                            <executions>
+                                <execution>
+                                    <goals>
+                                        <goal>scaladoc-macro</goal>
+                                        <goal>scaladoc-main</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
             </build>
         </profile>
 

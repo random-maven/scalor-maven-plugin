@@ -40,14 +40,14 @@
     <properties>
 
         <!-- Scalor release series. -->
-        <release.epoch>1.1.3</release.epoch>
+        <release.epoch>1.2.0</release.epoch>
 
         <!-- Development releases repository. -->
         <bintray.subject>random-maven</bintray.subject>
         <bintray.repository>maven</bintray.repository>
 
         <!-- Compiler epoch. -->
-        <version.scala.zinc>1.1.0</version.scala.zinc>
+        <version.scala.zinc>1.1.1</version.scala.zinc>
         <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
 
         <!-- Maven epoch. -->
@@ -92,56 +92,6 @@
     </repositories>
 
     <dependencies>
-
-        <!-- Testing. -->
-
-        <!-- Note: keep order. -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.scala-js</groupId>
-            <artifactId>scalajs-junit-test-runtime_${version.scala.epoch}</artifactId>
-            <version>${version.sjs.release}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Support JUnit 4/5 testing. -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-runner</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.maven.plugin-testing</groupId>
-            <artifactId>maven-plugin-testing-harness</artifactId>
-            <version>3.3.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <!-- Maven core. -->
 
@@ -230,6 +180,12 @@
 
         <!-- Utility. -->
 
+        <dependency><!-- Override legacy version. -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.16</version>
+        </dependency>
+
         <dependency>
             <groupId>com.lihaoyi</groupId>
             <artifactId>upickle_${version.scala.epoch}</artifactId>
@@ -279,7 +235,7 @@
 
         <dependency>
             <groupId>org.scala-js</groupId>
-            <artifactId>scalajs-cli_${version.scala.epoch}</artifactId>
+            <artifactId>scalajs-tools_${version.scala.epoch}</artifactId>
             <version>${version.sjs.release}</version>
         </dependency>
 
@@ -396,6 +352,56 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Testing. -->
+
+        <!-- Note: keep order. -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-js</groupId>
+            <artifactId>scalajs-junit-test-runtime_${version.scala.epoch}</artifactId>
+            <version>${version.sjs.release}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Support JUnit 4/5 testing. -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-runner</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.plugin-testing</groupId>
+            <artifactId>maven-plugin-testing-harness</artifactId>
+            <version>3.3.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -419,13 +425,16 @@
                 <configuration>
 
                     <zincCompileOptions>
-                        -feature ; -unchecked ; -deprecation ;
-                        -encoding ;
-                        ${project.build.sourceEncoding} ;
-                        -target:jvm-${maven.compiler.target} ;
-                        -Xmaxerrs ; 20 ;
-                        -compileorder:JavaThenScala ;
-                        -useScopesCompiler ;
+                        -feature
+                        -unchecked
+                        -deprecation
+                        -encoding
+                        ${project.build.sourceEncoding}
+                        -target:jvm-${maven.compiler.target}
+                        -Xmaxerrs
+                        20
+                        -compileorder:JavaThenScala
+                        -useScopesCompiler
                     </zincCompileOptions>
 
                     <!-- <eclipseLogClasspathOrder>true</eclipseLogClasspathOrder> -->
@@ -467,6 +476,7 @@
                     <execution>
                         <goals>
                             <goal>eclipse-config</goal>
+                            <goal>eclipse-prescomp</goal>
                             <goal>register-macro</goal>
                             <goal>register-main</goal>
                             <goal>register-test</goal>

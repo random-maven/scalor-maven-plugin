@@ -12,13 +12,16 @@ import org.eclipse.core.runtime.IProgressMonitor
 
 import com.carrotgarden.maven.scalor.EclipseRestartMojo
 import com.carrotgarden.maven.scalor.eclipse.Watcher.Detector
+import com.carrotgarden.maven.scalor.util
+import com.carrotgarden.maven.scalor.util.Text
 import com.carrotgarden.maven.scalor.util.Error
 import com.carrotgarden.maven.scalor.util.Logging.AnyLog
-import com.carrotgarden.maven.scalor.util.Logging.NoopLogger
-import com.carrotgarden.maven.scalor.util.Logging.SwitchLogger
+import com.carrotgarden.maven.scalor.util.Logging.ContextLogger
 
 import org.eclipse.m2e.core.project.IMavenProjectFacade
 import com.carrotgarden.maven.scalor.util.Folder
+
+import util.Option.convert._
 
 /**
  * Manage test application restart.
@@ -33,21 +36,17 @@ trait Restart {
    * Setup or update test process management job.
    */
   def restartEnsure(
-    kind :      Int,
-    monitor :   IProgressMonitor,
-    logger :    AnyLog,
-    restart :   ParamsRestart,
-    facade :    IMavenProjectFacade,
-    execution : MojoExecution
+    context : Config.BuildContext,
+    monitor : IProgressMonitor
   ) : Unit = {
-    import restart._
-    if ( eclipseRestartEnable ) {
+    import context._
+    if ( restart.eclipseRestartEnable ) {
       val manager = managerEnsure(
-        facade, restart, SwitchLogger( logger, "restart-manager" )
+        facade, restart, logger.branch( "restart-manager" )
       )
       logger.info( s"Manager running @ ${manager}" )
     } else {
-      Tasker.stopTask( eclipseRestartTaskName )
+      Tasker.stopTask( restart.eclipseRestartTaskName )
     }
   }
 
@@ -68,7 +67,7 @@ object Restart {
     // monitored build folders
     buildList : Array[ String ],
     // monitored resource patterns
-    matchList : Array[ String ],
+    regexList : Array[ String ],
     // application environment variables
     execVars : Array[ ( String, String ) ],
     // application java launch command
@@ -80,7 +79,9 @@ object Restart {
     //
     hasLogChanged :  Boolean,
     hasLogCommand :  Boolean,
-    hasLogDetected : Boolean
+    hasLogDetected : Boolean,
+    //
+    limitLogger : Int
   ) {
 
     override def equals( some : Any ) : Boolean = {
@@ -89,7 +90,7 @@ object Restart {
       if ( this.name != that.name ) { return false }
       if ( this.workDir != that.workDir ) { return false }
       if ( !this.buildList.sameElements( that.buildList ) ) { return false }
-      if ( !this.matchList.sameElements( that.matchList ) ) { return false }
+      if ( !this.regexList.sameElements( that.regexList ) ) { return false }
       if ( !this.execVars.sameElements( that.execVars ) ) { return false }
       if ( !this.command.sameElements( that.command ) ) { return false }
       if ( this.periodInvoke != that.periodInvoke ) { return false }
@@ -103,7 +104,8 @@ object Restart {
 
     def reportCommand : String = {
       val regex = s"[ \t\f\n\r ${File.pathSeparator}]+"
-      command.flatMap( _.split( regex ) ).mkString( "\n" )
+      val array = command.flatMap( _.split( regex ) )
+      Text.reportArray( array )
     }
 
   }
@@ -113,13 +115,13 @@ object Restart {
     def apply( facade : IMavenProjectFacade, restart : ParamsRestart ) : Context = {
       import restart._
       val project = facade.getMavenProject
-      val baseDir = project.getBasedir.getAbsoluteFile
-      val workDir = eclipseRestartWorkDir.getAbsoluteFile
+      val baseDir = project.getBasedir.getCanonicalFile
+      val workDir = eclipseRestartWorkDir.getCanonicalFile
       val classPath = ( buildTargetFolder +: buildDependencyFolders ) ++ projectClassPath( project )
-      val buildList = classPath.filter( path => path.isDirectory ).map( folder => folder.getAbsolutePath )
-      val matchList = parseCommonList( eclipseRestartMatchList, commonSequenceSeparator )
-      val execArgs = parseCommonList( eclipseRestartJavaArgs, commonSequenceSeparator )
-      val execVars = parseCommonMapping( eclipseRestartJavaVars, commonSequenceSeparator ).toArray
+      val buildList = classPath.filter( path => path.isDirectory ).map( folder => folder.getCanonicalPath )
+      val regexList = parseCommonList( eclipseRestartRegexList )
+      val execArgs = parseCommonList( eclipseRestartJavaArgs )
+      val execVars = parseCommonMapping( eclipseRestartJavaVars ).toArray
       val argsList = execArgs ++ Array( "-classpath", javaPath( classPath ) )
       val command = javaExec +: argsList :+ eclipseRestartMainClass
       new Context(
@@ -127,7 +129,7 @@ object Restart {
         baseDir        = baseDir,
         workDir        = workDir,
         buildList      = buildList,
-        matchList      = matchList,
+        regexList      = regexList,
         execVars       = execVars,
         command        = command,
         periodInvoke   = eclipseRestartPeriodInvoke,
@@ -135,7 +137,8 @@ object Restart {
         periodSettle   = eclipseRestartPeriodSettle,
         hasLogChanged  = eclipseRestartLogChanged,
         hasLogCommand  = eclipseRestartLogCommand,
-        hasLogDetected = eclipseRestartLogDetected
+        hasLogDetected = eclipseRestartLogDetected,
+        limitLogger    = eclipseRestartLimitLogger
       )
     }
 
@@ -156,8 +159,8 @@ object Restart {
 
     val detector = {
       val loggerOption = if ( hasLogChanged )
-        Some( SwitchLogger( logger, "restart-detector" ) ) else None
-      Detector( buildList, matchList, loggerOption )
+        Some( ContextLogger( logger, "restart-detector" ) ) else None
+      Detector( buildList, regexList, loggerOption )
     }
 
     @volatile var process : Process = null
@@ -167,7 +170,8 @@ object Restart {
     }
 
     def processLogger = {
-      ProcessLogger( logger.info, logger.fail )
+      val log = logger.branch( "restart-process" )
+      ProcessLogger( log.info, log.fail )
     }
 
     def processCreate() : Unit = this.synchronized {
@@ -227,21 +231,30 @@ object Restart {
       processDelete()
     }
 
+    def hasDetected : Boolean = {
+      detector.hasResult( periodSettle )
+    }
+
+    def reportDetected() = if ( hasLogDetected ) {
+      val limit = limitLogger
+      val size = detector.resultMap.size
+      val note = if ( size <= limit ) "full list" else s"${limit} of ${size}"
+      val report = detector.resultReport( limit )
+      logger.info( s"Process detect (${note}) @ ${this}:\n${report}" )
+    }
+
+    def removeDetected() : Unit = {
+      detector.resultClear()
+    }
+
     override def runTask( monitor : IProgressMonitor ) : Unit = {
-      if ( monitor.isCanceled ) {
-        logger.info( s"Manager cancel: ${this}" )
-        return
-      }
       val option = processOption
       if ( option.isDefined ) {
         val process = option.get
         if ( process.isAlive ) {
-          val hasResult = detector.hasResult( periodSettle )
-          if ( hasResult ) {
-            if ( hasLogDetected ) {
-              logger.info( s"Process detect @ ${this}\n${detector.resultReport}" )
-            }
-            detector.resultClear()
+          if ( hasDetected ) {
+            reportDetected()
+            removeDetected()
             logger.info( s"Process update @ ${this}" )
             processRestart()
           }
@@ -261,12 +274,12 @@ object Restart {
   def projectClassPath( project : MavenProject ) : Array[ File ] = {
     project.getArtifacts.asScala
       .filter( artifact => artifact.getFile != null )
-      .map( artifact => artifact.getFile.getAbsoluteFile )
+      .map( artifact => artifact.getFile.getCanonicalFile )
       .toArray
   }
 
   def javaPath( classPath : Array[ File ] ) : String = {
-    classPath.map( _.getAbsolutePath ).mkString( File.pathSeparator )
+    classPath.map( _.getCanonicalPath ).mkString( File.pathSeparator )
   }
 
   // FIXME detect o.s.
@@ -276,9 +289,9 @@ object Restart {
     val javaExecNix = new File( javaHome, "/bin/java" )
     val execExecWin = new File( javaHome, "/bin/java.exe" )
     if ( hasExec( javaExecNix ) ) {
-      javaExecNix.getAbsolutePath
+      javaExecNix.getCanonicalPath
     } else if ( hasExec( execExecWin ) ) {
-      execExecWin.getAbsolutePath
+      execExecWin.getCanonicalPath
     } else {
       "java"
     }

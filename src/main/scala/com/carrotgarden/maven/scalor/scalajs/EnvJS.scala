@@ -37,6 +37,7 @@ trait EnvConfAny extends AnyRef
   Specific scripts should be activated in JavaScript VM via parameter:
   <a href="#envconfWebjarsScriptList"><b>envconfWebjarsScriptList</b></a>
   Normally webjars folder should point to the extraction result of the webjars provisioning invocation.
+  Absolute path.
   """ )
   @Parameter(
     property     = "scalor.envconfWebjarsFolder",
@@ -82,9 +83,9 @@ trait EnvConfAny extends AnyRef
     import Config._
 
     // JS-VM settings.
-    val envExec = paramExec.getAbsolutePath
-    val envArgs = parseCommonList( paramArgs, commonSequenceSeparator ).toList
-    val envVars = parseCommonMapping( paramVars, commonSequenceSeparator )
+    val envExec = paramExec.getCanonicalPath
+    val envArgs = parseCommonList( paramArgs ).toList
+    val envVars = parseCommonMapping( paramVars )
     val envType = paramType
     val envConf = EnvConf(
       envExec = envExec,
@@ -94,15 +95,15 @@ trait EnvConfAny extends AnyRef
     )
 
     // Webjars resources.
-    val webjarsDir = envconfWebjarsFolder.getAbsolutePath
-    val scriptList = parseCommonList( envconfWebjarsScriptList, commonSequenceSeparator ).toList
+    val webjarsDir = envconfWebjarsFolder.getCanonicalPath
+    val scriptList = parseCommonList( envconfWebjarsScriptList ).toList
     val webConf = WebConf(
       webjarsDir = webjarsDir,
       scriptList = scriptList
     )
 
     // Generated runtime.js
-    val path = envconfModulePath.getAbsolutePath
+    val path = envconfModulePath.getCanonicalPath
     val module = Config.Module(
       path = path
     )
@@ -148,6 +149,7 @@ trait EnvConfNodejs extends EnvConfAny {
 
   @Description( """
   Environment variables for the Node.js JavaScript VM executable.
+  Normally should define <code>NODE_PATH</code> to point to the Node.js modules provisioning result.
   Separator parameter: <a href="#commonSequenceSeparator"><b>commonSequenceSeparator</b></a>.
   Mapping parameter: <a href="#commonMappingPattern"><b>commonMappingPattern</b></a>.
   Some Node.js environment variables:
@@ -160,8 +162,8 @@ NODE_PATH - set to absolute path to the provisioned node_modules folder
   @Parameter(
     property     = "scalor.envconfNodejsVars",
     defaultValue = """
-    NODE_MODULE_CONTEXTS=0 ;
-    NODE_PATH=${project.basedir}/test-tool/node/node_modules ;
+    NODE_MODULE_CONTEXTS=0 ★
+    NODE_PATH=${project.basedir}/test-tool/node/node_modules ★
     """
   )
   var envconfNodejsVars : String = _
@@ -265,9 +267,9 @@ trait EnvProvAny extends AnyRef
   var envprovTestToolFolder : File = _
 
   def folderTestTool : String = {
-    val folder = envprovTestToolFolder.getAbsoluteFile
+    val folder = envprovTestToolFolder.getCanonicalFile
     folder.mkdirs
-    folder.getAbsolutePath
+    folder.getCanonicalPath
   }
 
   def hasDetectExecutable( file : File ) = {
@@ -316,9 +318,9 @@ trait EnvProvNodejs extends EnvProvAny {
   @Parameter(
     property     = "scalor.envprovRnpmjsModules",
     defaultValue = """
-    npm@5.6.0 ; 
-    jsdom@11.6.0 ; 
-    source-map-support@0.5.2 ;
+    npm@5.6.0 ★ 
+    jsdom@11.6.0 ★ 
+    source-map-support@0.5.2 ★
     """
   )
   var envprovRnpmjsModules : String = _
@@ -331,8 +333,8 @@ trait EnvProvNodejs extends EnvProvAny {
   @Parameter(
     property     = "scalor.envprovRnpmjsOptions",
     defaultValue = """
-    --save ;
-    --silent ;
+    --save ★
+    --silent ★
     """
   )
   var envprovRnpmjsOptions : String = _
@@ -356,30 +358,26 @@ trait EnvProvNodejs extends EnvProvAny {
   )
   var envprovRnpmjsURL : String = _
 
-  def npmModuleList = parseCommonList(
-    envprovRnpmjsModules, commonSequenceSeparator
-  )
+  def npmModuleList = parseCommonList( envprovRnpmjsModules )
 
-  def npmInstallOptions = parseCommonList(
-    envprovRnpmjsOptions, commonSequenceSeparator
-  )
+  def npmInstallOptions = parseCommonList( envprovRnpmjsOptions )
 
   def folderTestToolNodejs : String = {
     val folder = new File( envprovTestToolFolder, envprovNodejsFolder )
     folder.mkdirs()
-    folder.getAbsolutePath
+    folder.getCanonicalPath
   }
 
   def folderTestToolModules : String = {
     val folder = new File( folderTestToolNodejs, "node_modules" )
     folder.mkdirs()
-    folder.getAbsolutePath
+    folder.getCanonicalPath
   }
 
   def folderWorkDir : String = {
     val folder = project.getBasedir
     folder.mkdirs()
-    folder.getAbsolutePath
+    folder.getCanonicalPath
   }
 
   def provideNodeVersion = {
@@ -402,7 +400,7 @@ trait EnvProvNodejs extends EnvProvAny {
     val folder = folderTestToolNodejs
     val exec = "node" // Node.js convention.
     val file = new File( folder, exec )
-    file.getAbsoluteFile
+    file.getCanonicalFile
   }
 
   def provisionedModuleList : List[ File ] = {
@@ -516,14 +514,14 @@ trait EnvProvPhantomjs extends EnvProvAny {
   def folderTestToolPhantomjs : String = {
     val folder = new File( envprovTestToolFolder, envprovPhantomjsFolder )
     folder.mkdirs()
-    folder.getAbsolutePath
+    folder.getCanonicalPath
   }
 
   def provisionedPhantomjs : File = {
     val folder = folderTestToolPhantomjs
     val exec = "phantomjs" // Phantom.js convention.
     val file = new File( folder, exec )
-    file.getAbsoluteFile
+    file.getCanonicalFile
   }
 
   /**
@@ -596,7 +594,7 @@ trait EnvProvWebjars extends EnvProvAny {
   def provisionedWebjars : File = {
     val folder = new File( folderTestTool, envprovWebjarsFolder )
     folder.mkdirs()
-    folder.getAbsoluteFile
+    folder.getCanonicalFile
   }
 
   /**

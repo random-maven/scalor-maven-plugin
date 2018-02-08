@@ -43,7 +43,7 @@ trait ReportAnyMojo extends AbstractMojo
   var skipReport : Boolean = _
 
   def performReport() : Unit = {
-    log.info( s"TODO TODO TODO" )
+    logger.info( s"TODO TODO TODO" )
   }
 
   override def perform() : Unit = {
@@ -144,7 +144,7 @@ trait ScaladocAnyMojo extends AbstractMojo
   def performScaladoc() : Unit = {
     val folder = scaladocOutputFolder
     val options = Seq()
-    log.info( s"Generating Scaladoc: ${folder}" )
+    logger.info( s"Generating Scaladoc: ${folder}" )
     ensureFolder( folder )
     zincPerformDocument( folder, options )
   }
@@ -159,7 +159,7 @@ trait ScaladocAnyMojo extends AbstractMojo
    * Package scaladoc content into an archive jar.
    */
   def performPackage() : Unit = {
-    log.info( s"Packaging Scaladoc: ${scaladocArchive}" )
+    logger.info( s"Packaging Scaladoc: ${scaladocArchive}" )
     if ( scaladocArchive.exists ) { scaladocArchive.delete }
     val packager = new MavenArchiver()
     val archiveBuilder = new JarArchiver()
@@ -176,7 +176,7 @@ trait ScaladocAnyMojo extends AbstractMojo
    */
   def performAttach() : Unit = {
     if ( scaladocHasAttach ) {
-      log.info( s"Attaching Scaladoc: ${scaladocArchive}" )
+      logger.info( s"Attaching Scaladoc: ${scaladocArchive}" )
       projectHelper.attachArtifact( project, scaladocArchive, scaladocClassifier )
     }
   }

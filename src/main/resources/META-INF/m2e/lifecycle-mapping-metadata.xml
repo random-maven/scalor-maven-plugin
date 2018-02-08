@@ -26,6 +26,7 @@
                 <goals>
 
                     <goal>eclipse-restart</goal>
+                    <goal>eclipse-prescomp</goal>
 
                     <goal>clean-macro</goal>
                     <goal>clean-main</goal>

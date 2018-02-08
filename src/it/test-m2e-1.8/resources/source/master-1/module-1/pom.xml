@@ -25,7 +25,7 @@
         <version.scala.release>2.12.4</version.scala.release>
 
         <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
-        <version.scala.zinc>1.1.0</version.scala.zinc>
+        <version.scala.zinc>1.1.1</version.scala.zinc>
 
         <maven.compiler.source>${version.java}</maven.compiler.source>
         <maven.compiler.target>${version.java}</maven.compiler.target>

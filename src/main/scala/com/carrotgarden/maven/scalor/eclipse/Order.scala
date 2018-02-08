@@ -27,12 +27,14 @@ import java.util.Arrays
 import org.eclipse.core.resources.IResource
 import com.carrotgarden.maven.scalor.util.Logging
 
+import util.Option.convert._
+
 /**
  * Re-order eclipse .project file and .classpath file entries.
  */
 trait Order {
 
-  self : Logging with Maven =>
+  self : Maven =>
 
   import Order._
   import IResource._
@@ -76,14 +78,14 @@ trait Order {
    * Order Eclipse .project builder entries
    */
   def ensureOrderBuilder(
-    request : ProjectConfigurationRequest,
-    config :  ParamsConfig,
+    context : Config.SetupContext,
     monitor : IProgressMonitor
   ) : Unit = {
+    import context._
     import config._
     val facade = request.getMavenProjectFacade
     if ( eclipseBuilderReorder ) {
-      log.info( "Ordering Eclipse .project builder entries." )
+      logger.info( "Ordering Eclipse .project builder entries." )
       reorderBuilder( facade.getProject, eclipseBuilderOrdering, commonSequenceSeparator, monitor )
     }
   }
@@ -124,14 +126,13 @@ trait Order {
    * Order class path entries inside the .classpath Maven container.
    */
   def ensureOrderMaven(
-    facade :    IMavenProjectFacade,
-    config :    ParamsConfig,
-    classpath : IClasspathDescriptor,
-    monitor :   IProgressMonitor
+    context : Config.SetupContext,
+    monitor : IProgressMonitor
   ) = {
+    import context._
     import config._
     if ( eclipseMavenReorder ) {
-      log.info( "Ordering entries inside the Maven container." )
+      logger.info( "Ordering entries inside the Maven container." )
       val configMap = parameterMap( eclipseMavenOrdering, commonSequenceSeparator )
       val ( field, order ) = if ( configMap.isEmpty ) {
         ( "artifactId", "ascending" )
@@ -147,13 +148,13 @@ trait Order {
    * Order natures inside Eclipse .project.
    */
   def ensureOrderNature(
-    request : ProjectConfigurationRequest,
-    config :  ParamsConfig,
+    context : Config.SetupContext,
     monitor : IProgressMonitor
   ) = {
+    import context._
     import config._
     if ( eclipseNatureReorder ) {
-      log.info( "Ordering Eclipse .project nature entries." )
+      logger.info( "Ordering Eclipse .project nature entries." )
       val mapper = new SettingsRegexMapper( eclipseNatureOrdering, commonSequenceSeparator )
       val comparator = ComparatorStringRule( mapper )
       val project = request.getProject
@@ -172,14 +173,13 @@ trait Order {
    * Order top level class path entries inside the .classpath.
    */
   def ensureOrderTopLevel(
-    request :   ProjectConfigurationRequest,
-    config :    ParamsConfig,
-    classpath : IClasspathDescriptor,
-    monitor :   IProgressMonitor
+    context : Config.SetupContext,
+    monitor : IProgressMonitor
   ) = {
+    import context._
     import config._
     if ( eclipseClasspathReorder ) {
-      log.info( "Ordering top level entries inside the .classpath." )
+      logger.info( "Ordering top level entries inside the .classpath." )
       ensureOrderAny( config, eclipseClasspathOrdering, commonSequenceSeparator, classpath, monitor )
     }
   }

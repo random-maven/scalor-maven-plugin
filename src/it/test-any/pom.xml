@@ -63,9 +63,9 @@
                     <!-- Remove select executions form life cycle. -->
                     <skipLinker>true</skipLinker>
                     <skipReport>true</skipReport>
-                    <skipScaladoc>true</skipScaladoc>
                     <skipEnvProv>true</skipEnvProv>
                     <skipEnvConf>true</skipEnvConf>
+                    <!-- <skipScaladoc>true</skipScaladoc> -->
 
                     <defineBridge>
                         <dependency>
@@ -100,11 +100,6 @@
                             <version>${version.scala.plugin.macro}</version>
                         </dependency>
                         <!-- Verify dependency w/o sources. -->
-                        <dependency>
-                            <groupId>com.artima.supersafe</groupId>
-                            <artifactId>supersafe_${version.scala.release}</artifactId>
-                            <version>${version.supersafe}</version>
-                        </dependency>
                         <dependency>
                             <groupId>com.artima.supersafe</groupId>
                             <artifactId>supersafe_${version.scala.release}</artifactId>

@@ -31,6 +31,12 @@ class OrderTest extends AnyRef
     }
   }
 
+  val separator = """[★\n]+"""
+
+  {
+    commonSequenceSeparator = separator
+  }
+
   val ordering = """
 
     11 = .*src/macr.*/java
@@ -63,8 +69,6 @@ class OrderTest extends AnyRef
     93 = .*target/test-classes 
 
   """
-
-  val separator = """[;\n]"""
 
   val source = """
     org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER
@@ -100,10 +104,10 @@ class OrderTest extends AnyRef
   def arraySort : Unit = {
     val mapper = new SettingsRegexMapper( ordering, separator )
     val comparator = ComparatorString( mapper )
-    val sourceList = parseCommonList( source, separator )
+    val sourceList = parseCommonList( source )
     val resultList = sourceList.clone
     Arrays.sort( resultList, comparator )
-    val targetList = parseCommonList( target, separator )
+    val targetList = parseCommonList( target )
     println( s"sourceList ${sourceList.mkString( ";" )}" )
     println( s"targetList ${resultList.mkString( ";" )}" )
     assert( targetList.toList == resultList.toList )
@@ -113,10 +117,10 @@ class OrderTest extends AnyRef
   def collectionSort : Unit = {
     val mapper = new SettingsRegexMapper( ordering, separator )
     val comparator = ComparatorString( mapper )
-    val sourceList = Arrays.asList( parseCommonList( source, separator ) : _* )
+    val sourceList = Arrays.asList( parseCommonList( source ) : _* )
     val resultList = new ArrayList[ String ]( sourceList )
     Collections.sort( resultList, comparator )
-    val targetList = Arrays.asList( parseCommonList( target, separator ) : _* )
+    val targetList = Arrays.asList( parseCommonList( target ) : _* )
     println( s"sourceList ${sourceList.asScala.mkString( ";" )}" )
     println( s"targetList ${resultList.asScala.mkString( ";" )}" )
     assert( targetList == resultList )
@@ -148,8 +152,8 @@ class OrderTest extends AnyRef
     xz
     """
 
-    val sourceList = Arrays.asList( parseCommonList( source, separator ) : _* ).asScala.map( entryFrom( _ ) )
-    val targetList = Arrays.asList( parseCommonList( target, separator ) : _* ).asScala.map( entryFrom( _ ) )
+    val sourceList = Arrays.asList( parseCommonList( source ) : _* ).asScala.map( entryFrom( _ ) )
+    val targetList = Arrays.asList( parseCommonList( target ) : _* ).asScala.map( entryFrom( _ ) )
     val resultList = new ArrayList[ IClasspathEntryDescriptor ]( sourceList.asJava )
     Collections.sort( resultList, comparator )
 

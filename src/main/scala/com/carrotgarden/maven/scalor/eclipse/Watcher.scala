@@ -9,8 +9,8 @@ import org.eclipse.core.runtime.IPath
 import scala.collection.concurrent.TrieMap
 import java.io.File
 import org.eclipse.core.runtime.Path
+import com.carrotgarden.maven.scalor.util.Text
 import com.carrotgarden.maven.scalor.util.Logging.AnyLog
-import com.carrotgarden.maven.scalor.util.Logging.NoopLogger
 
 /**
  * Eclipse resource change listener.
@@ -22,11 +22,11 @@ object Watcher {
    */
   case class Detector(
     buildList : Array[ String ],
-    matchList : Array[ String ],
+    regexList : Array[ String ],
     logger :    Option[ AnyLog ]
   ) extends IResourceChangeListener with IResourceDeltaVisitor {
 
-    val regexList = matchList.map( _.r )
+    val matchList = regexList.map( _.r )
 
     val resultMap = TrieMap[ String, String ]()
 
@@ -63,8 +63,9 @@ object Watcher {
       resultFinish = System.currentTimeMillis
     }
 
-    def resultReport : String = {
-      resultMap.values.toList.sorted.mkString( "\n" )
+    def resultReport( limit : Int ) : String = {
+      val array = resultMap.values.toList.sorted.take( limit ).toArray
+      Text.reportArray( array )
     }
 
     import IResourceChangeEvent._
@@ -75,9 +76,9 @@ object Watcher {
     }
 
     def hasMatch( path : String ) : Boolean = {
-      var index = 0; val count = regexList.length
+      var index = 0; val count = matchList.length
       while ( index < count ) {
-        val regex = regexList( index ); index += 1
+        val regex = matchList( index ); index += 1
         if ( regex.pattern.matcher( path ).matches ) {
           return true
         }
@@ -112,7 +113,7 @@ object Watcher {
       if ( location == null ) {
         return false
       }
-      val textPath = location.toFile.getAbsolutePath
+      val textPath = location.toFile.getCanonicalPath
       if ( hasMatch( textPath ) ) {
         log( _.info( s"register result=${textPath}" ) )
         resultRegister( textPath )
@@ -134,7 +135,7 @@ object Watcher {
       val projectDeltaList = rootDelta.getAffectedChildren
       projectDeltaList.foreach { projectDelta =>
         log( _.info( s"project delta=${projectDelta}" ) )
-        val projectPath = projectDelta.getResource.getLocation.toFile.getAbsolutePath
+        val projectPath = projectDelta.getResource.getLocation.toFile.getCanonicalPath
         if ( hasBuild( projectPath ) ) {
           // FIXME spurious matches to parent
           projectDelta.accept( this )
@@ -148,12 +149,16 @@ object Watcher {
 
   def workspacePath = workspace.getRoot.getLocation
 
-  /** Activate resource change listener. */
+  /**
+   *  Activate resource change listener.
+   */
   def register( detector : Detector ) = {
     workspace.addResourceChangeListener( detector )
   }
 
-  /** Deactivate resource change listener. */
+  /**
+   *  Deactivate resource change listener.
+   */
   def unregister( detector : Detector ) = {
     workspace.removeResourceChangeListener( detector )
   }

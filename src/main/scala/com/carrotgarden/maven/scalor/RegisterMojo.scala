@@ -26,7 +26,7 @@ import java.nio.file.Path
 
 /**
  * Shared register mojo interface.
- * Register Java, Scala, Resource folders for given compilation scope.
+ * Register Java, Scala, resource root folders for given compilation scope.
  */
 trait RegisterAnyMojo extends AbstractMojo
   with base.Dir
@@ -121,9 +121,9 @@ trait RegisterAnyMojo extends AbstractMojo
       .foreach { resource : Resource =>
         val path = basedir.absolute( Paths.get( resource.getDirectory ) )
         if ( hasResourceRoot( resource ) ) {
-          log.info( "Already registered: " + path )
+          logger.info( "Already registered: " + path )
         } else {
-          log.info( "Registering root:   " + path )
+          logger.info( "Registering root:   " + path )
           registerResource( resource )
         }
       }
@@ -132,9 +132,9 @@ trait RegisterAnyMojo extends AbstractMojo
       .map( file => basedir.absolute( file.toPath ) )
       .foreach { path : Path =>
         if ( hasSourceRoot( path ) ) {
-          log.info( "Already registered: " + path )
+          logger.info( "Already registered: " + path )
         } else {
-          log.info( "Registering root:   " + path )
+          logger.info( "Registering root:   " + path )
           registerSource( path.toString )
         }
       }
@@ -143,15 +143,15 @@ trait RegisterAnyMojo extends AbstractMojo
       .map( file => basedir.absolute( file.toPath ) )
       .foreach { path : Path =>
         if ( hasTargetRoot( path ) ) {
-          log.info( "Already registered: " + path )
+          logger.info( "Already registered: " + path )
         } else {
-          log.info( "Registering root:   " + path )
+          logger.info( "Registering root:   " + path )
           registerTarget( path.toString )
         }
       }
 
     if ( buildEnsureFolders ) {
-      log.info( "Ensuring build folders." )
+      logger.info( "Ensuring build folders." )
       buildResourceFolders
         .foreach { resource : Resource =>
           val path = basedir.absolute( Paths.get( resource.getDirectory ) )
@@ -177,7 +177,7 @@ trait RegisterAnyMojo extends AbstractMojo
 }
 
 @Description( """
-Register Java, Scala, Resource folders for compilation scope=macro.
+Register Java, Scala, resource root folders for compilation scope=macro.
 """ )
 @Mojo(
   name                         = `register-macro`,
@@ -213,7 +213,7 @@ class RegisterMacroMojo extends RegisterAnyMojo
 }
 
 @Description( """
-Register Java, Scala, Resource folders for compilation scope=main.
+Register Java, Scala, resource root folders for compilation scope=main.
 """ )
 @Mojo(
   name                         = `register-main`,
@@ -246,7 +246,7 @@ class RegisterMainMojo extends RegisterAnyMojo
 }
 
 @Description( """
-Register Java, Scala, Resource folders for compilation scope=test.
+Register Java, Scala, resource root folders for compilation scope=test.
 """ )
 @Mojo(
   name                         = `register-test`,

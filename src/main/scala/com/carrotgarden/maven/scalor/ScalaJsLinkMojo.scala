@@ -13,6 +13,9 @@ import com.carrotgarden.maven.scalor.util.Folder._
 import com.carrotgarden.maven.tools.Description
 import java.io.File
 
+import scala.collection.JavaConverters._
+import org.apache.maven.artifact.Artifact
+
 /**
  * Shared linker mojo interface.
  * Generate Scala.js runtime.js JavaScript.
@@ -31,66 +34,74 @@ trait ScalaJsLinkAnyMojo extends AbstractMojo
   Flag to skip this execution: <code>scala-js-link-*</code>.
   """ )
   @Parameter(
-    property     = "scalor.skipLinker", //
+    property     = "scalor.skipLinker",
     defaultValue = "false"
   )
   var skipLinker : Boolean = _
 
   @Description( """
-  Regular expression to detect when scalajs-library is present on class path.
-  Must provide version capture group.
+  Regular expression used to detect when Scala.js library is present on class path.
+  This regular expression is matched against resolved project depenencies in given scope.
+  Regular expression in the form: <code>${groupId}:${artifactId}</code>.
   Enablement parameter: <a href="#linkerLibraryDetect"><b>linkerLibraryDetect</b></a>.
   """ )
   @Parameter(
-    property     = "scalor.linkerLibraryRegex", //
-    defaultValue = "^scalajs-library_(.+)[.]jar$"
+    property     = "scalor.linkerLibraryRegex",
+    defaultValue = "org.scala-js:scalajs-library_.+"
   )
   var linkerLibraryRegex : String = _
 
   @Description( """
-  Invoke Scala.js linker only when scalajs-library is present
+  Invoke Scala.js linker only when Scala.js library is detected
   in project dependencies with given scope.
   Detection parameter: <a href="#linkerLibraryRegex"><b>linkerLibraryRegex</b></a>.
   """ )
   @Parameter(
-    property     = "scalor.linkerDetectScalajs", //
+    property     = "scalor.linkerLibraryDetect",
     defaultValue = "true"
   )
   var linkerLibraryDetect : Boolean = _
 
-  lazy val linkerClassPath = {
+  /**
+   * Provide linker project build class path.
+   */
+  def linkerClassPath : Array[ File ] = {
     buildDependencyFolders ++ projectClassPath( buildDependencyScopes )
   }
 
   /**
-   * Discover scalajs-library on project class path.
+   * Discover Scala.js library on project class path.
    */
-  def libraryOption = {
-    resolveJar( linkerClassPath, linkerLibraryRegex ).right.toOption
+  def libraryArtifactOption : Option[ Artifact ] = {
+    val libraryRegex = linkerLibraryRegex.r
+    project.getArtifacts.asScala.find { artifact =>
+      import artifact._
+      val identity = s"${getGroupId}:${getArtifactId}"
+      libraryRegex.pattern.matcher( identity ).matches
+    }
   }
 
   import scalajs.Linker._
 
-  def reportLink( options : Options, classpath : Seq[ File ], runtime : File ) = {
+  def reportLinker( options : Options, classpath : Array[ File ], runtime : File ) = {
     if ( linkerLogRuntime ) {
-      log.info( s"Linker runtime: ${runtime}" )
+      logger.info( s"Linker runtime: ${runtime}" )
     }
     if ( linkerLogOptions ) {
-      log.info( s"Linker options:\n${config( options )}" )
+      logger.info( s"Linker options:\n${config( options )}" )
     }
     if ( linkerLogClassPath ) {
-      log.info( s"Linker classpath:" )
-      classpath.sorted.foreach( file => log.info( s"   ${file}" ) )
+      loggerReportFileList( "Linker classpath:", classpath )
     }
   }
 
   def invokeLinker() : Unit = {
     val options = Options.parse( linkerOptions )
-    val classpath = linkerClassPath.toList
+    val classpath = linkerClassPath
     val runtime = linkerRuntimeFile()
-    log.info( s"Invoking Scala.js linker." )
-    reportLink( options, classpath, runtime )
-    performLink( options, classpath, runtime )
+    logger.info( s"Invoking Scala.js linker." )
+    reportLinker( options, classpath, runtime )
+    performLinker( options, classpath, runtime )
   }
 
   override def perform() : Unit = {
@@ -103,15 +114,15 @@ trait ScalaJsLinkAnyMojo extends AbstractMojo
       return
     }
     if ( linkerLibraryDetect ) {
-      val libraryDetect = libraryOption
-      if ( libraryDetect.isDefined ) {
-        log.info( s"Detected scalajs-library: ${libraryDetect.get.version}." )
+      val libraryOption = libraryArtifactOption
+      if ( libraryOption.isDefined ) {
+        logger.info( s"Scala.js library present: ${libraryOption.get}." )
         invokeLinker()
       } else {
-        log.info( "Missing scalajs-library, skipping execution." )
+        logger.info( s"Scala.js library missing: ${linkerLibraryRegex}, skipping execution." )
       }
     } else {
-      log.info( "Skipping library detect, forcing linker invocation." )
+      logger.info( "Skipping library detect, forcing linker invocation." )
       invokeLinker()
     }
   }
@@ -136,7 +147,7 @@ class ScalaJsLinkMainMojo extends ScalaJsLinkAnyMojo
   Flag to skip goal execution: <code>scala-js-link-main</code>.
   """ )
   @Parameter(
-    property     = "scalor.skipLinkerMain", //
+    property     = "scalor.skipLinkerMain",
     defaultValue = "false"
   )
   var skipLinkerMain : Boolean = _
@@ -163,7 +174,7 @@ class ScalaJsLinkTestMojo extends ScalaJsLinkAnyMojo
   Flag to skip this goal execution: <code>scala-js-link-test</code>.
   """ )
   @Parameter(
-    property     = "scalor.skipLinkerTest", //
+    property     = "scalor.skipLinkerTest",
     defaultValue = "false"
   )
   var skipLinkerTest : Boolean = _

@@ -73,7 +73,7 @@
         <version.scalacheck>1.13.5</version.scalacheck>
         <version.scala.plugin.meta>3.0.0-M10</version.scala.plugin.meta>
         <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
-        <version.scala.zinc>1.1.0</version.scala.zinc>
+        <version.scala.zinc>1.1.1</version.scala.zinc>
 
         <!-- Scala.js stack. -->
         <version.sjs.epoch>0.6</version.sjs.epoch>

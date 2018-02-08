@@ -22,27 +22,48 @@ trait ParamsConfigBase extends AnyRef
   with ParamsLogger
   with ParamsComment
   with ParamsLibrary
-  with ParamsTimeout
   with ParamsPreferences
   with ParamsVersionMaven
   with ParamsVersionScala
-  with ParamsKeeperTasks
   with ParamsHackSymlinks
-  with ParamsHackPresentationCompiler {
+  with ParamsLogConfig {
+
+  override def paramsLogConfig = eclipseLogParamsConfig
 
 }
+
+/**
+ * Manage test application restart after full or incremental build in Eclispe/M2E.
+ */
 trait ParamsRestartBase extends AnyRef
   with base.ParamsAny
   with base.BuildTest
-  with ParamsRestartCore {
+  with ParamsRestartCore
+  with ParamsLogConfig {
+
+  override def paramsLogConfig = eclipseRestartLogParameters
 
 }
 
+/**
+ * Manage Scala IDE Scala presentation compiler work-around process in Eclispe/M2E.
+ */
+trait ParamsPrescompBase extends AnyRef
+  with ParamsPrescompCore
+  with ParamsLogConfig {
+
+  override def paramsLogConfig = eclipsePrescompLogParameters
+
+}
+
+/**
+ * Manage test application restart after full or incremental build in Eclispe/M2E.
+ */
 trait ParamsRestartCore {
 
   @Description( """
   Enable test application with automatic restart management in Eclipse.
-  Application parameter: <a href="#eclipseAppRestartClass"><b>eclipseAppRestartClass</b></a>
+  Application parameter: <a href="#eclipseRestartMainClass"><b>eclipseRestartMainClass</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseRestartEnable",
@@ -52,7 +73,7 @@ trait ParamsRestartCore {
 
   @Description( """
   Fully qualified class name which represents test application used for auto-restart.
-  This class must be a Scala object with a "main" contract, for example, <code>test/Main.scala</code>:
+  This class must be a Scala object with a "main" contract, for example, in file <code>test/Main.scala</code>:
 <pre>
 package test
 object Main {
@@ -64,12 +85,17 @@ object Main {
   }
 }
 </pre>
-  Normally, this class should be placed in <code>src/test/scala</code> registered source root.
-  Test application will be restarted after full or incremental build in Eclipse, following a settlement delay. 
+  Normally, this class should be placed in
+  <a href="#buildTestSourceScalaFolders"><b>buildTestSourceScalaFolders</b></a>
+  (<code>src/test/scala</code>) registered source root.
+  Test application will be restarted after full or incremental build in Eclipse, 
+  after resource change detection, following a settlement delay. 
   Test application will also be restarted when it exits or crashes.
   Test application is launched in a separate JVM.
-  Enablement parameter: <a href="#eclipseRestartEnable"><b>eclipseRestartEnable</b></a>
-  Settlement parameter: <a href="#eclipseRestartPeriodSettle"><b>eclipseRestartPeriodSettle</b></a>
+  Enablement parameter: <a href="#eclipseRestartEnable"><b>eclipseRestartEnable</b></a>.
+  Settlement parameter: <a href="#eclipseRestartPeriodSettle"><b>eclipseRestartPeriodSettle</b></a>.
+  Detection parameter: <a href="#eclipseRestartRegexList"><b>eclipseRestartRegexList</b></a>.
+  Java launch parameter: <a href="#eclipseRestartJavaArgs"><b>eclipseRestartJavaArgs</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseRestartMainClass",
@@ -81,7 +107,7 @@ object Main {
   Working directory used to launch test application. Absolute path.
   """ )
   @Parameter(
-    property     = "scalor.eclipseRestartBaseDir",
+    property     = "scalor.eclipseRestartWorkDir",
     defaultValue = "${project.build.directory}/scalor/test-main"
   )
   var eclipseRestartWorkDir : File = _
@@ -94,9 +120,9 @@ object Main {
   @Parameter(
     property     = "scalor.eclipseRestartJavaArgs",
     defaultValue = """
-    -Dscalor.test.app=${project.artifactId} ;
-    -Xms1G ;
-    -Xmx1G ;
+    -Dscalor.test.app=${project.artifactId} ★
+    -Xms1G ★
+    -Xmx1G ★
     """
   )
   var eclipseRestartJavaArgs : String = _
@@ -109,8 +135,8 @@ object Main {
   @Parameter(
     property     = "scalor.eclipseRestartJavaVars",
     defaultValue = """
-    HOME=${project.basedir} ;
-    USER=scalor ;
+    HOME=${project.basedir} ★
+    USER=scalor ★
     """
   )
   var eclipseRestartJavaVars : String = _
@@ -118,9 +144,13 @@ object Main {
   @Description( """
   Eclipse background management job name representing running test application.
   Canceling this management job in Eclipse UI will terminate running test application.
-  M2E project update in Eclipse UI will re-create both management job and test application.
+  M2E project update or clean/build in Eclipse UI will re-create both management job and test application.
   Job name must be unique in Eclipse workspace.
-  Application parameter: <a href="#eclipseRestartMainClass"><b>eclipseRestartMainClass</b></a>
+  Application parameter: <a href="#eclipseRestartMainClass"><b>eclipseRestartMainClass</b></a>.
+  To review current background jobs in Eclipse, navigate:
+<pre>
+Eclipse -> Window -> Show View -> Progress 
+</pre>
   """ )
   @Parameter(
     property     = "scalor.eclipseRestartTaskName",
@@ -130,28 +160,30 @@ object Main {
 
   @Description( """
   List of regular expressions used to detect test application restart condition.
-  These resources are monitored in folders 
+  These resources are monitored in folders
+  <a href="#buildTestDependencyFolders"><b>buildTestDependencyFolders</b></a> 
   included as effective project dependencies resolved by Eclipse/M2E,
   such as <code>target/classes</code>, <code>target/test-classes</code>,
   from current project as well as from accessible dependecy projects in the workspace.
   Normally matches Scala JVM classes, Scala.js IR classes, configuration files.
   Separator parameter: <a href="#commonSequenceSeparator"><b>commonSequenceSeparator</b></a>.
+  Review actual class path with <a href="#eclipseRestartLogCommand"><b>eclipseRestartLogCommand</b></a>. 
   """ )
   @Parameter(
-    property     = "scalor.eclipseRestartMatchList",
+    property     = "scalor.eclipseRestartRegexList",
     defaultValue = """
-    ^.+[.]class$ ;
-    ^.+[.]sjsir$ ;
-    ^.+[.]conf$ ;
-    ^.+[.]js$ ;
+    ^.+[.]class$ ★
+    ^.+[.]sjsir$ ★
+    ^.+[.]conf$ ★
+    ^.+[.]js$ ★
     """
   )
-  var eclipseRestartMatchList : String = _
+  var eclipseRestartRegexList : String = _
 
   @Description( """
   Test application change detection settlement time window, milliseconds. 
   Actual restart will occur only when there are no more resource changes during this delay time window.
-  Application parameter: <a href="#eclipseRestartMainClass"><b>eclipseRestartMainClass</b></a>
+  Application parameter: <a href="#eclipseRestartMainClass"><b>eclipseRestartMainClass</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseRestartPeriodSettle",
@@ -162,7 +194,7 @@ object Main {
   @Description( """
   Test application wait-before-restart delay time window, milliseconds.
   Used as delay for application restart after an exit or crash, to prevent restart flood.  
-  Application parameter: <a href="#eclipseRestartMainClass"><b>eclipseRestartMainClass</b></a>
+  Application parameter: <a href="#eclipseRestartMainClass"><b>eclipseRestartMainClass</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseRestartPeriodPrevent",
@@ -173,13 +205,23 @@ object Main {
   @Description( """
   Restart management task checks invocation period, milliseconds.
   Defines frequency of test application liveness checks and resource change detection checks. 
-  Application parameter: <a href="#eclipseRestartMainClass"><b>eclipseRestartMainClass</b></a>
+  Application parameter: <a href="#eclipseRestartMainClass"><b>eclipseRestartMainClass</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseRestartPeriodInvoke",
     defaultValue = "1000"
   )
   var eclipseRestartPeriodInvoke : Long = _
+
+  @Description( """
+  Limit number of records reported by loggers.
+  Detector logger enablement: <a href="#eclipseRestartLogDetected"><b>eclipseRestartLogDetected</b></a>.
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseRestartLimitLogger",
+    defaultValue = "20"
+  )
+  var eclipseRestartLimitLogger : Int = _
 
   @Description( """
   Enable to log command used to launch managed test application.
@@ -193,7 +235,8 @@ object Main {
 
   @Description( """
   Enable to log list of changed resources which have triggred test application restart.
-  Detector parameter: <a href="#eclipseRestartMatchList"><b>eclipseRestartMatchList</b></a>
+  Detector parameter: <a href="#eclipseRestartRegexList"><b>eclipseRestartRegexList</b></a>.
+  Logs limit parameter: <a href="#eclipseRestartLimitLogger"><b>eclipseRestartLimitLogger</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseRestartLogDetected",
@@ -211,80 +254,82 @@ object Main {
   )
   var eclipseRestartLogChanged : Boolean = _
 
-}
-
-trait ParamsKeeperTasks {
-
-  //  @Description( """
-  //  Enable various background maintenance tasks.
-  //  Periodicity parameter: <a href="#eclipseKeeperPeriod"><b>eclipseKeeperPeriod</b></a>
-  //  """ )
-  //  @Parameter(
-  //    property     = "scalor.eclipseKeeperActive",
-  //    defaultValue = "true"
-  //  )
-  //  var eclipseKeeperActive : Boolean = _
-  //
-  //  @Description( """
-  //  Period of various background maintenance tasks, milliseconds.
-  //  Enablement parameter: <a href="#eclipseKeeperActive"><b>eclipseKeeperActive</b></a>
-  //  """ )
-  //  @Parameter(
-  //    property     = "scalor.eclipseKeeperPeriod",
-  //    defaultValue = "3000"
-  //  )
-  //  var eclipseKeeperPeriod : Long = _
-
-}
-
-trait ParamsHackPresentationCompiler {
-
   @Description( """
-  Work around spurious crashes of Scala IDE presentation compiler.
-  Specifically, periodically analyze managed Scala IDE project,
-  detect crashed presentation compiler instance, and issue restart.
-  Periodicity parameter: <a href="#eclipsePresentationCompilerPeriod"><b>eclipsePresentationCompilerPeriod</b></a>
+  Enable to log in Eclipse/M2E effective configuration parameters for this Maven execution.
   """ )
   @Parameter(
-    property     = "scalor.eclipseHackPresentationCompiler",
+    property     = "scalor.eclipseRestartLogParameters",
+    defaultValue = "false"
+  )
+  var eclipseRestartLogParameters : Boolean = _
+
+}
+
+/**
+ * Manage Scala IDE Scala presentation compiler work-around process in Eclispe/M2E.
+ */
+trait ParamsPrescompCore {
+
+  @Description( """
+  Enable to work around spurious crashes of Scala IDE presentation compiler.
+  Specifically, periodically analyze managed Scala IDE project,
+  detect crashed presentation compiler instance, and issue restart.
+  Periodicity parameter: <a href="#eclipsePrescompPeriodInvoke"><b>eclipsePrescompPeriodInvoke</b></a>.
+  """ )
+  @Parameter(
+    property     = "scalor.eclipsePrescompEnable",
     defaultValue = "true"
   )
-  var eclipseHackPresentationCompiler : Boolean = _
+  var eclipsePrescompEnable : Boolean = _
 
   @Description( """
   Enable to log presentation compiler compilation units with problems at serverity <code>level=error</code>.
   These compilation units are monitored by mainenace task and trigger presentation compiler restart requests.
-  Enablement parameter: <a href="#eclipseHackPresentationCompiler"><b>eclipseHackPresentationCompiler</b></a>
-  Periodicity parameter: <a href="#eclipsePresentationCompilerPeriod"><b>eclipsePresentationCompilerPeriod</b></a>
+  Enablement parameter: <a href="#eclipsePrescompEnable"><b>eclipsePrescompEnable</b></a>.
+  Periodicity parameter: <a href="#eclipsePrescompPeriodInvoke"><b>eclipsePrescompPeriodInvoke</b></a>.
   """ )
   @Parameter(
-    property     = "scalor.eclipseLogPresentationCompiler",
+    property     = "scalor.eclipsePrescompLogErrorUnits",
     defaultValue = "true"
   )
-  var eclipseLogPresentationCompiler : Boolean = _
+  var eclipsePrescompLogErrorUnits : Boolean = _
 
   @Description( """
-  Period of presentation compiler maintenance task, milliseconds. 
-  Enablement parameter: <a href="#eclipseHackPresentationCompiler"><b>eclipseHackPresentationCompiler</b></a>
+  Enable to log in Eclipse/M2E effective configuration parameters for this Maven execution.
   """ )
   @Parameter(
-    property     = "scalor.eclipsePresentationCompilerPeriod",
+    property     = "scalor.eclipsePrescompLogParameters",
+    defaultValue = "false"
+  )
+  var eclipsePrescompLogParameters : Boolean = _
+
+  @Description( """
+  Period of presentation compiler maintenance job invocations, milliseconds. 
+  Defines frequency of presentation compiler liveness checks.
+  Enablement parameter: <a href="#eclipsePrescompEnable"><b>eclipsePrescompEnable</b></a>.
+  """ )
+  @Parameter(
+    property     = "scalor.eclipsePrescompPeriodInvoke",
     defaultValue = "3000"
   )
-  var eclipsePresentationCompilerPeriod : Long = _
+  var eclipsePrescompPeriodInvoke : Long = _
 
   @Description( """
-  Eclipse background job name representing presentation compiler work around process.
-  Canceling this job will terminate presentation compiler work around process.
-  M2E project update will re-create management job.
+  Name of Eclipse background job representing Scala IDE presentation compiler work-around process.
+  Canceling this job in Eclipse UI will terminate presentation compiler work-around process.
+  M2E project update or clean/build in Eclipse UI will re-create management job.
   Job name must be unique in Eclipse workspace.
-  Enablement parameter: <a href="#eclipseHackPresentationCompiler"><b>eclipseHackPresentationCompiler</b></a>
+  Enablement parameter: <a href="#eclipsePrescompEnable"><b>eclipsePrescompEnable</b></a>.
+  To review current background jobs in Eclipse, navigate:
+<pre>
+Eclipse -> Window -> Show View -> Progress 
+</pre>
   """ )
   @Parameter(
-    property     = "scalor.eclipsePresentationCompilerTaskName",
+    property     = "scalor.eclipsePrescompTaskName",
     defaultValue = "Scalor: presenation compiler manager @ ${project.artifactId}"
   )
-  var eclipsePresentationCompilerTaskName : String = _
+  var eclipsePrescompTaskName : String = _
 
 }
 
@@ -404,6 +449,15 @@ trait ParamsComment {
 
 }
 
+/**
+ * Enabale logging of plugin configuration for given Eclipse goal.
+ */
+trait ParamsLogConfig {
+
+  def paramsLogConfig : Boolean
+
+}
+
 trait ParamsLogger {
 
   @Description( """
@@ -502,19 +556,6 @@ trait ParamsLogger {
 
 }
 
-trait ParamsTimeout {
-
-  //  @Description( """
-  //  Timeout waiting for background task to complete, seconds.
-  //  """ )
-  //  @Parameter(
-  //    property     = "scalor.eclipseUpdateJobTimeout",
-  //    defaultValue = "30"
-  //  )
-  //  var eclipseUpdateJobTimeout : Int = _
-
-}
-
 trait ParamsOrder {
 
   @Description( """
@@ -523,7 +564,7 @@ trait ParamsOrder {
   projectDescription/buildSpec/buildCommand/name
 </pre>
   Builder order is important in Eclipse builds.
-  Ordering parameter: <a href="#eclipseBuilderOrdering"><b>eclipseBuilderOrdering</b></a>
+  Ordering parameter: <a href="#eclipseBuilderOrdering"><b>eclipseBuilderOrdering</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseBuilderReorder",
@@ -535,7 +576,7 @@ trait ParamsOrder {
   Order Eclipse <code>.project</code> descriptor builder entries according to these rules.
   Rule format: 
 <pre>
-item = path ;
+item = path
   where:
   item - relative sort order index,
   path - regular expression to match against 'projectDescription/buildSpec/buildCommand/name', 
@@ -547,14 +588,14 @@ item = path ;
     property     = "scalor.eclipseBuilderOrdering",
     defaultValue = """
     
-    11 = org.eclipse.wst.+ ;
-    12 = org.eclipse.dltk.+ ;
+    11 = org.eclipse.wst.+ ★
+    12 = org.eclipse.dltk.+ ★
     
-    41 = org.eclipse.jdt.+ ;
-    42 = org.scala-ide.sdt.+ ; 
+    41 = org.eclipse.jdt.+ ★
+    42 = org.scala-ide.sdt.+ ★ 
     
-    71 = org.eclipse.pde.+ ;
-    72 = org.eclipse.m2e.+ ;
+    71 = org.eclipse.pde.+ ★
+    72 = org.eclipse.m2e.+ ★
     
     """
   )
@@ -565,7 +606,7 @@ item = path ;
 <pre>
   classpath/classpathentry/@path
 </pre>
-  Ordering parameter: <a href="#eclipseClasspathOrdering"><b>eclipseClasspathOrdering</b></a>
+  Ordering parameter: <a href="#eclipseClasspathOrdering"><b>eclipseClasspathOrdering</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseClasspathReorder",
@@ -578,7 +619,7 @@ item = path ;
   Class path entry order controls visual presentation in Eclipse UI.
   Rule format:
 <pre>
-item = path ;
+item = path
   where:
   item - relative sort order index,
   path - regular expression to match against 'classpath/classpathentry/@path', 
@@ -590,36 +631,36 @@ item = path ;
     property     = "scalor.eclipseClasspathOrdering",
     defaultValue = """
     
-    11 = .*src/macr.*/java ;
-    12 = .*src/macr.*/scala ;
-    13 = .*src/macr.*/groovy ;
-    14 = .*src/macr.*/res.* ;
+    11 = .*src/macr.*/java ★
+    12 = .*src/macr.*/scala ★
+    13 = .*src/macr.*/groovy ★
+    14 = .*src/macr.*/res.* ★
     
-    21 = .*src/main.*/java ;
-    22 = .*src/main.*/scala ;
-    23 = .*src/main.*/groovy ;
-    24 = .*src/main.*/res.* ;
+    21 = .*src/main.*/java ★
+    22 = .*src/main.*/scala ★
+    23 = .*src/main.*/groovy ★
+    24 = .*src/main.*/res.* ★
     
-    31 = .*src/test.*/java ;
-    32 = .*src/test.*/scala ;
-    33 = .*src/test.*/groovy ;
-    34 = .*src/test.*/res.* ;
+    31 = .*src/test.*/java ★
+    32 = .*src/test.*/scala ★
+    33 = .*src/test.*/groovy ★
+    34 = .*src/test.*/res.* ★
     
-    51 = .*target/gen[a-z-]*sources.* ; 
-    52 = .*target/gen[a-z-]*test-.* ;
-    53 = .*target/gen[a-z-]*.* ;
+    51 = .*target/gen[a-z-]*sources.* ★ 
+    52 = .*target/gen[a-z-]*test-.* ★
+    53 = .*target/gen[a-z-]*.* ★
     
-    81 = org.scala-ide.sdt.* ;
-    82 = org.eclipse.jdt.* ;
-    83 = org.eclipse.m2e.* ;
-    84 = GROOVY_SUPPORT ;
-    85 = GROOVY_DSL_SUPPORT ;
+    81 = org.scala-ide.sdt.* ★
+    82 = org.eclipse.jdt.* ★
+    83 = org.eclipse.m2e.* ★
+    84 = GROOVY_SUPPORT ★
+    85 = GROOVY_DSL_SUPPORT ★
     
-    91 = .*target/clas.* ;
-    92 = .*target/test-clas.* ; 
-    93 = .*target/scalor/clas.*/macr.* ; 
-    94 = .*target/scalor/clas.*/main.* ; 
-    95 = .*target/scalor/clas.*/test.* ; 
+    91 = .*target/clas.* ★
+    92 = .*target/test-clas.* ★ 
+    93 = .*target/scalor/clas.*/macr.* ★ 
+    94 = .*target/scalor/clas.*/main.* ★ 
+    95 = .*target/scalor/clas.*/test.* ★ 
     
     """
   )
@@ -628,7 +669,7 @@ item = path ;
   @Description( """
   Enable to re-order class path entires inside the<code>.classpath</code>Maven container.
   Class path entry order controls visual presentation in Eclipse UI.
-  Ordering parameter: <a href="#eclipseMavenOrdering"><b>eclipseMavenOrdering</b></a>
+  Ordering parameter: <a href="#eclipseMavenOrdering"><b>eclipseMavenOrdering</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseMavenReorder",
@@ -656,7 +697,7 @@ item = path ;
   @Description( """
   Enable to re-order nature entires in <code>.project</code> descriptor.
   Nature order controls project presentation in Eclipse UI.
-  Ordering parameter: <a href="#eclipseNatureOrdering"><b>eclipseNatureOrdering</b></a>
+  Ordering parameter: <a href="#eclipseNatureOrdering"><b>eclipseNatureOrdering</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseNatureReorder",
@@ -670,7 +711,7 @@ item = path ;
   In order to see <code>[S]<code> icon for Scala project, Scala nature must come first.
   Rule format: 
 <pre>
-item = path ;
+item = path
   where:
   item - relative sort order index,
   path - regular expression to match against 'projectDescription/natures/nature', 
@@ -682,12 +723,12 @@ item = path ;
     property     = "scalor.eclipseNatureOrdering",
     defaultValue = """
 
-    11 = org.scala-ide.sdt.+ ;
-    21 = org.eclipse.jdt.+ ;
-    31 = org.eclipse.pde.+ ;
-    41 = org.eclipse.m2e.+ ;
-    51 = org.eclipse.wst.+ ;
-    61 = org.eclipse.dltk.+ ;
+    11 = org.scala-ide.sdt.+ ★
+    21 = org.eclipse.jdt.+ ★
+    31 = org.eclipse.pde.+ ★
+    41 = org.eclipse.m2e.+ ★
+    51 = org.eclipse.wst.+ ★
+    61 = org.eclipse.dltk.+ ★
 
     """
   )
@@ -706,7 +747,7 @@ trait ParamsVersionMaven {
     Eclipse M2E plugin
   </a> 
   when running companion Eclipse plugin.
-  Version range parameter: <a href="#eclipseMavenPluginVersionRange"><b>eclipseMavenPluginVersionRange</b></a> 
+  Version range parameter: <a href="#eclipseMavenPluginVersionRange"><b>eclipseMavenPluginVersionRange</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseMavenPluginVersionCheck",
@@ -720,7 +761,7 @@ trait ParamsVersionMaven {
   true  -> fail with error
   false -> only log an error
 </pre>
-  Version range parameter: <a href="#eclipseMavenPluginVersionRange"><b>eclipseMavenPluginVersionRange</b></a> 
+  Version range parameter: <a href="#eclipseMavenPluginVersionRange"><b>eclipseMavenPluginVersionRange</b></a>.
   """ )
   @Parameter(
     property     = "scalor.eclipseMavenPluginVersionError",
@@ -800,31 +841,43 @@ object ParamsConfigBase extends ParamsConfigBase {
 }
 
 import meta.Macro._
-import ParamsConfig._
 
 /**
- * Expose updatable parameter values for `eclipse-config`.
+ * Updatable plugin configuration parameters.
  */
-case class ParamsConfig() extends ParamsConfigBase
+trait ParamsUpdateVars extends AnyRef
   with VariableCount
   with VariableReport
   with VariableUpdate {
 
-  /**
-   * Number of variable values.
-   */
+  def update( paramValue : UpdateFun ) : Unit
+
+}
+
+/**
+ * Updatable plugin configuration parameters.
+ */
+trait ParamsConfigValue extends AnyRef
+  with ParamsLogConfig
+  with ParamsUpdateVars {
+
+}
+
+/**
+ * Expose updatable parameter values for `eclipse-config`.
+ */
+case class ParamsConfig() extends AnyRef
+  with ParamsConfigBase
+  with ParamsConfigValue {
+
+  import ParamsConfig._
+
   override def paramsCount = variableCount[ ParamsConfigBase ]
 
-  /**
-   * Report class variable values via macro.
-   */
   override def reportParams( reportValue : ReportFun ) : Unit = {
     variableReportBlock[ ParamsConfigBase ]( reportValue )
   }
 
-  /**
-   * Update class variable values via macro.
-   */
   override def updateParams( paramValue : UpdateFun ) : Unit = {
     variableUpdateBlock[ ParamsConfigBase ]( paramValue )
   }
@@ -847,7 +900,7 @@ case class ParamsConfig() extends ParamsConfigBase
   /**
    * Update class variable values for all fields.
    */
-  def update( paramValue : UpdateFun ) : Unit = {
+  override def update( paramValue : UpdateFun ) : Unit = {
     this.updateParams( paramValue )
     buildMacro.updateParams( paramValue )
     buildMain.updateParams( paramValue )
@@ -895,9 +948,7 @@ object ParamsConfig {
    * Configuration parser.
    */
   implicit def codecParamsConfig : ReadWriter[ ParamsConfig ] = macroRW
-
   def parse( config : String ) : ParamsConfig = read[ ParamsConfig ]( config )
-
   def unparse( config : ParamsConfig ) : String = write( config )
 
 }
@@ -905,12 +956,12 @@ object ParamsConfig {
 /**
  * Expose updatable parameter values for `eclipse-restart`.
  */
-case class ParamsRestart() extends ParamsRestartBase
-  with VariableCount
-  with VariableReport
-  with VariableUpdate {
+case class ParamsRestart() extends AnyRef
+  with ParamsRestartBase
+  with ParamsConfigValue {
 
-  override def paramsCount = variableCount[ ParamsRestartBase ]
+  override def paramsCount =
+    variableCount[ ParamsRestartBase ]
 
   override def reportParams( reportValue : ReportFun ) : Unit = {
     variableReportBlock[ ParamsRestartBase ]( reportValue )
@@ -920,8 +971,32 @@ case class ParamsRestart() extends ParamsRestartBase
     variableUpdateBlock[ ParamsRestartBase ]( paramValue )
   }
 
+  override def update( paramValue : UpdateFun ) : Unit = {
+    this.updateParams( paramValue )
+  }
+
 }
 
-object ParamsRestart {
+/**
+ * Expose updatable parameter values for `eclipse-prescomp`.
+ */
+case class ParamsPrescomp() extends AnyRef
+  with ParamsPrescompBase
+  with ParamsConfigValue {
+
+  override def paramsCount =
+    variableCount[ ParamsPrescompBase ]
+
+  override def reportParams( reportValue : ReportFun ) : Unit = {
+    variableReportBlock[ ParamsPrescompBase ]( reportValue )
+  }
+
+  override def updateParams( paramValue : UpdateFun ) : Unit = {
+    variableUpdateBlock[ ParamsPrescompBase ]( paramValue )
+  }
+
+  override def update( paramValue : UpdateFun ) : Unit = {
+    this.updateParams( paramValue )
+  }
 
 }

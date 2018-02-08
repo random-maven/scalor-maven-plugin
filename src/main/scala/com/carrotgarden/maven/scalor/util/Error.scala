@@ -5,6 +5,7 @@ import scala.util.{ Either, Failure, Left, Right, Success, Try }
 import scala.language.implicitConversions
 import java.io.StringWriter
 import java.io.PrintWriter
+import scala.reflect.ClassTag
 
 /**
  * Errors support.

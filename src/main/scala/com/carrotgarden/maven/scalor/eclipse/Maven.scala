@@ -52,6 +52,7 @@ import org.eclipse.aether.impl.SyncContextFactory
 import org.eclipse.aether.impl.RemoteRepositoryManager
 import org.eclipse.aether.internal.impl.DefaultRepositorySystem
 import org.apache.maven.plugin.Mojo
+import com.carrotgarden.maven.scalor.util.Classer
 
 /**
  * Provide M2E infrastructure functions.
@@ -68,46 +69,51 @@ trait Maven {
   def paramExecValue[ T ](
     project :   MavenProject,
     execution : MojoExecution,
-    parameter : String,
+    name :      String,
     monitor :   IProgressMonitor
   )( implicit tag : ClassTag[ T ] ) : T = baseParamValue(
-    project, parameter, tag.runtimeClass, execution, monitor
+    project, name, tag.runtimeClass, execution, monitor
   ).asInstanceOf[ T ]
 
   /**
    * Provide Maven plugin configuration parmeter for a goal.
    */
   def paramGoalValue[ T ](
-    facade :    IMavenProjectFacade,
-    goal :      String,
-    parameter : String,
-    monitor :   IProgressMonitor
+    facade :  IMavenProjectFacade,
+    goal :    String,
+    name :    String,
+    monitor : IProgressMonitor
   )( implicit tag : ClassTag[ T ] ) : T = {
     val project = facade.getMavenProject
-    val execution = executionDefinition( facade, goal, monitor ).get
-    paramExecValue( project, execution, parameter, monitor )( tag )
+    executionDefinition( facade, goal, monitor ).map {
+      execution => paramExecValue( project, execution, name, monitor )( tag )
+    }.getOrElse( Throw( s"Trying to extract parameter for missing goal: ${goal}" ) )
   }
 
   /**
-   * Provide configuration value for `eclipse-config`.
+   * Provide configuration value for execution goal.
    */
-  def eclipseConfigValue[ T ](
-    facade :    IMavenProjectFacade,
-    parameter : String,
-    monitor :   IProgressMonitor
+  def extractGoalValue[ T ](
+    facade :  IMavenProjectFacade,
+    goal :    String,
+    name :    String,
+    monitor : IProgressMonitor
   )( implicit tag : ClassTag[ T ] ) : T = {
-    paramGoalValue( facade, A.mojo.`eclipse-config`, parameter, monitor )( tag )
+    paramGoalValue( facade, goal, name, monitor )( tag )
   }
 
   /**
-   * Provide configuration value for `eclipse-restart`.
+   * Extract plugin configuration parameters for executon goal.
    */
-  def eclipseRestartValue[ T ](
-    facade :    IMavenProjectFacade,
-    parameter : String,
-    monitor :   IProgressMonitor
-  )( implicit tag : ClassTag[ T ] ) : T = {
-    paramGoalValue( facade, A.mojo.`eclipse-restart`, parameter, monitor )( tag )
+  def extractGoalValue(
+    facade :  IMavenProjectFacade,
+    monitor : IProgressMonitor,
+    goal :    String
+  )(
+    name : String, klaz : Class[ _ ]
+  ) : Object = {
+    val javaType = Classer.primitiveWrap( klaz )
+    extractGoalValue( facade, goal, name, monitor )( ClassTag( javaType ) )
   }
 
 }
@@ -119,7 +125,7 @@ object Maven {
    */
   def relativePath( project : IProject, file : File ) = {
     import util.Folder._
-    MavenProjectUtils.getProjectRelativePath( project, ensureAbsolutePath( file ) );
+    MavenProjectUtils.getProjectRelativePath( project, file.getCanonicalPath );
   }
 
   /**
@@ -141,10 +147,10 @@ object Maven {
   def projectRelative( project : IProject, absolutePath : String ) : IPath = {
     val basedir = project.getLocation.toFile // absolute
     val resolve =
-      if ( absolutePath.equals( basedir.getAbsolutePath ) ) {
+      if ( absolutePath.equals( basedir.getCanonicalPath ) ) {
         "."
-      } else if ( absolutePath.startsWith( basedir.getAbsolutePath ) ) {
-        absolutePath.substring( basedir.getAbsolutePath().length() + 1 )
+      } else if ( absolutePath.startsWith( basedir.getCanonicalPath ) ) {
+        absolutePath.substring( basedir.getCanonicalPath().length() + 1 )
       } else { // outside the project
         absolutePath
       }

@@ -68,22 +68,22 @@ class ScalaJsEnvProvNodeJsMojo extends ScalaJsEnvProvAnyMojo
       return
     }
     if ( envprovForce ) {
-      log.info( "Forcing enironment provision." )
+      logger.info( "Forcing enironment provision." )
       provisionNodejs()
       provisionModules()
     } else {
       if ( hasDetectNodejs ) {
-        log.info( "Skipping provisioning, detected Node.js:" )
-        log.info( s"   ${provisionedNodejs}" )
+        logger.info( "Skipping provisioning, detected Node.js:" )
+        logger.info( s"   ${provisionedNodejs}" )
       } else {
-        log.info( "Provisioning enironment: Node.js." )
+        logger.info( "Provisioning enironment: Node.js." )
         provisionNodejs()
       }
       if ( hasDetectModules ) {
-        log.info( "Skipping provisioning, detected NPM modules:" )
-        provisionedModuleList.foreach( file => log.info( s"   ${file}" ) )
+        logger.info( "Skipping provisioning, detected NPM modules:" )
+        provisionedModuleList.foreach( file => logger.info( s"   ${file}" ) )
       } else {
-        log.info( "Provisioning enironment: NPM modules." )
+        logger.info( "Provisioning enironment: NPM modules." )
         provisionModules()
       }
     }
@@ -111,14 +111,14 @@ class ScalaJsEnvProvPhantomJsMojo extends ScalaJsEnvProvAnyMojo
       return
     }
     if ( envprovForce ) {
-      log.info( "Forcing enironment provision." )
+      logger.info( "Forcing enironment provision." )
       provisionPhantomjs()
     } else {
       if ( hasDetectPhantomjs ) {
-        log.info( "Skipping provisioning, detected Phantom.js:" )
-        log.info( s"   ${provisionedPhantomjs}" )
+        logger.info( "Skipping provisioning, detected Phantom.js:" )
+        logger.info( s"   ${provisionedPhantomjs}" )
       } else {
-        log.info( "Provisioning enironment: Phantom.js." )
+        logger.info( "Provisioning enironment: Phantom.js." )
         provisionPhantomjs()
       }
     }
@@ -145,8 +145,8 @@ class ScalaJsEnvProvWebjarsMojo extends ScalaJsEnvProvAnyMojo
       reportSkipReason( "Skipping disabled goal execution." )
       return
     }
-    log.info( "Provisioning enironment: Webjars." )
-    log.info( s"   ${provisionedWebjars}" )
+    logger.info( "Provisioning enironment: Webjars." )
+    logger.info( s"   ${provisionedWebjars}" )
     provisionWebjarsResources()
   }
 
@@ -170,12 +170,14 @@ trait ScalaJsEnvConfAnyMojo extends ScalaJsEnvAnyMojo
   @Description( """
   Enable to log provided JS-VM environment configuration.
   Use to review actual settings used to create tesing JS-VM instance:
-  - full path to the executable;
-  - process launch arguments;
-  - process environment variables;
-  - webjars scripts settings;
-  - runtime.js module;
+<pre>
+  - full path to the executable
+  - process launch arguments
+  - process environment variables
+  - webjars scripts settings
+  - runtime.js module settings 
   - etc.
+</pre>
   """ )
   @Parameter(
     property     = "scalor.envconfLogConfig",
@@ -185,8 +187,8 @@ trait ScalaJsEnvConfAnyMojo extends ScalaJsEnvAnyMojo
 
   def reportConfiguration() : Unit = {
     if ( envconfLogConfig ) {
-      log.info( s"Configuration path: ${configurationLocation}" )
-      log.info( s"Configuration data:\n${renderConfig}" )
+      logger.info( s"Configuration path: ${configurationLocation}" )
+      logger.info( s"Configuration data:\n${renderConfig}" )
     }
   }
 
@@ -211,7 +213,7 @@ class ScalaJsEnvConfNodeJsMojo extends ScalaJsEnvConfAnyMojo
       reportSkipReason( "Skipping disabled goal execution." )
       return
     }
-    log.info( "Configuring enironment: Node.js" )
+    logger.info( "Configuring enironment: Node.js" )
     configureEnvironment()
     reportConfiguration()
   }
@@ -237,7 +239,7 @@ class ScalaJsEnvConfPhantomJsMojo extends ScalaJsEnvConfAnyMojo
       reportSkipReason( "Skipping disabled goal execution." )
       return
     }
-    log.info( "Configuring enironment: Phantom.js" )
+    logger.info( "Configuring enironment: Phantom.js" )
     configureEnvironment()
     reportConfiguration()
   }

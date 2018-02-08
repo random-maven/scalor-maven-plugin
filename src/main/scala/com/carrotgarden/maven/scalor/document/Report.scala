@@ -94,7 +94,7 @@ trait ReportMain extends AnyRef
   override def getOutputName : String = reportMainReportRelativeFolder + "/index.html"
   override def getReportOutputDirectory : File = reportMainReportOutputDirectory
   override def setReportOutputDirectory( file : File ) : Unit = {
-    if ( reportMainReportOutputDirectory.getAbsolutePath.endsWith( reportMainReportRelativeFolder ) ) {
+    if ( reportMainReportOutputDirectory.getCanonicalPath.endsWith( reportMainReportRelativeFolder ) ) {
       reportMainReportOutputDirectory = file
     } else {
       reportMainReportOutputDirectory = new File( file, reportMainReportRelativeFolder )
@@ -145,7 +145,7 @@ trait ReportTest extends AnyRef
   override def getReportOutputDirectory : File = reportTestReportOutputDirectory
   override def getOutputName : String = reportTestReportRelativeFolder + "/index.html"
   override def setReportOutputDirectory( file : File ) : Unit = {
-    if ( reportTestReportOutputDirectory.getAbsolutePath.endsWith( reportTestReportRelativeFolder ) ) {
+    if ( reportTestReportOutputDirectory.getCanonicalPath.endsWith( reportTestReportRelativeFolder ) ) {
       reportTestReportOutputDirectory = file
     } else {
       reportTestReportOutputDirectory = new File( file, reportTestReportRelativeFolder )

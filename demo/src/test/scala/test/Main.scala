@@ -1,22 +1,32 @@
 package test
 
-import java.util.Date
+import java.time.format.DateTimeFormatter
+import java.time.ZoneOffset
+import java.time.Instant
 
 /**
  * Managed test application.
  *
- * Restarted in Eclipse after full or incremental build.
+ * Activated by Maven goal "eclipse-restart".
+ *
+ * Application is restarted in Eclipse after full or incremental build.
+ *
+ * Open Eclipse/M2E "Maven Console" to observe output from this application.
+ *
+ * Edit and save this file to observe application restart and launch stamp change.
  */
 object Main {
 
-  //////////////////
+  /////////////////
+
+  val stamp = DateTimeFormatter
+    .ofPattern( "yyyy-MM-dd_HH-mm-ss" )
+    .withZone( ZoneOffset.UTC )
+    .format( Instant.now() )
 
   def main( args : Array[ String ] ) : Unit = {
-
-    val date = new Date
-
     while ( true ) {
-      println( s"XXX Test application @ ${date} XXX" )
+      println( s"### Test application @ ${stamp} ###" )
       Thread.sleep( 5000 )
     }
   }
