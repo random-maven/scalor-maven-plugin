@@ -40,7 +40,7 @@
     <properties>
 
         <!-- Scalor release series. -->
-        <release.epoch>1.2.0</release.epoch>
+        <release.epoch>1.2.1</release.epoch>
 
         <!-- Development releases repository. -->
         <bintray.subject>random-maven</bintray.subject>
