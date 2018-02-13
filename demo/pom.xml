@@ -8,16 +8,15 @@
     <version>0-SNAPSHOT</version>
 
     <description>
-    Self-contained demonstration project. 
-    Project feature highlights:
-    * Scala.js linker
+    Demonstration project: 
     * Scala.macro compile
-    * Scala.js compile
+    * Scala.js compile and link
     * Scala.macro JUnit test
-    * Scala.js JUnit test
+    * Scala.js JUnit test in JS-VM
     * Provision Node.js test JS-VM
     * Provision Webjars for test JS-VM
     * Setup Eclipse plugin in M2E
+    * Incremental Scala.js linking in M2E
     * Manage test application restart in M2E
     * Manage presentation compiler work-around in M2E
     </description>
@@ -192,7 +191,7 @@
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>scalor-maven-plugin_2.12</artifactId>
-                <!-- <version>1.2.0.20180208170454</version> -->
+                <version>1.2.1.20180213030702</version>
 
                 <configuration>
 
@@ -290,10 +289,10 @@
                             <goal>eclipse-config</goal>
 
                             <!-- Manage test application restart. -->
-                            <!-- <goal>eclipse-restart</goal> -->
+                            <goal>eclipse-restart</goal>
 
                             <!-- Manage Scala IDE presentation compiler. -->
-                            <!-- <goal>eclipse-prescomp</goal> -->
+                            <goal>eclipse-prescomp</goal>
 
                             <!-- Add Scala sources to the project. -->
                             <goal>register-macro</goal>
