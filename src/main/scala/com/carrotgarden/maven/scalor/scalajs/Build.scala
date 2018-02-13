@@ -29,7 +29,7 @@ trait Build extends AnyRef
   /**
    * Full path of the generated runtime JavaScript.
    */
-  def linkerRuntimeFile() : File = {
+  def linkerRuntimeFile : File = {
     if ( !buildTargetFolder.exists() ) {
       buildTargetFolder.mkdirs()
     }

@@ -27,6 +27,7 @@ import xsbti.compile.MiniSetup
 import xsbti.compile.PerClasspathEntryLookup
 import xsbti.compile.PreviousResult
 import xsbti.compile.ZincCompilerUtil
+import com.carrotgarden.maven.scalor.util.Error.Throw
 
 /**
  * Compiler for scope=macro.
@@ -138,9 +139,42 @@ trait Compiler {
   }
 
   /**
-   * Provide compilation context.
+   * Discover optional Java tool chain.
+   */
+  //  def zincToolchainOption() : Option[ File ] = {
+  //    if ( zincToolchainEnable ) {
+  //      val toolchain = toolchainManager.getToolchainFromBuildContext( zincToolchainType, session )
+  //      if ( toolchain == null ) {
+  //        val param = meta.Macro.nameOf( zincToolchainType )
+  //        Throw( s"Toolchain failure: missing ${param}=${zincToolchainType}" )
+  //      }
+  //      val toolPath = toolchain.findTool( zincToolchainTool )
+  //      if ( toolPath == null ) {
+  //        val param = meta.Macro.nameOf( zincToolchainTool )
+  //        Throw( s"Toolchain failure: missing ${param}=${zincToolchainTool}" )
+  //      }
+  //      val toolHome = toolPath match {
+  //        case zincToolchainRegex.r( path ) => path
+  //        case _ =>
+  //          val param = meta.Macro.nameOf( zincToolchainRegex )
+  //          Throw( s"Toolchain failure: ${toolPath} does not match ${param}=${zincToolchainRegex}" )
+  //      }
+  //      Some( new File( toolHome ).getCanonicalFile )
+  //    } else {
+  //      None
+  //    }
+  //  }
+
+  /**
+   * Provide compiler context.
    */
   case class Context() {
+
+    // Optional tool chain.
+    //    val optionJavaHome = zincToolchainOption
+    //    if ( optionJavaHome.isDefined ) {
+    //      logger.info( s"Using toolchain: ${optionJavaHome.get}" )
+    //    }
 
     // Assemble required build context.
     val buildSources : Array[ File ] =
@@ -172,7 +206,7 @@ trait Compiler {
 
     // Provide compiler options.
     val optionsConfig = Settings.extract(
-      compilerInstall.version, parseCompileOptions, log.fail
+      compilerInstall.version, parseCompileOptions, logger.fail
     )
 
     // Provide user reporting.
@@ -245,7 +279,10 @@ trait Compiler {
     val incremental = new IncrementalCompilerImpl
 
     val compilers = incremental.compilers(
-      scalaInstance, ClasspathOptionsUtil.boot, None, scalaCompiler
+      instance  = scalaInstance,
+      cpOptions = ClasspathOptionsUtil.boot,
+      javaHome  = None, // optionJavaHome,
+      scalac    = scalaCompiler
     )
 
     val lookup = new PerClasspathEntryLookup {

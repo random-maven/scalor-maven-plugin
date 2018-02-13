@@ -1,40 +1,55 @@
 package com.carrotgarden.maven.scalor.scalajs
 
-import com.carrotgarden.maven.scalor._
-
 import java.io.File
 
-import org.scalajs.core.tools.linker.StandardLinker
-import org.scalajs.core.tools.linker.Semantics
-import org.scalajs.core.tools.linker.ModuleKind
-import org.scalajs.core.tools.logging.ScalaConsoleLogger
 import org.scalajs.core.tools.io.WritableFileVirtualJSFile
-import org.scalajs.core.tools.io.IRFileCache
 import org.scalajs.core.tools.linker.ClearableLinker
 import org.scalajs.core.tools.linker.GenLinker
+import org.scalajs.core.tools.linker.ModuleKind
+import org.scalajs.core.tools.linker.Semantics
+import org.scalajs.core.tools.linker.StandardLinker
 import org.scalajs.core.tools.logging.Logger
-import org.scalajs.core.tools.logging.Level
+
+import com.carrotgarden.maven.scalor.base
+import com.carrotgarden.maven.scalor.eclipse
+import com.carrotgarden.maven.scalor.base.Context.UpdateResult
 
 /**
  * Incremental caching Scala.js linker.
  */
 trait Linker {
 
-  self : eclipse.Context with base.Logging =>
+  self : com.carrotgarden.maven.scalor.base.Context with base.Logging =>
 
   import Linker._
+  import Logging._
 
-  lazy val linkerLogger = new LinkerLogger( log )
+  lazy val linkerLoggerBase = new LinkerLogger( logger, false )
+
+  lazy val linkerLoggerTime = new LinkerLogger( logger, true )
 
   /**
    * Invoke single linker run.
    */
-  def performLinker( options : Options, classpath : Array[ File ], runtime : File ) : Unit = {
-    val id = linkerId( options )
-    val engine = contextExtract[ Engine ]( id ).getOrElse {
-      val engine = Linker( options ); contextPersist( id, Some( engine ) ); engine
+  def performLinker(
+    context : Context
+  ) : Unit = {
+    import context._
+    val cacherId = linkerCacherId()
+    val linkerCacher = contextValue[ Cacher ]( cacherId ) {
+      logger.dbug( s"Creating cacher: ${cacherId}" )
+      newCacher()
     }
-    engine.link( classpath, runtime, linkerLogger )
+    val engineId = linkerEngineId( options )
+    val linkerEngine = contextValue[ Engine ]( engineId ) {
+      logger.dbug( s"Creating engine: ${engineId}" )
+      newEngine( options )
+    }
+    val linkerLogger = if ( hasLogStats ) linkerLoggerTime else linkerLoggerBase
+    linkerEngine.link( context, linkerLogger, linkerCacher )
+    if ( hasLogStats ) {
+      logger.info( s"Cacher stats: ${linkerCacher.report}" )
+    }
   }
 
 }
@@ -42,21 +57,45 @@ trait Linker {
 object Linker {
 
   /**
+   * Linker invocation context.
+   */
+  case class Context(
+    options :     Options,
+    classpath :   Array[ File ],
+    runtime :     File,
+    updateList :  Array[ UpdateResult ],
+    hasLogStats : Boolean
+  ) {
+    def hasUpdate = updateList.count( _.hasUpdate ) > 0
+  }
+
+  /**
    * Incremental caching Scala.js linker.
    */
   case class Engine(
-    linker : ClearableLinker,
-    cache :  IRFileCache#Cache
+    linker : ClearableLinker
   ) {
 
     /**
-     * Invoke single linker run.
+     * Single linker invocation.
      */
-    def link( classpath : Array[ File ], runtime : File, logger : Logger ) = {
-      val collected = IRFileCache.IRContainer.fromClasspath( classpath )
-      val extracted = cache.cached( collected )
-      val result = WritableFileVirtualJSFile( runtime )
-      linker.link( extracted, Seq(), result, logger )
+    def link(
+      context : Context,
+      logger :  Logger,
+      cacher :  Cacher
+    ) = {
+      import context._
+      logger.time( "Total invocation time" ) {
+        val sjsirDirFiles = logger.time( s"Cacher: Process dirs" ) {
+          cacher.cachedDirsFiles( classpath, updateList )
+        }
+        val sjsirJarFiles = logger.time( s"Cacher: Process jars" ) {
+          cacher.cachedJarsFiles( classpath )
+        }
+        val sjsirFiles = sjsirDirFiles ++ sjsirJarFiles
+        val output = WritableFileVirtualJSFile( runtime )
+        linker.link( sjsirFiles, Seq(), output, logger )
+      }
     }
 
   }
@@ -84,17 +123,24 @@ object Linker {
     def unparse( options : Options ) : String = write( options )
   }
 
-  def linkerId( options : Options ) = {
-    "scala-js-linker@" + options.toString
+  def linkerCacherId() : String = {
+    "scalor-linker-cacher"
   }
 
-  def apply( options : Options ) : Engine = {
+  def linkerEngineId( options : Options ) : String = {
+    "scalor-linker-engine@" + options.toString
+  }
+
+  def newCacher() = {
+    Cacher()
+  }
+
+  def newEngine( options : Options ) : Engine = {
     val linker = new ClearableLinker( () => newLinker( options ), options.batchMode )
-    val cache = new IRFileCache().newCache
-    Engine( linker, cache )
+    Engine( linker )
   }
 
-  def semantics( options : Options ) : Semantics = {
+  def newSemantics( options : Options ) : Semantics = {
     import options._
     if ( optimizer ) {
       Semantics.Defaults.optimized
@@ -103,7 +149,7 @@ object Linker {
     }
   }
 
-  def config( options : Options ) = {
+  def newConfig( options : Options ) : StandardLinker.Config = {
     import options._
     StandardLinker.Config()
       .withCheckIR( checkIR )
@@ -113,26 +159,11 @@ object Linker {
       .withSourceMap( sourceMap )
       .withPrettyPrint( prettyPrint )
       .withModuleKind( ModuleKind.NoModule ) // TODO
-      .withSemantics( semantics( options ) ) // TODO
+      .withSemantics( newSemantics( options ) ) // TODO
   }
 
   def newLinker( options : Options ) : GenLinker = {
-    StandardLinker( config( options ) )
-  }
-
-  class LinkerLogger( logger : util.Logging.AnyLog ) extends Logger {
-    def log( level : Level, message : => String ) : Unit = {
-      level match {
-        case Level.Debug => logger.dbug( message )
-        case Level.Info  => logger.info( message )
-        case Level.Warn  => logger.warn( message )
-        case Level.Error => logger.fail( message )
-      }
-    }
-    def success( message : => String ) : Unit = info( message )
-    def trace( error : => Throwable ) : Unit = {
-      logger.fail( error.getMessage, error )
-    }
+    StandardLinker( newConfig( options ) )
   }
 
 }

@@ -13,8 +13,7 @@ trait Mojo extends AbstractMojo
   with Logging
   with Context
   with Skip
-  with SkipMojo
-  with eclipse.Context {
+  with SkipMojo {
 
   /**
    * Mojo execution name.

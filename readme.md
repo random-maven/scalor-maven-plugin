@@ -21,6 +21,7 @@ Scala
 * uses static [compiler-bridge](https://github.com/sbt/zinc/tree/1.x/internal/compiler-bridge)
 * auto-discovery of [Scala compiler plugins](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html#definePluginList)
 * cross-scala-version [build with simple setup](https://github.com/random-maven/scalor-maven-plugin/tree/master/src/it/test-cross)
+* limited Scala [Java 9 support](https://github.com/scala/scala-dev/issues/139) 
 
 Scala.macro
 * [same-project](https://stackoverflow.com/questions/21994764/scala-macros-and-separate-compilation-units) Scala macro build
@@ -29,6 +30,7 @@ Scala.macro
 Scala.js
 * compiles and [links Scala.js JavaScrpt](https://github.com/scala-js/scala-js-cli)
 * same-project JS-VM + JVM [JUnit testing](https://github.com/random-scalor/scala-js-junit-tools)
+* incremental cached linking in [Eclipse/M2E](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-link-main-mojo.html)
 * auto-provisions Webjars [resources for testing](https://www.webjars.org/) 
 * auto-provisions JavaScript [JS-VM environments for testing](https://www.scala-js.org/doc/project/js-environments.html)
 
@@ -46,20 +48,16 @@ Primary Maven goals
 * [eclipse-config](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html)
 * [register-main](https://random-maven.github.io/scalor-maven-plugin/2.12/register-main-mojo.html)
 * [compile-main](https://random-maven.github.io/scalor-maven-plugin/2.12/compile-main-mojo.html)
+* [scala-js-link-main](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-link-main-mojo.html)
 
 Complete goals reference
 
-* [Maven Goals](https://random-maven.github.io/scalor-maven-plugin/2.12/plugin-info.html)
+* [Maven Goals 2.12](https://random-maven.github.io/scalor-maven-plugin/2.12/plugin-info.html)
 
 ### Planned features
 
 Scala.js
 * initializer module support
-* incremental Scala.js linker
-
-Eclipse
-* incremental Scala.js linker
-* auto-reload Scala.js web client
 
 ### Eclipse setup
 
@@ -110,7 +108,7 @@ However, `compiler-bridge` module provides an isolation gateway
 which allows `scalor-maven-plugin_2.12` to build projects 
 with different Scala epoch, such as `2.11`, `2.12`, `2.13`
 
-Required mapping is provided via `scalor-maven-plugin` configuration entries:
+Required version mapping is provided via `scalor-maven-plugin` configuration entries:
 ```xml
 <defineBridge>
 <defineCompiler>
@@ -120,7 +118,7 @@ Required mapping is provided via `scalor-maven-plugin` configuration entries:
 ### Usage example
 
 Project Examples:
-* minimal [demo project](https://github.com/random-maven/scalor-maven-plugin/blob/master/demo/pom.xml)
+* basic [demonstration project](https://github.com/random-maven/scalor-maven-plugin/blob/master/demo/pom.xml)
 * test project for cross Scala [2.11, 2.12, 2.13](https://github.com/random-maven/scalor-maven-plugin/tree/master/src/it/test-cross)
 * `scalor-maven-plugin` project itself is a cross
 [master](https://github.com/random-maven/scalor-maven-plugin/blob/master/pom.xml)

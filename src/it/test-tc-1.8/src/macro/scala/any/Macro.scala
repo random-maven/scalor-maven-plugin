@@ -1,0 +1,5 @@
+package any
+
+trait Macro {
+  
+}

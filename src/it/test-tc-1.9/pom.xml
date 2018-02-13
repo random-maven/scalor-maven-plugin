@@ -1,0 +1,109 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Use parent configuration. -->
+    <parent>
+        <groupId>com.carrotgarden.a</groupId>
+        <artifactId>carrot-a</artifactId>
+        <version>0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.carrotgarden.maven</groupId>
+    <artifactId>scalor-maven-plugin-test-tc-1.8</artifactId>
+    <version>${revision}</version>
+
+    <properties>
+
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scala-js</groupId>
+            <artifactId>scalajs-library_${version.scala.epoch}</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <configuration>
+                    <toolchains>
+                        <jdk>
+                            <version>1.9</version>
+                        </jdk>
+                    </toolchains>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>toolchain</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>@project.artifactId@</artifactId>
+                <version>@project.version@</version>
+
+                <!-- Activate full Scalor life cycle. -->
+                <extensions>true</extensions>
+
+                <configuration>
+
+                    <!-- Remove select executions form life cycle. -->
+                    <skipLinker>true</skipLinker>
+                    <skipReport>true</skipReport>
+                    <skipEnvProv>true</skipEnvProv>
+                    <skipEnvConf>true</skipEnvConf>
+                    <skipScaladoc>true</skipScaladoc>
+
+                    <zincToolchainEnable>true</zincToolchainEnable>
+
+                    <defineBridge>
+                        <dependency>
+                            <groupId>org.scala-sbt</groupId>
+                            <artifactId>compiler-bridge_${version.scala.epoch}</artifactId>
+                            <version>${version.scala.zinc}</version>
+                        </dependency>
+                    </defineBridge>
+                    <defineCompiler>
+                        <dependency>
+                            <groupId>org.scala-lang</groupId>
+                            <artifactId>scala-compiler</artifactId>
+                            <version>${version.scala.release}</version>
+                        </dependency>
+                    </defineCompiler>
+                    <definePluginList>
+                        <dependency>
+                            <groupId>org.scalamacros</groupId>
+                            <artifactId>paradise_${version.scala.release}</artifactId>
+                            <version>${version.scala.plugin.macro}</version>
+                        </dependency>
+                    </definePluginList>
+
+                </configuration>
+
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

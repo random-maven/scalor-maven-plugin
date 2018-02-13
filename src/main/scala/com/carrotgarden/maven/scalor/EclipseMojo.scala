@@ -32,7 +32,8 @@ import org.apache.maven.plugin.descriptor.PluginDescriptor
  * Shared Eclipse mojo interface.
  */
 trait EclipseAnyMojo extends AbstractMojo
-  with base.Mojo {
+  with base.Mojo
+  with eclipse.Context {
 
   @Description( """
   Flag to skip goal execution: <code>eclipse-*</code>.

@@ -8,7 +8,7 @@
     <version>0-SNAPSHOT</version>
 
     <description>
-    Self-contained, minimal demonstration project. 
+    Self-contained demonstration project. 
     Project feature highlights:
     * Scala.js linker
     * Scala.macro compile
@@ -40,7 +40,7 @@
         <version.scala.zinc>1.1.1</version.scala.zinc>
         <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
 
-        <!-- Scala.js tool stack. -->
+        <!-- Scala.js epoch. -->
         <version.sjs.epoch>0.6</version.sjs.epoch>
         <version.sjs.release>0.6.22</version.sjs.release>
         <version.sjs.library>sjs${version.sjs.epoch}_${version.scala.epoch}</version.sjs.library>
@@ -192,7 +192,7 @@
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>scalor-maven-plugin_2.12</artifactId>
-                <version>1.2.0.20180208170454</version>
+                <!-- <version>1.2.0.20180208170454</version> -->
 
                 <configuration>
 
@@ -201,9 +201,11 @@
                     <zincLogProjectClassPath>true</zincLogProjectClassPath>
                     <zincLogCompilerClassPath>true</zincLogCompilerClassPath>
                     <zincLogCompilerPluginList>true</zincLogCompilerPluginList>
-                    <linkerLogRuntime>true</linkerLogRuntime>
-                    <linkerLogOptions>true</linkerLogOptions>
-                    <linkerLogClassPath>true</linkerLogClassPath>
+                    <!-- <linkerLogRuntime>true</linkerLogRuntime> -->
+                    <!-- <linkerLogOptions>true</linkerLogOptions> -->
+                    <!-- <linkerLogClassPath>true</linkerLogClassPath> -->
+                    <linkerLogBuildStats>true</linkerLogBuildStats>
+                    <linkerLogUpdateResult>true</linkerLogUpdateResult>
                     <envconfLogConfig>true</envconfLogConfig>
                     <!-- <eclipseLogBuildParticipant>true</eclipseLogBuildParticipant> -->
 
@@ -288,10 +290,10 @@
                             <goal>eclipse-config</goal>
 
                             <!-- Manage test application restart. -->
-                            <goal>eclipse-restart</goal>
+                            <!-- <goal>eclipse-restart</goal> -->
 
                             <!-- Manage Scala IDE presentation compiler. -->
-                            <goal>eclipse-prescomp</goal>
+                            <!-- <goal>eclipse-prescomp</goal> -->
 
                             <!-- Add Scala sources to the project. -->
                             <goal>register-macro</goal>

@@ -1,20 +1,19 @@
 package com.carrotgarden.maven.scalor
 
-import org.apache.maven.plugin.AbstractMojo
-import org.apache.maven.plugins.annotations._
-import org.apache.maven.execution.MavenSession
-import org.apache.maven.project.MavenProject
-import org.apache.maven.plugin.BuildPluginManager
-import org.apache.maven.plugin.MojoFailureException
-import org.sonatype.plexus.build.incremental.BuildContext
-
-import com.carrotgarden.maven.scalor.util.Folder._
-
-import com.carrotgarden.maven.tools.Description
 import java.io.File
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConverters.asScalaSetConverter
+
 import org.apache.maven.artifact.Artifact
+import org.apache.maven.plugin.AbstractMojo
+import org.apache.maven.plugins.annotations.Mojo
+import org.apache.maven.plugins.annotations.Parameter
+import org.apache.maven.plugins.annotations.LifecyclePhase
+import org.apache.maven.plugins.annotations.ResolutionScope
+
+import com.carrotgarden.maven.scalor.base.Context.UpdateResult
+import com.carrotgarden.maven.scalor.scalajs.Linker
+import com.carrotgarden.maven.tools.Description
 
 /**
  * Shared linker mojo interface.
@@ -25,7 +24,7 @@ trait ScalaJsLinkAnyMojo extends AbstractMojo
   with base.Params
   with base.Logging
   with base.SkipMojo
-  with eclipse.Context
+  with com.carrotgarden.maven.scalor.base.Context
   with scalajs.Build
   with scalajs.Linker
   with scalajs.ParamsLinkAny {
@@ -38,29 +37,6 @@ trait ScalaJsLinkAnyMojo extends AbstractMojo
     defaultValue = "false"
   )
   var skipLinker : Boolean = _
-
-  @Description( """
-  Regular expression used to detect when Scala.js library is present on class path.
-  This regular expression is matched against resolved project depenencies in given scope.
-  Regular expression in the form: <code>${groupId}:${artifactId}</code>.
-  Enablement parameter: <a href="#linkerLibraryDetect"><b>linkerLibraryDetect</b></a>.
-  """ )
-  @Parameter(
-    property     = "scalor.linkerLibraryRegex",
-    defaultValue = "org.scala-js:scalajs-library_.+"
-  )
-  var linkerLibraryRegex : String = _
-
-  @Description( """
-  Invoke Scala.js linker only when Scala.js library is detected
-  in project dependencies with given scope.
-  Detection parameter: <a href="#linkerLibraryRegex"><b>linkerLibraryRegex</b></a>.
-  """ )
-  @Parameter(
-    property     = "scalor.linkerLibraryDetect",
-    defaultValue = "true"
-  )
-  var linkerLibraryDetect : Boolean = _
 
   /**
    * Provide linker project build class path.
@@ -81,38 +57,52 @@ trait ScalaJsLinkAnyMojo extends AbstractMojo
     }
   }
 
-  import scalajs.Linker._
-
-  def reportLinker( options : Options, classpath : Array[ File ], runtime : File ) = {
+  /**
+   * Produce user reports.
+   */
+  def reportLinker( context : Linker.Context ) = {
+    import context._
     if ( linkerLogRuntime ) {
       logger.info( s"Linker runtime: ${runtime}" )
     }
     if ( linkerLogOptions ) {
-      logger.info( s"Linker options:\n${config( options )}" )
+      logger.info( s"Linker options:\n${Linker.newConfig( options )}" )
     }
     if ( linkerLogClassPath ) {
       loggerReportFileList( "Linker classpath:", classpath )
     }
+    if ( linkerLogUpdateResult ) {
+      val report = if ( hasUpdate ) {
+        updateList.filter( _.hasUpdate ).map( _.report ).mkString( "\n", "\n", "" )
+      } else {
+        "None"
+      }
+      logger.info( s"Linker update result: ${report}" )
+    }
   }
 
-  def invokeLinker() : Unit = {
-    val options = Options.parse( linkerOptions )
-    val classpath = linkerClassPath
-    val runtime = linkerRuntimeFile()
-    logger.info( s"Invoking Scala.js linker." )
-    reportLinker( options, classpath, runtime )
-    performLinker( options, classpath, runtime )
+  def linkerOptions = Linker.Options.parse( linkerOptionsActive )
+
+  /**
+   *
+   */
+  def invokeLinker( updateList : Array[ UpdateResult ] = Array.empty ) : Unit = {
+    val context = Linker.Context(
+      options     = linkerOptions,
+      classpath   = linkerClassPath,
+      runtime     = linkerRuntimeFile,
+      updateList  = updateList,
+      hasLogStats = linkerLogBuildStats
+    )
+    reportLinker( context )
+    performLinker( context )
   }
 
-  override def perform() : Unit = {
-    if ( skipLinker || hasSkipMojo ) {
-      reportSkipReason( "Skipping disabled goal execution." )
-      return
-    }
-    if ( hasIncremental ) {
-      reportSkipReason( "Skipping incremental build invocation." )
-      return
-    }
+  /**
+   * Linker full/clean build.
+   */
+  def performLinkFull() : Unit = {
+    logger.info( "Full linker build request." )
     if ( linkerLibraryDetect ) {
       val libraryOption = libraryArtifactOption
       if ( libraryOption.isDefined ) {
@@ -124,6 +114,30 @@ trait ScalaJsLinkAnyMojo extends AbstractMojo
     } else {
       logger.info( "Skipping library detect, forcing linker invocation." )
       invokeLinker()
+    }
+  }
+
+  /**
+   * Linker incremental build.
+   */
+  def performLinkIncr() : Unit = {
+    logger.info( "Incremental build request." )
+    val updateList = contextUpdateResult( buildDependencyFolders, linkerClassRegex.r )
+    val hasUpdate = updateList.count( _.hasUpdate ) > 0
+    if ( hasUpdate ) {
+      invokeLinker( updateList )
+    }
+  }
+
+  override def perform() : Unit = {
+    if ( skipLinker || hasSkipMojo ) {
+      reportSkipReason( "Skipping disabled goal execution." )
+      return
+    }
+    if ( hasIncremental ) {
+      performLinkIncr()
+    } else {
+      performLinkFull()
     }
   }
 

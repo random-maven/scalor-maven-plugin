@@ -44,8 +44,26 @@
 
                 <plugin>
                     <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-compiler-plugin</artifactId>
+                    <configuration>
+                        <!--
+                            Use Java tool chain definition from MANIFEST.MF
+                            Make sure to provide jdk/id=JavaSE-1.8 in ${user.home}/.m2/toolchains.xml
+                        -->
+                        <useJDK>BREE</useJDK>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
                     <artifactId>tycho-surefire-plugin</artifactId>
                     <configuration>
+
+                        <!--
+                            Use Java tool chain definition from MANIFEST.MF
+                            Make sure to provide jdk/id=JavaSE-1.8 in ${user.home}/.m2/toolchains.xml
+                        -->
+                        <useJDK>BREE</useJDK>
 
                         <!-- Note: make sure CI has Xorg. -->
                         <useUIHarness>true</useUIHarness>

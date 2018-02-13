@@ -73,8 +73,8 @@ trait Entry {
   """ )
   def ensureSourceRoots(
     context :    Config.SetupContext,
-    sourceList : Seq[ String ],
-    target :     String,
+    sourceList : Seq[ String ], // absolute
+    target :     String, // absolute
     attribMap :  Map[ String, String ],
     monitor :    IProgressMonitor
   ) : Unit = {
@@ -91,6 +91,9 @@ trait Entry {
     }
   }
 
+  @Description( """
+  Path convention: resolve as absolute.
+  """ )
   def ensureSourceRoots(
     context :   Config.SetupContext,
     build :     base.Build,
@@ -98,9 +101,12 @@ trait Entry {
     monitor :   IProgressMonitor
   ) : Unit = {
     import build._
-    val resourceList = buildResourceFolders.map( _.getDirectory )
-    val sourceList = buildSourceFolders.map( _.getCanonicalPath )
-    val target = buildTargetFolder.getCanonicalPath
+    val resourceList = // absolute FIXME think again when symlinks here
+      buildResourceFolders.map( path => new File( path.getDirectory ).getAbsolutePath )
+    val sourceList = // absolute
+      buildSourceFolders.map( path => path.getAbsolutePath )
+    val target = // absolute
+      buildTargetFolder.getAbsolutePath
     ensureSourceRoots( context, resourceList, target, attribMap, monitor )
     ensureSourceRoots( context, sourceList, target, attribMap, monitor )
   }

@@ -37,7 +37,7 @@ trait RegisterAnyMojo extends AbstractMojo
   with base.BuildEnsure
   with base.BuildAnySources
   with base.BuildAnyTarget
-  with eclipse.Context {
+  with com.carrotgarden.maven.scalor.base.Context {
 
   type RegisterFun[ T ] = ( T => Unit )
 

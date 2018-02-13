@@ -41,7 +41,7 @@ class LinkerTest {
   def linkerIdentity() = {
     val source = Options()
     val target = Options()
-    assertEquals( linkerId( source ), linkerId( target ) )
+    assertEquals( linkerEngineId( source ), linkerEngineId( target ) )
   }
 
 }

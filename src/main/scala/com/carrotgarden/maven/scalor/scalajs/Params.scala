@@ -9,7 +9,9 @@ import com.carrotgarden.maven.scalor._
 import scala.beans.BeanProperty
 
 trait ParamsLinkAny extends AnyRef
+  with ParamsRegex
   with ParamsLogging
+  with ParamsLibrary
   with ParamsOptsAny {
 
 }
@@ -21,6 +23,46 @@ trait ParamsLinkMain extends ParamsLinkAny
 
 trait ParamsLinkTest extends ParamsLinkAny
   with ParamsOptsTest {
+
+}
+
+trait ParamsRegex {
+
+  @Description( """
+  Regular expression used to discover Scala.js IR classes from class path.
+  """ )
+  @Parameter(
+    property     = "scalor.linkerClassRegex",
+    defaultValue = "^.+[.]sjsir$"
+  )
+  var linkerClassRegex : String = _
+
+}
+
+trait ParamsLibrary {
+
+  @Description( """
+  Regular expression used to detect when Scala.js library is present on class path.
+  This regular expression is matched against resolved project depenencies in given scope.
+  Regular expression in the form: <code>${groupId}:${artifactId}</code>.
+  Enablement parameter: <a href="#linkerLibraryDetect"><b>linkerLibraryDetect</b></a>.
+  """ )
+  @Parameter(
+    property     = "scalor.linkerLibraryRegex",
+    defaultValue = "org.scala-js:scalajs-library_.+"
+  )
+  var linkerLibraryRegex : String = _
+
+  @Description( """
+  Invoke Scala.js linker only when Scala.js library is detected
+  in project dependencies with given scope.
+  Detection parameter: <a href="#linkerLibraryRegex"><b>linkerLibraryRegex</b></a>.
+  """ )
+  @Parameter(
+    property     = "scalor.linkerLibraryDetect",
+    defaultValue = "true"
+  )
+  var linkerLibraryDetect : Boolean = _
 
 }
 
@@ -56,6 +98,26 @@ trait ParamsLogging {
   )
   var linkerLogClassPath : Boolean = _
 
+  @Description( """
+  Enable logging of Scala.js linker build phase statistics, including phase durations.
+  Use to review linker performance profile.
+  """ )
+  @Parameter(
+    property     = "scalor.linkerLogBuildStats", //
+    defaultValue = "false"
+  )
+  var linkerLogBuildStats : Boolean = _
+
+  @Description( """
+  Enable logging of Scala.js linker update result of M2E incremental change detection.
+  Use to review actual <code>*.sjsir</code> classes which triggered Eclipse linker build.
+  """ )
+  @Parameter(
+    property     = "scalor.linkerLogUpdateResult", //
+    defaultValue = "false"
+  )
+  var linkerLogUpdateResult : Boolean = _
+
 }
 
 /**
@@ -82,7 +144,7 @@ trait ParamsOptsAny extends base.ParamsAny {
   /**
    * Linker engine options for detected IDE vs CI mode.
    */
-  def linkerOptions : String = {
+  def linkerOptionsActive : String = {
     val varsList = parseCommonList( linkerEnvVarListCI )
     val hasCI = varsList.find( name => System.getenv.get( name ) != null ).isDefined
     if ( hasCI ) linkerOptionsProduction else linkerOptionsDevelopment
@@ -117,7 +179,7 @@ trait ParamsOptsMain extends ParamsOptsAny {
   @Parameter(
     property     = "scalor.linkerMainOptionsDevs",
     defaultValue = """
-    { "checkIR":false, "parallel":true, "optimizer":true, "batchMode":false, "sourceMap":true, "prettyPrint":true }
+    { "checkIR":false, "parallel":true, "optimizer":false, "batchMode":false, "sourceMap":true, "prettyPrint":true }
     """
   )
   var linkerMainOptionsDevs : String = _
@@ -149,9 +211,6 @@ trait ParamsOptsMain extends ParamsOptsAny {
  */
 trait ParamsOptsTest extends ParamsOptsAny {
 
-  //  Normally, to ensure that test classes are not "optimized away",
-  //  disable <code>optimizer</code>, or use explicit Scala.js export annotations.
-
   @Description( """
   Scala.js linker options for scope=test, mode=IDE/development.
   Scala.js linker options reference:
@@ -181,7 +240,7 @@ trait ParamsOptsTest extends ParamsOptsAny {
   @Parameter(
     property     = "scalor.linkerTestOptionsProd",
     defaultValue = """
-    { "checkIR":true, "parallel":true, "optimizer":false, "batchMode":true, "sourceMap":true, "prettyPrint":false }
+    { "checkIR":true, "parallel":true, "optimizer":true, "batchMode":true, "sourceMap":true, "prettyPrint":false }
     """
   )
   var linkerTestOptionsProd : String = _

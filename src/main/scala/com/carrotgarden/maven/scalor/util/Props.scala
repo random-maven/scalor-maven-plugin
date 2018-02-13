@@ -5,6 +5,7 @@ import java.util.Properties
 import java.util.Collections
 import java.util.Enumeration
 import java.util.Vector
+import java.util.Map
 
 object Props {
 

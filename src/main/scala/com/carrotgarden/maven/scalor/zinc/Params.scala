@@ -163,7 +163,8 @@ trait Params extends AnyRef
   with base.ParamsAny
   with ParamsCompileOptions
   with ParamsLogging
-  with ParamScalaInstall {
+  with ParamScalaInstall
+  with ParamsToolchain {
 
   @Description( """
   Regular expression for Java source file discovery.
@@ -209,6 +210,42 @@ trait Params extends AnyRef
     defaultValue = "text"
   )
   var zincStateStoreType : String = _
+
+}
+
+trait ParamsToolchain {
+
+  //  @Description( """
+  //  """ )
+  //  @Parameter(
+  //    property     = "scalor.zincToolchainEnable",
+  //    defaultValue = "false"
+  //  )
+  //  var zincToolchainEnable : Boolean = _
+  //
+  //  @Description( """
+  //  """ )
+  //  @Parameter(
+  //    property     = "scalor.zincToolchainType",
+  //    defaultValue = "jdk"
+  //  )
+  //  var zincToolchainType : String = _
+  //
+  //  @Description( """
+  //  """ )
+  //  @Parameter(
+  //    property     = "scalor.zincToolchainTool",
+  //    defaultValue = "java"
+  //  )
+  //  var zincToolchainTool : String = _
+  //
+  //  @Description( """
+  //  """ )
+  //  @Parameter(
+  //    property     = "scalor.zincToolchainRegex",
+  //    defaultValue = """^(.+)[/\\]bin[/\\]java.*$"""
+  //  )
+  //  var zincToolchainRegex : String = _
 
 }
 

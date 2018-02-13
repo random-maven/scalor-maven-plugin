@@ -13,7 +13,7 @@ import java.io.File
  */
 trait Logging extends util.Logging {
 
-  self : Mojo with eclipse.Context =>
+  self : Mojo with Context =>
 
   // Lazy, for plexus injector.
   override lazy val log = Logging.Log( getLog, hasEclipseContext )
