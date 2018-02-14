@@ -2,6 +2,8 @@ package com.carrotgarden.maven.scalor.eclipse
 
 import java.util.Properties
 
+import scala.collection.concurrent.TrieMap
+
 import org.eclipse.core.internal.registry.ExtensionRegistry
 import org.eclipse.core.runtime
 import org.eclipse.core.runtime.ContributorFactoryOSGi
@@ -11,14 +13,13 @@ import org.eclipse.core.runtime.Platform
 import org.eclipse.core.runtime.Status
 import org.slf4j.LoggerFactory
 
+import com.carrotgarden.maven.scalor.A
 import com.carrotgarden.maven.scalor.util
 import com.carrotgarden.maven.scalor.util.Logging
-import com.carrotgarden.maven.scalor.A
-import scala.collection.concurrent.TrieMap
 
 object Plugin {
 
-  import Logging._
+  import com.carrotgarden.maven.scalor.util.Logging._
 
   val loggerMemento = TrieMap[ String, AnyLog ]()
 
@@ -43,7 +44,7 @@ object Plugin {
 
     import Plugin._
     import Plugin.Config._
-    import com.carrotgarden.maven.scalor.util.OSGI._
+    import Wiring._
     import com.carrotgarden.maven.scalor.util.Props._
 
     /**
@@ -96,9 +97,9 @@ object Plugin {
      */
     def hasLogback = {
       // M2E provides logback appender which prints to "Maven Console"
-      val hasAppender = discoverBundle( getBundle, m2e.logback.appender ).isDefined
+      val hasAppender = discoverBundleFrom( getBundle, m2e.logback.appender ).isDefined
       // M2E logback appender must be configured by this configuration bundle
-      val hasConfiguration = discoverBundle( getBundle, m2e.logback.configuration ).isDefined
+      val hasConfiguration = discoverBundleFrom( getBundle, m2e.logback.configuration ).isDefined
       // Multiple alternative Slf4J implementation bundles can make M2E appender inoperable
       val hasImplementation = LoggerFactory.getILoggerFactory.getClass.getName.startsWith( "ch.qos.logback" )
       //

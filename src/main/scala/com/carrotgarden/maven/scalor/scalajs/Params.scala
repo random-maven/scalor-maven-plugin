@@ -1,28 +1,28 @@
 package com.carrotgarden.maven.scalor.scalajs
 
-import java.io.File
-
-import com.carrotgarden.maven.tools.Description
 import org.apache.maven.plugins.annotations.Parameter
 
-import com.carrotgarden.maven.scalor._
-import scala.beans.BeanProperty
+import com.carrotgarden.maven.scalor.base
+import com.carrotgarden.maven.tools.Description
 
 trait ParamsLinkAny extends AnyRef
   with ParamsRegex
   with ParamsLogging
   with ParamsLibrary
-  with ParamsOptsAny {
+  with ParamsOptsAny
+  with ParamsInitListAny {
 
 }
 
 trait ParamsLinkMain extends ParamsLinkAny
-  with ParamsOptsMain {
+  with ParamsOptsMain
+  with ParamsInitListMain {
 
 }
 
 trait ParamsLinkTest extends ParamsLinkAny
-  with ParamsOptsTest {
+  with ParamsOptsTest
+  with ParamsInitListTest {
 
 }
 
@@ -36,6 +36,93 @@ trait ParamsRegex {
     defaultValue = "^.+[.]sjsir$"
   )
   var linkerClassRegex : String = _
+
+}
+
+/**
+ * List of Scala.js module initializers.
+ */
+trait ParamsInitListAny {
+
+  @Description( """
+  Regular expression used to extract Scala.js module initializer configuration.
+  Must provide extractor for pattern: <code>packageName.ClassName.methodName(arg0,arg1,...)</code>.
+  Must provide exactly 3 capture groups: class, method, arguments.
+  Arguments separator is hard-coded comma <code>,</code> not part of this regex.
+  """ )
+  @Parameter(
+    property     = "scalor.linkerInitializerRegex",
+    defaultValue = ParamsInitListAny.initializerRegex
+  )
+  var linkerInitializerRegex : String = _
+
+  /**
+   * List of Scala.js module initializers.
+   */
+  def linkerInitializerList : Array[ String ]
+
+}
+
+object ParamsInitListAny {
+
+  final val initializerRegex = """([a-zA-Z_.0-9]+)[.]([a-zA-Z_0-9]+)[(]([^()]*)[)]"""
+
+  final val initializerDescription = """
+  List of Scala.js module initializer declarations.
+  Module initializers are JavaScript equivalent to Java <code>main</code> method convention.
+  They are invoked when linker-generated <code>runtime.js</code> script is loaded in Node.js or Browser JS-VM.
+  Each list entry must be a fully qualified class name of Scala object, 
+  with method name, with argument list, which follows Java <code>main</code> contract,
+  and is annotated with <code>@JSExportTopLevel</code>, <code>@JSExport</code>.
+  For example, the following <code>pom.xml</code> plugin configuration entry:
+<pre>
+&lt;linkerTestInitializerList&gt;
+   &lt;initializer&gt;test.Init.main(build=${project.artifactId},stamp=${maven.build.timestamp})&lt;/initializer&gt;
+&lt;/linkerTestInitializerList&gt;
+</pre> 
+   must be accompanied by Scala object in file <code>test/Init.scala</code>:
+<pre>
+package test
+import scala.scalajs.js.annotation._
+@JSExportTopLevel( "test.Init" )
+object Init {
+  @JSExport
+  // Arguments contain "build" and "stamp" entries from pom.xml.
+  def main( args : Array[ String ] ) : Unit = {
+    // This module output is printed on JS-VM console (Node.js or Browser).
+    println( s"init-main: ${args(0)} ${args(1)}" )
+  }
+}
+</pre>
+  This list is empty by default.
+  Extractor parameter: <a href="#linkerInitializerRegex"><b>linkerInitializerRegex</b></a>.
+  """
+}
+
+trait ParamsInitListMain extends ParamsInitListAny {
+
+  @Description( ParamsInitListAny.initializerDescription )
+  @Parameter(
+    property     = "scalor.linkerMainInitializerList",
+    defaultValue = ""
+  )
+  var linkerMainInitializerList : Array[ String ] = _
+
+  override def linkerInitializerList = linkerMainInitializerList
+
+}
+
+trait ParamsInitListTest extends ParamsInitListAny {
+  import ParamsInitListAny._
+
+  @Description( ParamsInitListAny.initializerDescription )
+  @Parameter(
+    property     = "scalor.linkerTestInitializerList",
+    defaultValue = ""
+  )
+  var linkerTestInitializerList : Array[ String ] = _
+
+  override def linkerInitializerList = linkerTestInitializerList
 
 }
 

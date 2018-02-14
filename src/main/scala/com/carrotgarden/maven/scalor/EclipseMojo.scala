@@ -8,7 +8,6 @@ import org.apache.maven.plugins.annotations._
 import A.mojo._
 
 import base.Params._
-import util.OSGI._
 import util.Error._
 import util.Params._
 import util.Classer._
@@ -172,7 +171,7 @@ class EclipseConfigMojo extends EclipseAnyMojo
 
 @Description( """
 Manage test application process restart after full or incremental build in Eclispe/M2E.
-Requires "eclipse-config".
+Requires goal=eclipse-config.
 """ )
 @Mojo(
   name                         = `eclipse-restart`,
@@ -189,7 +188,7 @@ class EclipseRestartMojo extends EclipseAnyMojo
 
 @Description( """
 Manage Scala IDE Scala presentation compiler work-around process in Eclispe/M2E.
-Requires "eclipse-config".
+Requires goal=eclipse-config.
 """ )
 @Mojo(
   name                         = `eclipse-prescomp`,

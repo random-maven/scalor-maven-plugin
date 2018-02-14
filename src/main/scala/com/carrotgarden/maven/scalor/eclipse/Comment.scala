@@ -1,16 +1,8 @@
 package com.carrotgarden.maven.scalor.eclipse
 
-import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
 import org.eclipse.core.runtime.IProgressMonitor
 
-import com.carrotgarden.maven.scalor.util
-import util.Params._
-import ParamsConfigBase._
-
-import org.eclipse.core.resources.IResource
-import com.carrotgarden.maven.scalor.util.Logging
-
-import util.Option.convert._
+import com.carrotgarden.maven.scalor.util.Optioner.convert_Option_Value
 
 /**
  * Provide eclipse .project file comment.
@@ -19,8 +11,7 @@ trait Comment {
 
   self : Maven =>
 
-  import Maven._
-  import IResource._
+  import org.eclipse.core.resources.IResource._
 
   /**
    */

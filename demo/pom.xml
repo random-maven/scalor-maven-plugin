@@ -7,20 +7,6 @@
     <artifactId>scalor-maven-plugin-demo</artifactId>
     <version>0-SNAPSHOT</version>
 
-    <description>
-    Demonstration project: 
-    * Scala.macro compile
-    * Scala.js compile and link
-    * Scala.macro JUnit test
-    * Scala.js JUnit test in JS-VM
-    * Provision Node.js test JS-VM
-    * Provision Webjars for test JS-VM
-    * Setup Eclipse plugin in M2E
-    * Incremental Scala.js linking in M2E
-    * Manage test application restart in M2E
-    * Manage presentation compiler work-around in M2E
-    </description>
-
     <properties>
 
         <!-- Java epoch. -->
@@ -28,21 +14,18 @@
         <maven.compiler.source>${version.java}</maven.compiler.source>
         <maven.compiler.target>${version.java}</maven.compiler.target>
 
-        <!-- File format. -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
         <!-- Scala epoch. -->
         <version.scala.epoch>2.12</version.scala.epoch>
         <version.scala.release>2.12.4</version.scala.release>
-
-        <!-- Scala compiler. -->
-        <version.scala.zinc>1.1.1</version.scala.zinc>
-        <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
 
         <!-- Scala.js epoch. -->
         <version.sjs.epoch>0.6</version.sjs.epoch>
         <version.sjs.release>0.6.22</version.sjs.release>
         <version.sjs.library>sjs${version.sjs.epoch}_${version.scala.epoch}</version.sjs.library>
+
+        <!-- Scala compiler. -->
+        <version.scala.zinc>1.1.1</version.scala.zinc>
+        <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
 
         <!-- JUnit 4/5 Testing -->
         <version.maven.testing>2.19.1</version.maven.testing><!-- JUnit 5 OK. -->
@@ -50,11 +33,16 @@
         <version.junit.jupiter>5.0.3</version.junit.jupiter>
         <version.junit.vintage>4.12.3</version.junit.vintage>
 
+        <!-- File format. -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
     </properties>
 
     <dependencies>
 
-        <!-- Libraries. -->
+        <!--
+            Scala libraries.
+        -->
 
         <!-- Scala core. -->
         <dependency>
@@ -119,10 +107,8 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Testing. -->
-
         <!--
-            Enable JUnit 4/5 testing.
+            Enable JUnit 4/5 testing:
             JS tests are using JUnit 4, and JVM tests are using JUnit 5.
             JS tests are invoked inside JS-VM, and JVM tests are invoked inside JVM.
         -->
@@ -152,7 +138,7 @@
         </dependency>
 
         <!--
-            Enable JUnit Scala.js testing.
+            Enable JUnit Scala.js testing:
             Provides custom JUnit runners, which run JUnit 4 tests inside JS-VM.
             Note: keep order: after org.junit.* dependencies (see scalajs-junit-test-runtime).
         -->
@@ -191,7 +177,7 @@
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>scalor-maven-plugin_2.12</artifactId>
-                <version>1.2.1.20180213030702</version>
+                <!-- <version>1.2.1.20180213030702</version> -->
 
                 <configuration>
 
@@ -207,6 +193,13 @@
                     <linkerLogUpdateResult>true</linkerLogUpdateResult>
                     <envconfLogConfig>true</envconfLogConfig>
                     <!-- <eclipseLogBuildParticipant>true</eclipseLogBuildParticipant> -->
+
+                    <!--
+                        Example of Scala.js module initializer. See test/Init.scala.
+                    -->
+                    <linkerTestInitializerList>
+                        <initializer>test.Init.main(build=${project.artifactId},stamp=${maven.build.timestamp})</initializer>
+                    </linkerTestInitializerList>
 
                     <!--
                         Provide compiler options for Scala.js support.
@@ -234,13 +227,20 @@
                     </envconfWebjarsScriptList>
 
                     <defineBridge>
+                        <!--
+                            Required compiler bridge.
+                        -->
                         <dependency>
                             <groupId>org.scala-sbt</groupId>
                             <artifactId>compiler-bridge_${version.scala.epoch}</artifactId>
                             <version>${version.scala.zinc}</version>
                         </dependency>
                     </defineBridge>
+
                     <defineCompiler>
+                        <!--
+                            Required scala compiler.
+                        -->
                         <dependency>
                             <groupId>org.scala-lang</groupId>
                             <artifactId>scala-compiler</artifactId>
@@ -256,14 +256,19 @@
                             <version>${version.sjs.release}</version>
                         </dependency>
                     </defineCompiler>
+
                     <definePluginList>
-                        <!-- Macro type provider support. -->
+                        <!--
+                            Macro type provider support.
+                        -->
                         <dependency>
                             <groupId>org.scalamacros</groupId>
                             <artifactId>paradise_${version.scala.release}</artifactId>
                             <version>${version.scala.plugin.macro}</version>
                         </dependency>
-                        <!-- Generate Scala.js *.sjsir classes. -->
+                        <!--
+                            Generate Scala.js *.sjsir classes.
+                        -->
                         <dependency>
                             <groupId>org.scala-js</groupId>
                             <artifactId>scalajs-compiler_${version.scala.release}</artifactId>
@@ -288,7 +293,7 @@
                             <!-- Install Eclipse companion plugin. -->
                             <goal>eclipse-config</goal>
 
-                            <!-- Manage test application restart. -->
+                            <!-- Manage test application restart in M2E. -->
                             <goal>eclipse-restart</goal>
 
                             <!-- Manage Scala IDE presentation compiler. -->

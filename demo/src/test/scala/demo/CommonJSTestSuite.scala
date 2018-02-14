@@ -2,8 +2,8 @@ package demo
 
 import com.carrotgarden.sjs.junit.ScalaJS_Suite
 
-import org.junit.jupiter.api.Assertions._;
-import org.junit.jupiter.api._;
+import org.junit.jupiter.api.Assertions._
+import org.junit.jupiter.api._
 
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
@@ -28,7 +28,7 @@ import org.junit.runners.Suite
 //12:41:50.962 [Thread-1] INFO  [JS-VM/console] - ### Message from VM: Scala.js @ demo.CommonJSTest01 ###
 //12:41:51.019 [Thread-1] INFO  [JS-VM/console] - ### Message from VM: Scala.js @ demo.CommonJSTest02 ###
 
-@RunWith( classOf[ ScalaJS_Suite ] ) // Using custom Suite.
+@RunWith( classOf[ ScalaJS_Suite ] ) // Using custom runner.
 @Suite.SuiteClasses( Array(
   classOf[ CommonJSTest01 ], // Worker test is invoked in JS-VM.
   classOf[ CommonJSTest02 ] // Worker test is invoked in JS-VM.

@@ -1,19 +1,18 @@
 package com.carrotgarden.maven.scalor.eclipse
 
-import com.carrotgarden.maven.scalor._
-import org.eclipse.jface.preference.IPreferenceStore
-import org.eclipse.jface.preference.PreferenceStore
 import java.io.File
 import java.io.FileOutputStream
-import org.eclipse.ui.preferences.ScopedPreferenceStore
+
+import org.eclipse.jface.preference.IPreferenceStore
+import org.eclipse.jface.preference.PreferenceStore
 
 /**
  * Properties support.
  */
 trait Props {
 
-  import util.Error._
-  import util.Folder._
+  import com.carrotgarden.maven.scalor.util.Error._
+  import com.carrotgarden.maven.scalor.util.Folder._
 
   /**
    * Optionally provide header comment in preference store.

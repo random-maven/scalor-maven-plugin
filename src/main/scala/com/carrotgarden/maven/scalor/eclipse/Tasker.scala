@@ -1,14 +1,15 @@
 package com.carrotgarden.maven.scalor.eclipse
 
-import org.eclipse.core.runtime.jobs.Job
+import java.util.concurrent.atomic.AtomicBoolean
+
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.Status
-import com.carrotgarden.maven.scalor.util.Logging.AnyLog
-import org.eclipse.core.runtime.jobs.IJobChangeListener
 import org.eclipse.core.runtime.jobs.IJobChangeEvent
-import org.eclipse.core.runtime.jobs.JobChangeAdapter
-import java.util.concurrent.atomic.AtomicBoolean
+import org.eclipse.core.runtime.jobs.IJobChangeListener
+import org.eclipse.core.runtime.jobs.Job
+
+import com.carrotgarden.maven.scalor.util.Logging.AnyLog
 
 /**
  * Eclipse job execution support.

@@ -1,16 +1,15 @@
 package com.carrotgarden.maven.scalor.eclipse
 
-import org.eclipse.core.resources.IResourceChangeListener
-import org.eclipse.core.resources.IResourceChangeEvent
-import org.eclipse.core.resources.ResourcesPlugin
-import org.eclipse.core.resources.IResourceDeltaVisitor
-import org.eclipse.core.resources.IResourceDelta
-import org.eclipse.core.runtime.IPath
 import scala.collection.concurrent.TrieMap
-import java.io.File
-import org.eclipse.core.runtime.Path
-import com.carrotgarden.maven.scalor.util.Text
+
+import org.eclipse.core.resources.IResourceChangeEvent
+import org.eclipse.core.resources.IResourceChangeListener
+import org.eclipse.core.resources.IResourceDelta
+import org.eclipse.core.resources.IResourceDeltaVisitor
+import org.eclipse.core.resources.ResourcesPlugin
+
 import com.carrotgarden.maven.scalor.util.Logging.AnyLog
+import com.carrotgarden.maven.scalor.util.Text
 
 /**
  * Eclipse resource change listener.
@@ -68,8 +67,8 @@ object Watcher {
       Text.reportArray( array )
     }
 
-    import IResourceChangeEvent._
-    import IResourceDelta._
+    import org.eclipse.core.resources.IResourceChangeEvent._
+    import org.eclipse.core.resources.IResourceDelta._
 
     def hasChange( delta : IResourceDelta ) : Boolean = {
       ( delta.getKind & ALL_WITH_PHANTOMS ) != 0
@@ -136,8 +135,8 @@ object Watcher {
       projectDeltaList.foreach { projectDelta =>
         log( _.info( s"project delta=${projectDelta}" ) )
         val projectPath = projectDelta.getResource.getLocation.toFile.getCanonicalPath
+        // FIXME spurious matches to parent
         if ( hasBuild( projectPath ) ) {
-          // FIXME spurious matches to parent
           projectDelta.accept( this )
         }
       }

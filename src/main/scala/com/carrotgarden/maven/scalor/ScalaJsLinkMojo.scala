@@ -49,11 +49,11 @@ trait ScalaJsLinkAnyMojo extends AbstractMojo
    * Discover Scala.js library on project class path.
    */
   def libraryArtifactOption : Option[ Artifact ] = {
-    val libraryRegex = linkerLibraryRegex.r
+    val libraryMatcher = linkerLibraryRegex.r.pattern.matcher( "" )
     project.getArtifacts.asScala.find { artifact =>
       import artifact._
       val identity = s"${getGroupId}:${getArtifactId}"
-      libraryRegex.pattern.matcher( identity ).matches
+      libraryMatcher.reset( identity ).matches
     }
   }
 
@@ -84,15 +84,17 @@ trait ScalaJsLinkAnyMojo extends AbstractMojo
   def linkerOptions = Linker.Options.parse( linkerOptionsActive )
 
   /**
-   *
+   * Produce linker runtime.js.
    */
   def invokeLinker( updateList : Array[ UpdateResult ] = Array.empty ) : Unit = {
     val context = Linker.Context(
-      options     = linkerOptions,
-      classpath   = linkerClassPath,
-      runtime     = linkerRuntimeFile,
-      updateList  = updateList,
-      hasLogStats = linkerLogBuildStats
+      options          = linkerOptions,
+      classpath        = linkerClassPath,
+      runtime          = linkerRuntimeFile,
+      updateList       = updateList,
+      initializerList  = linkerInitializerList,
+      initializerRegex = linkerInitializerRegex,
+      hasLogStats      = linkerLogBuildStats
     )
     reportLinker( context )
     performLinker( context )
@@ -145,6 +147,7 @@ trait ScalaJsLinkAnyMojo extends AbstractMojo
 
 @Description( """
 Generate Scala.js runtime JavaScript for scope=main.
+Provides incremental linking in M2E.
 """ )
 @Mojo(
   name                         = A.mojo.`scala-js-link-main`,
@@ -172,6 +175,7 @@ class ScalaJsLinkMainMojo extends ScalaJsLinkAnyMojo
 
 @Description( """
 Generate Scala.js runtime JavaScript for scope=test.
+Provides incremental linking in M2E.
 """ )
 @Mojo(
   name                         = A.mojo.`scala-js-link-test`,

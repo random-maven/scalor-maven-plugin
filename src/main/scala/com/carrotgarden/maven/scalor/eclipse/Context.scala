@@ -1,9 +1,12 @@
 package com.carrotgarden.maven.scalor.eclipse
 
-import com.carrotgarden.maven.tools.Description
 import com.carrotgarden.maven.scalor.base
 import com.carrotgarden.maven.scalor.util.Error.TryHard
+import com.carrotgarden.maven.tools.Description
 
+/**
+ * Eclipse wiring context.
+ */
 @Description( """
 Note: controlled OSGI environment.
 """ )

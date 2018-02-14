@@ -1,12 +1,9 @@
 package com.carrotgarden.maven.scalor.eclipse
 
 import scala.collection.mutable
+
 import org.eclipse.core.resources.IProject
 import org.scalaide.core.internal.project.ScalaProject
-import org.eclipse.core.runtime.jobs.Job
-import org.eclipse.core.runtime.IProgressMonitor
-import org.eclipse.core.runtime.IStatus
-import org.eclipse.core.runtime.Status
 
 /**
  * Remember managed projects.

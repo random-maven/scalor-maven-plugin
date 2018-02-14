@@ -111,6 +111,7 @@ trait BuildMacroDependency extends BuildAnyDependency {
   Maven dependency scopes which control selection
   of project dependency artifacts to be included
   in the classpath of compilation scope=macro.
+  Scopes <a href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html">reference</a>.
   """ )
   @Parameter(
     property     = "scalor.buildMacroDependencyScopes",
@@ -201,6 +202,7 @@ trait BuildMainDependency extends BuildAnyDependency {
   Maven dependency scopes which control selection
   of project dependency artifacts to be included
   in the classpath of compilation scope=main.
+  Scopes <a href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html">reference</a>.
   """ )
   @Parameter(
     property     = "scalor.buildMainDependencyScopes",
@@ -237,6 +239,7 @@ trait BuildMainSources extends BuildAnySources {
 
   @Description( """
   Resource root folders to be included in compilation scope=main.
+  Normally uses <code>src/main/resources</code>.
   Component reference: 
 <a href="https://maven.apache.org/pom.html#Resources">
   Resource
@@ -306,6 +309,7 @@ trait BuildTestDependency extends BuildAnyDependency {
   Maven dependency scopes which control selection
   of project dependency artifacts to be included
   in the classpath of compilation scope=test.
+  Scopes <a href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html">reference</a>.
   """ )
   @Parameter(
     property     = "scalor.buildTestDependencyScopes",
@@ -342,6 +346,7 @@ trait BuildTestSources extends BuildAnySources {
 
   @Description( """
   Resource root folders to be included in compilation scope=test.
+  Normally uses <code>src/test/resources</code>.
   Component reference: 
 <a href="https://maven.apache.org/pom.html#Resources">
   Resource

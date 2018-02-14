@@ -1,27 +1,25 @@
 package com.carrotgarden.maven.scalor.eclipse
 
-import com.carrotgarden.maven.scalor.base
-import com.carrotgarden.maven.scalor.util
-
 import scala.collection.mutable.HashSet
 import scala.tools.nsc
 import scala.tools.nsc.settings.NoScalaVersion
 
 import org.apache.maven.artifact.Artifact
-
+import org.eclipse.core.resources.IProject
 import org.eclipse.core.runtime.IPath
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Status
 import org.eclipse.core.runtime.jobs.Job
+import org.eclipse.jdt.core.IClasspathAttribute
 import org.eclipse.jdt.core.IClasspathContainer
 import org.eclipse.jdt.core.IClasspathEntry
 import org.eclipse.jdt.core.JavaCore
 import org.eclipse.jface.preference.IPersistentPreferenceStore
 import org.eclipse.m2e.core.project.IMavenProjectFacade
 import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
-
 import org.scalaide.core.SdtConstants
+import org.scalaide.core.internal.ScalaPlugin
 import org.scalaide.core.internal.project.CompileScope
 import org.scalaide.core.internal.project.CustomScalaInstallationLabel
 import org.scalaide.core.internal.project.LabeledScalaInstallation
@@ -35,13 +33,9 @@ import org.scalaide.util.eclipse.EclipseUtils
 import org.scalaide.util.internal.SettingConverterUtil.SCALA_DESIRED_INSTALLATION
 import org.scalaide.util.internal.SettingConverterUtil.USE_PROJECT_SETTINGS_PREFERENCE
 import org.scalaide.util.internal.SettingConverterUtil.convertNameToProperty
-import org.eclipse.jdt.core.IClasspathAttribute
-import com.carrotgarden.maven.scalor.util.Logging
-import com.carrotgarden.maven.scalor.eclipse.JobHelpers.IJobMatcher
-import org.scalaide.core.internal.ScalaPlugin
-import org.eclipse.core.resources.IProject
 
-import util.Option.convert._
+import com.carrotgarden.maven.scalor.base
+import com.carrotgarden.maven.scalor.util.Optioner.convert_Option_Value
 
 /**
  * Provide Scala IDE settings for a project.
@@ -99,7 +93,7 @@ trait ScalaIDE {
     import context._
     import config._
     if ( eclipseLogInstallReport ) {
-      import util.Folder._
+      import com.carrotgarden.maven.scalor.util.Folder._
       logger.info( s"Producing custom Scala installation report." )
       val reportFile = eclipseInstallReportFile.getCanonicalFile
       logger.info( s"   ${reportFile}" )
@@ -370,7 +364,6 @@ trait ScalaIDE {
     monitor : IProgressMonitor
   ) : Unit = {
     import context._
-    import config._
     logger.info( s"Configuring Scala IDE." )
     val subMon = monitor.toSub
     reportCustomInstall( context, subMon.split( 20 ) )
@@ -414,7 +407,6 @@ object ScalaIDE {
    * Eclipse resource path for Maven artifact jar file.
    */
   def pathFrom( artifact : Artifact ) = {
-    import util.Folder._
     new Path( artifact.getFile.getCanonicalPath )
   }
 
@@ -451,7 +443,6 @@ object ScalaIDE {
   def report(
     module : ScalaModule
   ) = {
-    import util.Folder._
     import module._
     val text = new StringBuffer
     def spacer = text.append( "      " )

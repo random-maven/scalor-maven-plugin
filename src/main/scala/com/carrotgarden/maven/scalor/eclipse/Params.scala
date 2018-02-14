@@ -2,10 +2,11 @@ package com.carrotgarden.maven.scalor.eclipse
 
 import java.io.File
 
-import com.carrotgarden.maven.tools.Description
 import org.apache.maven.plugins.annotations.Parameter
 
-import com.carrotgarden.maven.scalor._
+import com.carrotgarden.maven.scalor.base
+import com.carrotgarden.maven.scalor.zinc
+import com.carrotgarden.maven.tools.Description
 
 /**
  * Maven plugin parameters used to control companion Eclipse plugin.
@@ -73,7 +74,7 @@ trait ParamsRestartCore {
 
   @Description( """
   Fully qualified class name which represents test application used for auto-restart.
-  This class must be a Scala object with a "main" contract, for example, in file <code>test/Main.scala</code>:
+  This class must be a Scala object with Java "main" contract, for example, in file <code>test/Main.scala</code>:
 <pre>
 package test
 object Main {
@@ -840,7 +841,14 @@ object ParamsConfigBase extends ParamsConfigBase {
   // Ensure variables have default values.
 }
 
-import meta.Macro._
+import com.carrotgarden.maven.scalor.meta.Macro.ReportFun
+import com.carrotgarden.maven.scalor.meta.Macro.UpdateFun
+import com.carrotgarden.maven.scalor.meta.Macro.VariableCount
+import com.carrotgarden.maven.scalor.meta.Macro.VariableReport
+import com.carrotgarden.maven.scalor.meta.Macro.VariableUpdate
+import com.carrotgarden.maven.scalor.meta.Macro.variableCount
+import com.carrotgarden.maven.scalor.meta.Macro.variableReportBlock
+import com.carrotgarden.maven.scalor.meta.Macro.variableUpdateBlock
 
 /**
  * Updatable plugin configuration parameters.

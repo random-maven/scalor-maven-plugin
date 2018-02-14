@@ -2,8 +2,8 @@ package demo
 
 import com.carrotgarden.sjs.junit.ScalaJS_Suite
 
-import org.junit.jupiter.api.Assertions._;
-import org.junit.jupiter.api._;
+import org.junit.jupiter.api.Assertions._
+import org.junit.jupiter.api._
 
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
@@ -12,8 +12,8 @@ import org.junit.runners.Suite
  * This is a Master -> Worker test controller.
  * 
  * Note:
- * - master test (SomeTestSuite) is invoked in JVM,
- * - while workers (SomeTestJS01, SomeTestJS02) are invoked in JS-VM.
+ * - master test (JavaScriptTestSuite) is invoked in JVM,
+ * - while workers (JavaScriptTestJS01, JavaScriptTestJS02) are invoked in JS-VM.
  *
  * Basic setup for JavaScript testing inside JS-VM:
  * - use custom JUnit 4 runner: @RunWith(ScalaJS_Suite)

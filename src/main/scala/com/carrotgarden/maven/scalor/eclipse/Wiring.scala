@@ -1,29 +1,23 @@
 package com.carrotgarden.maven.scalor.eclipse
 
+import java.io.File
+import java.nio.file.Files
+
 import org.codehaus.plexus.classworlds.realm.ClassRealm
+import org.eclipse.core.resources.IProject
+import org.eclipse.core.resources.IWorkspace
+import org.eclipse.core.resources.ResourcesPlugin
+import org.eclipse.m2e.core.internal.MavenPluginActivator
+import org.eclipse.m2e.core.ui.internal.M2EUIPluginActivator
+import org.osgi.framework.Bundle
 import org.sonatype.plexus.build.incremental.BuildContext
 
-import com.carrotgarden.maven.scalor.base
-import com.carrotgarden.maven.scalor.util
 import com.carrotgarden.maven.tools.Description
 
-import org.osgi.framework.BundleReference
-import org.eclipse.core.resources.ResourcesPlugin
-import org.scalaide.core.IScalaPlugin
-import org.eclipse.core.resources.IWorkspace
-import org.eclipse.m2e.core.embedder.IMaven
-import org.eclipse.m2e.core.MavenPlugin
-import org.eclipse.jdt.core.JavaCore
-import org.eclipse.core.resources.IProject
-
-import java.io.File
-import org.codehaus.plexus.classworlds.ClassWorld
-import org.osgi.framework.Bundle
-
-import Wiring._
-import org.eclipse.m2e.core.ui.internal.M2EUIPluginActivator
-import org.eclipse.m2e.core.internal.MavenPluginActivator
-import java.nio.file.Files
+import Wiring.Handle
+import Wiring.Meta
+import Wiring.bundleClassLoader
+import Wiring.discoverBundleFrom
 
 /**
  * Connect this Maven plugin with host Eclipse platform
@@ -42,14 +36,15 @@ case class Wiring(
   metaOsgiCore :    Meta         = Meta( "osgi.core", "org.osgi" )
 ) {
 
+  import org.osgi.framework.BundleReference
+
   /**
    * Connect this Maven plugin to host Eclipse plugins.
    */
-  def setup: Handle = {
+  def setup : Handle = {
 
     /**
-     * Keep order:
-     * each given step provides class loaders for following steps.
+     * Keep order: each given step provides class loaders for following steps.
      */
 
     // eclipse m2e bundle loader
@@ -77,8 +72,7 @@ case class Wiring(
 
     // discover eclipse bundle and import select packages into local realm
     def importBundle( meta : Meta ) : Bundle = {
-      import util.OSGI._
-      val bundle = discoverBundle( bundleM2E, meta.id ).get
+      val bundle = discoverBundleFrom( bundleM2E, meta.id ).get
       importPackage( bundleClassLoader( bundle ), meta )
       bundle
     }
@@ -114,6 +108,11 @@ case class Wiring(
 
 object Wiring {
 
+  import org.osgi.framework.BundleContext
+  import org.osgi.framework.BundleReference
+  import org.osgi.framework.Version
+  import org.osgi.framework.wiring.BundleWiring
+
   /**
    * Bundle import descriptor.
    */
@@ -141,8 +140,7 @@ object Wiring {
    * Find Eclipse project with matching base directory.
    */
   def projectWithBase( projectList : Array[ IProject ], baseDir : File ) : IProject = {
-    import util.Folder._
-    import util.Error._
+    import com.carrotgarden.maven.scalor.util.Error._
     val sourcePath = baseDir.toPath
     val length = projectList.length
     var index = 0
@@ -162,6 +160,36 @@ object Wiring {
       }
     }
     Throw( s"Missing required project: ${sourcePath}" )
+  }
+
+  /**
+   * Obtain class loader servicing given bundle.
+   */
+  def bundleClassLoader( bundle : Bundle ) : ClassLoader = {
+    bundle.adapt( classOf[ BundleWiring ] ).getClassLoader
+  }
+
+  /**
+   * Find bundle by symbolic name and version.
+   */
+  def discoverBundleFrom(
+    root :          Bundle,
+    symbolicName :  String,
+    versionOption : Option[ String ] = None
+  ) : Option[ Bundle ] = {
+    val list = root.getBundleContext.getBundles
+    val version = Version.parseVersion( versionOption.getOrElse( "0.0.0.invalid" ) )
+    var index = 0
+    val length = list.length
+    while ( index < length ) {
+      val bundle = list( index ); index += 1
+      val hasName = bundle.getSymbolicName.equals( symbolicName )
+      val hasVersion = !versionOption.isDefined || version.equals( bundle.getVersion )
+      if ( hasName && hasVersion ) {
+        return Some( bundle )
+      }
+    }
+    None
   }
 
 }

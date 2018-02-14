@@ -61,7 +61,7 @@ case class ScalaInstall(
    */
   def withTitleDigest : ScalaInstall = {
     val digest = digestFrom( this )
-    this.copy( title = title + " [" + digest + "]" )
+    this.copy( title = s"${title} [${digest}]" )
   }
 
 }

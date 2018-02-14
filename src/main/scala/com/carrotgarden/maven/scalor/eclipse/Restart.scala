@@ -2,26 +2,21 @@ package com.carrotgarden.maven.scalor.eclipse
 
 import java.io.File
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConverters.asScalaSetConverter
 import scala.sys.process.Process
 import scala.sys.process.ProcessLogger
 
-import org.apache.maven.plugin.MojoExecution
 import org.apache.maven.project.MavenProject
 import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.m2e.core.project.IMavenProjectFacade
 
-import com.carrotgarden.maven.scalor.EclipseRestartMojo
 import com.carrotgarden.maven.scalor.eclipse.Watcher.Detector
-import com.carrotgarden.maven.scalor.util
-import com.carrotgarden.maven.scalor.util.Text
 import com.carrotgarden.maven.scalor.util.Error
+import com.carrotgarden.maven.scalor.util.Folder
 import com.carrotgarden.maven.scalor.util.Logging.AnyLog
 import com.carrotgarden.maven.scalor.util.Logging.ContextLogger
-
-import org.eclipse.m2e.core.project.IMavenProjectFacade
-import com.carrotgarden.maven.scalor.util.Folder
-
-import util.Option.convert._
+import com.carrotgarden.maven.scalor.util.Optioner.convert_Option_Value
+import com.carrotgarden.maven.scalor.util.Text
 
 /**
  * Manage test application restart.
@@ -282,7 +277,7 @@ object Restart {
     classPath.map( _.getCanonicalPath ).mkString( File.pathSeparator )
   }
 
-  // FIXME detect o.s.
+  // FIXME detect O.S.
   def javaExec : String = {
     import com.carrotgarden.maven.scalor.util.Folder._
     val javaHome = System.getProperty( "java.home" )

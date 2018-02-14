@@ -1,20 +1,16 @@
 package com.carrotgarden.maven.scalor.scalajs
 
-import org.twdata.maven.mojoexecutor.MojoExecutor._
-import com.carrotgarden.maven.scalor.base
-
 import java.io.File
-
-import com.carrotgarden.maven.tools.Description
-import org.apache.maven.plugins.annotations.Parameter
-
-import com.carrotgarden.maven.scalor._
+import java.net.URLClassLoader
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-import java.nio.file.Paths
+
+import org.apache.maven.plugins.annotations.Parameter
 import org.webjars.WebJarExtractor
-import org.webjars.WebJarExtractor.MemoryCache
-import java.net.URLClassLoader
+
+import com.carrotgarden.maven.scalor.base
+import com.carrotgarden.maven.scalor.util
+import com.carrotgarden.maven.tools.Description
 
 /**
  * Common Scala.js VM environment configuration.
@@ -80,7 +76,7 @@ trait EnvConfAny extends AnyRef
    */
   def configureEnvironment() : Unit = {
 
-    import Config._
+    import com.carrotgarden.sjs.junit.Config._
 
     // JS-VM settings.
     val envExec = paramExec.getCanonicalPath
@@ -429,6 +425,7 @@ trait EnvProvNodejs extends EnvProvAny {
    * Install Node.js binary.
    */
   def provisionNodejs() : Unit = {
+    import org.twdata.maven.mojoexecutor.MojoExecutor._
     val nodeVersion = provideNodeVersion
     //
     executeMojo( //
@@ -456,6 +453,7 @@ trait EnvProvNodejs extends EnvProvAny {
    * Invoke "npm install" to provision node_modules.
    */
   def provisionModules() : Unit = {
+    import org.twdata.maven.mojoexecutor.MojoExecutor._
     val modules = npmModuleList.mkString( " " )
     val options = npmInstallOptions.mkString( " " )
     val prefix = s"--prefix ${folderTestToolNodejs}"
@@ -544,6 +542,7 @@ trait EnvProvPhantomjs extends EnvProvAny {
    * Install Phantom.js binary.
    */
   def provisionPhantomjs() : Unit = {
+    import org.twdata.maven.mojoexecutor.MojoExecutor._
     //
     executeMojo( //
       plugin( //
@@ -609,7 +608,7 @@ trait EnvProvWebjars extends EnvProvAny {
    * Provision discovered webjars resources.
    */
   def provisionWebjarsResources() : Unit = {
-    val cache = new MemoryCache()
+    val cache = new WebJarExtractor.MemoryCache()
     val loader = webjarsClassLoader
     val extractor = new WebJarExtractor( cache, loader )
     extractor.extractAllWebJarsTo( provisionedWebjars )

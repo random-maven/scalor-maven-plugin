@@ -5,7 +5,7 @@ import java.time.ZoneOffset
 import java.time.Instant
 
 /**
- * Managed test application.
+ * Example of managed test application.
  *
  * Activated by Maven goal "eclipse-restart".
  *

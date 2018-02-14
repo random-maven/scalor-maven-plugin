@@ -1,21 +1,17 @@
 package com.carrotgarden.maven.scalor.eclipse
 
-import org.eclipse.core.runtime.IProgressMonitor
-
-import org.osgi.framework.VersionRange
-
-import scala.util.Success
 import scala.util.Failure
+import scala.util.Success
 
-import com.carrotgarden.maven.scalor._
-
-import meta.Macro._
-import util.Error._
-
-import org.scalaide.core.internal.ScalaPlugin
-import org.osgi.framework.Bundle
+import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.m2e.core.ui.internal.M2EUIPluginActivator
-import com.carrotgarden.maven.scalor.util.Logging
+import org.osgi.framework.Bundle
+import org.osgi.framework.VersionRange
+import org.scalaide.core.internal.ScalaPlugin
+
+import com.carrotgarden.maven.scalor.meta.Macro.nameOf
+import com.carrotgarden.maven.scalor.util.Error.Throw
+import com.carrotgarden.maven.scalor.util.Error.TryHard
 import com.carrotgarden.maven.scalor.util.Logging.AnyLog
 
 /**
@@ -34,7 +30,6 @@ trait Version {
     paramValue :   String,
     monitor :      IProgressMonitor
   ) : Unit = {
-    import config._
     if ( hasCheck ) {
       logger.info( s"Verifying ${pluginName} version." )
       val range = rangeFrom( paramValue ) match {

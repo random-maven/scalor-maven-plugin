@@ -1,17 +1,13 @@
 package com.carrotgarden.maven.scalor.eclipse
 
+import scala.collection.mutable.ArrayBuffer
+
 import org.eclipse.core.resources.IProject
 import org.eclipse.core.runtime.IProgressMonitor
-import scala.collection.mutable.ArrayBuffer
-import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
 import org.eclipse.jdt.core.JavaCore
 import org.scalaide.core.SdtConstants
-import org.eclipse.core.resources.IResource
 
-import com.carrotgarden.maven.scalor.util
-import com.carrotgarden.maven.scalor.util.Logging
-
-import util.Option.convert._
+import com.carrotgarden.maven.scalor.util.Optioner.convert_Option_Value
 
 /**
  * Provide eclipse .project file natures.
@@ -73,7 +69,7 @@ object Nature {
   val javaNatureId = JavaCore.NATURE_ID
   val scalaNatureId = SdtConstants.NatureId
 
-  import IResource._
+  import org.eclipse.core.resources.IResource._
 
   /**
    * Work around Eclipse ignoring nature ordering.

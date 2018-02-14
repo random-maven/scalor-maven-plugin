@@ -1,9 +1,9 @@
 package com.carrotgarden.maven.scalor.eclipse
 
-import org.eclipse.core.runtime.preferences.InstanceScope
 import org.eclipse.core.resources.IProject
-import org.eclipse.core.runtime.preferences.IScopeContext
 import org.eclipse.core.resources.ProjectScope
+import org.eclipse.core.runtime.preferences.IScopeContext
+import org.eclipse.core.runtime.preferences.InstanceScope
 
 /**
  * Eclipse preferences support.

@@ -22,7 +22,7 @@ class JavaScriptTestJS01 {
   @Test // This is JUnit 4.
   def verifyVM() : Unit = {
     // https://github.com/scala-js/scala-js/blob/master/javalanglib/src/main/scala/java/lang/System.scala
-    assertEquals( "Running in Scala.js VM", System.getProperty( "java.vm.name" ), "Scala.js" )
+    assertEquals( System.getProperty( "java.vm.name" ), "Scala.js" )
   }
 
   @Ignore

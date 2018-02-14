@@ -3,7 +3,7 @@
 
 Build integrator for Java, Scala, Scala.macro, Scala.js, Eclipse and Maven.
 
-[![Apache License, Version 2.0, January 2004](https://img.shields.io/github/license/mojohaus/versions-maven-plugin.svg?label=License)](http://www.apache.org/licenses/)
+[![Apache License](https://img.shields.io/github/license/mojohaus/versions-maven-plugin.svg?label=License)](http://www.apache.org/licenses/)
 [![Travis Status](https://travis-ci.org/random-maven/scalor-maven-plugin.svg?branch=master)](https://travis-ci.org/random-maven/scalor-maven-plugin/builds)
 
 | Install | Production Release | Development Release |
@@ -13,6 +13,9 @@ Build integrator for Java, Scala, Scala.macro, Scala.js, Eclipse and Maven.
 Similar plugins
 * [scala-maven-plugin](https://github.com/davidB/scala-maven-plugin)
 * [sbt-compiler-maven-plugin](https://github.com/sbt-compiler-maven-plugin/sbt-compiler-maven-plugin)
+
+Getting started
+* build and study [demo project](https://github.com/random-maven/scalor-maven-plugin/blob/master/demo)
 
 ### Plugin features
 
@@ -29,10 +32,13 @@ Scala.macro
 
 Scala.js
 * compiles and [links Scala.js JavaScrpt](https://github.com/scala-js/scala-js-cli)
+* supports [JavaScrpt module initializers](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-link-main-mojo.html#linkerMainInitializerList)
 * same-project JS-VM + JVM [JUnit testing](https://github.com/random-scalor/scala-js-junit-tools)
 * incremental cached linking in [Eclipse/M2E](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-link-main-mojo.html)
-* auto-provisions Webjars [resources for testing](https://www.webjars.org/) 
-* auto-provisions JavaScript [JS-VM environments for testing](https://www.scala-js.org/doc/project/js-environments.html)
+* [auto-provisions](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-env-prov-webjars-mojo.html) 
+  Webjars [resources for testing](https://www.webjars.org/) 
+* [auto-provisions](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-env-prov-nodejs-mojo.html)
+  JavaScript [JS-VM environments for testing](https://www.scala-js.org/doc/project/js-environments.html)
 
 Eclipse and Maven
 * brings and installs companion [Eclipse plugin](https://github.com/random-maven/scalor-maven-plugin/blob/master/src/main/scala/com/carrotgarden/maven/scalor/EclipsePlugin.scala)
@@ -54,14 +60,10 @@ Complete goals reference
 
 * [Maven Goals 2.12](https://random-maven.github.io/scalor-maven-plugin/2.12/plugin-info.html)
 
-### Planned features
-
-Scala.js
-* initializer module support
-
 ### Eclipse setup
 
 Prerequisites:
+* [JDK-8 or JDK-9](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 * [Eclipse 4.7](http://www.eclipse.org/downloads/),
   [Maven M2E 1.8](http://www.eclipse.org/m2e/),
   [Scala IDE 4.7](http://scala-ide.org/).
@@ -102,7 +104,7 @@ For example:
 Eclipse companion plugin provided by this Maven plugin
 needs to interact with Scala IDE and hence must run
 on the Scala Library from the same epoch:
-* Scala IDE `4.7.0` -> Scala Library `2.12.3` -> `scalor-maven-plugin_2.12`
+* Scala IDE `4.7.0` -> `scalor-maven-plugin_2.12`
 
 However, `compiler-bridge` module provides an isolation gateway 
 which allows `scalor-maven-plugin_2.12` to build projects 
@@ -118,7 +120,7 @@ Required version mapping is provided via `scalor-maven-plugin` configuration ent
 ### Usage example
 
 Project Examples:
-* basic [demonstration project](https://github.com/random-maven/scalor-maven-plugin/blob/master/demo/pom.xml)
+* basic [demonstration project](https://github.com/random-maven/scalor-maven-plugin/blob/master/demo)
 * test project for cross Scala [2.11, 2.12, 2.13](https://github.com/random-maven/scalor-maven-plugin/tree/master/src/it/test-cross)
 * `scalor-maven-plugin` project itself is a cross
 [master](https://github.com/random-maven/scalor-maven-plugin/blob/master/pom.xml)
@@ -128,7 +130,7 @@ build
 
 Command line invocation:
 
-```
+```bash
 mvn clean install -P scalor
 ```
 
@@ -212,14 +214,14 @@ mvn clean install -P scalor
                                     <goal>compile-main</goal>
                                     <goal>compile-test</goal>
 
-                                    <!-- Provide test JS-VM. -->
-                                    <goal>scala-js-env-prov-webjars</goal>
-                                    <goal>scala-js-env-prov-nodejs</goal>
-                                    <goal>scala-js-env-conf-nodejs</goal>
-
                                     <!-- Link runtime JS script. -->
                                     <goal>scala-js-link-main</goal>
                                     <goal>scala-js-link-test</goal>
+
+                                    <!-- Provide JS-VM environment for testing. -->
+                                    <goal>scala-js-env-prov-webjars</goal>
+                                    <goal>scala-js-env-prov-nodejs</goal>
+                                    <goal>scala-js-env-conf-nodejs</goal>
 
                                 </goals>
 
@@ -234,7 +236,7 @@ mvn clean install -P scalor
 
 ### Build yourself
 
-```
+```bash
 cd /tmp
 git clone git@github.com:random-maven/scalor-maven-plugin.git
 cd scalor-maven-plugin

@@ -1,33 +1,22 @@
 package com.carrotgarden.maven.scalor.eclipse
 
-import com.carrotgarden.maven.scalor.util
-
-import util.Params._
-import ParamsConfigBase._
-
-import scala.collection.JavaConverters._
-
-import org.eclipse.m2e.jdt.IClasspathDescriptor
-import org.eclipse.core.runtime.IProgressMonitor
-import org.eclipse.m2e.jdt.IClasspathDescriptor
-import org.eclipse.core.runtime.IProgressMonitor
-import java.util.Comparator
-import org.eclipse.m2e.core.project.IMavenProjectFacade
-import org.eclipse.m2e.core.project.IMavenProjectFacade
-
-import org.eclipse.core.resources.ICommand
-import org.eclipse.m2e.jdt.IClasspathEntryDescriptor
-import java.util.ArrayList
+import java.util.Arrays
 import java.util.Collections
-import org.eclipse.core.resources.IProject
+import java.util.Comparator
+
+import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.util.Sorting
 
-import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
-import java.util.Arrays
-import org.eclipse.core.resources.IResource
-import com.carrotgarden.maven.scalor.util.Logging
+import org.eclipse.core.resources.ICommand
+import org.eclipse.core.resources.IProject
+import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.m2e.jdt.IClasspathDescriptor
+import org.eclipse.m2e.jdt.IClasspathEntryDescriptor
 
-import util.Option.convert._
+import com.carrotgarden.maven.scalor.util.Optioner.convert_Option_Value
+import com.carrotgarden.maven.scalor.util.Params.RegexMapper
+import com.carrotgarden.maven.scalor.util.Params.SettingsRegexMapper
+import com.carrotgarden.maven.scalor.util.Params.parameterMap
 
 /**
  * Re-order eclipse .project file and .classpath file entries.
@@ -37,7 +26,7 @@ trait Order {
   self : Maven =>
 
   import Order._
-  import IResource._
+  import org.eclipse.core.resources.IResource._
 
   /**
    *
@@ -116,7 +105,6 @@ trait Order {
     classpath : IClasspathDescriptor,
     monitor :   IProgressMonitor
   ) = {
-    import config._
     val mapper = new SettingsRegexMapper( ordering, separator )
     val comparator = ComparatorClasspathRule( mapper )
     reorderClasspath( classpath, comparator, monitor )

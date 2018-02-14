@@ -1,10 +1,9 @@
 package com.carrotgarden.maven.scalor.eclipse
 
-import org.eclipse.core.runtime.IProgressMonitor
-import org.eclipse.core.runtime.OperationCanceledException
+import scala.language.implicitConversions
+
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.SubMonitor
-import scala.language.implicitConversions
 
 /**
  * Eclipse job notification support.

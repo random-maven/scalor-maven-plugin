@@ -1,17 +1,8 @@
 package com.carrotgarden.maven.scalor.eclipse
 
-import org.apache.maven.plugin.MojoExecution
 import org.eclipse.core.resources.IProject
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.m2e.core.project.configurator.MojoExecutionBuildParticipant
-import com.carrotgarden.maven.scalor.util
-import com.carrotgarden.maven.scalor.util.Logging
-import org.eclipse.core.runtime.CoreException
-import org.eclipse.core.runtime.Status
-import org.eclipse.core.runtime.IStatus
-import org.eclipse.m2e.core.project.IMavenProjectFacade
-
-import util.Option.convert._
 
 /**
  * M2E build support.
@@ -26,9 +17,8 @@ object Build {
   ) extends MojoExecutionBuildParticipant( context.execution, true, true )
     with Restart
     with Prescomp {
-    import context._
-
     import Participant._
+    import context._
     import com.carrotgarden.maven.scalor.A.mojo._
 
     /** Current plugin goal. */

@@ -10,6 +10,7 @@ import org.scalajs.core.tools.io.FileVirtualScalaJSIRFile
 import org.scalajs.core.tools.io.IRFileCache.IRContainer
 import org.scalajs.core.tools.io.IRFileCache.VirtualRelativeIRFile
 import org.scalajs.core.tools.io.VirtualJarFile
+
 import com.carrotgarden.maven.scalor.base.Context.UpdateResult
 
 /**
@@ -94,8 +95,8 @@ object Cacher {
     root :   LinkerRoot,
     update : UpdateResult
   ) : LinkerRoot = {
-    import update._
     import scala.collection.mutable
+    import update._
     require( hasDir( root.path ) )
     require( root.hasBase( basedir ) )
     val resultMap = mutable.Map[ LinkerKey, LinkerFile ]()

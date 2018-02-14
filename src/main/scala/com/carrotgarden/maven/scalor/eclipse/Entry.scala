@@ -1,38 +1,23 @@
 package com.carrotgarden.maven.scalor.eclipse
 
-import scala.collection.JavaConverters._
-
-import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
-import org.eclipse.m2e.jdt.IClasspathDescriptor
 import java.io.File
+import java.nio.file.Paths
+
+import scala.collection.JavaConverters.asScalaBufferConverter
 
 import org.eclipse.core.runtime.IProgressMonitor
-
-import ParamsConfigBase._
-import Maven._
-
-import org.apache.maven.plugin.MojoExecution
-
-import com.carrotgarden.maven.scalor.base
-import com.carrotgarden.maven.scalor.util
-import com.carrotgarden.maven.tools.Description
-
+import org.eclipse.core.runtime.Path
 import org.eclipse.jdt.core.IClasspathEntry
 import org.eclipse.jdt.core.JavaCore
-import org.eclipse.core.runtime.Path
-import org.eclipse.m2e.core.project.configurator.AbstractProjectConfigurator
-import org.eclipse.jdt.core.IClasspathAttribute
-import com.carrotgarden.maven.scalor.base.Build.Param
 import org.scalaide.core.SdtConstants
-import java.nio.file.Files
-import java.nio.file.Paths
-import org.eclipse.m2e.core.project.IMavenProjectFacade
-import com.carrotgarden.maven.scalor.util.Logging
 
-import util.Option.convert._
+import com.carrotgarden.maven.scalor.base
+import com.carrotgarden.maven.tools.Description
+
+import com.carrotgarden.maven.scalor.util.Optioner.convert_Option_Value
 
 /**
- * Manage eclipse .classpath file class path entries.
+ * Manage eclipse .classpath descriptor class path entries.
  */
 trait Entry {
 
@@ -55,12 +40,11 @@ trait Entry {
     monitor :      IProgressMonitor,
     attribMap :    Map[ String, String ] = Map(),
     generated :    Boolean               = false
-  ) = {
+  ) : Unit = {
     import context._
-    import util.Folder._
     val project = request.getProject
-    val sourcePath = projectFolder( project, sourceFolder ).getFullPath
-    val targetPath = projectFolder( project, targetFolder ).getFullPath
+    val sourcePath = Maven.projectFolder( project, sourceFolder ).getFullPath
+    val targetPath = Maven.projectFolder( project, targetFolder ).getFullPath
     logger.info( s"   ${sourcePath} -> ${targetPath}" )
     val entry = classpath.addSourceEntry( sourcePath, targetPath, generated )
     attribMap.foreach {
@@ -79,7 +63,7 @@ trait Entry {
     monitor :    IProgressMonitor
   ) : Unit = {
     import context._
-    import util.Folder
+    import com.carrotgarden.maven.scalor.util.Folder
     @Description( """
     Project source/target folders are project-contained.
     """ )
@@ -121,11 +105,10 @@ trait Entry {
     monitor : IProgressMonitor
   ) : Unit = {
     import context._
-    import Param._
+    import com.carrotgarden.maven.scalor.base.Build.Param._
     val attribAny = Map(
       attrib.optional -> "true"
     )
-    import base.Build._
     val attribMacro = attribAny + ( attrib.scope -> scope.`macro` )
     val attribMain = attribAny + ( attrib.scope -> scope.`main` )
     val attribTest = attribAny + ( attrib.scope -> scope.`test` )

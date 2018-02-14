@@ -13,20 +13,21 @@ import org.scalajs.core.tools.logging.Logger
 import com.carrotgarden.maven.scalor.base
 import com.carrotgarden.maven.scalor.eclipse
 import com.carrotgarden.maven.scalor.base.Context.UpdateResult
+import org.scalajs.core.tools.linker.ModuleInitializer
 
 /**
  * Incremental caching Scala.js linker.
  */
 trait Linker {
 
-  self : com.carrotgarden.maven.scalor.base.Context with base.Logging =>
+  self : base.Context with base.Logging =>
 
   import Linker._
   import Logging._
 
-  lazy val linkerLoggerBase = new LinkerLogger( logger, false )
+  lazy val linkerBaseLogger = new LinkerLogger( logger, false )
 
-  lazy val linkerLoggerTime = new LinkerLogger( logger, true )
+  lazy val linkerTimeLogger = new LinkerLogger( logger, true )
 
   /**
    * Invoke single linker run.
@@ -45,7 +46,7 @@ trait Linker {
       logger.dbug( s"Creating engine: ${engineId}" )
       newEngine( options )
     }
-    val linkerLogger = if ( hasLogStats ) linkerLoggerTime else linkerLoggerBase
+    val linkerLogger = if ( hasLogStats ) linkerTimeLogger else linkerBaseLogger
     linkerEngine.link( context, linkerLogger, linkerCacher )
     if ( hasLogStats ) {
       logger.info( s"Cacher stats: ${linkerCacher.report}" )
@@ -60,11 +61,13 @@ object Linker {
    * Linker invocation context.
    */
   case class Context(
-    options :     Options,
-    classpath :   Array[ File ],
-    runtime :     File,
-    updateList :  Array[ UpdateResult ],
-    hasLogStats : Boolean
+    options :          Options,
+    classpath :        Array[ File ],
+    runtime :          File,
+    updateList :       Array[ UpdateResult ],
+    initializerList :  Array[ String ],
+    initializerRegex : String,
+    hasLogStats :      Boolean
   ) {
     def hasUpdate = updateList.count( _.hasUpdate ) > 0
   }
@@ -86,15 +89,16 @@ object Linker {
     ) = {
       import context._
       logger.time( "Total invocation time" ) {
-        val sjsirDirFiles = logger.time( s"Cacher: Process dirs" ) {
+        val sjsirDirsFiles = logger.time( s"Cacher: Process dirs" ) {
           cacher.cachedDirsFiles( classpath, updateList )
         }
-        val sjsirJarFiles = logger.time( s"Cacher: Process jars" ) {
+        val sjsirJarsFiles = logger.time( s"Cacher: Process jars" ) {
           cacher.cachedJarsFiles( classpath )
         }
-        val sjsirFiles = sjsirDirFiles ++ sjsirJarFiles
+        val sjsirFiles = sjsirDirsFiles ++ sjsirJarsFiles
+        val initList = newInitList( context )
         val output = WritableFileVirtualJSFile( runtime )
-        linker.link( sjsirFiles, Seq(), output, logger )
+        linker.link( sjsirFiles, initList, output, logger )
       }
     }
 
@@ -121,6 +125,15 @@ object Linker {
     implicit def optionsCodec : ReadWriter[ Options ] = macroRW
     def parse( options : String ) : Options = read[ Options ]( options )
     def unparse( options : Options ) : String = write( options )
+  }
+
+  def newInitList( context : Context ) : Seq[ ModuleInitializer ] = {
+    val regex = context.initializerRegex.r
+    context.initializerList.map { initializer =>
+      val regex( className, methodName, argsLine ) = initializer
+      val argsList = argsLine.split( "," ).toList // hard-coded comma
+      ModuleInitializer.mainMethodWithArgs( className, methodName, argsList )
+    }
   }
 
   def linkerCacherId() : String = {

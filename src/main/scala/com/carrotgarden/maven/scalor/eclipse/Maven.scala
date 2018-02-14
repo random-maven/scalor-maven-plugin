@@ -8,12 +8,31 @@ import scala.reflect.ClassTag
 import org.apache.maven.RepositoryUtils
 import org.apache.maven.artifact.Artifact
 import org.apache.maven.model.Dependency
+import org.apache.maven.plugin.Mojo
 import org.apache.maven.plugin.MojoExecution
+import org.apache.maven.plugin.descriptor.PluginDescriptor
 import org.apache.maven.project.MavenProject
 import org.codehaus.plexus.util.xml.Xpp3Dom
+import org.eclipse.aether.RepositorySystem
+import org.eclipse.aether.impl.ArtifactDescriptorReader
+import org.eclipse.aether.impl.ArtifactResolver
+import org.eclipse.aether.impl.DependencyCollector
+import org.eclipse.aether.impl.Deployer
+import org.eclipse.aether.impl.Installer
+import org.eclipse.aether.impl.LocalRepositoryProvider
+import org.eclipse.aether.impl.MetadataResolver
+import org.eclipse.aether.impl.RemoteRepositoryManager
+import org.eclipse.aether.impl.SyncContextFactory
+import org.eclipse.aether.impl.VersionRangeResolver
+import org.eclipse.aether.impl.VersionResolver
+import org.eclipse.aether.internal.impl.DefaultRepositorySystem
+import org.eclipse.aether.spi.log.LoggerFactory
 import org.eclipse.aether.util.artifact.JavaScopes
+import org.eclipse.core.resources.IFolder
+import org.eclipse.core.resources.IProject
 import org.eclipse.core.runtime.IPath
 import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.core.runtime.Path
 import org.eclipse.m2e.core.MavenPlugin
 import org.eclipse.m2e.core.internal.MavenPluginActivator
 import org.eclipse.m2e.core.internal.project.registry.MavenProjectFacade
@@ -22,37 +41,11 @@ import org.eclipse.m2e.core.project.IMavenProjectFacade
 import org.eclipse.m2e.core.project.MavenProjectUtils
 import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
 
-import org.codehaus.plexus.component.annotations.Requirement
-
 import com.carrotgarden.maven.scalor.A
 import com.carrotgarden.maven.scalor.resolve
-import com.carrotgarden.maven.scalor.util
-import org.eclipse.core.resources.IProject
-import org.eclipse.core.runtime.Path
-import org.eclipse.core.resources.IFolder
-import org.apache.maven.plugin.descriptor.PluginDescriptor
-import com.carrotgarden.maven.scalor.util.Error._
-import scala.util.Success
-import org.eclipse.aether.impl.VersionRangeResolver
-import org.eclipse.aether.RepositorySystem
-import org.eclipse.aether.spi.log.LoggerFactory
-import org.apache.maven.repository.internal.DefaultVersionRangeResolver
-import scala.util.Failure
-import com.carrotgarden.maven.scalor.util.Logging
-import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader
-import org.eclipse.aether.impl.ArtifactDescriptorReader
-import org.eclipse.aether.impl.VersionResolver
-import org.eclipse.aether.impl.DependencyCollector
-import org.eclipse.aether.impl.ArtifactResolver
-import org.eclipse.aether.impl.MetadataResolver
-import org.eclipse.aether.impl.Installer
-import org.eclipse.aether.impl.Deployer
-import org.eclipse.aether.impl.LocalRepositoryProvider
-import org.eclipse.aether.impl.SyncContextFactory
-import org.eclipse.aether.impl.RemoteRepositoryManager
-import org.eclipse.aether.internal.impl.DefaultRepositorySystem
-import org.apache.maven.plugin.Mojo
 import com.carrotgarden.maven.scalor.util.Classer
+import com.carrotgarden.maven.scalor.util.Error.Throw
+import com.carrotgarden.maven.scalor.util.Logging
 
 /**
  * Provide M2E infrastructure functions.
@@ -124,7 +117,6 @@ object Maven {
    * Relative path of project file. File must be inside the project.
    */
   def relativePath( project : IProject, file : File ) = {
-    import util.Folder._
     MavenProjectUtils.getProjectRelativePath( project, file.getCanonicalPath );
   }
 
@@ -254,8 +246,6 @@ object Maven {
   }
 
   import com.carrotgarden.maven.scalor.base.Params._
-  import com.carrotgarden.maven.scalor.util.Classer
-
   import org.osgi.framework.Version
 
   /**
@@ -282,8 +272,8 @@ object Maven {
       val loader = mavenImpl.getProjectRealm( project )
       Classer.withContextLoader[ RepositorySystem ]( loader ) {
         val system = new DefaultRepositorySystem
-        import system._
         import mavenImpl._
+        import system._
         setLoggerFactory( lookupComponent( classOf[ LoggerFactory ] ) )
         setVersionResolver( lookupComponent( classOf[ VersionResolver ] ) )
         setVersionRangeResolver( lookupComponent( classOf[ VersionRangeResolver ] ) )

@@ -40,11 +40,7 @@
     <properties>
 
         <!-- Scalor release series. -->
-        <release.epoch>1.2.1</release.epoch>
-
-        <!-- Development releases repository. -->
-        <bintray.subject>random-maven</bintray.subject>
-        <bintray.repository>maven</bintray.repository>
+        <release.epoch>1.2.2</release.epoch>
 
         <!-- Compiler epoch. -->
         <version.scala.zinc>1.1.1</version.scala.zinc>
@@ -53,13 +49,13 @@
         <!-- Maven epoch. -->
         <version.maven>[3.5,3.6)</version.maven>
 
-        <!-- Eclipse platform plugins. -->
-        <version.eclipse.m2e>1.8.1</version.eclipse.m2e>
-        <version.eclipse.scala-ide>4.7.1</version.eclipse.scala-ide>
-
         <!-- Scala.js tools stack. -->
         <version.sjs.epoch>0.6</version.sjs.epoch>
         <version.sjs.release>0.6.22</version.sjs.release>
+
+        <!-- Eclipse platform plugins. -->
+        <version.eclipse.m2e>1.8.1</version.eclipse.m2e>
+        <version.eclipse.scala-ide>4.7.1</version.eclipse.scala-ide>
 
         <!-- Eclipse companion plugin properties. -->
         <eclipse.plugin.name>${project.groupId}.${project.artifactId}</eclipse.plugin.name>
@@ -70,6 +66,10 @@
         <eclipse.plugin.projectConfigurator>${eclipse.plugin.name}.projectConfigurator_${eclipse.plugin.revision}</eclipse.plugin.projectConfigurator>
         <eclipse.bundle.name>${eclipse.plugin.identity}</eclipse.bundle.name>
         <eclipse.bundle.version>0.0.0</eclipse.bundle.version><!-- Version is in the identity. -->
+
+        <!-- Development releases repository. -->
+        <bintray.subject>random-maven</bintray.subject>
+        <bintray.repository>maven</bintray.repository>
 
     </properties>
 
@@ -138,7 +138,6 @@
         </dependency>
 
         <!-- Maven plugin executor. -->
-
         <dependency>
             <groupId>org.twdata.maven</groupId>
             <artifactId>mojo-executor</artifactId>
@@ -536,33 +535,16 @@
                 </executions>
             </plugin>
 
-            <!-- Adjust for Eclipse. -->
+            <!-- Use bundle manifest for Eclipse companion plugin. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <!-- Use maven-bundle-plugin manifest. -->
+                    <!-- Use maven-bundle-plugin provided manifest. -->
                     <archive>
                         <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                     </archive>
                 </configuration>
-            </plugin>
-
-            <!-- Produce clean deployment pom.xml. -->
-            <plugin>
-                <groupId>com.carrotgarden.maven</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-                <configuration>
-                    <targetPomFile>${project.build.directory}/flatten/pom.xml.flatten</targetPomFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>flatten</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
 
             <!-- Generate plugin.xml descriptor. See plugin-extra profile. -->
@@ -583,7 +565,21 @@
                 </executions>
             </plugin>
 
-            <!-- Package plugin as Maven life cycle extension. -->
+            <!-- Produce clean deployment project descriptor pom.xml. -->
+            <plugin>
+                <groupId>com.carrotgarden.maven</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Package this plugin as Maven life cycle extension. -->
             <plugin>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-component-metadata</artifactId>

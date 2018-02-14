@@ -100,13 +100,16 @@ trait Compiler {
   /**
    * Compilation scope classes output directory.
    */
-  def zincBuildTarget : File = buildTargetFolder
+  def zincBuildTarget : File = {
+    buildTargetFolder
+  }
 
   /**
    * Configured project build dependencies.
    */
-  def zincBuildClassPath : Array[ File ] =
+  def zincBuildClassPath : Array[ File ] = {
     buildDependencyFolders ++ projectClassPath( buildDependencyScopes )
+  }
 
   /**
    * Zinc logger level.
@@ -285,6 +288,7 @@ trait Compiler {
       scalac    = scalaCompiler
     )
 
+    // FIXME review
     val lookup = new PerClasspathEntryLookup {
       override def analysis( classpathEntry : File ) : Optional[ CompileAnalysis ] = Optional.empty[ CompileAnalysis ]
       override def definesClass( classpathEntry : File ) : DefinesClass = Locate.definesClass( classpathEntry )
@@ -352,6 +356,7 @@ trait Compiler {
     storeNext.set( contentNext )
 
   }
+
   /**
    * Setup and invoke Zinc document compiler.
    */
@@ -374,6 +379,7 @@ trait Compiler {
 }
 
 object Compiler {
+
   import Module._
   import com.carrotgarden.maven.scalor.util.Folder._
 

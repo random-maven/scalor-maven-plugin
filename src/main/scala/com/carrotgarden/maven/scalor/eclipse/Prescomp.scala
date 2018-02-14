@@ -1,17 +1,15 @@
 package com.carrotgarden.maven.scalor.eclipse
 
+import scala.collection.mutable
+
 import org.eclipse.core.runtime.IProgressMonitor
-import com.carrotgarden.maven.scalor.util
-import com.carrotgarden.maven.scalor.util.Logging.AnyLog
 import org.eclipse.m2e.core.project.IMavenProjectFacade
-import org.apache.maven.plugin.MojoExecution
 import org.scalaide.core.IScalaProject
 import org.scalaide.core.compiler.IScalaPresentationCompiler
 import org.scalaide.core.internal.compiler.ScalaPresentationCompiler
-import scala.collection.mutable
-import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
 
-import util.Option.convert._
+import com.carrotgarden.maven.scalor.util.Logging.AnyLog
+import com.carrotgarden.maven.scalor.util.Optioner.convert_Option_Value
 
 /**
  * Manage Scala IDE presentation compiler.

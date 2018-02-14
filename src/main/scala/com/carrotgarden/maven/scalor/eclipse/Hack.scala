@@ -1,65 +1,15 @@
 package com.carrotgarden.maven.scalor.eclipse
 
-import com.carrotgarden.maven.scalor.base
-import com.carrotgarden.maven.scalor.util
-
-import scala.collection.mutable.HashSet
-import scala.tools.nsc
-import scala.tools.nsc.settings.NoScalaVersion
-
-import org.apache.maven.artifact.Artifact
-
-import org.eclipse.core.runtime.IPath
-import org.eclipse.core.runtime.IProgressMonitor
-import org.eclipse.core.runtime.Path
-import org.eclipse.core.runtime.Status
-import org.eclipse.core.runtime.jobs.Job
-import org.eclipse.jdt.core.IClasspathContainer
-import org.eclipse.jdt.core.IClasspathEntry
-import org.eclipse.jdt.core.JavaCore
-import org.eclipse.jface.preference.IPersistentPreferenceStore
-import org.eclipse.m2e.core.project.IMavenProjectFacade
-import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest
-
-import org.scalaide.core.SdtConstants
-import org.scalaide.core.internal.project.CompileScope
-import org.scalaide.core.internal.project.CustomScalaInstallationLabel
-import org.scalaide.core.internal.project.LabeledScalaInstallation
-import org.scalaide.core.internal.project.ScalaInstallation
-import org.scalaide.core.internal.project.ScalaInstallationChoice
-import org.scalaide.core.internal.project.ScalaInstallationLabel
-import org.scalaide.core.internal.project.ScalaModule
-import org.scalaide.core.internal.project.ScalaProject
-import org.scalaide.ui.internal.preferences.IDESettings
-import org.scalaide.util.eclipse.EclipseUtils
-import org.eclipse.jdt.core.IClasspathAttribute
-import com.carrotgarden.maven.scalor.util.Logging
-import org.eclipse.core.resources.IFolder
-import org.eclipse.core.resources.IResource
-
-import java.nio.file.FileVisitOption._
-import java.nio.file.FileVisitResult._
-import java.nio.file.Files
-import java.util.EnumSet
-import java.nio.file.SimpleFileVisitor
-
 import java.nio.file
-import java.nio.file.FileVisitResult
-import java.io.IOException
 import java.nio.file.DirectoryStream
+import java.nio.file.Files
 
-import scala.collection.JavaConverters._
+import org.eclipse.core.resources.IResource
+import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.IStatus
-import org.eclipse.m2e.core.MavenPlugin
-import org.scalaide.core.IScalaProject
-import org.scalaide.core.compiler.IScalaPresentationCompiler
-import org.scalaide.core.compiler.InteractiveCompilationUnit
-import org.scalaide.core.internal.compiler.ScalaPresentationCompiler
-import scala.collection.mutable
-import com.carrotgarden.maven.scalor.util.Logging.AnyLog
-import com.carrotgarden.maven.scalor.util.Logging.ContextLogger
+import org.eclipse.core.runtime.Path
 
-import util.Option.convert._
+import com.carrotgarden.maven.scalor.util.Optioner.convert_Option_Value
 
 /**
  * Various workarounds.
@@ -117,7 +67,7 @@ trait Hack {
 
 object Hack {
 
-  import DirectoryStream.Filter
+  import java.nio.file.DirectoryStream.Filter
 
   case class SymlinkFilter() extends Filter[ file.Path ] {
     override def accept( entry : file.Path ) : Boolean = {
