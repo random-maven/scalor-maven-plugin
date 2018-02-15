@@ -154,10 +154,10 @@ case class ParamsProjctUnit( proj : MavenProject ) extends ParamsProject {
 trait ParamsAny {
 
   @Description( """
-  Common separator for plugin configuration list values provided in <code>pom.xml</code>.
+  Separator for plugin configuration list values provided in <code>pom.xml</code>.
   Separator regular expression is used as follows:
 <pre>
-  options.split( commonSequenceSeparator ).map( _.trim ).filterNot( _.isEmpty )
+  string.split( commonSequenceSeparator ).map( _.trim ).filterNot( _.isEmpty )
 </pre>
   Note: <code>&lt;![CDATA[ ... ]]&gt;</code> brackets can help preserve text entries in <code>pom.xml</code>.
   Note: to insert unicode symbol in Eclipse/GTK, type CTRL+SHIFT+U, then XXXX - a 4-hex-digit unicode value.
@@ -170,8 +170,8 @@ trait ParamsAny {
   var commonSequenceSeparator : String = _
 
   @Description( """
-  Common regular expression for plugin configuration map values provided in <code>pom.xml</code>.
-  Normally uses format: <code>key=value</code>.
+  Regular expression for plugin configuration map values provided in <code>pom.xml</code>.
+  Extractor for pattern: <code>key=value</code>.
   Must define exactly two regex capture groups.
   Mapping regular expression is used as follows:
 <pre>

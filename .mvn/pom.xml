@@ -49,7 +49,7 @@
         <version.protobuf>3.5.1</version.protobuf>
         <version.snappy>1.1.7.1</version.snappy>
         <version.lucene>7.2.1</version.lucene>
-        <version.amazon.sdk>1.11.273</version.amazon.sdk>
+        <version.amazon.sdk>1.11.278</version.amazon.sdk>
         <version.sigar>1.6.5.132</version.sigar>
         <version.aspectj>1.8.13</version.aspectj>
         <version.bouncy>1.59</version.bouncy>
@@ -1410,7 +1410,7 @@
                         <dependency>
                             <groupId>com.vladsch.flexmark</groupId>
                             <artifactId>flexmark-all</artifactId>
-                            <version>0.30.0</version>
+                            <version>0.32.4</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -1731,10 +1731,9 @@
                         </dependency>
                     </dependencies>
                     <configuration>
+                        <runOrder>alphabetical</runOrder>
                         <includes>
                             <include>**/*Test.class</include>
-                            <include>**/*Spec.class</include>
-                            <include>**/*Check.class</include>
                             <include>**/*Suite.class</include>
                         </includes>
                     </configuration>
@@ -1753,7 +1752,6 @@
                     </dependencies>
                     <configuration>
                         <includes>
-                            <!-- Integration tests. -->
                             <include>**/*Bench.class</include>
                         </includes>
                     </configuration>
@@ -1817,16 +1815,10 @@
                     </configuration>
                 </plugin>
 
-                <!-- include osgi scr component descriptors -->
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>3.4.0</version>
-                    <configuration>
-                        <instructions>
-                            <Service-Component>OSGI-INF/service-component/*.xml</Service-Component>
-                        </instructions>
-                    </configuration>
+                    <version>3.5.0</version>
                 </plugin>
 
                 <plugin>

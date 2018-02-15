@@ -67,7 +67,11 @@ Prerequisites:
 * [Eclipse 4.7](http://www.eclipse.org/downloads/),
   [Maven M2E 1.8](http://www.eclipse.org/m2e/),
   [Scala IDE 4.7](http://scala-ide.org/).
-* better, use [Maven M2E 1.9](https://repository.takari.io/content/sites/m2e.extras/m2e/1.9.0/N/LATEST/)
+* better, use
+  [Maven M2E 1.9](https://repository.takari.io/content/sites/m2e.extras/m2e/1.9.0/N/LATEST/)
+  and
+  [Scala IDE 4.7 RC](http://scala-ide.org/download/milestone.html)
+  .
 
 Involves two steps:
 

@@ -498,6 +498,7 @@
                         <type>maven-plugin</type>
                     </supportedProjectTypes>
                     <instructions>
+                        <_noee>true</_noee>
                         <Require-Bundle>
 <![CDATA[
         org.slf4j.api,

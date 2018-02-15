@@ -11,7 +11,7 @@ Project features:
 * Provision Webjars for test JS-VM
 * Setup Eclipse plugin in M2E
 * Incremental Scala.js linking in M2E
-* Manage test application restart in M2E
+* Manage test application process restart in M2E
 * Manage presentation compiler work-around in M2E
 
 ### Verify full Maven build
@@ -32,6 +32,6 @@ and
 [sources](https://github.com/random-maven/scalor-maven-plugin/tree/master/demo/src)
 .
 
-Enable various logging options in `pom.xml` and observe results in M2E 
+Enable various plugin logging options in `pom.xml` and observe results in M2E 
 [Maven Console](https://www.ibm.com/support/knowledgecenter/SS8PJ7_9.1.0/com.ibm.etools.maven.doc/topics/troubleshooting.html)
 . 
