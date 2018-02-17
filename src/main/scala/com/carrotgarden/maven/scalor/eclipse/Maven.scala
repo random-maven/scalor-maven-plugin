@@ -46,6 +46,7 @@ import com.carrotgarden.maven.scalor.resolve
 import com.carrotgarden.maven.scalor.util.Classer
 import com.carrotgarden.maven.scalor.util.Error.Throw
 import com.carrotgarden.maven.scalor.util.Logging
+import com.carrotgarden.maven.scalor.util.Optioner.convert_Option_Value
 
 /**
  * Provide M2E infrastructure functions.
@@ -183,7 +184,7 @@ object Maven {
     facade :  IMavenProjectFacade,
     monitor : IProgressMonitor
   ) : PluginDescriptor = {
-    val execution = executionDefinition( facade, A.mojo.`eclipse-config`, monitor ).get
+    val execution = executionDefinition( facade, A.mojo.`eclipse-config`, monitor )
     execution.getMojoDescriptor.getPluginDescriptor
   }
 
@@ -199,50 +200,6 @@ object Maven {
     val plugin = pluginDescriptor( facade, monitor )
     val project = facade.getMavenProject
     context.getSession.getPluginContext( plugin, project )
-  }
-
-  /**
-   * Declared dependencies for this plugin.
-   */
-  def pluginDependencyList(
-    request : ProjectConfigurationRequest,
-    monitor : IProgressMonitor
-  ) : List[ Dependency ] = {
-    val facade = request.getMavenProjectFacade
-    val execution = executionDefinition( facade, A.mojo.`eclipse-config`, monitor ).get
-    execution.getPlugin.getDependencies.asScala.toList
-  }
-
-  /**
-   * Resolve declared scalor plugin dependencies with sources.
-   */
-  def pluginResolvedDependencyList(
-    request : ProjectConfigurationRequest,
-    scope :   String                      = JavaScopes.COMPILE,
-    monitor : IProgressMonitor
-  ) : List[ Artifact ] = {
-
-    val maven = MavenPlugin.getMaven
-    val context = maven.getExecutionContext
-    val activator = MavenPluginActivator.getDefault
-
-    val repoSystem = activator.getRepositorySystem
-    val repoSession = context.getRepositorySession
-    val remoteRepoList = RepositoryUtils.toRepos( maven.getArtifactRepositories )
-
-    val aether = new resolve.AetherUnit(
-      repoSystem,
-      repoSession,
-      remoteRepoList
-    )
-
-    val stereotypes = repoSession.getArtifactTypeRegistry
-
-    val dependencyList = pluginDependencyList( request, monitor )
-
-    val artifactList = aether.resolveRoundTrip( dependencyList, stereotypes, scope )
-
-    artifactList
   }
 
   import com.carrotgarden.maven.scalor.base.Params._

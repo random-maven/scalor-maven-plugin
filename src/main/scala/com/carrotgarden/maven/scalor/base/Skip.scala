@@ -30,7 +30,7 @@ trait Skip {
     property     = "scalor.skipPackagingList",
     defaultValue = "pom"
   )
-  var skipPackagingList : Array[ String ] = _
+  var skipPackagingList : Array[ String ] = Array.empty
   
 }
 

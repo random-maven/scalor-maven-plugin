@@ -38,12 +38,16 @@ object Module {
     module.binaryArtifact.getVersion
   }
 
+  def entryFrom( artifact : Artifact ) : String = {
+    artifact.getFile.getCanonicalPath
+  }
+
   def entiresFrom( module : Module ) : Seq[ String ] = {
     import Folder._
     import module._
     Seq(
-      binaryArtifact.getFile.getCanonicalPath,
-      sourceArtifact.map( _.getFile.getCanonicalPath ).getOrElse( "" )
+      entryFrom( binaryArtifact ),
+      sourceArtifact.map( entryFrom( _ ) ).getOrElse( "" )
     )
   }
 
@@ -51,17 +55,17 @@ object Module {
    * Provide artifact module type detector.
    */
   case class Detector(
-    regexCompilerBridge :      String,
-    regexScalaCompiler :       String,
-    regexScalaLibrary :        String,
-    regexScalaReflect :        String,
+    regexCompilerBridge : String,
+    regexScalaCompiler :  String,
+    regexScalaLibrary :   String,
+    //    regexScalaReflect :        String,
     resourcePluginDescriptor : String
   ) {
 
     val RxCompilerBridge = regexCompilerBridge.r
     val RxScalaCompiler = regexScalaCompiler.r
     val RxScalaLibrary = regexScalaLibrary.r
-    val RxScalaReflect = regexScalaReflect.r
+    //    val RxScalaReflect = regexScalaReflect.r
 
     /**
      * Provide artifact module type detector.
@@ -71,7 +75,7 @@ object Module {
         case RxCompilerBridge() => CompilerBridge
         case RxScalaCompiler() => ScalaCompiler
         case RxScalaLibrary() => ScalaLibrary
-        case RxScalaReflect() => ScalaReflect
+        //        case RxScalaReflect() => ScalaReflect
         case _ if Maven.hasResourceMatch( `artifact`, resourcePluginDescriptor ) => CompilerPlugin
         case _ => Unknown
       }

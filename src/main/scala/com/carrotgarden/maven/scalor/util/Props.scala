@@ -22,9 +22,10 @@ object Props {
   }
 
   def propertiesFrom( url : URL ) : Properties = {
-    val config = new Properties
+    val config = new Properties()
     val input = url.openStream()
     config.load( input )
+    input.close()
     config
   }
 

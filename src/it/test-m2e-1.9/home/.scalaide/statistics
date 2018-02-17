@@ -1,0 +1,422 @@
+{
+  "@type":"org.scalaide.core.internal.statistics.StatData",
+  "firstStat":1449158765056,
+  "featureData":[
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$AutoEscapeLiterals$",
+        "id":"AutoEscapeLiterals",
+        "description":"Automatically escape \" signs in string literals",
+        "group":{
+          "@id":1,
+          "@type":"org.scalaide.core.internal.statistics.Groups$Editing$",
+          "description":"Editing"
+        }
+      },
+      "nrOfUses":5,
+      "lastUsed":1510101172932
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$AutoIndentOnTab$",
+        "id":"AutoIndentOnTab",
+        "description":"Automatically indent when tab is pressed",
+        "group":{"@ref":1}
+      },
+      "nrOfUses":684,
+      "lastUsed":1515435058140
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.autoedits.SurroundSelectionWithString",
+        "description":"Surround selection with \"quotes\"",
+        "group":{
+          "@id":2,
+          "@type":"org.scalaide.core.internal.statistics.Groups$AutoEdit$",
+          "description":"Auto Edit"
+        }
+      },
+      "nrOfUses":95,
+      "lastUsed":1483859535620
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.autoedits.SurroundSelectionWithBraces",
+        "description":"Surround selection with {braces}",
+        "group":{"@ref":2}
+      },
+      "nrOfUses":15,
+      "lastUsed":1483416044770
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$ExplicitReturnType$",
+        "id":"ExplicitReturnType",
+        "description":"Add explicit return type",
+        "group":{
+          "@id":4,
+          "@type":"org.scalaide.core.internal.statistics.Groups$QuickAssist$",
+          "description":"Quick Assist"
+        }
+      },
+      "nrOfUses":1,
+      "lastUsed":1481028544640
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$RestartPresentationCompiler$",
+        "id":"RestartPresentationCompiler",
+        "description":"Restart Presentation Compiler",
+        "group":{
+          "@id":6,
+          "@type":"org.scalaide.core.internal.statistics.Groups$Miscellaneous$",
+          "description":"Miscellaneous"
+        }
+      },
+      "nrOfUses":83,
+      "lastUsed":1515435996812
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$CodeAssist$",
+        "id":"CodeAssist",
+        "description":"Code completion",
+        "group":{"@ref":1}
+      },
+      "nrOfUses":4516,
+      "lastUsed":1515435698666
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.saveactions.AddReturnTypeToPublicSymbols",
+        "description":"Add return type to public symbols (experimental)",
+        "group":{
+          "@id":3,
+          "@type":"org.scalaide.core.internal.statistics.Groups$SaveAction$",
+          "description":"Save Action"
+        }
+      },
+      "nrOfUses":6,
+      "lastUsed":1489695612379
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$NotSpecified$",
+        "id":"NotSpecified",
+        "description":"<not specified>",
+        "group":{"@ref":6}
+      },
+      "nrOfUses":1,
+      "lastUsed":1513482872342
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.saveactions.AutoFormatting",
+        "description":"Auto formatting",
+        "group":{"@ref":3}
+      },
+      "nrOfUses":78,
+      "lastUsed":1510108003633
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$GlobalRename$",
+        "id":"GlobalRename",
+        "description":"Rename global value",
+        "group":{
+          "@id":5,
+          "@type":"org.scalaide.core.internal.statistics.Groups$Refactoring$",
+          "description":"Refactoring"
+        }
+      },
+      "nrOfUses":1705,
+      "lastUsed":1515516104182
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$CreateClass$",
+        "id":"CreateClass",
+        "description":"Create class",
+        "group":{"@ref":4}
+      },
+      "nrOfUses":3,
+      "lastUsed":1514041332194
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$AutoClosingComments$",
+        "id":"AutoClosingComments",
+        "description":"Automatically close multi line comments and Scaladoc",
+        "group":{"@ref":1}
+      },
+      "nrOfUses":15,
+      "lastUsed":1514149248456
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$ExtractCode$",
+        "id":"ExtractCode",
+        "description":"Extract code",
+        "group":{"@ref":4}
+      },
+      "nrOfUses":2,
+      "lastUsed":1513270759690
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.autoedits.ApplyTemplate",
+        "description":"Insert template into editor whenever its name is written",
+        "group":{"@ref":2}
+      },
+      "nrOfUses":20,
+      "lastUsed":1481220216895
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.autoedits.CloseParenthesis",
+        "description":"Close (parentheses)",
+        "group":{"@ref":2}
+      },
+      "nrOfUses":1183,
+      "lastUsed":1489695608365
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$InlineLocalValue$",
+        "id":"InlineLocalValue",
+        "description":"Inline local value",
+        "group":{"@ref":4}
+      },
+      "nrOfUses":1,
+      "lastUsed":1483678901016
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$LocalRename$",
+        "id":"LocalRename",
+        "description":"Rename local value",
+        "group":{"@ref":5}
+      },
+      "nrOfUses":721,
+      "lastUsed":1515516171493
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.autoedits.CloseBacktick",
+        "description":"Close backticks",
+        "group":{"@ref":2}
+      },
+      "nrOfUses":1,
+      "lastUsed":1483422640167
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$AutoAddStripMargin$",
+        "id":"AutoAddStripMargin",
+        "description":"Automatically add strip margins when multi line string starts with a |",
+        "group":{"@ref":1}
+      },
+      "nrOfUses":11,
+      "lastUsed":1510101173055
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.autoedits.SurroundSelectionWithParentheses",
+        "description":"Surround selection with (parentheses)",
+        "group":{"@ref":2}
+      },
+      "nrOfUses":17,
+      "lastUsed":1483729280588
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$AutoBreakComments$",
+        "id":"AutoBreakComments",
+        "description":"Automatically break multi-line comments and Scaladoc after the Print Margin",
+        "group":{"@ref":1}
+      },
+      "nrOfUses":6,
+      "lastUsed":1510101172777
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.autoedits.SurroundBlock",
+        "description":"Surround a block with curly braces",
+        "group":{"@ref":2}
+      },
+      "nrOfUses":3,
+      "lastUsed":1483848708773
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$MoveClass$",
+        "id":"MoveClass",
+        "description":"Move class/object/trait",
+        "group":{"@ref":5}
+      },
+      "nrOfUses":149,
+      "lastUsed":1515194841955
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.saveactions.TabToSpaceConverter",
+        "description":"Convert tabs to spaces",
+        "group":{"@ref":3}
+      },
+      "nrOfUses":5,
+      "lastUsed":1492452302709
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$FixSpellingMistake$",
+        "id":"FixSpellingMistake",
+        "description":"Fix spelling mistake",
+        "group":{"@ref":4}
+      },
+      "nrOfUses":2,
+      "lastUsed":1510110051050
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.saveactions.AddMissingOverride",
+        "description":"Add missing override keyword (experimental)",
+        "group":{"@ref":3}
+      },
+      "nrOfUses":3,
+      "lastUsed":1510244142802
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$ImportMissingMember$",
+        "id":"ImportMissingMember",
+        "description":"Import missing member",
+        "group":{"@ref":4}
+      },
+      "nrOfUses":1450,
+      "lastUsed":1515384226322
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.autoedits.CloseString",
+        "description":"Close strings",
+        "group":{"@ref":2}
+      },
+      "nrOfUses":241,
+      "lastUsed":1488995289655
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.saveactions.AddNewLineAtEndOfFile",
+        "description":"Add new line at end of file",
+        "group":{"@ref":3}
+      },
+      "nrOfUses":2,
+      "lastUsed":1510258037905
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.saveactions.RemoveDuplicatedEmptyLines",
+        "description":"Remove duplicated empty lines",
+        "group":{"@ref":3}
+      },
+      "nrOfUses":16,
+      "lastUsed":1510448703329
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$CharactersSaved$",
+        "id":"CharactersSaved",
+        "description":"Number of typed characters saved thanks to code completion",
+        "group":{"@ref":1}
+      },
+      "nrOfUses":43107,
+      "lastUsed":1515435698670
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.autoedits.CloseChar",
+        "description":"Close char literals",
+        "group":{"@ref":2}
+      },
+      "nrOfUses":6,
+      "lastUsed":1483422635436
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.autoedits.CloseBracket",
+        "description":"Close [square] brackets",
+        "group":{"@ref":2}
+      },
+      "nrOfUses":192,
+      "lastUsed":1489251350484
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.autoedits.CloseCurlyBrace",
+        "description":"Close {curly} braces",
+        "group":{"@ref":2}
+      },
+      "nrOfUses":5,
+      "lastUsed":1478634348025
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$OrganizeImports$",
+        "id":"OrganizeImports",
+        "description":"Organize imports",
+        "group":{"@ref":5}
+      },
+      "nrOfUses":25,
+      "lastUsed":1515438579062
+    },
+    {
+      "feature":{
+        "id":"org.scalaide.extensions.saveactions.RemoveTrailingWhitespace",
+        "description":"Remove trailing whitespace",
+        "group":{"@ref":3}
+      },
+      "nrOfUses":12,
+      "lastUsed":1492364593916
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$AutoEscapeBackslashes$",
+        "id":"AutoEscapeBackslashes",
+        "description":"Automatically escape \\ signs in string and character literals",
+        "group":{"@ref":1}
+      },
+      "nrOfUses":4,
+      "lastUsed":1510101172921
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$AutoRemoveEscapedSign$",
+        "id":"AutoRemoveEscapedSign",
+        "description":"Automatically remove complete escaped sign in string and character literals",
+        "group":{"@ref":1}
+      },
+      "nrOfUses":16,
+      "lastUsed":1510101172908
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$CreateMethod$",
+        "id":"CreateMethod",
+        "description":"Create method",
+        "group":{"@ref":4}
+      },
+      "nrOfUses":66,
+      "lastUsed":1514923374247
+    },
+    {
+      "feature":{
+        "@type":"org.scalaide.core.internal.statistics.Features$AutoIndentMultiLineStrings$",
+        "id":"AutoIndentMultiLineStrings",
+        "description":"Automatically indent in multi line string literals",
+        "group":{"@ref":1}
+      },
+      "nrOfUses":19,
+      "lastUsed":1510101173058
+    }
+  ]
+}

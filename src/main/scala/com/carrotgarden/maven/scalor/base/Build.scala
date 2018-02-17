@@ -134,7 +134,7 @@ trait BuildMacroSources extends BuildAnySources {
     property     = "scalor.buildMacroSourceJavaFolders",
     defaultValue = "${project.build.sourceDirectory}/../../macro/java"
   )
-  var buildMacroSourceJavaFolders : Array[ File ] = Array[ File ]()
+  var buildMacroSourceJavaFolders : Array[ File ] = Array.empty
 
   @Description( """
   Scala source root folders to be included in compilation scope=macro.

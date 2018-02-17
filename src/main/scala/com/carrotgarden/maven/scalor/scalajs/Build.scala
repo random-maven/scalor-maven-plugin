@@ -79,7 +79,7 @@ trait BuildMainDependency extends base.BuildAnyDependency {
     property     = "scalor.linkerMainDependencyFolders",
     defaultValue = "${project.build.outputDirectory}"
   )
-  var linkerMainDependencyFolders : Array[ File ] = _
+  var linkerMainDependencyFolders : Array[ File ] = Array.empty
 
   @Description( """
   Provide linker class path from project dependency artifacts based on these scopes.
@@ -89,7 +89,7 @@ trait BuildMainDependency extends base.BuildAnyDependency {
     property     = "scalor.linkerMainDependencyScopes",
     defaultValue = "provided"
   )
-  var linkerMainDependencyScopes : Array[ String ] = _
+  var linkerMainDependencyScopes : Array[ String ] = Array.empty
 
   override def buildDependencyFolders = linkerMainDependencyFolders
   override def buildDependencyScopes = linkerMainDependencyScopes
@@ -155,7 +155,7 @@ trait BuildTestDependency extends base.BuildAnyDependency {
     property     = "scalor.linkerTestDependencyFolders",
     defaultValue = "${project.build.testOutputDirectory},${project.build.outputDirectory}"
   )
-  var linkerTestDependencyFolders : Array[ File ] = _
+  var linkerTestDependencyFolders : Array[ File ] = Array.empty
 
   @Description( """
   Provide linker class path from project dependencies selected by these scopes.
@@ -165,7 +165,7 @@ trait BuildTestDependency extends base.BuildAnyDependency {
     property     = "scalor.linkerTestDependencyScopes",
     defaultValue = "provided,test"
   )
-  var linkerTestDependencyScopes : Array[ String ] = _
+  var linkerTestDependencyScopes : Array[ String ] = Array.empty
 
   override def buildDependencyFolders = linkerTestDependencyFolders
   override def buildDependencyScopes = linkerTestDependencyScopes

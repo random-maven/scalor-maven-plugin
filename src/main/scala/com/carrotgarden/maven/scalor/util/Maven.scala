@@ -3,6 +3,11 @@ package com.carrotgarden.maven.scalor.util
 import org.apache.maven.artifact.Artifact
 import java.net.URLClassLoader
 import java.net.URL
+import org.apache.maven.project.MavenProject
+import scala.collection.JavaConverters._
+import org.apache.maven.plugin.descriptor.PluginDescriptor
+import org.apache.maven.model.Dependency
+import org.apache.maven.model.Model
 
 /**
  * Maven support.
@@ -68,6 +73,42 @@ object Maven {
         Left( new RuntimeException( "Duplicate artifact: " + regex ) )
       case Nil =>
         Left( new RuntimeException( "Missing artifact: " + regex ) )
+    }
+  }
+
+  /**
+   * Find matching artifact in a project by identity regex.
+   */
+  def locateArtifact( project : MavenProject, regex : String ) : Option[ Artifact ] = {
+    val matcher = regex.r.pattern.matcher( "" )
+    project.getArtifacts.asScala.find { artifact =>
+      import artifact._
+      val identity = s"${getGroupId}:${getArtifactId}"
+      matcher.reset( identity ).matches
+    }
+  }
+
+  /**
+   * Find matching artifact in a plugin by identity regex.
+   */
+  def locateArtifact( pluginMeta : PluginDescriptor, regex : String ) : Option[ Artifact ] = {
+    val matcher = regex.r.pattern.matcher( "" )
+    pluginMeta.getArtifacts.asScala.find { artifact =>
+      import artifact._
+      val identity = s"${getGroupId}:${getArtifactId}"
+      matcher.reset( identity ).matches
+    }
+  }
+
+  /**
+   * Find matching dependency in a model by identity regex.
+   */
+  def locateDependency( model : Model, regex : String ) : Option[ Dependency ] = {
+    val matcher = regex.r.pattern.matcher( "" )
+    model.getDependencies.asScala.find { dependency =>
+      import dependency._
+      val identity = s"${getGroupId}:${getArtifactId}"
+      matcher.reset( identity ).matches
     }
   }
 

@@ -311,7 +311,7 @@ trait ParamsPrescompCore {
   """ )
   @Parameter(
     property     = "scalor.eclipsePrescompPeriodInvoke",
-    defaultValue = "3000"
+    defaultValue = "5000"
   )
   var eclipsePrescompPeriodInvoke : Long = _
 
@@ -483,7 +483,7 @@ trait ParamsLogger {
 
   @Description( """
   Enable to log persisting of custom Scala installation.
-  Use to review complier title with MD5.
+  Use to review complier configuration for given project.
   """ )
   @Parameter(
     property     = "scalor.eclipseLogPersistInstall",

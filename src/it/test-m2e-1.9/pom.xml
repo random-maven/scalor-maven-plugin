@@ -83,7 +83,8 @@
                         <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
 
                         <!-- Enough memory for Eclipse to start. -->
-                        <argLine>-Xmx1G</argLine>
+                        <!-- Configure alternative user home. -->
+                        <argLine>-Xmx1G -Duser.home=${project.basedir}/home</argLine>
 
                         <!-- Expose platform console logger output. -->
                         <showEclipseLog>true</showEclipseLog>

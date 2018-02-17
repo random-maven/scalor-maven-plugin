@@ -26,6 +26,7 @@ import java.net.URLClassLoader
 import org.eclipse.core.resources.IProject
 import org.eclipse.m2e.core.ui.internal.UpdateMavenProjectJob
 import org.apache.maven.plugin.descriptor.PluginDescriptor
+import com.carrotgarden.maven.scalor.base.Self
 
 /**
  * Shared Eclipse mojo interface.
@@ -122,11 +123,8 @@ class EclipseConfigMojo extends EclipseAnyMojo
     logger.info( "Configuring companion Eclipse plugin:" )
     val handle = resolveHandle
 
-    val descriptorUrl = Plugin.Config.pluginPropertiesUrl
-    val descriptorProps = propertiesFrom( descriptorUrl )
-
-    val pluginId = descriptorProps.getProperty( Plugin.Config.key.pluginId )
-    val pluginLocation = Plugin.Config.location
+    val pluginId = Self.pluginId
+    val pluginLocation = Self.location
     logger.info( "   pluginId: " + pluginId )
     logger.info( "   location: " + pluginLocation )
 

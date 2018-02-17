@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.carrotgarden.maven</groupId>
+    <artifactId>scalor-maven-plugin-test-define</artifactId>
+    <version>0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <description>
+        Verify "auto define" logic.
+    </description>
+
+    <modules>
+        <module>pom-2.11.xml</module>
+        <module>pom-2.12.xml</module>
+        <!-- <module>pom-2.13.xml</module> -->
+    </modules>
+
+    <properties>
+
+        <!-- Java epoch. -->
+        <version.java>1.8</version.java>
+        <maven.compiler.source>${version.java}</maven.compiler.source>
+        <maven.compiler.target>${version.java}</maven.compiler.target>
+
+        <!-- Scala epoch. -->
+        <version.scala.epoch>2.12</version.scala.epoch>
+        <version.scala.release>2.12.4</version.scala.release>
+
+        <!-- File format. -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${version.scala.release}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>@project.artifactId@</artifactId>
+                <version>@project.version@</version>
+
+                <configuration>
+
+                    <zincLogBridgeClassPath>true</zincLogBridgeClassPath>
+                    <zincLogCompilerClassPath>true</zincLogCompilerClassPath>
+                    <zincLogCompilerPluginList>true</zincLogCompilerPluginList>
+
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>register-main</goal>
+                            <goal>compile-main</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

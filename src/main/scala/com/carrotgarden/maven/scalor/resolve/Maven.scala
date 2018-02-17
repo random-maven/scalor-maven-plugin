@@ -42,40 +42,7 @@ trait Maven {
   @Parameter( defaultValue = "${project.remoteProjectRepositories}", readonly = true, required = true )
   var remoteRepoList : java.util.List[ RemoteRepository ] = _
 
-  @Description( """
-  This plugin descriptor.
-  """ )
-  @Parameter( defaultValue = "${plugin}", required = true, readonly = true )
-  var pluginDescriptor : PluginDescriptor = _
-
   def stereotypes = repoSession.getArtifactTypeRegistry
-
-  /**
-   * Configured scalor plugin dependencies.
-   */
-  def pluginDependencyList() : List[ Dependency ] = {
-    pluginDescriptor.getPlugin.getDependencies.asScala.toList
-  }
-
-  /**
-   * Resolved scalor plugin dependencies with sources.
-   */
-  def pluginResolvedDependencyList(
-    scope : String = JavaScopes.COMPILE
-  ) : List[ Artifact ] = {
-
-    val aether = AetherUnit(
-      repoSystem,
-      repoSession,
-      remoteRepoList
-    )
-
-    val dependencyList = pluginDependencyList()
-
-    val artifactList = aether.resolveRoundTrip( dependencyList, stereotypes, scope )
-
-    artifactList
-  }
 
   import base.Params._
 

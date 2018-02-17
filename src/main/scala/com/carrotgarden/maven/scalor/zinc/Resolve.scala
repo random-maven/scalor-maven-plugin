@@ -12,14 +12,14 @@ import com.carrotgarden.maven.scalor._
 trait Resolve {
 
   self : ParamScalaInstall // 
-  with resolve.Maven with base.ParamsCompiler =>
+  with resolve.Maven with base.Params with base.ParamsCompiler =>
 
   def moduleDetector() : Module.Detector = {
     Module.Detector(
       regexCompilerBridge,
       regexScalaCompiler,
       regexScalaLibrary,
-      regexScalaReflect,
+      //      regexScalaReflect,
       resourcePluginDescriptor
     )
   }
@@ -33,7 +33,9 @@ trait Resolve {
     import base.Params._
 
     val defineRequest = base.Params.DefineRequest(
-      convert( defineBridge ), convert( defineCompiler ), convert( definePluginList )
+      defineAutoBridge( project ),
+      defineAutoCompiler( project ),
+      defineAutoPluginList( project )
     )
 
     val defineResponse = resolveDefine( defineRequest, "compile" )

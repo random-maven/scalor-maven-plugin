@@ -1,6 +1,7 @@
 package com.carrotgarden.maven.scalor.eclipse
 
 import scala.collection.mutable.HashSet
+import scala.collection.JavaConverters._
 import scala.tools.nsc
 import scala.tools.nsc.settings.NoScalaVersion
 
@@ -78,7 +79,7 @@ trait ScalaIDE {
       regexCompilerBridge,
       regexScalaCompiler,
       regexScalaLibrary,
-      regexScalaReflect,
+      //      regexScalaReflect,
       resourcePluginDescriptor
     )
   }
@@ -117,8 +118,11 @@ trait ScalaIDE {
     logger.info( s"Resolving custom Scala installation." )
     val detector = moduleDetector( config, monitor )
     val facade = request.getMavenProjectFacade
+    val project = facade.getMavenProject
     val defineRequest = base.Params.DefineRequest(
-      convert( defineBridge ), convert( defineCompiler ), convert( definePluginList )
+      defineAutoBridge( project ),
+      defineAutoCompiler( project ),
+      defineAutoPluginList( project )
     )
     val defineResponse = resolveDefine( request, defineRequest, "compile", monitor )
     val install = ScalaInstall( zincScalaInstallTitle, detector, defineResponse ).withTitleDigest
@@ -142,14 +146,14 @@ trait ScalaIDE {
     import org.scalaide.core.internal.project.ScalaInstallation._
     logger.info( "Persisting custom Scala installation." )
     val scalaInstallation = installFrom( request.getMavenProjectFacade, install )
-    val current = customInstallations.find( _.label == scalaInstallation.label )
-    if ( current.isDefined ) {
+    val scalaPresentOption = customInstallations.find( _.label == scalaInstallation.label )
+    if ( scalaPresentOption.isDefined ) {
       if ( eclipseLogPersistInstall ) {
-        logger.info( "   custom installation is already present: " + report( current.get.label ) )
+        logger.info( s"Custom installation is already present: ${report( scalaPresentOption )}" )
       }
     } else {
       if ( eclipseLogPersistInstall ) {
-        logger.info( "   registering custom Scala installation: " + report( scalaInstallation.label ) )
+        logger.info( s"Registering new custom Scala installation: ${report( scalaInstallation )}" )
       }
       customInstallations += scalaInstallation
       installationsTracker.saveInstallationsState( availableInstallations )

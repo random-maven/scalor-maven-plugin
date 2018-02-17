@@ -22,11 +22,12 @@
 
             <plugins>
 
-                <!-- <plugin> -->
-                <!-- <groupId>@project.groupId@</groupId> -->
-                <!-- <artifactId>@project.artifactId@</artifactId> -->
-                <!-- <version>@project.version@</version> -->
-                <!-- </plugin> -->
+                <!-- See setup.groovy -->
+                <plugin>
+                    <groupId>@project.groupId@</groupId>
+                    <artifactId>@project.artifactId@</artifactId>
+                    <version>@project.version@</version>
+                </plugin>
 
             </plugins>
         </pluginManagement>

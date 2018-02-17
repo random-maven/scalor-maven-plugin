@@ -106,7 +106,7 @@ trait ParamsInitListMain extends ParamsInitListAny {
     property     = "scalor.linkerMainInitializerList",
     defaultValue = ""
   )
-  var linkerMainInitializerList : Array[ String ] = _
+  var linkerMainInitializerList : Array[ String ] = Array.empty
 
   override def linkerInitializerList = linkerMainInitializerList
 
@@ -120,7 +120,7 @@ trait ParamsInitListTest extends ParamsInitListAny {
     property     = "scalor.linkerTestInitializerList",
     defaultValue = ""
   )
-  var linkerTestInitializerList : Array[ String ] = _
+  var linkerTestInitializerList : Array[ String ] = Array.empty
 
   override def linkerInitializerList = linkerTestInitializerList
 

@@ -615,9 +615,16 @@
                         <include>test-any</include>
                         <include>test-envjs</include>
                         <include>test-cross</include>
+                        <include>test-define</include>
                         <include>test-m2e-1.8</include>
                         <include>test-m2e-1.9</include>
                     </pomIncludes>
+                    <scriptVariables>
+                        <projectGroupId>${project.groupId}</projectGroupId>
+                        <projectArtifactId>${project.artifactId}</projectArtifactId>
+                        <projectVersion>${project.version}</projectVersion>
+                        <projectLocalRepo>${project.basedir}/test-repo</projectLocalRepo>
+                    </scriptVariables>
                 </configuration>
             </plugin>
 

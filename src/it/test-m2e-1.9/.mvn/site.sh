@@ -7,4 +7,4 @@ set -e -u
 
 cd "${BASH_SOURCE%/*}/.."
 
-./mvnw.sh plugin:report site -B
+./mvnw.sh clean install site:site site:stage site:deploy -B -P skip-test

@@ -49,12 +49,7 @@ trait ScalaJsLinkAnyMojo extends AbstractMojo
    * Discover Scala.js library on project class path.
    */
   def libraryArtifactOption : Option[ Artifact ] = {
-    val libraryMatcher = linkerLibraryRegex.r.pattern.matcher( "" )
-    project.getArtifacts.asScala.find { artifact =>
-      import artifact._
-      val identity = s"${getGroupId}:${getArtifactId}"
-      libraryMatcher.reset( identity ).matches
-    }
+    util.Maven.locateArtifact( project, linkerLibraryRegex )
   }
 
   /**

@@ -53,13 +53,20 @@ object Version {
       val entry = artifactVersion( module ).getOrElse(
         Throw( "Can not extract verson from artifactId: " + module )
       )
-      FileItem( fileFrom( module ), entry.version )
+      FileItem( fileFrom( module ), entry.versionTail )
     } else {
       FileItem( fileFrom( module ), versionFrom( module ) )
     }
   }
 
-  case class ArtifactVersion( artifacId : String, version : String )
+  /**
+   * Scala convention:
+   * compiler-bridge_2.12
+   * paradise_2.12.3
+   */
+  case class ArtifactVersion( artifacHead : String, versionTail : String ) {
+    def unparse : String = s"${artifacHead}_${versionTail}"
+  }
 
   /**
    * Scala convention:
@@ -95,20 +102,30 @@ object Version {
 
     val compiler = itemFrom( install.compiler )
     val library = itemFrom( install.library )
-    val reflect = itemFrom( install.reflect )
+    //    val reflect = itemFrom( install.reflect )
 
     assertVersionTree( bridge, compiler )
     assertVersionTree( bridge, library )
-    assertVersionTree( bridge, reflect )
+    //    assertVersionTree( bridge, reflect )
 
     assertVersionExact( compiler, library )
-    assertVersionExact( compiler, reflect )
+    //    assertVersionExact( compiler, reflect )
 
     install.pluginDefineList.foreach { module =>
       val plugin = itemFrom( module, true )
       assertVersionExact( compiler, plugin )
     }
 
+  }
+
+  import scala.tools.nsc.settings.SpecificScalaVersion
+
+  def scalaVersionEpoch( scalaVersion : SpecificScalaVersion ) = {
+    s"${scalaVersion.major}.${scalaVersion.minor}"
+  }
+
+  def scalaVersionRelease( scalaVersion : SpecificScalaVersion ) = {
+    scalaVersion.unparse
   }
 
 }

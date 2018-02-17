@@ -116,6 +116,7 @@ with different Scala epoch, such as `2.11`, `2.12`, `2.13`
 
 Required version mapping is provided via `scalor-maven-plugin` configuration entries:
 ```xml
+<defineAuto>
 <defineBridge>
 <defineCompiler>
 <definePluginList>
@@ -160,7 +161,7 @@ mvn clean install -P scalor
                         <artifactId>scalor-maven-plugin_2.12</artifactId>
                         <configuration>
 
-                           <!-- Required bridge. -->
+                           <!-- Compiler bridge. -->
                             <defineBridge>
                                 <dependency>
                                     <groupId>org.scala-sbt</groupId>
@@ -169,7 +170,7 @@ mvn clean install -P scalor
                                 </dependency>
                             </defineBridge>
 
-                           <!-- Required compiler. -->
+                           <!-- Scala compiler. -->
                             <defineCompiler>
                                 <dependency>
                                     <groupId>org.scala-lang</groupId>
@@ -178,7 +179,7 @@ mvn clean install -P scalor
                                 </dependency>
                             </defineCompiler>
 
-                           <!-- Optional compiler plugins. -->
+                           <!-- Compiler plugins. -->
                             <definePluginList>
                                 <dependency>
                                     <groupId>org.scalamacros</groupId>

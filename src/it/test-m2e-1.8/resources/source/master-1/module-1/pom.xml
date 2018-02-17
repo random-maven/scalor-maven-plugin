@@ -20,15 +20,14 @@
     <properties>
 
         <version.java>1.8</version.java>
+        <maven.compiler.source>${version.java}</maven.compiler.source>
+        <maven.compiler.target>${version.java}</maven.compiler.target>
 
         <version.scala.epoch>2.12</version.scala.epoch>
         <version.scala.release>2.12.4</version.scala.release>
 
         <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
         <version.scala.zinc>1.1.1</version.scala.zinc>
-
-        <maven.compiler.source>${version.java}</maven.compiler.source>
-        <maven.compiler.target>${version.java}</maven.compiler.target>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -61,35 +60,37 @@
 
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>scalor-maven-plugin_2.12</artifactId>
-                <!-- FIXME version parameter via invoker plugin -->
+                <version>LATEST</version>
 
                 <configuration>
 
                     <eclipseProjectCommentString>scalor-maven-plugin</eclipseProjectCommentString>
-                    <eclipseRemoveLibraryContainer>true</eclipseRemoveLibraryContainer>
+                    <eclipseRemoveLibraryContainer>false</eclipseRemoveLibraryContainer>
                     <eclipseRenameLibraryContainer>false</eclipseRenameLibraryContainer>
 
-                    <defineBridge>
-                        <dependency>
-                            <groupId>org.scala-sbt</groupId>
-                            <artifactId>compiler-bridge_${version.scala.epoch}</artifactId>
-                            <version>${version.scala.zinc}</version>
-                        </dependency>
-                    </defineBridge>
-                    <defineCompiler>
-                        <dependency>
-                            <groupId>org.scala-lang</groupId>
-                            <artifactId>scala-compiler</artifactId>
-                            <version>${version.scala.release}</version>
-                        </dependency>
-                    </defineCompiler>
-                    <definePluginList>
-                        <dependency>
-                            <groupId>org.scalamacros</groupId>
-                            <artifactId>paradise_${version.scala.release}</artifactId>
-                            <version>${version.scala.plugin.macro}</version>
-                        </dependency>
-                    </definePluginList>
+                    <!-- <defineBridge> -->
+                    <!-- <dependency> -->
+                    <!-- <groupId>org.scala-sbt</groupId> -->
+                    <!-- <artifactId>compiler-bridge_${version.scala.epoch}</artifactId> -->
+                    <!-- <version>${version.scala.zinc}</version> -->
+                    <!-- </dependency> -->
+                    <!-- </defineBridge> -->
+
+                    <!-- <defineCompiler> -->
+                    <!-- <dependency> -->
+                    <!-- <groupId>org.scala-lang</groupId> -->
+                    <!-- <artifactId>scala-compiler</artifactId> -->
+                    <!-- <version>${version.scala.release}</version> -->
+                    <!-- </dependency> -->
+                    <!-- </defineCompiler> -->
+
+                    <!-- <definePluginList> -->
+                    <!-- <dependency> -->
+                    <!-- <groupId>org.scalamacros</groupId> -->
+                    <!-- <artifactId>paradise_${version.scala.release}</artifactId> -->
+                    <!-- <version>${version.scala.plugin.macro}</version> -->
+                    <!-- </dependency> -->
+                    <!-- </definePluginList> -->
 
                 </configuration>
 

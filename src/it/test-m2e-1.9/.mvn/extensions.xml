@@ -4,7 +4,13 @@
     <extension>
         <groupId>com.carrotgarden.maven</groupId>
         <artifactId>arkon-maven-extension</artifactId>
-        <version>[1.0,1.1)</version>
+        <version>[1.0,2.0)</version>
+    </extension>
+
+    <extension>
+        <groupId>com.carrotgarden.maven</groupId>
+        <artifactId>profile-activator-extension</artifactId>
+        <version>[1.0,2.0)</version>
     </extension>
 
 </extensions>

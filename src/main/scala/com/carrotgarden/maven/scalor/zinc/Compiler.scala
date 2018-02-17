@@ -196,6 +196,8 @@ trait Compiler {
     // Provide compiler installation.
     val compilerInstall =
       resolveCustomInstall()
+    val bridgeClassPath : Array[ File ] =
+      compilerInstall.bridgeList.map( Module.fileFrom( _ ) ).toArray
     val compilerClassPath : Array[ File ] =
       compilerInstall.zincJars.map( Module.fileFrom( _ ) ).toArray
     val compilerPluginList : Array[ File ] =
@@ -218,6 +220,9 @@ trait Compiler {
     }
     if ( zincLogProjectClassPath ) {
       loggerReportFileList( "Build class path:", buildClassPath )
+    }
+    if ( zincLogBridgeClassPath ) {
+      loggerReportFileList( "Bridge class path:", bridgeClassPath )
     }
     if ( zincLogCompilerClassPath ) {
       loggerReportFileList( "Compiler class path:", compilerClassPath )
@@ -250,12 +255,12 @@ trait Compiler {
     val bridgeJar = Module.fileFrom( compilerInstall.bridge )
 
     // Provide static compiler-bridge jar.
-    val provider = ZincCompilerUtil.constantBridgeProvider( scalaInstance, bridgeJar )
+    val bridgeProvider = ZincCompilerUtil.constantBridgeProvider( scalaInstance, bridgeJar )
 
     // Configured ScalaC instance.
     val scalaCompiler = new AnalyzingCompiler(
       scalaInstance    = scalaInstance,
-      provider         = provider,
+      provider         = bridgeProvider,
       classpathOptions = ClasspathOptionsUtil.auto,
       onArgsHandler = _ => (),
       classLoaderCache = None // FIXME provide loader cache

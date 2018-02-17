@@ -161,17 +161,16 @@ trait Aether {
    * Format round-trip: Maven -> Aether -> Maven
    */
   def resolveRoundTrip(
-    binaryDeps :  immutable.List[ org.apache.maven.model.Dependency ],
+    binaryDeps :  Seq[ org.apache.maven.model.Dependency ],
     stereotypes : ArtifactTypeRegistry,
     scope :       String
-  ) : immutable.List[ org.apache.maven.artifact.Artifact ] = {
+  ) : Seq[ org.apache.maven.artifact.Artifact ] = {
     val dependencyList = binaryDeps
       .map( RepositoryUtils.toDependency( _, stereotypes ) )
       .asJava
     val artifactList = resolveBothJars( dependencyList, scope )
       .asScala
       .map( artifact => RepositoryUtils.toArtifact( artifact ) )
-      .toList
     artifactList
   }
 

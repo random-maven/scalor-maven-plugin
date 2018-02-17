@@ -16,6 +16,7 @@ import org.apache.maven.project.MavenProject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.m2e.core.MavenPlugin;
 import org.eclipse.m2e.core.project.IMavenProjectFacade;
@@ -29,9 +30,6 @@ import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-// Only comes with M2E 1.9
-//import org.apache.maven.shared.utils.StringUtils;
 
 /**
  * Verify companion Eclipse plugin setup, Scala project import and
@@ -87,6 +85,54 @@ public class Scalor_01_Test extends AbstractMavenProjectTestCase {
 		}
 	}
 
+	static Job findJob(String name) {
+		Job[] list = Job.getJobManager().find(null);
+		for (Job job : list) {
+			if (job.getName().equals(name)) {
+				return job;
+			}
+		}
+		return null;
+	}
+
+	static void log(String text) {
+		System.err.println("XXX " + text);
+	}
+
+	static void awaitIdle() throws Exception {
+		log("start@idle");
+		int count = 0;
+		int limit = 3;
+		IJobManager manager = Job.getJobManager();
+		while (true) {
+			if (manager.isIdle()) {
+				count += 1;
+			} else {
+				count = 0;
+			}
+			if (count >= limit) {
+				break;
+			} else {
+				Thread.sleep(1000);
+			}
+		}
+		log("finish@idle");
+	}
+
+	static void awaitWork(String title, Job job) throws Exception {
+		log("enter@" + title);
+		while (true) {
+			if (job.getState() == Job.RUNNING) {
+				log("start@" + title);
+				break;
+			} else {
+				Thread.sleep(100);
+			}
+		}
+		job.join();
+		log("finish@" + title);
+	}
+
 	@Before
 	public void setUp() throws Exception {
 		String masterDir = "master-1";
@@ -126,6 +172,10 @@ public class Scalor_01_Test extends AbstractMavenProjectTestCase {
 	@Test
 	public void testScalaProjectImport() throws Exception {
 
+		log("test start");
+
+		awaitIdle();
+
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 
 		Set<IProject> projectsInitial = new HashSet<>(Arrays.asList(workspaceRoot.getProjects()));
@@ -147,22 +197,17 @@ public class Scalor_01_Test extends AbstractMavenProjectTestCase {
 		String importName = "Import @" + System.currentTimeMillis();
 		importJob.setDirectoriesToImport(proposals.keySet()); // accept proposals
 		importJob.setName(importName);
-		importJob.setPriority(40);// build
-		importJob.schedule(1000); // start delay
+		importJob.setPriority(10);// interact
+		importJob.schedule(0); // start delay
 
 		// await import
-		JobHelpers.waitForJobs(new IJobMatcher() {
-			public boolean matches(Job job) {
-				return importName.equals(job.getName());
-			}
-		}, 300_000);
+		awaitWork("import", importJob);
 
 		// await config
-		JobHelpers.waitForJobs(new IJobMatcher() {
-			public boolean matches(Job job) {
-				return MavenProjectConfigurator.UPDATE_MAVEN_CONFIGURATION_JOB_NAME.equals(job.getName());
-			}
-		}, 300_000);
+		Job configJob = findJob(MavenProjectConfigurator.UPDATE_MAVEN_CONFIGURATION_JOB_NAME);
+		awaitWork("config", configJob);
+
+		awaitIdle();
 
 		Set<IProject> projectsFinal = new HashSet<>(Arrays.asList(workspaceRoot.getProjects()));
 
@@ -185,50 +230,35 @@ public class Scalor_01_Test extends AbstractMavenProjectTestCase {
 		}
 		assertNotNull("Module project present", moduleProject);
 
-		// hardcoded in companion plugin @ ScalaIDE.scala
-		String scalorName = "Scalor: update project settings for Scala IDE";
+		awaitIdle();
 
-		// await update @ ScalaIDE.scala: post maven import
-		JobHelpers.waitForJobs(new IJobMatcher() {
-			public boolean matches(Job job) {
-				return scalorName.equals(job.getName());
-			}
-		}, 300_000);
-
-		// start update: post companion install
+		// start update
 		String updateName = "Update @" + System.currentTimeMillis();
 		UpdateMavenProjectJob updateJob = new UpdateMavenProjectJob(new IProject[] { moduleProject });
 		updateJob.setName(updateName);
-		updateJob.setPriority(40);// build
-		updateJob.schedule(1000); // start delay
+		updateJob.setPriority(10);// interact
+		updateJob.schedule(0); // start delay
 
-		// await maven update
-		JobHelpers.waitForJobs(new IJobMatcher() {
-			public boolean matches(Job job) {
-				return updateName.equals(job.getName());
-			}
-		}, 300_000);
+		// await update
+		awaitWork("update", updateJob);
 
-		// await update @ ScalaIDE.scala: post maven update
-		JobHelpers.waitForJobs(new IJobMatcher() {
-			public boolean matches(Job job) {
-				return scalorName.equals(job.getName());
-			}
-		}, 300_000);
+		// await scalor
+		// Job scalorJob = findJob("Scalor: update project settings for Scala IDE");
+		// awaitWork("scalor", scalorJob);
+
+		awaitIdle();
 
 		// match ".project"
 		String metaProject = ".project";
 		File testerProject = new File(testerModuleDir, metaProject);
 		File targetProject = new File(targetModuleDir, metaProject);
-		// FIXME M2E 1.8 vs 1.9 difference
-		// assertEqualsText(testerProject, targetProject);
+		assertEqualsText(testerProject, targetProject);
 
 		// match ".classpath"
 		String metaClasspath = ".classpath";
 		File testerClasspath = new File(testerModuleDir, metaClasspath);
 		File targetClasspath = new File(targetModuleDir, metaClasspath);
-		// FIXME unstable scala library container removal
-		// assertEqualsText(testerClasspath, targetClasspath);
+		assertEqualsText(testerClasspath, targetClasspath);
 
 		// match ".settings/scala-ide"
 		String metaScalaIDE = ".settings/org.scala-ide.sdt.core.prefs";
@@ -253,8 +283,7 @@ public class Scalor_01_Test extends AbstractMavenProjectTestCase {
 				"scala.compiler.sourceLevel", //
 				"useScopesCompiler", //
 		};
-		// FIXME M2E 1.8 vs 1.9 difference
-		// assertEqualsProps(testerSettings, targetSettings, nameList);
+		assertEqualsProps(testerSettings, targetSettings, nameList);
 
 		// Thread.sleep(300 * 1000); // manual testing
 

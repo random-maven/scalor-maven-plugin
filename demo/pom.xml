@@ -177,13 +177,17 @@
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>scalor-maven-plugin_2.12</artifactId>
-                <version>1.2.3.20180215211914</version>
+                <!-- <version>1.2.3.20180215211914</version> -->
 
                 <configuration>
 
-                    <!-- Extra logging for demonstration purposes. -->
+                    <!--
+                        Extra logging for demonstration purposes.
+                    -->
                     <zincLogSourcesList>true</zincLogSourcesList>
                     <zincLogProjectClassPath>true</zincLogProjectClassPath>
+                    <!-- <zincLogBridgeClassPath>true</zincLogBridgeClassPath> -->
+                    <!-- <zincLogCompilerClassPath>true</zincLogCompilerClassPath> -->
                     <zincLogCompilerClassPath>true</zincLogCompilerClassPath>
                     <zincLogCompilerPluginList>true</zincLogCompilerPluginList>
                     <!-- <linkerLogRuntime>true</linkerLogRuntime> -->
@@ -193,6 +197,8 @@
                     <linkerLogUpdateResult>true</linkerLogUpdateResult>
                     <envconfLogConfig>true</envconfLogConfig>
                     <!-- <eclipseLogBuildParticipant>true</eclipseLogBuildParticipant> -->
+                    <eclipseLogPersistInstall>true</eclipseLogPersistInstall>
+                    <!-- <eclipseLogInstallReport>true</eclipseLogInstallReport> -->
 
                     <!--
                         Example of Scala.js module initializer. See test/Init.scala.
@@ -228,7 +234,7 @@
 
                     <defineBridge>
                         <!--
-                            Required compiler bridge.
+                            Compiler bridge.
                         -->
                         <dependency>
                             <groupId>org.scala-sbt</groupId>
@@ -239,7 +245,7 @@
 
                     <defineCompiler>
                         <!--
-                            Required scala compiler.
+                            Scala compiler.
                         -->
                         <dependency>
                             <groupId>org.scala-lang</groupId>
