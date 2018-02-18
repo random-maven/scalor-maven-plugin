@@ -6,6 +6,8 @@ import org.apache.maven.plugins.annotations.Parameter
 
 import com.carrotgarden.maven.scalor.base
 import com.carrotgarden.maven.tools.Description
+import com.carrotgarden.maven.scalor.util.Folder
+import com.carrotgarden.maven.scalor.util.Error.Throw
 
 /**
  * Linker build resource definitions for any scope.
@@ -15,23 +17,102 @@ trait Build extends AnyRef
   with base.BuildAnyDependency {
 
   /**
+   * Build mode for runtime JavaScript.
+   */
+  def linkerModeBuild : String
+
+  /**
+   * Build mode for runtime JavaScript.
+   */
+  def linkerModeBuildMin : String
+
+  /**
    * Name of the generated runtime JavaScript.
    */
   def linkerRuntimeJS : String
 
   /**
-   * Name of the runtime dependency resolution report.
+   * Name of the generated runtime JavaScript.
    */
-  def linkerRuntimeDeps : String
+  def linkerRuntimeMinJS : String
+
+  /**
+   * Build mode for runtime JavaScript.
+   */
+  def linkerBuildMode : Build.Mode = {
+    Build.buildMode( linkerModeBuild )
+  }
+
+  /**
+   * Build mode for runtime JavaScript.
+   */
+  def linkerBuildModeMin : Build.Mode = {
+    Build.buildMode( linkerModeBuildMin )
+  }
+
+  def linkerHasBuild( incremental : Boolean ) : Boolean = {
+    Build.hasBuildEnabled( linkerBuildMode, incremental )
+  }
+
+  def linkerHasBuildMin( incremental : Boolean ) : Boolean = {
+    Build.hasBuildEnabled( linkerBuildModeMin, incremental )
+  }
 
   /**
    * Full path of the generated runtime JavaScript.
    */
   def linkerRuntimeFile : File = {
-    if ( !buildTargetFolder.exists() ) {
-      buildTargetFolder.mkdirs()
+    val file = new File( buildTargetFolder, linkerRuntimeJS ).getCanonicalFile
+    Folder.ensureParent( file )
+    file
+  }
+
+  /**
+   * Full path of the generated runtime JavaScript.
+   */
+  def linkerRuntimeMinFile : File = {
+    val file = new File( buildTargetFolder, linkerRuntimeMinJS ).getCanonicalFile
+    Folder.ensureParent( file )
+    file
+  }
+
+}
+
+object Build {
+
+  sealed trait Mode {
+    def name : String
+  }
+  case object BuildAlways extends Mode {
+    override val name = "always"
+  }
+  case object BuildNever extends Mode {
+    override val name = "never"
+  }
+  case object BuildFull extends Mode {
+    override val name = "full"
+  }
+  case object BuildIncr extends Mode {
+    override val name = "incr"
+  }
+
+  def buildMode( name : String ) : Mode = {
+    name match {
+      case BuildAlways.name => BuildAlways
+      case BuildNever.name  => BuildNever
+      case BuildFull.name   => BuildFull
+      case BuildIncr.name   => BuildIncr
+      case _                => Throw( s"Invalid build mode: ${name}" )
     }
-    new File( buildTargetFolder, linkerRuntimeJS ).getCanonicalFile
+  }
+
+  def hasBuildEnabled( mode : Mode, incremental : Boolean ) : Boolean = {
+    mode match {
+      case BuildAlways => true
+      case BuildNever  => false
+      case BuildFull   => !incremental
+      case BuildIncr   => incremental
+    }
   }
 
 }
@@ -44,27 +125,67 @@ trait BuildMain extends Build
   with BuildMainTarget {
 
   @Description( """
-  Name of the generated runtime JavaScript file.
+  Build mode for non-optimized <a href="#linkerMainRuntimeJs"><b>linkerMainRuntimeJs</b></a>.
+  Normally uses <code>always</code>, to link during both Maven full build and Eclipse incremental build.
+  Available build modes:
+<pre>
+  always - link during both full and incremental build
+  never  - do not produce runtime at all
+  full   - link only during full build
+  incr   - link only during incremental build
+</pre>
+  """ )
+  @Parameter(
+    property     = "scalor.linkerMainBuildMode",
+    defaultValue = "always"
+  )
+  var linkerMainBuildMode : String = _
+
+  @Description( """
+  Build mode for optimized/minified <a href="#linkerMainRuntimeMinJs"><b>linkerMainRuntimeMinJs</b></a>.
+  Normally uses <code>full</code>, to link only during Maven full build and skip Eclipse incremental build.
+  Available build modes:
+<pre>
+  always - link during both full and incremental build
+  never  - do not produce runtime at all
+  full   - link only during full build
+  incr   - link only during incremental build
+</pre>
+  """ )
+  @Parameter(
+    property     = "scalor.linkerMainBuildModeMin",
+    defaultValue = "full"
+  )
+  var linkerMainBuildModeMin : String = _
+
+  @Description( """
+  Non-optimized runtime script.
+  Relative path of the generated runtime JavaScript file for scope=main, mode=development.
   File is packaged inside <a href="#linkerMainTargetFolder"><b>linkerMainTargetFolder</b></a>
+  Normally follows webjars convention.
   """ )
   @Parameter(
     property     = "scalor.linkerMainRuntimeJs",
-    defaultValue = "runtime.js"
+    defaultValue = "${project.artifactId}/${project.version}/runtime.js"
   )
   var linkerMainRuntimeJs : String = _
 
   @Description( """
-  Name of the runtime dependency resolution report file.
+  Linker optimized/minified runtime script.
+  Relative path of the generated runtime JavaScript file for scope=main, mode=production.
   File is packaged inside <a href="#linkerMainTargetFolder"><b>linkerMainTargetFolder</b></a>
+  Normally follows webjars convention.
   """ )
   @Parameter(
-    property     = "scalor.linkerMainRuntimeDeps",
-    defaultValue = "runtime.deps"
+    property     = "scalor.linkerMainRuntimeMinJs",
+    defaultValue = "${project.artifactId}/${project.version}/runtime.min.js"
   )
-  var linkerMainRuntimeDeps : String = _
+  var linkerMainRuntimeMinJs : String = _
 
+  override def linkerModeBuild = linkerMainBuildMode
+  override def linkerModeBuildMin = linkerMainBuildModeMin
   override def linkerRuntimeJS = linkerMainRuntimeJs
-  override def linkerRuntimeDeps = linkerMainRuntimeDeps
+  override def linkerRuntimeMinJS = linkerMainRuntimeMinJs
 
 }
 
@@ -101,10 +222,11 @@ trait BuildMainTarget extends base.BuildAnyTarget {
   @Description( """
   Build target directory for the generated runtime JavaScript file with scope=main.
   Normally packaged inside <code>target/classes</code>.
+  Normally follows webjars convention.
   """ )
   @Parameter(
     property     = "scalor.linkerMainTargetFolder",
-    defaultValue = "${project.build.outputDirectory}/META-INF/resources/script"
+    defaultValue = "${project.build.outputDirectory}/META-INF/resources/webjars"
   )
   var linkerMainTargetFolder : File = _
 
@@ -120,27 +242,67 @@ trait BuildTest extends Build
   with BuildTestDependency {
 
   @Description( """
-  Name of the generated runtime JavaScript file.
+  Build mode for non-optimized <a href="#linkerTestRuntimeJs"><b>linkerTestRuntimeJs</b></a>.
+  Normally uses <code>always</code>, to link during both Maven full build and Eclipse incremental build.
+  Available build modes:
+<pre>
+  always - link during both full and incremental build
+  never  - do not produce runtime at all
+  full   - link only during full build
+  incr   - link only during incremental build
+</pre>
+  """ )
+  @Parameter(
+    property     = "scalor.linkerTestBuildMode",
+    defaultValue = "always"
+  )
+  var linkerTestBuildMode : String = _
+
+  @Description( """
+  Build mode for optimized/minified <a href="#linkerTestRuntimeMinJs"><b>linkerTestRuntimeMinJs</b></a>.
+  Normally uses <code>never</code>, since test runtime is not intended as deployment artifact.
+  Available build modes:
+<pre>
+  always - link during both full and incremental build
+  never  - do not produce runtime at all
+  full   - link only during full build
+  incr   - link only during incremental build
+</pre>
+  """ )
+  @Parameter(
+    property     = "scalor.linkerTestBuildModeMin",
+    defaultValue = "never"
+  )
+  var linkerTestBuildModeMin : String = _
+
+  @Description( """
+  Non-optimized runtime script.
+  Relative path of the generated runtime JavaScript file for scope=test, mode=development.
   File is packaged inside <a href="#linkerTestTargetFolder"><b>linkerTestTargetFolder</b></a>
+  Normally follows webjars convention.
   """ )
   @Parameter(
     property     = "scalor.linkerTestRuntimeJs",
-    defaultValue = "runtime-test.js"
+    defaultValue = "${project.artifactId}/${project.version}/runtime-test.js"
   )
   var linkerTestRuntimeJs : String = _
 
   @Description( """
-  Name of the runtime dependency resolution report file.
+  Linker optimized/minified runtime script.
+  Relative path of the generated runtime JavaScript file for scope=test, mode=production.
   File is packaged inside <a href="#linkerTestTargetFolder"><b>linkerTestTargetFolder</b></a>
+  Normally follows webjars convention.
   """ )
   @Parameter(
-    property     = "scalor.linkerTestRuntimeDeps",
-    defaultValue = "runtime-test.deps"
+    property     = "scalor.linkerTestRuntimeMinJs",
+    defaultValue = "${project.artifactId}/${project.version}/runtime-test.min.js"
   )
-  var linkerTestRuntimeDeps : String = _
+  var linkerTestRuntimeMinJs : String = _
 
+  override def linkerModeBuild = linkerTestBuildMode
+  override def linkerModeBuildMin = linkerTestBuildModeMin
   override def linkerRuntimeJS = linkerTestRuntimeJs
-  override def linkerRuntimeDeps = linkerTestRuntimeDeps
+  override def linkerRuntimeMinJS = linkerTestRuntimeMinJs
 
 }
 
@@ -177,10 +339,11 @@ trait BuildTestTarget extends base.BuildAnyTarget {
   @Description( """
   Build target directory for the generated runtime JavaScript file with scope=test.
   Normally packaged inside <code>target/test-classes</code>.
+  Normally follows webjars convention.
   """ )
   @Parameter(
     property     = "scalor.linkerTestTargetFolder",
-    defaultValue = "${project.build.testOutputDirectory}/META-INF/resources/script-test"
+    defaultValue = "${project.build.testOutputDirectory}/META-INF/resources/webjars"
   )
   var linkerTestTargetFolder : File = _
 

@@ -32,7 +32,7 @@ trait Linker {
   /**
    * Invoke single linker run.
    */
-  def performLinker(
+  def linkerPerform(
     context : Context
   ) : Unit = {
     import context._
@@ -108,12 +108,13 @@ object Linker {
    * Linker engine configuration.
    */
   case class Options(
-    checkIR :     Boolean = false,
-    parallel :    Boolean = true,
-    optimizer :   Boolean = false,
-    batchMode :   Boolean = false,
-    sourceMap :   Boolean = true,
-    prettyPrint : Boolean = false
+    checkIR :         Boolean = false,
+    parallel :        Boolean = true,
+    optimizer :       Boolean = false,
+    batchMode :       Boolean = false,
+    sourceMap :       Boolean = true,
+    prettyPrint :     Boolean = false,
+    closureCompiler : Boolean = false
   )
 
   /**
@@ -137,11 +138,11 @@ object Linker {
   }
 
   def linkerCacherId() : String = {
-    "scalor-linker-cacher"
+    s"scalor-linker-cacher"
   }
 
   def linkerEngineId( options : Options ) : String = {
-    "scalor-linker-engine@" + options.toString
+    s"scalor-linker-engine@${options.toString}"
   }
 
   def newCacher() = {
@@ -173,6 +174,7 @@ object Linker {
       .withPrettyPrint( prettyPrint )
       .withModuleKind( ModuleKind.NoModule ) // TODO
       .withSemantics( newSemantics( options ) ) // TODO
+      .withClosureCompilerIfAvailable( closureCompiler )
   }
 
   def newLinker( options : Options ) : GenLinker = {

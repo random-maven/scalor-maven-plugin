@@ -19,7 +19,7 @@ object Maven {
    */
   def artifactIdentity( artifact : Artifact, useVersion : Boolean = false ) = {
     import artifact._
-    getGroupId + ":" + getArtifactId + ( if ( useVersion ) ":" + getVersion else "" )
+    s"${getGroupId}:${getArtifactId}${if ( useVersion ) s":${getVersion}" else ""}"
   }
 
   /**
@@ -70,9 +70,9 @@ object Maven {
       case head :: Nil =>
         Right( head )
       case head :: tail =>
-        Left( new RuntimeException( "Duplicate artifact: " + regex ) )
+        Left( new RuntimeException( s"Duplicate artifact: ${regex}" ) )
       case Nil =>
-        Left( new RuntimeException( "Missing artifact: " + regex ) )
+        Left( new RuntimeException( s"Missing artifact: ${regex}" ) )
     }
   }
 

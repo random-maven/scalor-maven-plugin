@@ -17,8 +17,6 @@ object A {
      */
     final val name = "scalor"
 
-    // FIMXE remove
-    final val artifactId = "scalor-maven-plugin"
     /**
      * Plugin user property naming pattern: ${plugin.property...}
      */
@@ -70,7 +68,7 @@ object A {
     final val `scala-js-env-prov-nodejs` = "scala-js-env-prov-nodejs"
     final val `scala-js-env-prov-phantomjs` = "scala-js-env-prov-phantomjs"
     final val `scala-js-env-prov-webjars` = "scala-js-env-prov-webjars"
-    
+
     final val `scala-js-env-conf-nodejs` = "scala-js-env-conf-nodejs"
     final val `scala-js-env-conf-phantomjs` = "scala-js-env-conf-phantomjs"
 
@@ -86,7 +84,7 @@ object A {
    * Parameter names.
    */
   object param {
-    def of( name : String ) = A.maven.name + "." + name
+    def of( name : String ) = s"${A.maven.name}.${name}"
   }
 
 }

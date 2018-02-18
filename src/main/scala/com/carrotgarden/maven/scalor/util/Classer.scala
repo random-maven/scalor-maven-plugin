@@ -13,6 +13,9 @@ import java.io.PrintWriter
  */
 object Classer {
 
+  /**
+   * Convert from primitive type into wrapper type.
+   */
   val primitiveMap = Map[ Class[ _ ], Class[ _ ] ](
     java.lang.Boolean.TYPE -> classOf[ java.lang.Boolean ],
     java.lang.Byte.TYPE -> classOf[ java.lang.Byte ],
@@ -23,13 +26,6 @@ object Classer {
     java.lang.Float.TYPE -> classOf[ java.lang.Float ],
     java.lang.Double.TYPE -> classOf[ java.lang.Double ]
   )
-
-  def reportTrace( error : Throwable ) : String = {
-    val writer = new StringWriter
-    val printer = new PrintWriter( writer )
-    error.printStackTrace( printer )
-    writer.toString
-  }
 
   /**
    * Convert from primitive type into wrapper type.

@@ -28,7 +28,7 @@ class LinkerTest {
 
   @Test
   def optionsParser() = {
-    val result = """{"checkIR":false,"parallel":true,"optimizer":false,"batchMode":false,"sourceMap":true,"prettyPrint":false}"""
+    val result = """{"checkIR":false,"parallel":true,"optimizer":false,"batchMode":false,"sourceMap":true,"prettyPrint":false,"closureCompiler":false}"""
     val source = Options()
     val target = read[ Options ]( result )
     //    println( s"source ${source}" )

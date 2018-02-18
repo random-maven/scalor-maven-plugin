@@ -12,7 +12,7 @@ wipe_repo() {
 
 base=$(cd "${BASH_SOURCE%/*}/.." && pwd)
 
-name="com/carrotgarden"
+name="com/carrotgarden/maven"
 
 wipe_repo "$base/test-repo/$name"
 

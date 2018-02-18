@@ -51,9 +51,9 @@ trait Mojo extends AbstractMojo
       perform()
     } catch {
       case error : Throwable =>
-        val message = "Execution failure:"
+        val message = "Execution failure"
         contextError( message, error );
-        log.fail( message + " " + error.getMessage )
+        log.fail( s"${message} ${error.getMessage}" )
         throw new MojoFailureException( message, error )
     }
   }

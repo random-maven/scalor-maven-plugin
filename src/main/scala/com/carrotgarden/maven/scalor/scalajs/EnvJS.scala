@@ -24,7 +24,7 @@ trait EnvConfAny extends AnyRef
   """ )
   @Parameter(
     property     = "scalor.envconfModulePath",
-    defaultValue = "${project.build.testOutputDirectory}/META-INF/resources/script-test/runtime-test.js"
+    defaultValue = "${project.build.testOutputDirectory}/META-INF/resources/webjars/${project.artifactId}/${project.version}/runtime-test.js"
   )
   var envconfModulePath : File = _
 
@@ -380,7 +380,7 @@ trait EnvProvNodejs extends EnvProvAny {
     if ( envprovNodejsVersion.startsWith( "v" ) ) {
       envprovNodejsVersion
     } else {
-      "v" + envprovNodejsVersion
+      s"v${envprovNodejsVersion}"
     }
   }
 

@@ -48,7 +48,7 @@ object EclipsePlugin {
     override def start( context : BundleContext ) = {
       EclipsePlugin.instance = this
       super.start( context )
-      log.info( "Plugin start: " + pluginId )
+      log.info( s"Plugin start: ${pluginId}" )
       ensureContribution
     }
 
@@ -56,7 +56,7 @@ object EclipsePlugin {
      * Eclipse plugin lifecycle.
      */
     override def stop( context : BundleContext ) = {
-      log.info( "Plugin stop:  " + pluginId )
+      log.info( s"Plugin stop:  ${pluginId}" )
       unensureContribution
       super.stop( context )
       EclipsePlugin.instance = null

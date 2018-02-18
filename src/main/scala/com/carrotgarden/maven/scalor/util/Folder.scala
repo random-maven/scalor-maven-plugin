@@ -80,17 +80,17 @@ object Folder {
    * Enforce path resolution.
    * Absolute path does not resolve symbolic links.
    */
-//  def ensureAbsoluteFile( file : File ) : File = {
-//    file.getCanonicalFile
-//  }
+  //  def ensureAbsoluteFile( file : File ) : File = {
+  //    file.getCanonicalFile
+  //  }
 
   /**
    * Enforce path resolution.
    * Absolute path does not resolve symbolic links.
    */
-//  def ensureAbsolutePath( file : File ) : String = {
-//    file.getCanonicalPath
-//  }
+  //  def ensureAbsolutePath( file : File ) : String = {
+  //    file.getCanonicalPath
+  //  }
 
   /**
    * Enforce path resolution.
@@ -220,8 +220,8 @@ object Folder {
       case file if file.getName.matches( regex ) => file
     }.toList match {
       case head :: Nil  => Right( head )
-      case head :: tail => Left( "Duplicate file: " + regex )
-      case Nil          => Left( "File not present: " + regex )
+      case head :: tail => Left( s"Duplicate file: ${regex}" )
+      case Nil          => Left( s"File not present: ${regex}" )
     }
   }
 

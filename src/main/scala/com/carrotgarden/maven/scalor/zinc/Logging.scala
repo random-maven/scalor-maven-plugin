@@ -20,25 +20,36 @@ object Logging {
 
     def hasLog( entry : Level.Value ) = entry.id >= level.id
 
-    override def trace( error : => Throwable ) : Unit =
-      log.info( "[TRCE] " + Option( error.getMessage ).getOrElse( "error" ) )
+    override def trace( error : => Throwable ) : Unit = {
+      val report = Option( error.getMessage ).getOrElse( error )
+      log.fail( s"[TRCE] Failure: ${report}", error )
+    }
 
-    override def success( message : => String ) : Unit =
-      log.info( "[DONE] " + s"Success: $message" )
+    override def success( message : => String ) : Unit = {
+      log.info( s"[DONE] Success: ${message}" )
+    }
 
-    override def log( level : Level.Value, message : => String ) : Unit =
+    val EOL = "\n"
+
+    override def log( level : Level.Value, message : => String ) : Unit = {
       level match {
-        case Level.Debug => if ( hasLog( Level.Debug ) ) log.info( "[DBUG] " + message )
-        case Level.Info  => if ( hasLog( Level.Info ) ) log.info( "[INFO] " + message )
-        case Level.Warn  => if ( hasLog( Level.Warn ) ) log.info( "[WARN] " + message )
-        case Level.Error => if ( hasLog( Level.Error ) ) {
-          if ( message.contains( "\n" ) ) { // suppress stack dump
-            log.fail( "[FAIL] " + message.substring( 0, message.indexOf( "\n" ) ) )
-          } else {
-            log.fail( "[FAIL] " + message )
+        case Level.Debug =>
+          if ( hasLog( Level.Debug ) ) log.info( s"[DBUG] ${message}" )
+        case Level.Info =>
+          if ( hasLog( Level.Info ) ) log.info( s"[INFO] ${message}" )
+        case Level.Warn =>
+          if ( hasLog( Level.Warn ) ) log.info( s"[WARN] ${message}" )
+        case Level.Error =>
+          if ( hasLog( Level.Error ) ) {
+            if ( message.contains( EOL ) ) { // suppress stack dump
+              val report = message.substring( 0, message.indexOf( EOL ) )
+              log.fail( s"[FAIL] ${report}" )
+            } else {
+              log.fail( s"[FAIL] ${message}" )
+            }
           }
-        }
       }
+    }
 
   }
 
@@ -48,14 +59,17 @@ object Logging {
   )
     extends LoggedReporter( maxErrors, logger ) {
 
-    override def logInfo( problem : Problem ) : Unit =
+    override def logInfo( problem : Problem ) : Unit = {
       logger.info( problem.toString )
+    }
 
-    override def logWarning( problem : Problem ) : Unit =
+    override def logWarning( problem : Problem ) : Unit = {
       logger.warn( problem.toString )
+    }
 
-    override def logError( problem : Problem ) : Unit =
+    override def logError( problem : Problem ) : Unit = {
       logger.error( problem.toString )
+    }
 
   }
 

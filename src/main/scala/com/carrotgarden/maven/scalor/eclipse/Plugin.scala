@@ -67,7 +67,7 @@ object Plugin {
     lazy val eclipseDecorator = property( Key.eclipseDecorator )
     lazy val projectConfigurator = property( Key.projectConfigurator )
 
-    lazy val logId = mavenArtifactId + "-" + mavenVersion
+    lazy val logId = s"${mavenArtifactId}-${mavenVersion}"
 
     /**
      * Log to M2E "Maven Console".

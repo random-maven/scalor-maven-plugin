@@ -17,7 +17,7 @@ import java.time.Instant
  */
 object Main {
 
-  ////////////////
+  /////////////////
 
   val stamp = DateTimeFormatter
     .ofPattern( "yyyy-MM-dd_HH-mm-ss" )

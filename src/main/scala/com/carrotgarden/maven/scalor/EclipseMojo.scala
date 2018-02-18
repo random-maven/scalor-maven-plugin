@@ -64,7 +64,7 @@ trait EclipseAnyMojo extends AbstractMojo
       logger.info( s"   ${handle.mavenPlugin.getBundle}" )
       logger.info( s"   ${handle.mavenPluginUI.getBundle}" )
     case Failure( error ) =>
-      logger.fail( "Required Eclipse plugin is missing: " + error )
+      logger.fail( s"Required Eclipse plugin is missing: ${error}", error )
   }
 
   /**
@@ -124,27 +124,27 @@ class EclipseConfigMojo extends EclipseAnyMojo
     val handle = resolveHandle
 
     val pluginId = Self.pluginId
-    val pluginLocation = Self.location
-    logger.info( "   pluginId: " + pluginId )
-    logger.info( "   location: " + pluginLocation )
+    val location = Self.location
+    logger.info( s"   pluginId: ${pluginId}" )
+    logger.info( s"   location: ${location}" )
 
     val bundleContext = handle.bundleM2E.getBundleContext
 
-    val pluginOption = Option( bundleContext.getBundle( pluginLocation ) )
+    val pluginOption = Option( bundleContext.getBundle( location ) )
 
     val ( installMessage, pluginBundle, needProjectUpdate ) =
       if ( pluginOption.isDefined ) {
         val pluginBundle = pluginOption.get
         ( "Companion plugin is already installed", pluginBundle, false )
       } else {
-        bundleContext.installBundle( pluginLocation ).start()
-        val pluginBundle = bundleContext.getBundle( pluginLocation )
+        bundleContext.installBundle( location ).start()
+        val pluginBundle = bundleContext.getBundle( location )
         ( "Companion plugin installed in Eclipse", pluginBundle, true )
       }
-    logger.info( installMessage + ": " + pluginBundle )
+    logger.info( s"${installMessage}: ${pluginBundle}" )
 
     if ( needProjectUpdate ) {
-      logger.info( "Scheduling project update in Eclipse to invoke M2E project configurator." )
+      logger.info( "Scheduling project update to invoke M2E project configurator." )
       val projectList = handle.workspace.getRoot.getProjects
       val currentProject = projectWithBase( projectList, project.getBasedir )
 
@@ -157,7 +157,7 @@ class EclipseConfigMojo extends EclipseAnyMojo
         true /*refreshFromLocal*/
       )
 
-      val updateName = s"Updating: ${project.getArtifactId} from: ${pluginId}"
+      val updateName = s"Scalor: update ${project.getArtifactId} @ ${pluginId}"
       updateJob.setName( updateName )
       updateJob.setPriority( 10 )
       updateJob.schedule( 1 * 1000 )

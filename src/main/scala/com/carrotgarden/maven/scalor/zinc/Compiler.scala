@@ -28,6 +28,7 @@ import xsbti.compile.PerClasspathEntryLookup
 import xsbti.compile.PreviousResult
 import xsbti.compile.ZincCompilerUtil
 import com.carrotgarden.maven.scalor.util.Error.Throw
+import com.carrotgarden.maven.scalor.util.Folder
 
 /**
  * Compiler for scope=macro.
@@ -92,9 +93,8 @@ trait Compiler {
    * Compilation scope input source files.
    */
   def zincBuildSources : Array[ File ] = {
-    import com.carrotgarden.maven.scalor.util.Folder._
-    val zincRegexAnySource = zincRegexAnyJava + "|" + zincRegexAnyScala
-    fileListByRegex( buildSourceFolders, zincRegexAnySource )
+    val zincRegexAnySource = s"${zincRegexAnyJava}|${zincRegexAnyScala}"
+    Folder.fileListByRegex( buildSourceFolders, zincRegexAnySource )
   }
 
   /**
@@ -351,7 +351,7 @@ trait Compiler {
       }
     }
 
-    logger.info( s"Invoking Zinc compiler: ${scalaInstance.version}" )
+    logger.info( s"Invoking Zinc compiler: ${compilerInstall.identity}" )
 
     // Run compiler invocation.
     val resultNext = incremental.compile( inputsNext, cologger )
@@ -368,7 +368,7 @@ trait Compiler {
   def zincPerformDocument( outputDirectory : File, options : Seq[ String ] ) : Unit = {
     val context = Context(); import context._
 
-    logger.info( s"Invoking Zinc compiler: ${scalaInstance.version}" )
+    logger.info( s"Invoking Zinc compiler: ${compilerInstall.identity}" )
 
     // Generate scaladoc.
     scalaCompiler.doc(

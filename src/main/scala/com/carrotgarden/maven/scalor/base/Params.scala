@@ -10,16 +10,15 @@ import org.apache.maven.execution.MavenSession
 import org.apache.maven.model.Dependency
 import org.apache.maven.plugin.BuildPluginManager
 import org.apache.maven.plugin.MojoExecution
+import org.apache.maven.plugin.descriptor.PluginDescriptor
 import org.apache.maven.plugins.annotations.Component
 import org.apache.maven.plugins.annotations.Parameter
 import org.apache.maven.project.MavenProject
 import org.apache.maven.toolchain.ToolchainManager
 
-import com.carrotgarden.maven.tools.Description
-import com.carrotgarden.maven.scalor.util.Maven
 import com.carrotgarden.maven.scalor.util.Error.Throw
-import com.carrotgarden.maven.scalor.meta.Macro
-import org.apache.maven.plugin.descriptor.PluginDescriptor
+import com.carrotgarden.maven.scalor.util.Maven
+import com.carrotgarden.maven.tools.Description
 
 /**
  * Shared mojo execution configuration parameters.
@@ -59,7 +58,7 @@ trait ParamsPlugin {
   var toolchainManager : ToolchainManager = _
 
   @Description( """
-  Maven build plugin manager component.
+  Maven build plugin manager.
   """ )
   @Component()
   var buildManager : BuildPluginManager = _
@@ -135,7 +134,6 @@ trait ParamsProject {
    */
   // FIXME switch to aether
   def projectClassPath( bucket : Scope.Bucket = Scope.Select.Test ) : Array[ File ] = {
-    import com.carrotgarden.maven.scalor.util.Folder._
     val list = new ArrayList[ File ]()
     val iter = project.getArtifacts.iterator
     while ( iter.hasNext ) {
@@ -224,16 +222,17 @@ trait ParamsCompiler extends AnyRef
   with ParamsDefine
   with ParamsRegex {
 
+  import com.carrotgarden.maven.scalor.meta.Macro.nameOf
+  import com.carrotgarden.maven.scalor.zinc.Version
   import scala.tools.nsc.settings.ScalaVersion
   import scala.tools.nsc.settings.SpecificScalaVersion
-  import com.carrotgarden.maven.scalor.zinc.Version
 
   /**
    * Locate plugin bridge dependency.
    */
   def defineFindBridge() : Dependency = {
     Self.pluginDependency( regexCompilerBridge ).getOrElse(
-      Throw( s"Missing bridge, see: ${Macro.nameOf( defineAuto )}, ${Macro.nameOf( regexCompilerBridge )}." )
+      Throw( s"Missing bridge, see: ${nameOf( defineAuto )}, ${nameOf( regexCompilerBridge )}." )
     )
   }
 
@@ -242,7 +241,7 @@ trait ParamsCompiler extends AnyRef
    */
   def defineFindCompiler() : Dependency = {
     Self.pluginDependency( regexScalaCompiler ).getOrElse(
-      Throw( s"Missing compiler, see: ${Macro.nameOf( defineAuto )}, ${Macro.nameOf( regexScalaCompiler )}." )
+      Throw( s"Missing compiler, see: ${nameOf( defineAuto )}, ${nameOf( regexScalaCompiler )}." )
     )
   }
 
@@ -251,7 +250,7 @@ trait ParamsCompiler extends AnyRef
    */
   def defineFindLibrary( project : MavenProject ) : Artifact = {
     Maven.locateArtifact( project, regexScalaLibrary ).getOrElse(
-      Throw( s"Missing library, see: ${Macro.nameOf( defineAuto )}, ${Macro.nameOf( regexScalaLibrary )}." )
+      Throw( s"Missing library, see: ${nameOf( defineAuto )}, ${nameOf( regexScalaLibrary )}." )
     )
   }
 
@@ -310,7 +309,7 @@ trait ParamsCompiler extends AnyRef
     } else if ( defineBridge.isEmpty && defineAuto ) {
       Array( defineMakeBridge( project ) )
     } else {
-      Throw( s"Missing bridge, see: ${Macro.nameOf( defineAuto )}, ${Macro.nameOf( defineBridge )}." )
+      Throw( s"Missing bridge, see: ${nameOf( defineAuto )}, ${nameOf( defineBridge )}." )
     }
   }
 
@@ -326,7 +325,7 @@ trait ParamsCompiler extends AnyRef
     } else if ( defineCompiler.isEmpty && defineAuto ) {
       Array( defineMakeCompiler( project ) )
     } else {
-      Throw( s"Missing compiler, see: ${Macro.nameOf( defineAuto )}, ${Macro.nameOf( defineCompiler )}." )
+      Throw( s"Missing compiler, see: ${nameOf( defineAuto )}, ${nameOf( defineCompiler )}." )
     }
   }
 

@@ -44,6 +44,9 @@ object Error {
       }
   }
 
+  /**
+   * Report error stack trace.
+   */
   def reportStackTrace( error : Throwable ) : String = {
     val wirter = new StringWriter()
     val printer = new PrintWriter( wirter )

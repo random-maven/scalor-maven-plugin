@@ -41,21 +41,21 @@ trait ScalaJsLinkAnyMojo extends AbstractMojo
   /**
    * Provide linker project build class path.
    */
-  def linkerClassPath : Array[ File ] = {
+  lazy val linkerClassPath : Array[ File ] = {
     buildDependencyFolders ++ projectClassPath( buildDependencyScopes )
   }
 
   /**
    * Discover Scala.js library on project class path.
    */
-  def libraryArtifactOption : Option[ Artifact ] = {
+  lazy val libraryArtifactOption : Option[ Artifact ] = {
     util.Maven.locateArtifact( project, linkerLibraryRegex )
   }
 
   /**
    * Produce user reports.
    */
-  def reportLinker( context : Linker.Context ) = {
+  def linkerReport( context : Linker.Context ) : Unit = {
     import context._
     if ( linkerLogRuntime ) {
       logger.info( s"Linker runtime: ${runtime}" )
@@ -76,66 +76,71 @@ trait ScalaJsLinkAnyMojo extends AbstractMojo
     }
   }
 
-  def linkerOptions = Linker.Options.parse( linkerOptionsActive )
-
   /**
    * Produce linker runtime.js.
    */
-  def invokeLinker( updateList : Array[ UpdateResult ] = Array.empty ) : Unit = {
+  def linkerInvoke(
+    runtime :    File,
+    options :    String,
+    updateList : Array[ UpdateResult ]
+  ) : Unit = {
+    val linkerOptions = Linker.Options.parse( options )
     val context = Linker.Context(
       options          = linkerOptions,
       classpath        = linkerClassPath,
-      runtime          = linkerRuntimeFile,
+      runtime          = runtime,
       updateList       = updateList,
       initializerList  = linkerInitializerList,
       initializerRegex = linkerInitializerRegex,
       hasLogStats      = linkerLogBuildStats
     )
-    reportLinker( context )
-    performLinker( context )
+    linkerReport( context )
+    linkerPerform( context )
   }
 
   /**
-   * Linker full/clean build.
+   * Generate runtime.js and runtime.min.js.
    */
-  def performLinkFull() : Unit = {
-    logger.info( "Full linker build request." )
-    if ( linkerLibraryDetect ) {
-      val libraryOption = libraryArtifactOption
-      if ( libraryOption.isDefined ) {
-        logger.info( s"Scala.js library present: ${libraryOption.get}." )
-        invokeLinker()
-      } else {
-        logger.info( s"Scala.js library missing: ${linkerLibraryRegex}, skipping execution." )
-      }
-    } else {
-      logger.info( "Skipping library detect, forcing linker invocation." )
-      invokeLinker()
+  def performLinker( updateList : Array[ UpdateResult ] ) : Unit = {
+    val hasBuild = linkerHasBuild( hasIncremental )
+    if ( hasBuild ) {
+      linkerInvoke( linkerRuntimeFile, linkerRuntimeOptions, updateList )
     }
-  }
-
-  /**
-   * Linker incremental build.
-   */
-  def performLinkIncr() : Unit = {
-    logger.info( "Incremental build request." )
-    val updateList = contextUpdateResult( buildDependencyFolders, linkerClassRegex.r )
-    val hasUpdate = updateList.count( _.hasUpdate ) > 0
-    if ( hasUpdate ) {
-      invokeLinker( updateList )
+    val hasBuildMin = linkerHasBuildMin( hasIncremental )
+    if ( hasBuildMin ) {
+      linkerInvoke( linkerRuntimeMinFile, linkerRuntimeMinOptions, updateList )
     }
   }
 
   override def perform() : Unit = {
+
     if ( skipLinker || hasSkipMojo ) {
       reportSkipReason( "Skipping disabled goal execution." )
       return
     }
-    if ( hasIncremental ) {
-      performLinkIncr()
-    } else {
-      performLinkFull()
+
+    if ( linkerLibraryDetect && libraryArtifactOption.isEmpty ) {
+      reportSkipReason( s"Skipping execution: Scala.js library missing: ${linkerLibraryRegex}." )
+      return
     }
+
+    val updateList = if ( hasIncremental ) {
+      contextUpdateResult( buildDependencyFolders, linkerClassRegex.r )
+    } else {
+      Array.empty[ UpdateResult ]
+    }
+
+    if ( hasIncremental ) {
+      logger.info( s"Incremental build request." )
+      val hasUpdate = updateList.count( _.hasUpdate ) > 0
+      if ( hasUpdate ) {
+        performLinker( updateList )
+      }
+    } else {
+      logger.info( s"Full linker build request." )
+      performLinker( updateList )
+    }
+
   }
 
 }

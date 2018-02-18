@@ -109,6 +109,10 @@ trait RegisterAnyMojo extends AbstractMojo
    */
   def registerTarget : RegisterFun[ String ]
 
+  def reportPathOld( path : Path ) = s"Already registered:   ${path}"
+  
+  def reportPathNew( path : Path ) = s"Registering new root: ${path}"
+
   /**
    * Business logic of adding root folders to the project model.
    */
@@ -121,9 +125,9 @@ trait RegisterAnyMojo extends AbstractMojo
       .foreach { resource : Resource =>
         val path = basedir.absolute( Paths.get( resource.getDirectory ) )
         if ( hasResourceRoot( resource ) ) {
-          logger.info( "Already registered: " + path )
+          logger.info( reportPathOld( path ) )
         } else {
-          logger.info( "Registering root:   " + path )
+          logger.info( reportPathNew( path ) )
           registerResource( resource )
         }
       }
@@ -132,9 +136,9 @@ trait RegisterAnyMojo extends AbstractMojo
       .map( file => basedir.absolute( file.toPath ) )
       .foreach { path : Path =>
         if ( hasSourceRoot( path ) ) {
-          logger.info( "Already registered: " + path )
+          logger.info( reportPathOld( path ) )
         } else {
-          logger.info( "Registering root:   " + path )
+          logger.info( reportPathNew( path ) )
           registerSource( path.toString )
         }
       }
@@ -143,9 +147,9 @@ trait RegisterAnyMojo extends AbstractMojo
       .map( file => basedir.absolute( file.toPath ) )
       .foreach { path : Path =>
         if ( hasTargetRoot( path ) ) {
-          logger.info( "Already registered: " + path )
+          logger.info( reportPathOld( path ) )
         } else {
-          logger.info( "Registering root:   " + path )
+          logger.info( reportPathNew( path ) )
           registerTarget( path.toString )
         }
       }

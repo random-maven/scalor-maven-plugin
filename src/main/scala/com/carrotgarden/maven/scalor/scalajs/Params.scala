@@ -212,40 +212,13 @@ trait ParamsLogging {
  */
 trait ParamsOptsAny extends base.ParamsAny {
 
-  @Description( """
-  List of names of environment variables, which, 
-  when detected, activate <code>integration</code> Scala.js linker options.
-  Otherwise, linker will use <code>interactive</code> linker options.
-  IDE <code>interactive</code> options are for development.
-  CI <code>integration</code> options are for production.
-  Separator parameter: <a href="#commonSequenceSeparator"><b>commonSequenceSeparator</b></a>.
-  """ )
-  @Parameter(
-    property     = "scalor.linkerEnvVarListCI",
-    defaultValue = """
-    CONTINUOUS_INTEGRATION ★ JENKINS_HOME ★ HUDSON_HOME ★  
-    """
-  )
-  var linkerEnvVarListCI : String = _
+  /**
+   */
+  def linkerRuntimeOptions : String
 
   /**
-   * Linker engine options for detected IDE vs CI mode.
    */
-  def linkerOptionsActive : String = {
-    val varsList = parseCommonList( linkerEnvVarListCI )
-    val hasCI = varsList.find( name => System.getenv.get( name ) != null ).isDefined
-    if ( hasCI ) linkerOptionsProduction else linkerOptionsDevelopment
-  }
-
-  /**
-   * IDE <code>interactive</code> options are for development.
-   */
-  def linkerOptionsDevelopment : String
-
-  /**
-   * CI <code>integration</code> options are for production.
-   */
-  def linkerOptionsProduction : String
+  def linkerRuntimeMinOptions : String
 
 }
 
@@ -255,41 +228,57 @@ trait ParamsOptsAny extends base.ParamsAny {
 trait ParamsOptsMain extends ParamsOptsAny {
 
   @Description( """
-  Scala.js linker options for scope=main, mode=IDE/development.
+  Build options for non-optimized <a href="#linkerMainRuntimeJs"><b>linkerMainRuntimeJs</b></a>.
+  Scala.js linker options for scope=main, mode=development.
   Scala.js linker options reference:
   <a href="https://github.com/scala-js/scala-js/blob/master/linker/shared/src/main/scala/org/scalajs/linker/StandardLinker.scala">
     StandardLinker.scala
   </a>
-  Configuration detection parameter: <a href="#linkerEnvVarListCI"><b>linkerEnvVarListCI</b></a>
   Uses simple <code>json</code> format.
   """ )
   @Parameter(
-    property     = "scalor.linkerMainOptionsDevs",
+    property     = "scalor.linkerMainBuildOptions",
     defaultValue = """
-    { "checkIR":false, "parallel":true, "optimizer":false, "batchMode":false, "sourceMap":true, "prettyPrint":true }
+    { 
+    "checkIR":false, 
+    "parallel":true, 
+    "batchMode":false, 
+    "sourceMap":true, 
+    "optimizer":false, 
+    "prettyPrint":true, 
+    "closureCompiler":false
+    }
     """
   )
-  var linkerMainOptionsDevs : String = _
+  var linkerMainBuildOptions : String = _
 
   @Description( """
-  Scala.js linker options for scope=main, mode=CI/production.
+  Build options for optimized/minified <a href="#linkerMainRuntimeMinJs"><b>linkerMainRuntimeMinJs</b></a>.
+  Scala.js linker options for scope=main, mode=production.
   Scala.js linker options reference:
   <a href="https://github.com/scala-js/scala-js/blob/master/linker/shared/src/main/scala/org/scalajs/linker/StandardLinker.scala">
     StandardLinker.scala
   </a>
-  Configuration detection parameter: <a href="#linkerEnvVarListCI"><b>linkerEnvVarListCI</b></a>
   Uses simple <code>json</code> format.
   """ )
   @Parameter(
-    property     = "scalor.linkerMainOptionsProd",
+    property     = "scalor.linkerMainBuildOptionsMin",
     defaultValue = """
-    { "checkIR":true, "parallel":true, "optimizer":true, "batchMode":true, "sourceMap":true, "prettyPrint":false }
+    { 
+    "checkIR":false, 
+    "parallel":true, 
+    "batchMode":true, 
+    "sourceMap":true, 
+    "optimizer":true, 
+    "prettyPrint":false, 
+    "closureCompiler":true
+    }
     """
   )
-  var linkerMainOptionsProd : String = _
+  var linkerMainBuildOptionsMin : String = _
 
-  override def linkerOptionsDevelopment = linkerMainOptionsDevs
-  override def linkerOptionsProduction = linkerMainOptionsProd
+  override def linkerRuntimeOptions = linkerMainBuildOptions
+  override def linkerRuntimeMinOptions = linkerMainBuildOptionsMin
 
 }
 
@@ -299,40 +288,56 @@ trait ParamsOptsMain extends ParamsOptsAny {
 trait ParamsOptsTest extends ParamsOptsAny {
 
   @Description( """
-  Scala.js linker options for scope=test, mode=IDE/development.
+  Build options for non-optimized <a href="#linkerTestRuntimeJs"><b>linkerTestRuntimeJs</b></a>.
+  Scala.js linker options for scope=test, mode=development.
   Scala.js linker options reference:
   <a href="https://github.com/scala-js/scala-js/blob/master/linker/shared/src/main/scala/org/scalajs/linker/StandardLinker.scala">
     StandardLinker.scala
   </a>
-  Configuration detection parameter: <a href="#linkerEnvVarListCI"><b>linkerEnvVarListCI</b></a>
   Uses simple <code>json</code> format.
   """ )
   @Parameter(
-    property     = "scalor.linkerTestOptionsDevs",
+    property     = "scalor.linkerTestBuildOptions",
     defaultValue = """
-    { "checkIR":false, "parallel":true, "optimizer":false, "batchMode":false, "sourceMap":true, "prettyPrint":true }
+    { 
+    "checkIR":false, 
+    "parallel":true, 
+    "batchMode":false, 
+    "sourceMap":true, 
+    "optimizer":false, 
+    "prettyPrint":true, 
+    "closureCompiler":false
+    }
     """
   )
-  var linkerTestOptionsDevs : String = _
+  var linkerTestBuildOptions : String = _
 
   @Description( """
-  Scala.js linker options for scope=test, mode=CI/production.
+  Build options for optimized/minified <a href="#linkerTestRuntimeMinJs"><b>linkerTestRuntimeMinJs</b></a>.
+  Scala.js linker options for scope=test, mode=production.
   Scala.js linker options reference:
   <a href="https://github.com/scala-js/scala-js/blob/master/linker/shared/src/main/scala/org/scalajs/linker/StandardLinker.scala">
     StandardLinker.scala
   </a>
-  Configuration detection parameter: <a href="#linkerEnvVarListCI"><b>linkerEnvVarListCI</b></a>
   Uses simple <code>json</code> format.
   """ )
   @Parameter(
-    property     = "scalor.linkerTestOptionsProd",
+    property     = "scalor.linkerTestBuildOptionsMin",
     defaultValue = """
-    { "checkIR":true, "parallel":true, "optimizer":true, "batchMode":true, "sourceMap":true, "prettyPrint":false }
+    { 
+    "checkIR":false, 
+    "parallel":true, 
+    "batchMode":true, 
+    "sourceMap":true, 
+    "optimizer":true, 
+    "prettyPrint":false, 
+    "closureCompiler":true
+    }
     """
   )
-  var linkerTestOptionsProd : String = _
+  var linkerTestBuildOptionsMin : String = _
 
-  override def linkerOptionsDevelopment = linkerTestOptionsDevs
-  override def linkerOptionsProduction = linkerTestOptionsProd
+  override def linkerRuntimeOptions = linkerTestBuildOptions
+  override def linkerRuntimeMinOptions = linkerTestBuildOptionsMin
 
 }

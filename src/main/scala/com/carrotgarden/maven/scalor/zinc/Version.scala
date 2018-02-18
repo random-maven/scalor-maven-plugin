@@ -51,7 +51,7 @@ object Version {
   def itemFrom( module : Module, useArtifactVersion : Boolean = false ) : FileItem = {
     if ( useArtifactVersion ) {
       val entry = artifactVersion( module ).getOrElse(
-        Throw( "Can not extract verson from artifactId: " + module )
+        Throw( s"Can not extract verson from artifactId: ${module}" )
       )
       FileItem( fileFrom( module ), entry.versionTail )
     } else {

@@ -5,6 +5,7 @@ Build integrator for Java, Scala, Scala.macro, Scala.js, Eclipse and Maven.
 
 [![Apache License](https://img.shields.io/github/license/mojohaus/versions-maven-plugin.svg?label=License)](http://www.apache.org/licenses/)
 [![Travis Status](https://travis-ci.org/random-maven/scalor-maven-plugin.svg?branch=master)](https://travis-ci.org/random-maven/scalor-maven-plugin/builds)
+[![Lines of Code](https://tokei.rs/b1/github/random-maven/scalor-maven-plugin)](https://github.com/random-maven/scalor-maven-plugin)
 
 | Install | Production Release | Development Release |
 | ----------------------------------- | ------------------ | ------------------- |

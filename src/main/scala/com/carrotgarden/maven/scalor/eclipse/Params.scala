@@ -501,15 +501,15 @@ trait ParamsLogger {
   )
   var eclipseLogClasspathOrder : Boolean = _
 
-  @Description( """
-  Enable to log generated resolved custom Scala installation.
-  Use to review installation details, including title, dependencies, etc.
-  """ )
-  @Parameter(
-    property     = "scalor.eclipseLogInstallResolve",
-    defaultValue = "false"
-  )
-  var eclipseLogInstallResolve : Boolean = _
+  //  @Description( """
+  //  Enable to log generated resolved custom Scala installation.
+  //  Use to review installation details, including title, dependencies, etc.
+  //  """ )
+  //  @Parameter(
+  //    property     = "scalor.eclipseLogInstallResolve",
+  //    defaultValue = "false"
+  //  )
+  //  var eclipseLogInstallResolve : Boolean = _
 
   @Description( """
   Report all available custom Scala installations persisted by Eclispe Scala IDE plugin.

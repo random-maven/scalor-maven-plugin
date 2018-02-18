@@ -126,10 +126,10 @@ trait ScalaIDE {
     )
     val defineResponse = resolveDefine( request, defineRequest, "compile", monitor )
     val install = ScalaInstall( zincScalaInstallTitle, detector, defineResponse ).withTitleDigest
-    if ( eclipseLogInstallResolve ) {
-      val scalaInstallation = installFrom( facade, install )
-      logger.info( "Custom Scala installation report:\n" + report( scalaInstallation ) )
-    }
+    //    if ( eclipseLogInstallResolve ) {
+    //      val scalaInstallation = installFrom( facade, install )
+    //      logger.info( s"Custom Scala installation report:\n${report( scalaInstallation )}" )
+    //    }
     install
   }
 
@@ -552,7 +552,7 @@ object ScalaIDE {
         case Param.scope.`macro` => Some( CompileMacrosScope.name )
         case Param.scope.`main`  => Some( CompileMainScope.name )
         case Param.scope.`test`  => Some( CompileTestsScope.name )
-        case invalid             => errorFun( "invalid scope: " + invalid ); None
+        case invalid             => errorFun( s"invalid scope: ${invalid}" ); None
       }
     }
 

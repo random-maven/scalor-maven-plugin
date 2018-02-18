@@ -13,6 +13,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase._
 import com.carrotgarden.maven.scalor.A
 import com.carrotgarden.maven.scalor.meta
 import com.carrotgarden.maven.scalor.util.Error._
+import com.carrotgarden.maven.scalor.base.Self
 
 /**
  * Provide default Maven lifecycle for Scalor plugin.
@@ -45,7 +46,7 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
   /**
    * Locate scalor-maven-plugin in the current project.
    */
-  def scalorPlugin( implicit session : MavenSession ) = aquirePlugin( A.maven.artifactId )
+  def scalorPlugin( implicit session : MavenSession ) = aquirePlugin( Self.mavenArtifactId )
 
   /**
    * Locate maven-compiler-plugin in the current project.
@@ -109,7 +110,7 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
         registerExecution( TEST_COMPILE, `compile-test` )
 
         registerExecution( PROCESS_TEST_CLASSES, `scala-js-link-test` )
-        
+
         registerExecution( TEST, `eclipse-restart` )
         registerExecution( TEST, `eclipse-prescomp` )
 
@@ -128,7 +129,7 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
 }
 
 /**
- *
+ * TODO
  */
 object Lifecycle {
   import meta.Macro

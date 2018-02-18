@@ -63,6 +63,11 @@ case class ScalaInstall(
     this.copy( title = s"${title} [${digest}]" )
   }
 
+  /**
+   * Reproduce Scala IDE UI compiler installation entry.
+   */
+  def identity = s"${title}: ${version.unparse}"
+
 }
 
 /**
