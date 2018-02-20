@@ -27,7 +27,7 @@ Update plugin project squash point to release commit
 
 ### Commit
 
-Commit and verify development travis build of demo project
+Commit and verify CI development build of demo project
 * https://github.com/random-maven/scalor-maven-plugin/blob/master/.mvn/github-squash.sh
 
 Merge development branch into master branch
