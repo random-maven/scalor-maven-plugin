@@ -408,7 +408,7 @@
         <!-- Substitute ${project} variables. -->
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>${project.basedir}/src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
         </resources>
@@ -436,10 +436,15 @@
                         -useScopesCompiler
                     </zincCompileOptions>
 
-                    <!-- <eclipseLogClasspathOrder>true</eclipseLogClasspathOrder> -->
+                    <!-- <zincLogSourcesList>true</zincLogSourcesList> -->
+                    <!-- <zincLogBridgeClassPath>true</zincLogBridgeClassPath> -->
+                    <!-- <zincLogCompilerClassPath>true</zincLogCompilerClassPath> -->
                     <!-- <zincLogProjectClassPath>true</zincLogProjectClassPath> -->
+                    <!-- <zincLogCompilerPluginList>true</zincLogCompilerPluginList> -->
                     <!-- <zincLogProgressRate>true</zincLogProgressRate> -->
                     <!-- <zincLogProgressUnit>true</zincLogProgressUnit> -->
+
+                    <!-- <eclipseLogClasspathOrder>true</eclipseLogClasspathOrder> -->
 
                     <defineBridge>
                         <dependency>
@@ -610,7 +615,7 @@
                     <!-- <debug>true</debug> -->
                     <showErrors>true</showErrors>
                     <streamLogs>true</streamLogs>
-                    <localRepositoryPath>${project.basedir}/test-repo</localRepositoryPath>
+                    <!-- <localRepositoryPath>${project.basedir}/test-repo</localRepositoryPath> -->
                     <pomIncludes>
                         <include>test-any</include>
                         <include>test-envjs</include>
@@ -652,6 +657,7 @@
 
     <reporting>
         <plugins>
+        
             <!-- Default index. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -664,11 +670,13 @@
                     </reportSet>
                 </reportSets>
             </plugin>
-            <!-- Plugin executions. -->
+            
+            <!-- Plugin documentation. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
             </plugin>
+            
             <!-- <plugin> -->
             <!-- <groupId>org.apache.maven.plugins</groupId> -->
             <!-- <artifactId>maven-javadoc-plugin</artifactId> -->
@@ -676,6 +684,7 @@
             <!-- <skip>true</skip> -->
             <!-- </configuration> -->
             <!-- </plugin> -->
+            
         </plugins>
     </reporting>
 

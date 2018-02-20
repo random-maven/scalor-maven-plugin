@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF8"?>
+<toolchains>
+
+    <!-- JDK toolchains @ CI -->
+    <!-- https://maven.apache.org/guides/mini/guide-using-toolchains.html -->
+
+    <toolchain>
+        <type>jdk</type>
+        <provides>
+            <id>JavaSE-1.8</id>
+        </provides>
+        <configuration>
+            <jdkHome>C:/Program Files/Java/jdk1.8.0</jdkHome>
+        </configuration>
+    </toolchain>
+
+    <toolchain>
+        <type>jdk</type>
+        <provides>
+            <id>JavaSE-1.9</id>
+        </provides>
+        <configuration>
+            <jdkHome>C:/Program Files/Java/jdk9</jdkHome>
+        </configuration>
+    </toolchain>
+
+    <toolchain>
+        <type>jdk</type>
+        <provides>
+            <vendor>oracle</vendor>
+            <version>1.8</version>
+        </provides>
+        <configuration>
+            <jdkHome>C:/Program Files/Java/jdk1.8.0</jdkHome>
+        </configuration>
+    </toolchain>
+
+    <toolchain>
+        <type>jdk</type>
+        <provides>
+            <vendor>oracle</vendor>
+            <version>1.9</version>
+        </provides>
+        <configuration>
+            <jdkHome>C:/Program Files/Java/jdk9</jdkHome>
+        </configuration>
+    </toolchain>
+
+</toolchains>

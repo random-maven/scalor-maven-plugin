@@ -2,7 +2,11 @@ package com.carrotgarden.maven.scalor;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -10,6 +14,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.project.MavenProject;
@@ -30,6 +45,14 @@ import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Verify companion Eclipse plugin setup, Scala project import and
@@ -83,6 +106,94 @@ public class Scalor_01_Test extends AbstractMavenProjectTestCase {
 			String target = targetProps.getProperty(name);
 			assertEquals(assertText + " @ " + name, source, target);
 		}
+	}
+
+	static String prettyPrint(Node node) throws Exception {
+		StringWriter writer = new StringWriter();
+		Transformer xformer = TransformerFactory.newInstance().newTransformer();
+		xformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		xformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		xformer.transform(new DOMSource(node), new StreamResult(writer));
+		return writer.toString();
+	}
+
+	static final DocumentBuilder builder = newBuilder();
+
+	static final Document document = newDocument();
+
+	static Document newDocument() {
+		try {
+			return newDocument("<main></main>");
+		} catch (Exception error) {
+			throw new RuntimeException(error);
+		}
+	}
+
+	static DocumentBuilder newBuilder() {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setNamespaceAware(true);
+			factory.setCoalescing(true);
+			factory.setIgnoringElementContentWhitespace(true);
+			factory.setIgnoringComments(true);
+			return factory.newDocumentBuilder();
+		} catch (Exception error) {
+			throw new RuntimeException(error);
+		}
+	}
+
+	static Document newDocument(String xml) throws Exception {
+		InputSource input = new InputSource(new StringReader(xml));
+		return builder.parse(input);
+	}
+
+	static List<Element> findNode(Document doc, Element elem) {
+		NodeList nodeList = doc.getElementsByTagName(elem.getTagName());
+		NamedNodeMap attrMap = elem.getAttributes();
+		Attr attr = (Attr) attrMap.item(0);
+		String name = attr.getName();
+		String value = elem.getAttribute(name);
+		ArrayList<Element> findList = new ArrayList<>();
+		int index = 0;
+		int limit = nodeList.getLength();
+		while (index < limit) {
+			Element node = (Element) nodeList.item(index);
+			index += 1;
+			if (value.equals(node.getAttribute(name))) {
+				findList.add(node);
+			}
+		}
+		return findList;
+
+	}
+
+	static void deleteNode(Document doc, Element[] deleteList) {
+		for (Element delete : deleteList) {
+			List<Element> removeList = findNode(doc, delete);
+			for (Element remove : removeList) {
+				remove.getParentNode().removeChild(remove);
+			}
+		}
+	}
+
+	static void assertEqualsXML(File sourceFile, File targetFile, Element[] deleteList) throws Exception {
+		//
+		Document sourceDoc = builder.parse(sourceFile);
+		deleteNode(sourceDoc, deleteList);
+		sourceDoc.normalizeDocument();
+		NodeList sourceList = sourceDoc.getElementsByTagName("classpathentry");
+		String sourceText = prettyPrint(sourceDoc.getDocumentElement());
+		//
+		Document targetDoc = builder.parse(targetFile);
+		deleteNode(targetDoc, deleteList);
+		targetDoc.normalizeDocument();
+		String targetText = prettyPrint(targetDoc.getDocumentElement());
+		//
+		String assertText = sourceFile + " vs " + targetFile + "\n" //
+				+ "--- sourceText ---\n" + sourceText //
+				+ "--- targetText ---\n" + targetText //
+		;
+		assertTrue(assertText, sourceDoc.isEqualNode(targetDoc));
 	}
 
 	static Job findJob(String name) {
@@ -252,13 +363,18 @@ public class Scalor_01_Test extends AbstractMavenProjectTestCase {
 		String metaProject = ".project";
 		File testerProject = new File(testerModuleDir, metaProject);
 		File targetProject = new File(targetModuleDir, metaProject);
-		assertEqualsText(testerProject, targetProject);
+		// assertEqualsText(testerProject, targetProject);
+		assertEqualsXML(testerProject, targetProject, new Element[] {});
 
 		// match ".classpath"
 		String metaClasspath = ".classpath";
 		File testerClasspath = new File(testerModuleDir, metaClasspath);
 		File targetClasspath = new File(targetModuleDir, metaClasspath);
-		assertEqualsText(testerClasspath, targetClasspath);
+		// assertEqualsText(testerClasspath, targetClasspath);
+		Element drop1 = document.createElement("classpathentry");
+		drop1.setAttribute("path", "org.scala-ide.sdt.launching.SCALA_CONTAINER");
+		Element[] dropList = { drop1 };
+		assertEqualsXML(testerClasspath, targetClasspath, dropList);
 
 		// match ".settings/scala-ide"
 		String metaScalaIDE = ".settings/org.scala-ide.sdt.core.prefs";
@@ -268,10 +384,10 @@ public class Scalor_01_Test extends AbstractMavenProjectTestCase {
 				"//src/macro/java", //
 				"//src/macro/scala", //
 				"//src/main/java", //
-				"//src/main/resources", //
+				// "//src/main/resources", //
 				"//src/main/scala", //
 				"//src/test/java", //
-				"//src/test/resources", //
+				// "//src/test/resources", //
 				"//src/test/scala", //
 				"Xmaxerrs", //
 				"compileorder", //

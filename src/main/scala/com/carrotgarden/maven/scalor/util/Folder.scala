@@ -15,6 +15,7 @@ import scala.Right
 import java.nio.charset.Charset
 
 import scala.language.implicitConversions
+import java.util.regex.Matcher
 
 /**
  * Operations against base folder.
@@ -126,26 +127,29 @@ object Folder {
   }
 
   def fileListByRegex( rootList : Array[ File ], regex : String ) : Array[ File ] = {
-    val pattern = regex.r.pattern
+    val matcher = regex.r.pattern.matcher( "" )
     val fileList = new ArrayList[ File ]( 256 )
-    val iter = Arrays.asList( rootList : _* ).iterator()
-    while ( iter.hasNext() ) {
-      val root = iter.next()
-      if ( root.isDirectory() ) fileCollectByRegex( root, pattern, fileList )
+    var index = 0
+    var limit = rootList.length
+    while ( index < limit ) {
+      val root = rootList( index ); index += 1
+      if ( root.isDirectory ) {
+        fileCollectByRegex( root, matcher, fileList )
+      }
     }
     fileList.toArray( Array[ File ]() )
   }
 
-  def fileCollectByRegex( root : File, regex : Pattern, fileList : ArrayList[ File ] ) : Unit = {
-    val list = root.listFiles()
+  def fileCollectByRegex( root : File, matcher : Matcher, fileList : ArrayList[ File ] ) : Unit = {
+    val list = root.listFiles
     var index = 0
     var limit = list.length
     while ( index < limit ) {
       val file = list( index ); index += 1
-      if ( file.isFile() && regex.matcher( file.getCanonicalPath ).matches() ) {
+      if ( file.isFile && matcher.reset( file.getCanonicalPath ).matches ) {
         fileList.add( file )
-      } else if ( file.isDirectory() ) {
-        fileCollectByRegex( file, regex, fileList )
+      } else if ( file.isDirectory ) {
+        fileCollectByRegex( file, matcher, fileList )
       }
     }
   }

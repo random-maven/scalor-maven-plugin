@@ -177,7 +177,7 @@
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>scalor-maven-plugin_2.12</artifactId>
-                <version>1.3.0.20180218205359</version>
+                <!-- <version>1.3.0.20180218205359</version> -->
 
                 <configuration>
 
@@ -352,7 +352,10 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <runOrder>alphabetical</runOrder>
+                    <!--
+                        Name pattern for JVM test class discovery.
+                        Make sure JS-VM test classes use different pattern.
+                    -->
                     <includes>
                         <include>**/*Test.class</include>
                         <include>**/*Suite.class</include>

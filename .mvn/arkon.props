@@ -36,6 +36,7 @@ pathList = \
     wrapper/maven-wrapper.properties ; \
     install.sh ; \
     package.sh ; \
+    verify.cmd ; \
     verify.sh ; \
     site.sh ; \
     release-bintray.sh ; \

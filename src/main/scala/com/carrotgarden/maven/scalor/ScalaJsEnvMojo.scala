@@ -74,7 +74,7 @@ class ScalaJsEnvProvNodeJsMojo extends ScalaJsEnvProvAnyMojo
     } else {
       if ( hasDetectNodejs ) {
         logger.info( "Skipping provisioning, detected Node.js:" )
-        logger.info( s"   ${provisionedNodejs}" )
+        logger.info( s"   ${configuredNodejs}" )
       } else {
         logger.info( "Provisioning enironment: Node.js." )
         provisionNodejs()
@@ -116,7 +116,7 @@ class ScalaJsEnvProvPhantomJsMojo extends ScalaJsEnvProvAnyMojo
     } else {
       if ( hasDetectPhantomjs ) {
         logger.info( "Skipping provisioning, detected Phantom.js:" )
-        logger.info( s"   ${provisionedPhantomjs}" )
+        logger.info( s"   ${configuredPhantomjs}" )
       } else {
         logger.info( "Provisioning enironment: Phantom.js." )
         provisionPhantomjs()
@@ -146,7 +146,7 @@ class ScalaJsEnvProvWebjarsMojo extends ScalaJsEnvProvAnyMojo
       return
     }
     logger.info( "Provisioning enironment: Webjars." )
-    logger.info( s"   ${provisionedWebjars}" )
+    logger.info( s"   ${configuredWebjars}" )
     provisionWebjarsResources()
   }
 

@@ -4,8 +4,9 @@
 Publish to Sonatype
 * https://github.com/random-maven/scalor-maven-plugin/blob/master/.mvn/release-sonatype.sh
 
-Verify release travis build
+Verify release CI build
 * https://travis-ci.org/random-maven/scalor-maven-plugin/builds
+* https://ci.appveyor.com/project/random-maven/scalor-maven-plugin/history
 
 Verify and promote release to Maven Central
 * https://oss.sonatype.org/index.html#stagingRepositories

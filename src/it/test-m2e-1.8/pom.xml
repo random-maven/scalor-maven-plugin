@@ -51,6 +51,7 @@
                             Make sure to provide jdk/id=JavaSE-1.8 in ${user.home}/.m2/toolchains.xml
                         -->
                         <useJDK>BREE</useJDK>
+                        <useProjectSettings>false</useProjectSettings>
                     </configuration>
                 </plugin>
 
@@ -76,8 +77,9 @@
                         <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
 
                         <!-- Enough memory for Eclipse to start. -->
+                        <argLine>-Xmx1G</argLine>
                         <!-- Configure alternative user home. -->
-                        <argLine>-Xmx1G -Duser.home=${project.basedir}/home</argLine>
+                        <!-- <argLine>-Xmx1G -Duser.home=${project.basedir}/home</argLine> -->
 
                         <!-- Expose platform console logger output. -->
                         <showEclipseLog>true</showEclipseLog>

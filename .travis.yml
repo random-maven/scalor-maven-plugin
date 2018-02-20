@@ -6,7 +6,6 @@ jdk:
 cache:
   directories:
   - "$HOME/.m2"
-  - "./test-repo"
 branches:
   only:
   - master
@@ -23,7 +22,7 @@ before_script:
 script:
 - "/bin/cp -f -r ./.mvn/ci/.scalaide $HOME/.scalaide"
 - "/bin/cp -f ./.mvn/ci/settings.xml $HOME/.m2/settings.xml"
-- "/bin/cp -f ./.mvn/ci/toolchains.xml $HOME/.m2/toolchains.xml"
+- "/bin/cp -f ./.mvn/ci/toolchains-travis.xml $HOME/.m2/toolchains.xml"
 - "./.mvn/verify.sh || exit 1"
 - "./.mvn/release-bintray.sh || exit 1"
 - "./demo/.mvn/verify.sh || exit 1"

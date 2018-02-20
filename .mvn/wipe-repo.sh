@@ -2,7 +2,7 @@
 set -e -u
 
 #
-# remove build artifacts on ci host.
+# remove build artifacts on ci host
 #
 
 wipe_repo() {

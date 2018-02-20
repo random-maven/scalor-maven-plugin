@@ -392,7 +392,26 @@ trait EnvProvNodejs extends EnvProvAny {
     }
   }
 
-  def provisionedNodejs : File = {
+  /**
+   * Expected location of executable.
+   */
+  def extractedNodejs : File = {
+    def hasFile( file : File ) = file.isFile() && file.exists()
+    val folder = folderTestToolNodejs
+    val fileNix = new File( folder, "node" )
+    val fileWin = new File( folder, "node.exe" )
+    val file =
+      if ( hasFile( fileNix ) ) {
+        fileNix
+      } else if ( hasFile( fileWin ) ) {
+        fileWin
+      } else {
+        util.Error.Throw( s"Missing extracted Node.js executable in ${folder}" )
+      }
+    file.getCanonicalFile
+  }
+
+  def configuredNodejs : File = {
     val folder = folderTestToolNodejs
     val exec = "node" // Node.js convention.
     val file = new File( folder, exec )
@@ -411,7 +430,7 @@ trait EnvProvNodejs extends EnvProvAny {
    * Verify if configured Node.js binary is present.
    */
   def hasDetectNodejs = {
-    hasDetectExecutable( provisionedNodejs )
+    hasDetectExecutable( configuredNodejs )
   }
 
   /**
@@ -444,7 +463,9 @@ trait EnvProvNodejs extends EnvProvAny {
       executionEnvironment( project, session, buildManager ) //
     )
     //
-    val target = provisionedNodejs
+    val source = extractedNodejs
+    val target = configuredNodejs
+    Files.copy( source.toPath, target.toPath, StandardCopyOption.REPLACE_EXISTING )
     target.setReadable( true )
     target.setExecutable( true )
   }
@@ -515,7 +536,7 @@ trait EnvProvPhantomjs extends EnvProvAny {
     folder.getCanonicalPath
   }
 
-  def provisionedPhantomjs : File = {
+  def configuredPhantomjs : File = {
     val folder = folderTestToolPhantomjs
     val exec = "phantomjs" // Phantom.js convention.
     val file = new File( folder, exec )
@@ -526,7 +547,7 @@ trait EnvProvPhantomjs extends EnvProvAny {
    * Verify if configured Phantom.js binary is present.
    */
   def hasDetectPhantomjs = {
-    hasDetectExecutable( provisionedPhantomjs )
+    hasDetectExecutable( configuredPhantomjs )
   }
 
   /**
@@ -534,6 +555,9 @@ trait EnvProvPhantomjs extends EnvProvAny {
    */
   val phantomExtractKey = "phantomjs.binary"
 
+  /**
+   * Expected location of executable.
+   */
   def extractedPhantomjs = {
     new File( project.getProperties.getProperty( phantomExtractKey ) )
   }
@@ -560,7 +584,7 @@ trait EnvProvPhantomjs extends EnvProvAny {
     )
     //
     val source = extractedPhantomjs
-    val target = provisionedPhantomjs
+    val target = configuredPhantomjs
     Files.copy( source.toPath, target.toPath, StandardCopyOption.REPLACE_EXISTING )
     target.setReadable( true )
     target.setExecutable( true )
@@ -590,7 +614,7 @@ trait EnvProvWebjars extends EnvProvAny {
   /**
    * Webjars extraction folder.
    */
-  def provisionedWebjars : File = {
+  def configuredWebjars : File = {
     val folder = new File( folderTestTool, envprovWebjarsFolder )
     folder.mkdirs()
     folder.getCanonicalFile
@@ -611,7 +635,7 @@ trait EnvProvWebjars extends EnvProvAny {
     val cache = new WebJarExtractor.MemoryCache()
     val loader = webjarsClassLoader
     val extractor = new WebJarExtractor( cache, loader )
-    extractor.extractAllWebJarsTo( provisionedWebjars )
+    extractor.extractAllWebJarsTo( configuredWebjars )
   }
 
 }

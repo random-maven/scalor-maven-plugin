@@ -39,6 +39,10 @@ trait Mojo extends AbstractMojo
 
   override def execute() : Unit = {
     try {
+      // Use local JNA native library.
+      // https://github.com/sbt/io/issues/110
+      sys.props.put("jna.nosys", "true")
+      //
       contextReset()
       if ( hasSkip ) {
         reportSkipReason( "Skipping plugin execution." )
