@@ -11,6 +11,7 @@ Project features:
 * Provision Webjars for test JS-VM
 * Setup Eclipse plugin in M2E
 * Incremental Scala.js linking in M2E
+* Transfer source format settings in M2E
 * Manage test application process restart in M2E
 * Manage presentation compiler work-around in M2E
 

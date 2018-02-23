@@ -25,21 +25,31 @@
             <pluginExecutionFilter>
                 <goals>
 
+                    <goal>eclipse-format</goal>
                     <goal>eclipse-restart</goal>
                     <goal>eclipse-prescomp</goal>
 
+                    <goal>clean</goal>
                     <goal>clean-macro</goal>
                     <goal>clean-main</goal>
                     <goal>clean-test</goal>
 
+                    <goal>register</goal>
                     <goal>register-macro</goal>
                     <goal>register-main</goal>
                     <goal>register-test</goal>
 
+                    <goal>format</goal>
+                    <goal>format-macro</goal>
+                    <goal>format-main</goal>
+                    <goal>format-test</goal>
+
+                    <goal>compile</goal>
                     <goal>compile-macro</goal>
                     <goal>compile-main</goal>
                     <goal>compile-test</goal>
 
+                    <goal>scala-js-link</goal>
                     <goal>scala-js-link-main</goal>
                     <goal>scala-js-link-test</goal>
 
@@ -50,6 +60,11 @@
                     <goal>scala-js-env-conf-nodejs</goal>
                     <goal>scala-js-env-conf-phantomjs</goal>
 
+                    <goal>report</goal>
+                    <goal>report-main</goal>
+                    <goal>report-test</goal>
+
+                    <goal>scaladoc</goal>
                     <goal>scaladoc-main</goal>
                     <goal>scaladoc-test</goal>
 

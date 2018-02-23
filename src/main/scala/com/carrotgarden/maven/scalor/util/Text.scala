@@ -1,5 +1,9 @@
 package com.carrotgarden.maven.scalor.util
 
+import java.io.File
+import java.nio.file.Files
+import java.nio.charset.Charset
+
 /**
  * Text support.
  */
@@ -22,5 +26,31 @@ object Text {
   def reportArray[ T ]( array : Array[ T ] ) = {
     array.mkString( "   ", "\n   ", "" )
   }
+
+  /**
+   * Load file into string.
+   */
+  def textRead(
+    file :    File,
+    charset : Charset = Charset.forName( "UTF-8" )
+  ) : String = {
+    new String( Files.readAllBytes( file.toPath ), charset )
+  }
+
+  /**
+   * Save string into file.
+   */
+  def textWrite(
+    text :    String,
+    file :    File,
+    charset : Charset = Charset.forName( "UTF-8" )
+  ) : Unit = {
+    Files.write( file.toPath, text.getBytes( charset ) )
+  }
+
+  /**
+   * Render array as hex values.
+   */
+  def renderHex( array : Array[ Byte ] ) : String = array.map( "%02x" format _ ).mkString
 
 }

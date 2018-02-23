@@ -82,7 +82,7 @@ class MacroBundle( val c : Context ) extends RichContext {
     tree.symbol.isMethod && tree.symbol.asMethod.isVar && tree.symbol.asMethod.isGetter
   }
 
-  def methodList( body : List[ Tree ] ) : List[ Tree ] = { 
+  def methodList( body : List[ Tree ] ) : List[ Tree ] = {
     body.collect {
       case tree : DefDef if hasMethod( tree ) => tree
     }
@@ -98,7 +98,7 @@ class MacroBundle( val c : Context ) extends RichContext {
     tree.symbol.name.decodedName.toString
   }
 
-  def nameOf( member : c.Expr[ Any ] ) : c.Expr[ String ] = { 
+  def nameOf( member : c.Expr[ Any ] ) : c.Expr[ String ] = {
     val name = extractName( member.tree ).decodedName.toString
     val result = q"$name"
     info( s"${showCode( result )}" )

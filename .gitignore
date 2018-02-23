@@ -11,10 +11,4 @@ test-repo/
 test-tool/
 
 # Scala IDE
-.cache*
-
-# Scalor plugin
-/.scalor/
-
-# Flatten plugin
-pom.xml.flatten
+.cache-*

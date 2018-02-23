@@ -10,7 +10,7 @@ import org.junit.runners.Suite
 
 /**
  * This is a Master -> Worker test controller.
- * 
+ *
  * Note:
  * - master test (JavaScriptTestSuite) is invoked in JVM,
  * - while workers (JavaScriptTestJS01, JavaScriptTestJS02) are invoked in JS-VM.

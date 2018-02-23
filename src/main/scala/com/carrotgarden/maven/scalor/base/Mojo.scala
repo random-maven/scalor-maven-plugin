@@ -4,6 +4,11 @@ import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugin.MojoFailureException
 
 import com.carrotgarden.maven.scalor.eclipse
+import com.carrotgarden.maven.scalor.util.Error.Throw
+import com.carrotgarden.maven.scalor.util
+import org.codehaus.plexus.util.xml.Xpp3Dom
+import org.apache.maven.plugin.MojoExecution
+import com.carrotgarden.maven.scalor.util.Maven
 
 /**
  * Shared mojo execution process steps.
@@ -20,6 +25,9 @@ trait Mojo extends AbstractMojo
    */
   def mojoName : String
 
+  /**
+   * Mojo skip flag.
+   */
   def hasSkip : Boolean = {
     skip
   }
@@ -32,6 +40,8 @@ trait Mojo extends AbstractMojo
     if ( skipLogReason ) { log.info( line ) }
   }
 
+  def throwNotUsed = Throw( "Not used." )
+
   /**
    * Actually perform goal execution.
    */
@@ -41,7 +51,7 @@ trait Mojo extends AbstractMojo
     try {
       // Use local JNA native library.
       // https://github.com/sbt/io/issues/110
-      sys.props.put("jna.nosys", "true")
+      sys.props.put( "jna.nosys", "true" )
       //
       contextReset()
       if ( hasSkip ) {
@@ -57,9 +67,21 @@ trait Mojo extends AbstractMojo
       case error : Throwable =>
         val message = "Execution failure"
         contextError( message, error );
-        log.fail( s"${message} ${error.getMessage}" )
+        logger.fail( s"${message}: ${error.getMessage}" )
         throw new MojoFailureException( message, error )
     }
+  }
+
+  /**
+   * Perform goal execution from this plugin.
+   */
+  def executeSelfMojo( goal : String ) : Unit = {
+    logger.info( s"Invoking goal: ${goal}" )
+    val mojoMeta = pluginMeta.getMojo( goal )
+    val mojoConfig = mojoMeta.getMojoConfiguration
+    val executionConfig = Maven.convertPlexusConfig( mojoConfig )
+    val mojoExecution = new MojoExecution( mojoMeta, executionConfig )
+    buildManager.executeMojo( session, mojoExecution )
   }
 
 }

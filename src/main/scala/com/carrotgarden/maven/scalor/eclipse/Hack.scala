@@ -27,7 +27,7 @@ trait Hack {
    */
   // http://help.eclipse.org/oxygen/index.jsp?topic=/org.eclipse.platform.doc.isv/guide/resInt_linked.htm
   def hackSymbolicLinks(
-    context :  Config.SetupContext,
+    context : Config.SetupContext,
     monitor : IProgressMonitor
   ) : Unit = {
     import context._

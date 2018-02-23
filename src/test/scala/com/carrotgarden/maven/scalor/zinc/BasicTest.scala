@@ -14,8 +14,8 @@ import org.junit.platform.runner.JUnitPlatform
 class BasicTest {
 
   @Test
-  def basic : Unit= {
-    
+  def basic : Unit = {
+
   }
 
 }

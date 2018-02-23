@@ -31,7 +31,7 @@ trait Skip {
     defaultValue = "pom"
   )
   var skipPackagingList : Array[ String ] = Array.empty
-  
+
 }
 
 /**

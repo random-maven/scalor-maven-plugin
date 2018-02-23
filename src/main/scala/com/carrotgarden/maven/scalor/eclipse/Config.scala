@@ -82,6 +82,17 @@ trait Config {
     paramsAnyGoal( logger, facade, A.mojo.`eclipse-prescomp`, ParamsPrescomp(), monitor )
   }
 
+  /**
+   * Extract plugin configuration parameters for `eclipse-format`.
+   */
+  def paramsFormat(
+    logger :  AnyLog,
+    facade :  IMavenProjectFacade,
+    monitor : IProgressMonitor
+  ) : ParamsFormat = {
+    paramsAnyGoal( logger, facade, A.mojo.`eclipse-format`, ParamsFormat(), monitor )
+  }
+
 }
 
 object Config {
@@ -98,6 +109,7 @@ object Config {
   case class BuildContext(
     logger :    AnyLog,
     config :    ParamsConfig,
+    format :    Option[ ParamsFormat ]   = None,
     restart :   Option[ ParamsRestart ]  = None,
     prescomp :  Option[ ParamsPrescomp ] = None,
     facade :    IMavenProjectFacade,

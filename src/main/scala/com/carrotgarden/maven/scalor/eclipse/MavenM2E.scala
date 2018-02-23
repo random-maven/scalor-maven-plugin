@@ -8,5 +8,5 @@ package com.carrotgarden.maven.scalor.eclipse
 trait MavenM2E {
 
   // TODO
-  
+
 }

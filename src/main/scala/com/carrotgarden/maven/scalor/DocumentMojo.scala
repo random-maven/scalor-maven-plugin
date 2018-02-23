@@ -57,17 +57,39 @@ trait ReportAnyMojo extends AbstractMojo
 }
 
 @Description( """
-Produce Scaladoc site report for compilation scope=[macro,main].
+Produce Scaladoc site report for all compilation scopes.
+Invokes goals: report-*
 """ )
 @Mojo(
-  name                         = `report-main`,
+  name                         = A.mojo.`report`,
+  defaultPhase                 = LifecyclePhase.PACKAGE,
+  requiresDependencyResolution = ResolutionScope.TEST
+)
+class ReportArkonMojo extends ReportAnyMojo
+  with document.ReportMain {
+
+  override def mojoName = A.mojo.`report`
+
+  override def performReport() : Unit = {
+    executeSelfMojo( A.mojo.`report-main` )
+    executeSelfMojo( A.mojo.`report-test` )
+  }
+
+}
+
+@Description( """
+Produce Scaladoc site report for compilation scope=[macro,main].
+A member of goal=report.
+""" )
+@Mojo(
+  name                         = A.mojo.`report-main`,
   defaultPhase                 = LifecyclePhase.PACKAGE,
   requiresDependencyResolution = ResolutionScope.COMPILE
 )
 class ReportMainMojo extends ReportAnyMojo
   with document.ReportMain {
 
-  override def mojoName : String = `report-main`
+  override def mojoName = A.mojo.`report-main`
 
   @Description( """
   Flag to skip goal execution: <code>report-main</code>.
@@ -84,16 +106,17 @@ class ReportMainMojo extends ReportAnyMojo
 
 @Description( """
 Produce Scaladoc site report for compilation scope=[test].
+A member of goal=report.
 """ )
 @Mojo(
-  name                         = `report-test`,
+  name                         = A.mojo.`report-test`,
   defaultPhase                 = LifecyclePhase.PACKAGE,
-  requiresDependencyResolution = ResolutionScope.COMPILE
+  requiresDependencyResolution = ResolutionScope.TEST
 )
 class ReportTestMojo extends ReportAnyMojo
   with document.ReportTest {
 
-  override def mojoName : String = `report-test`
+  override def mojoName = A.mojo.`report-test`
 
   @Description( """
   Flag to skip goal execution: <code>report-test</code>.
@@ -181,23 +204,57 @@ trait ScaladocAnyMojo extends AbstractMojo
     }
   }
 
+  def performGenerate() : Unit = {
+    performScaladoc
+    performPackage
+    performAttach
+  }
+
   override def perform() : Unit = {
     if ( skipScaladoc || hasSkipMojo ) {
       reportSkipReason( "Skipping disabled goal execution." )
       return
     }
-    performScaladoc
-    performPackage
-    performAttach
+    performGenerate()
+  }
+
+}
+
+@Description( """
+Produce project Scaladoc artifact for all compilation scopes.
+Invokes goals: scaladoc-*.
+""" )
+@Mojo(
+  name                         = A.mojo.`scaladoc`,
+  defaultPhase                 = LifecyclePhase.PACKAGE,
+  requiresDependencyResolution = ResolutionScope.TEST
+)
+class ScaladocArkonMojo extends ScaladocAnyMojo
+  with document.ScaladocMacro
+  with document.ScaladocMain
+  with document.ScaladocTest
+  with zinc.CompilerMacro
+  with zinc.CompilerMain
+  with zinc.CompilerTest {
+
+  override def mojoName = A.mojo.`scaladoc`
+
+  override def zincBuildCache = throwNotUsed
+
+  override def performGenerate() : Unit = {
+    executeSelfMojo( A.mojo.`scaladoc-macro` )
+    executeSelfMojo( A.mojo.`scaladoc-main` )
+    executeSelfMojo( A.mojo.`scaladoc-test` )
   }
 
 }
 
 @Description( """
 Produce project Scaladoc artifact for compilation scope=macro.
+A member of goal=scaladoc.
 """ )
 @Mojo(
-  name                         = `scaladoc-macro`,
+  name                         = A.mojo.`scaladoc-macro`,
   defaultPhase                 = LifecyclePhase.PACKAGE,
   requiresDependencyResolution = ResolutionScope.COMPILE
 )
@@ -205,7 +262,7 @@ class ScaladocMacroMojo extends ScaladocAnyMojo
   with document.ScaladocMacro
   with zinc.CompilerMacro {
 
-  override def mojoName : String = `scaladoc-macro`
+  override def mojoName = A.mojo.`scaladoc-macro`
 
   @Description( """
   Flag to skip goal execution: <code>scaladoc-macro</code>.
@@ -225,9 +282,10 @@ class ScaladocMacroMojo extends ScaladocAnyMojo
 
 @Description( """
 Produce project Scaladoc artifact for compilation scope=main.
+A member of goal=scaladoc.
 """ )
 @Mojo(
-  name                         = `scaladoc-main`,
+  name                         = A.mojo.`scaladoc-main`,
   defaultPhase                 = LifecyclePhase.PACKAGE,
   requiresDependencyResolution = ResolutionScope.COMPILE
 )
@@ -235,7 +293,7 @@ class ScaladocMainMojo extends ScaladocAnyMojo
   with document.ScaladocMain
   with zinc.CompilerMain {
 
-  override def mojoName : String = `scaladoc-main`
+  override def mojoName = A.mojo.`scaladoc-main`
 
   @Description( """
   Flag to skip goal execution: <code>scaladoc-main</code>.
@@ -252,9 +310,10 @@ class ScaladocMainMojo extends ScaladocAnyMojo
 
 @Description( """
 Produce project Scaladoc artifact for compilation scope=test.
+A member of goal=scaladoc.
 """ )
 @Mojo(
-  name                         = `scaladoc-test`,
+  name                         = A.mojo.`scaladoc-test`,
   defaultPhase                 = LifecyclePhase.PACKAGE,
   requiresDependencyResolution = ResolutionScope.TEST
 )
@@ -262,7 +321,7 @@ class ScaladocTestMojo extends ScaladocAnyMojo
   with document.ScaladocTest
   with zinc.CompilerTest {
 
-  override def mojoName : String = `scaladoc-test`
+  override def mojoName = A.mojo.`scaladoc-test`
 
   @Description( """
   Flag to skip goal execution: <code>scaladoc-test</code>.

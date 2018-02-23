@@ -100,7 +100,7 @@ trait EclipseAnyMojo extends AbstractMojo
 Install companion Eclipse plugin provided by this Maven plugin when running under Eclipse/M2E.
 """ )
 @Mojo(
-  name                         = `eclipse-config`,
+  name                         = A.mojo.`eclipse-config`,
   defaultPhase                 = LifecyclePhase.INITIALIZE,
   requiresDependencyResolution = ResolutionScope.NONE
 )
@@ -108,7 +108,7 @@ class EclipseConfigMojo extends EclipseAnyMojo
   with base.ParamsCompiler
   with eclipse.ParamsConfigBase {
 
-  override def mojoName = `eclipse-config`
+  def mojoName = A.mojo.`eclipse-config`
 
   override def performEclipse : Unit = {
 
@@ -168,24 +168,41 @@ class EclipseConfigMojo extends EclipseAnyMojo
 }
 
 @Description( """
-Manage test application process restart after full or incremental build in Eclispe/M2E.
+Transfer source format settings from Maven to Eclipse.
 Requires goal=eclipse-config.
 """ )
 @Mojo(
-  name                         = `eclipse-restart`,
-  defaultPhase                 = LifecyclePhase.TEST,
-  requiresDependencyResolution = ResolutionScope.TEST
+  name                         = A.mojo.`eclipse-format`,
+  defaultPhase                 = LifecyclePhase.GENERATE_SOURCES,
+  requiresDependencyResolution = ResolutionScope.NONE
 )
-class EclipseRestartMojo extends EclipseAnyMojo
-  with eclipse.ParamsRestartBase {
-  override def mojoName = `eclipse-restart`
+class EclipseFormatMojo extends EclipseAnyMojo
+  with eclipse.ParamsFormatBase {
+  def mojoName = A.mojo.`eclipse-format`
   override def performEclipse : Unit = {
     logger.fail( s"Design failure: must be invoked by Eclipse build participant." )
   }
 }
 
 @Description( """
-Manage Scala IDE Scala presentation compiler work-around process in Eclispe/M2E.
+Manage test application process restart after full or incremental build in Eclipse/M2E.
+Requires goal=eclipse-config.
+""" )
+@Mojo(
+  name                         = A.mojo.`eclipse-restart`,
+  defaultPhase                 = LifecyclePhase.TEST,
+  requiresDependencyResolution = ResolutionScope.TEST
+)
+class EclipseRestartMojo extends EclipseAnyMojo
+  with eclipse.ParamsRestartBase {
+  def mojoName = A.mojo.`eclipse-restart`
+  override def performEclipse : Unit = {
+    logger.fail( s"Design failure: must be invoked by Eclipse build participant." )
+  }
+}
+
+@Description( """
+Manage Scala IDE Scala presentation compiler work-around process in Eclipse/M2E.
 Requires goal=eclipse-config.
 """ )
 @Mojo(
@@ -195,7 +212,7 @@ Requires goal=eclipse-config.
 )
 class EclipsePrescompMojo extends EclipseAnyMojo
   with eclipse.ParamsPrescompBase {
-  override def mojoName = `eclipse-prescomp`
+  def mojoName = A.mojo.`eclipse-prescomp`
   override def performEclipse : Unit = {
     logger.fail( s"Design failure: must be invoked by Eclipse build participant." )
   }

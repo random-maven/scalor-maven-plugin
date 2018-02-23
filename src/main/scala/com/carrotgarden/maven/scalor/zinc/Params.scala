@@ -6,6 +6,7 @@ import com.carrotgarden.maven.tools.Description
 
 import com.carrotgarden.maven.scalor.base
 import com.carrotgarden.maven.scalor.util.Folder._
+import com.carrotgarden.maven.scalor.util.Folder
 
 /**
  * Compiler configuration parameters for scope=macro.
@@ -164,25 +165,8 @@ trait Params extends AnyRef
   with ParamsCompileOptions
   with ParamsLogging
   with ParamScalaInstall
+  with ParamsRegex
   with ParamsToolchain {
-
-  @Description( """
-  Regular expression for Java source file discovery.
-  """ )
-  @Parameter(
-    property     = "scalor.zincRegexAnyJava",
-    defaultValue = """^.+[.]java$"""
-  )
-  var zincRegexAnyJava : String = _
-
-  @Description( """
-  Regular expression for Scala source file discovery.
-  """ )
-  @Parameter(
-    property     = "scalor.zincRegexAnyScala",
-    defaultValue = """^.+[.]scala$"""
-  )
-  var zincRegexAnyScala : String = _
 
   @Description( """
   Flag to force version constistency check
@@ -210,6 +194,44 @@ trait Params extends AnyRef
     defaultValue = "text"
   )
   var zincStateStoreType : String = _
+
+}
+
+trait ParamsRegex {
+
+  @Description( """
+  Regular expression for Java source file discovery.
+  """ )
+  @Parameter(
+    property     = "scalor.zincRegexAnyJava",
+    defaultValue = """^.+[.]java$"""
+  )
+  var zincRegexAnyJava : String = _
+
+  @Description( """
+  Regular expression for Scala source file discovery.
+  """ )
+  @Parameter(
+    property     = "scalor.zincRegexAnyScala",
+    defaultValue = """^.+[.]scala$"""
+  )
+  var zincRegexAnyScala : String = _
+
+  /**
+   * Compilation scope input source files.
+   */
+  def zincBuildSourceList( buildSourceFolders : Array[ File ] ) : Array[ File ] = {
+    val zincRegexAnySource = s"${zincRegexAnyJava}|${zincRegexAnyScala}"
+    Folder.fileListByRegex( buildSourceFolders, zincRegexAnySource )
+  }
+
+  def zincBuildJavaList( buildSourceFolders : Array[ File ] ) : Array[ File ] = {
+    Folder.fileListByRegex( buildSourceFolders, zincRegexAnyJava )
+  }
+
+  def zincBuildScalaList( buildSourceFolders : Array[ File ] ) : Array[ File ] = {
+    Folder.fileListByRegex( buildSourceFolders, zincRegexAnyScala )
+  }
 
 }
 

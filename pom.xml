@@ -207,6 +207,20 @@
             <version>1.0.1.20180129202557</version>
         </dependency>
 
+        <!-- Java formatter. https://bugs.eclipse.org/bugs/show_bug.cgi?id=528085 -->
+        <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.core</artifactId>
+            <version>3.12.3</version><!-- No Java 9 modules. Fix release pending. -->
+        </dependency>
+
+        <!-- Scala formatter. -->
+        <dependency>
+            <groupId>org.scalariform</groupId>
+            <artifactId>scalariform_${version.scala.epoch}</artifactId>
+            <version>0.2.6</version>
+        </dependency>
+
         <!-- Scala compiler. -->
 
         <dependency>
@@ -257,12 +271,12 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.eclipse.jdt</groupId>
-            <artifactId>org.eclipse.jdt.core</artifactId>
-            <version>3.13.50</version>
-            <scope>provided</scope>
-        </dependency>
+        <!-- <dependency> --><!-- Note: required formatter. -->
+        <!-- <groupId>org.eclipse.jdt</groupId> -->
+        <!-- <artifactId>org.eclipse.jdt.core</artifactId> -->
+        <!-- <version>3.13.100</version> -->
+        <!-- <scope>provided</scope> -->
+        <!-- </dependency> -->
 
         <dependency>
             <groupId>org.eclipse.jdt</groupId>
@@ -516,6 +530,7 @@
         org.eclipse.m2e.core,
         org.eclipse.m2e.core.ui,
         org.eclipse.m2e.jdt,
+        scalariform,
         org.scala-lang.scala-library;bundle-version="$${range;[==,=+);${version.scala.epoch}}",
         org.scala-lang.scala-reflect;bundle-version="$${range;[==,=+);${version.scala.epoch}}",
         org.scala-lang.scala-compiler;bundle-version="$${range;[==,=+);${version.scala.epoch}}",
@@ -621,6 +636,7 @@
                         <include>test-envjs</include>
                         <include>test-cross</include>
                         <include>test-define</include>
+                        <include>test-format</include>
                         <include>test-m2e-1.8</include>
                         <include>test-m2e-1.9</include>
                     </pomIncludes>
@@ -657,7 +673,7 @@
 
     <reporting>
         <plugins>
-        
+
             <!-- Default index. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -670,13 +686,13 @@
                     </reportSet>
                 </reportSets>
             </plugin>
-            
+
             <!-- Plugin documentation. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
             </plugin>
-            
+
             <!-- <plugin> -->
             <!-- <groupId>org.apache.maven.plugins</groupId> -->
             <!-- <artifactId>maven-javadoc-plugin</artifactId> -->
@@ -684,7 +700,7 @@
             <!-- <skip>true</skip> -->
             <!-- </configuration> -->
             <!-- </plugin> -->
-            
+
         </plugins>
     </reporting>
 

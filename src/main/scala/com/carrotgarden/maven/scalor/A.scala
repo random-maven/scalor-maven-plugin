@@ -49,19 +49,29 @@ object A {
     final val `eclipse-config` = "eclipse-config"
     final val `eclipse-restart` = "eclipse-restart"
     final val `eclipse-prescomp` = "eclipse-prescomp"
+    final val `eclipse-format` = "eclipse-format"
 
+    final val `clean` = "clean"
     final val `clean-macro` = "clean-macro"
     final val `clean-main` = "clean-main"
     final val `clean-test` = "clean-test"
 
+    final val `format` = "format"
+    final val `format-macro` = "format-macro"
+    final val `format-main` = "format-main"
+    final val `format-test` = "format-test"
+
+    final val `register` = "register"
     final val `register-macro` = "register-macro"
     final val `register-main` = "register-main"
     final val `register-test` = "register-test"
 
+    final val `compile` = "compile"
     final val `compile-macro` = "compile-macro"
     final val `compile-main` = "compile-main"
     final val `compile-test` = "compile-test"
 
+    final val `scala-js-link` = "scala-js-link"
     final val `scala-js-link-main` = "scala-js-link-main"
     final val `scala-js-link-test` = "scala-js-link-test"
 
@@ -72,12 +82,15 @@ object A {
     final val `scala-js-env-conf-nodejs` = "scala-js-env-conf-nodejs"
     final val `scala-js-env-conf-phantomjs` = "scala-js-env-conf-phantomjs"
 
+    final val `scaladoc` = "scaladoc"
     final val `scaladoc-macro` = "scaladoc-macro"
     final val `scaladoc-main` = "scaladoc-main"
     final val `scaladoc-test` = "scaladoc-test"
 
+    final val `report` = "report"
     final val `report-main` = "report-main"
     final val `report-test` = "report-test"
+
   }
 
   /**

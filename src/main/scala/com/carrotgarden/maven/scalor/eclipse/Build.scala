@@ -15,6 +15,7 @@ object Build {
   case class Participant(
     context : Config.BuildContext
   ) extends MojoExecutionBuildParticipant( context.execution, true, true )
+    with Format
     with Restart
     with Prescomp {
     import Participant._
@@ -28,20 +29,25 @@ object Build {
     def facade = getMavenProjectFacade
 
     /**
-     * Enablement of Maven executions for Eclispe build type.
+     * Enablement of Maven executions for Eclipse build type.
      */
     override def appliesToBuildKind( kind : Int ) : Boolean = {
       try {
         goal match {
 
           // add sources to project, during configuration
+          case `register` if ( hasBuildConf( kind ) ) => true
           case `register-macro` if ( hasBuildConf( kind ) ) => true
           case `register-main` if ( hasBuildConf( kind ) ) => true
           case `register-test` if ( hasBuildConf( kind ) ) => true
 
           // generate runtime.js, during both full and incremental
+          case `scala-js-link` if ( hasBuildMake( kind ) ) => true
           case `scala-js-link-main` if ( hasBuildMake( kind ) ) => true
           case `scala-js-link-test` if ( hasBuildMake( kind ) ) => true
+
+          // set format to project, during configuration
+          case `eclipse-format` if ( hasBuildConf( kind ) ) => true
 
           // manage test application, only during full build
           case `eclipse-restart` if ( hasBuildFull( kind ) ) => true
@@ -54,7 +60,7 @@ object Build {
         }
       } catch {
         case error : Throwable =>
-          logger.fail( s"Participant check error", error )
+          logger.fail( s"Participant check error: ${error.getMessage}", error )
           throw error
       }
     }
@@ -68,27 +74,28 @@ object Build {
       import context.config._
       try {
         if ( eclipseLogBuildParticipant ) {
-          // log.context( "build-participant" )
           val mode = renderMode( kind )
           val exec = appliesToBuildKind( kind )
           logger.info( s"participant=${goal} mode=${mode} exec=${exec}" )
         }
         goal match {
           // execute in Eclipse
+          case `eclipse-format` if appliesToBuildKind( kind ) =>
+            formatEnsure( context, monitor )
+            null
           case `eclipse-restart` if appliesToBuildKind( kind ) =>
             restartEnsure( context, monitor )
             null
-          // execute in Eclipse
           case `eclipse-prescomp` if appliesToBuildKind( kind ) =>
             prescompEnsure( context, monitor )
             null
+          // delegate to Maven
           case _ =>
-            // delegate to Maven
             super.build( kind, monitor )
         }
       } catch {
         case error : Throwable =>
-          logger.fail( s"Participant build error", error )
+          logger.fail( s"Participant build error: ${error.getMessage}", error )
           throw error
       }
     }

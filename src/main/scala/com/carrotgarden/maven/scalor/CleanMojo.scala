@@ -32,7 +32,7 @@ trait CleanAnyMojo extends AbstractMojo
   Flag to skip goal execution: <code>clean-*</code>.
   """ )
   @Parameter(
-    property     = "scalor.skipRegister",
+    property     = "scalor.skipClean",
     defaultValue = "false"
   )
   var skipClean : Boolean = _
@@ -41,7 +41,7 @@ trait CleanAnyMojo extends AbstractMojo
 
   def performClean() : Unit = {
     resouceList.foreach { file =>
-      val path =  file.getCanonicalFile
+      val path = file.getCanonicalFile
       logger.info( s"Deleting ${path}" )
       path.delete
     }
@@ -62,17 +62,44 @@ trait CleanAnyMojo extends AbstractMojo
 }
 
 @Description( """
-Clean project cache resources for compilation scope=macro.
+Clean project cache resources for all compilation scopes.
+Invokes goals: clean-*
 """ )
 @Mojo(
-  name                         = `clean-macro`,
+  name                         = A.mojo.`clean`,
+  defaultPhase                 = LifecyclePhase.CLEAN,
+  requiresDependencyResolution = ResolutionScope.NONE
+)
+class CleanArkonMojo extends CleanAnyMojo
+  with zinc.ParamsMacroCache
+  with zinc.ParamsMainCache
+  with zinc.ParamsTestCache {
+
+  override def mojoName = A.mojo.`clean`
+
+  override def resouceList = throwNotUsed
+
+  override def performClean() : Unit = {
+    executeSelfMojo( A.mojo.`clean-macro` )
+    executeSelfMojo( A.mojo.`clean-main` )
+    executeSelfMojo( A.mojo.`clean-test` )
+  }
+
+}
+
+@Description( """
+Clean project cache resources for compilation scope=macro.
+A member of goal=clean.
+""" )
+@Mojo(
+  name                         = A.mojo.`clean-macro`,
   defaultPhase                 = LifecyclePhase.CLEAN,
   requiresDependencyResolution = ResolutionScope.NONE
 )
 class CleanMacroMojo extends CleanAnyMojo
   with zinc.ParamsMacroCache {
 
-  override def mojoName = `clean-macro`
+  override def mojoName = A.mojo.`clean-macro`
 
   @Description( """
   Flag to skip goal execution: <code>clean-macro</code>.
@@ -90,16 +117,17 @@ class CleanMacroMojo extends CleanAnyMojo
 
 @Description( """
 Clean project cache resources for compilation scope=main.
+A member of goal=clean.
 """ )
 @Mojo(
-  name                         = `clean-main`,
+  name                         = A.mojo.`clean-main`,
   defaultPhase                 = LifecyclePhase.CLEAN,
   requiresDependencyResolution = ResolutionScope.NONE
 )
 class CleanMainMojo extends CleanAnyMojo
   with zinc.ParamsMainCache {
 
-  override def mojoName = `clean-main`
+  override def mojoName = A.mojo.`clean-main`
 
   @Description( """
   Flag to skip goal execution: <code>clean-main</code>.
@@ -117,16 +145,17 @@ class CleanMainMojo extends CleanAnyMojo
 
 @Description( """
 Clean project cache resources for compilation scope=test.
+A member of goal=clean.
 """ )
 @Mojo(
-  name                         = `clean-test`,
+  name                         = A.mojo.`clean-test`,
   defaultPhase                 = LifecyclePhase.CLEAN,
   requiresDependencyResolution = ResolutionScope.NONE
 )
 class CleanTestMojo extends CleanAnyMojo
   with zinc.ParamsTestCache {
 
-  override def mojoName = `clean-test`
+  override def mojoName = A.mojo.`clean-test`
 
   @Description( """
   Flag to skip goal execution: <code>clean-test</code>.

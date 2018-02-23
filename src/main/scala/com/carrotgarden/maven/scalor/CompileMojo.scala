@@ -33,45 +33,59 @@ trait CompileAnyMojo extends AbstractMojo
   )
   var skipCompile : Boolean = _
 
-  //  @Description( """
-  //  Flag to skip compile execution in Eclipse: <code>compile-*</code>.
-  //  """ )
-  //  @Parameter(
-  //    property     = "scalor.skipCompileEclipse", //
-  //    defaultValue = "true"
-  //  )
-  //  var skipCompileEclipse : Boolean = _
+  def performCompile() : Unit = {
+    zincPerformCompile()
+  }
 
   override def perform() : Unit = {
     if ( skipCompile || hasSkipMojo ) {
       reportSkipReason( "Skipping disabled goal execution." )
       return
     }
-    //    if ( hasEclipse && skipCompileEclipse ) {
-    //      reportSkipReason( "Skipping eclipse build invocation." )
-    //      return
-    //    }
-    //    if ( hasIncremental ) {
-    //      reportSkipReason( "Skipping incremental build invocation." )
-    //      return
-    //    }
-    zincPerformCompile()
+    performCompile()
+  }
+
+}
+
+@Description( """
+Compile Java and Scala sources in all compilation scopes.
+Invokes goals: compile-*
+""" )
+@Mojo(
+  name                         = A.mojo.`compile`,
+  defaultPhase                 = LifecyclePhase.COMPILE,
+  requiresDependencyResolution = ResolutionScope.TEST
+)
+class CompileArkonMojo extends CompileAnyMojo
+  with zinc.CompilerMacro
+  with zinc.CompilerMain
+  with zinc.CompilerTest {
+
+  override def mojoName = A.mojo.`compile`
+
+  override def zincBuildCache = throwNotUsed
+
+  override def performCompile() : Unit = {
+    executeSelfMojo( A.mojo.`compile-macro` )
+    executeSelfMojo( A.mojo.`compile-main` )
+    executeSelfMojo( A.mojo.`compile-test` )
   }
 
 }
 
 @Description( """
 Compile Java and Scala sources in compilation scope=macro.
+A member of goal=compile.
 """ )
 @Mojo(
-  name                         = `compile-macro`,
+  name                         = A.mojo.`compile-macro`,
   defaultPhase                 = LifecyclePhase.COMPILE,
   requiresDependencyResolution = ResolutionScope.COMPILE
 )
 class CompileMacroMojo extends CompileAnyMojo
   with zinc.CompilerMacro {
 
-  override def mojoName = `compile-macro`
+  override def mojoName = A.mojo.`compile-macro`
 
   @Description( """
     Flag to skip goal execution: <code>compile-macro</code>.
@@ -88,16 +102,17 @@ class CompileMacroMojo extends CompileAnyMojo
 
 @Description( """
 Compile Java and Scala sources in compilation scope=main.
+A member of goal=compile.
 """ )
 @Mojo(
-  name                         = `compile-main`,
+  name                         = A.mojo.`compile-main`,
   defaultPhase                 = LifecyclePhase.COMPILE,
   requiresDependencyResolution = ResolutionScope.COMPILE
 )
 class CompileMainMojo extends CompileAnyMojo
   with zinc.CompilerMain {
 
-  override def mojoName = `compile-main`
+  override def mojoName = A.mojo.`compile-main`
 
   @Description( """
   Flag to skip goal execution: <code>compile-main</code>.
@@ -114,16 +129,17 @@ class CompileMainMojo extends CompileAnyMojo
 
 @Description( """
 Compile Java and Scala sources in compilation scope=test.
+A member of goal=compile.
 """ )
 @Mojo(
-  name                         = `compile-test`,
+  name                         = A.mojo.`compile-test`,
   defaultPhase                 = LifecyclePhase.TEST_COMPILE,
   requiresDependencyResolution = ResolutionScope.TEST
 )
 class CompileTestMojo extends CompileAnyMojo
   with zinc.CompilerTest {
 
-  override def mojoName = `compile-test`
+  override def mojoName = A.mojo.`compile-test`
 
   @Description( """
   Flag to skip goal execution: <code>compile-test</code>.

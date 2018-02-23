@@ -112,24 +112,16 @@ trait ScalaJsLinkAnyMojo extends AbstractMojo
     }
   }
 
-  override def perform() : Unit = {
-
-    if ( skipLinker || hasSkipMojo ) {
-      reportSkipReason( "Skipping disabled goal execution." )
-      return
-    }
-
+  def performInvocation() : Unit = {
     if ( linkerLibraryDetect && libraryArtifactOption.isEmpty ) {
       reportSkipReason( s"Skipping execution: Scala.js library missing: ${linkerLibraryRegex}." )
       return
     }
-
     val updateList = if ( hasIncremental ) {
       contextUpdateResult( buildDependencyFolders, linkerClassRegex.r )
     } else {
       Array.empty[ UpdateResult ]
     }
-
     if ( hasIncremental ) {
       logger.info( s"Incremental build request." )
       val hasUpdate = updateList.count( _.hasUpdate ) > 0
@@ -140,7 +132,38 @@ trait ScalaJsLinkAnyMojo extends AbstractMojo
       logger.info( s"Full linker build request." )
       performLinker( updateList )
     }
+  }
 
+  override def perform() : Unit = {
+    if ( skipLinker || hasSkipMojo ) {
+      reportSkipReason( "Skipping disabled goal execution." )
+      return
+    }
+    performInvocation()
+  }
+
+}
+
+@Description( """
+Generate Scala.js runtime JavaScript for all scopes.
+Invokes goals: scala-js-link-*.
+""" )
+@Mojo(
+  name                         = A.mojo.`scala-js-link`,
+  defaultPhase                 = LifecyclePhase.PROCESS_CLASSES,
+  requiresDependencyResolution = ResolutionScope.TEST
+)
+class ScalaJsLinkArkonMojo extends ScalaJsLinkAnyMojo
+  with scalajs.BuildMain
+  with scalajs.BuildTest
+  with scalajs.ParamsLinkMain
+  with scalajs.ParamsLinkTest {
+
+  override def mojoName = A.mojo.`scala-js-link`
+
+  override def performInvocation() : Unit = {
+    executeSelfMojo( A.mojo.`scala-js-link-main` )
+    executeSelfMojo( A.mojo.`scala-js-link-test` )
   }
 
 }
@@ -148,6 +171,7 @@ trait ScalaJsLinkAnyMojo extends AbstractMojo
 @Description( """
 Generate Scala.js runtime JavaScript for scope=main.
 Provides incremental linking in M2E.
+A member of goal=scala-js-link.
 """ )
 @Mojo(
   name                         = A.mojo.`scala-js-link-main`,
@@ -176,6 +200,7 @@ class ScalaJsLinkMainMojo extends ScalaJsLinkAnyMojo
 @Description( """
 Generate Scala.js runtime JavaScript for scope=test.
 Provides incremental linking in M2E.
+A member of goal=scala-js-link.
 """ )
 @Mojo(
   name                         = A.mojo.`scala-js-link-test`,

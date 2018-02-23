@@ -3,9 +3,11 @@
 
 Build integrator for Java, Scala, Scala.macro, Scala.js, Eclipse and Maven.
 
-[![Apache License](https://img.shields.io/github/license/mojohaus/versions-maven-plugin.svg?label=License)](http://www.apache.org/licenses/)
+[![Project License](https://img.shields.io/github/license/mojohaus/versions-maven-plugin.svg?label=License)](http://www.apache.org/licenses/)
 [![Travis Status](https://travis-ci.org/random-maven/scalor-maven-plugin.svg?branch=master)](https://travis-ci.org/random-maven/scalor-maven-plugin/builds)
 [![AppVey Status](https://ci.appveyor.com/api/projects/status/5ena8xeyujneqqog?svg=true)](https://ci.appveyor.com/project/random-maven/scalor-maven-plugin/history)
+[![Project Files](https://tokei.rs/b1/github/random-maven/scalor-maven-plugin?category=files)](https://github.com/random-maven/scalor-maven-plugin)
+[![Project Lines](https://tokei.rs/b1/github/random-maven/scalor-maven-plugin?category=lines)](https://github.com/random-maven/scalor-maven-plugin)
 [![Lines of Code](https://tokei.rs/b1/github/random-maven/scalor-maven-plugin)](https://github.com/random-maven/scalor-maven-plugin)
 
 | Install | Production Release | Development Release |
@@ -47,6 +49,8 @@ Eclipse and Maven
 * creates custom [Scala installations for Scala IDE](http://scala-ide.org/docs/4.0.x/advancedsetup/scala-installations.html)
 * exposes comprehensive [configuration and logging](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html)
 * provides [identical compiler settings](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html#zincCompileOptions)
+for Maven and Eclipse
+* provides [identical formatter settings](https://random-maven.github.io/scalor-maven-plugin/2.12/format-mojo.html)
 for Maven and Eclipse
 * works around spurious crashes of [Scala IDE presentation compiler](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-prescomp-mojo.html)
 * auto-restarts test application [after full or incremental build in Eclipse](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-restart-mojo.html)
@@ -204,6 +208,9 @@ mvn clean install -P scalor
 
                                     <!-- Setup Eclipse plugin. -->
                                     <goal>eclipse-config</goal>
+
+                                    <!-- Transfer format settings. -->
+                                    <goal>eclipse-format</goal>
 
                                     <!-- Manage test application. -->
                                     <goal>eclipse-restart</goal>

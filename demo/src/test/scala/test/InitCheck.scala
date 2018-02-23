@@ -6,9 +6,9 @@ import org.junit.Assert._
 
 /**
  * Verify Scala.js initializer is in fact invoked.
- * 
+ *
  * Module initializer must provide global variable value.
- * 
+ *
  * This is a worker test invoked in JS-VM by master controller in JVM.
  */
 // Sample console output:

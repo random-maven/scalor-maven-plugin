@@ -10,7 +10,7 @@ class ClasserTest extends AnyRef {
   import Classer._
 
   @Test
-  def companion: Unit = {
+  def companion : Unit = {
     implicit val loader = this.getClass.getClassLoader
 
     val module = trueCompanion( classOf[ ClasserModule ] )

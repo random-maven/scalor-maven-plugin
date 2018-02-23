@@ -14,6 +14,7 @@ import java.io.File
 
 import ScalaInstall._
 import Module._
+import com.carrotgarden.maven.scalor.util.Text
 
 /**
  * Scala compiler installation descriptor.
@@ -75,7 +76,6 @@ case class ScalaInstall(
  */
 object ScalaInstall {
 
-  import util.Hex
   import util.Maven._
   import util.Error._
 
@@ -83,7 +83,7 @@ object ScalaInstall {
     val text = entriesFrom( install ).mkString( ";" )
     val array = text.getBytes( StandardCharsets.UTF_8 )
     val digest = MessageDigest.getInstance( "MD5" ).digest( array )
-    val result = new String( Hex.value( digest ) );
+    val result = new String( Text.renderHex( digest ) );
     result
   }
 

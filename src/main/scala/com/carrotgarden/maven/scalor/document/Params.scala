@@ -23,11 +23,11 @@ import org.apache.maven.project.MavenProjectHelper
  */
 trait Params {
 
-//  @Description( """
-//  Maven archive builder.
-//  """ )
-//  @Component( role = classOf[ Archiver ], hint = "jar" )
-//  var archiveBuilder : JarArchiver = _
+  //  @Description( """
+  //  Maven archive builder.
+  //  """ )
+  //  @Component( role = classOf[ Archiver ], hint = "jar" )
+  //  var archiveBuilder : JarArchiver = _
 
   @Description( """
   Configuration of Scaladoc archive jar. 

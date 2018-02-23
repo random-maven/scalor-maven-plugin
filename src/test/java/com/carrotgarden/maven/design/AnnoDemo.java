@@ -28,7 +28,7 @@ public class AnnoDemo {
 	public static Annotation setAttrValue(Annotation anno, Class<? extends Annotation> type, String attrName,
 			Object newValue) throws Exception {
 		InvocationHandler handler = new AnnotationInvocationHandler(anno, attrName, newValue);
-		Annotation proxy = (Annotation) Proxy.newProxyInstance(anno.getClass().getClassLoader(), new Class[] { type },
+		Annotation proxy = (Annotation) Proxy.newProxyInstance(anno.getClass().getClassLoader(), new Class[]{type},
 				handler);
 		return proxy;
 	}

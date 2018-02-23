@@ -97,7 +97,7 @@ public interface ManageOS {
 	static void resolvePath(int fd) {
 		byte[] filePath = new byte[NIX_C.PATH_MAX];
 		if (LIB_C.fcntl(fd, NIX_C.F_GETPATH, filePath) != -1) {
-			
+
 		} else {
 
 		}

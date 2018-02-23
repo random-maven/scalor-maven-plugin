@@ -10,7 +10,7 @@ object Base {
 
   /**
    * M2E project configurator Scala -> Java  compatibility layer.
-   * 
+   *
    * Convert "protected" to "public" for self-type trait member access.
    */
   abstract class Conf extends AbstractProjectConfigurator {

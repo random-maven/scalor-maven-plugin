@@ -5,6 +5,7 @@ import java.io.File
 import org.apache.maven.plugins.annotations.Parameter
 
 import com.carrotgarden.maven.scalor.base
+import com.carrotgarden.maven.scalor.format
 import com.carrotgarden.maven.scalor.zinc
 import com.carrotgarden.maven.tools.Description
 
@@ -34,7 +35,7 @@ trait ParamsConfigBase extends AnyRef
 }
 
 /**
- * Manage test application restart after full or incremental build in Eclispe/M2E.
+ * Manage test application restart after full or incremental build in Eclipse/M2E.
  */
 trait ParamsRestartBase extends AnyRef
   with base.ParamsAny
@@ -47,7 +48,7 @@ trait ParamsRestartBase extends AnyRef
 }
 
 /**
- * Manage Scala IDE Scala presentation compiler work-around process in Eclispe/M2E.
+ * Manage Scala IDE Scala presentation compiler work-around process in Eclipse/M2E.
  */
 trait ParamsPrescompBase extends AnyRef
   with ParamsPrescompCore
@@ -58,7 +59,44 @@ trait ParamsPrescompBase extends AnyRef
 }
 
 /**
- * Manage test application restart after full or incremental build in Eclispe/M2E.
+ * Apply source format settings from Maven to Eclipse.
+ */
+trait ParamsFormatBase extends AnyRef
+  with ParamsFormatCore
+  with ParamsLogConfig {
+
+  override def paramsLogConfig = eclipseFormatLogParameters
+
+}
+
+/**
+ * Apply source format settings from Maven to Eclipse.
+ */
+trait ParamsFormatCore extends AnyRef
+  with format.ParamsSettings {
+
+  @Description( """
+  Enable to transfer source format settings from Maven to Eclipse.
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseFormatEnable",
+    defaultValue = "true"
+  )
+  var eclipseFormatEnable : Boolean = _
+
+  @Description( """
+  Enable to log in Eclipse/M2E effective configuration parameters for this Maven execution.
+  """ )
+  @Parameter(
+    property     = "scalor.eclipseFormatLogParameters",
+    defaultValue = "false"
+  )
+  var eclipseFormatLogParameters : Boolean = _
+
+}
+
+/**
+ * Manage test application restart after full or incremental build in Eclipse/M2E.
  */
 trait ParamsRestartCore {
 
@@ -267,7 +305,7 @@ Eclipse -> Window -> Show View -> Progress
 }
 
 /**
- * Manage Scala IDE Scala presentation compiler work-around process in Eclispe/M2E.
+ * Manage Scala IDE Scala presentation compiler work-around process in Eclipse/M2E.
  */
 trait ParamsPrescompCore {
 
@@ -512,7 +550,7 @@ trait ParamsLogger {
   //  var eclipseLogInstallResolve : Boolean = _
 
   @Description( """
-  Report all available custom Scala installations persisted by Eclispe Scala IDE plugin.
+  Report all available custom Scala installations persisted by Eclipse Scala IDE plugin.
   Provides titles, dependencies, etc., for every custom Scala installation.
   Generated report output file parameter: 
     <a href="#eclipseInstallReportFile"><b>eclipseInstallReportFile</b></a>.
@@ -1001,6 +1039,30 @@ case class ParamsPrescomp() extends AnyRef
 
   override def updateParams( paramValue : UpdateFun ) : Unit = {
     variableUpdateBlock[ ParamsPrescompBase ]( paramValue )
+  }
+
+  override def update( paramValue : UpdateFun ) : Unit = {
+    this.updateParams( paramValue )
+  }
+
+}
+
+/**
+ * Expose updatable parameter values for `eclipse-format`.
+ */
+case class ParamsFormat() extends AnyRef
+  with ParamsFormatBase
+  with ParamsConfigValue {
+
+  override def paramsCount =
+    variableCount[ ParamsFormatBase ]
+
+  override def reportParams( reportValue : ReportFun ) : Unit = {
+    variableReportBlock[ ParamsFormatBase ]( reportValue )
+  }
+
+  override def updateParams( paramValue : UpdateFun ) : Unit = {
+    variableUpdateBlock[ ParamsFormatBase ]( paramValue )
   }
 
   override def update( paramValue : UpdateFun ) : Unit = {

@@ -1,0 +1,32 @@
+#Scalariform formatter preferences
+#Wed Feb 21 22:05:36 CST 2018
+singleCasePatternOnNewline=true
+spaceBeforeContextColon=false
+compactControlReadability=false
+doubleIndentMethodDeclaration=false
+compactStringConcatenation=false
+spaceInsideBrackets=true
+firstParameterOnNewline=Force
+spaceInsideParentheses=true
+indentWithTabs=false
+spacesAroundMultiImports=true
+alignArguments=true
+spaceBeforeColon=true
+doubleIndentConstructorArguments=false
+alignSingleLineCaseStatements.maxArrowIndent=40
+alignParameters=true
+multilineScaladocCommentsStartOnFirstLine=false
+spacesWithinPatternBinders=true
+formatXml=true
+danglingCloseParenthesis=Force
+doubleIndentClassDeclaration=false
+alignSingleLineCaseStatements=true
+indentPackageBlocks=true
+indentSpaces=2
+firstArgumentOnNewline=Force
+rewriteArrowSymbols=false
+preserveSpaceBeforeArguments=false
+allowParamGroupsOnNewlines=false
+placeScaladocAsterisksBeneathSecondAsterisk=false
+newlineAtEndOfFile=true
+indentLocalDefs=false

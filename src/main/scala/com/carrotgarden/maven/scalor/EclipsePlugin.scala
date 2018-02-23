@@ -96,6 +96,8 @@ object EclipsePlugin {
       def hasGoal( goal : String ) = execution.getGoal == goal
       val subMon = SubMonitor.convert( null )
       val config = cached( paramsConfig( logger, facade, subMon ) )
+      val format = if ( hasGoal( A.mojo.`eclipse-format` ) )
+        Some( cached( paramsFormat( logger, facade, subMon ) ) ) else None
       val restart = if ( hasGoal( A.mojo.`eclipse-restart` ) )
         Some( cached( paramsRestart( logger, facade, subMon ) ) ) else None
       val prescomp = if ( hasGoal( A.mojo.`eclipse-prescomp` ) )
@@ -103,6 +105,7 @@ object EclipsePlugin {
       val context = eclipse.Config.BuildContext(
         logger    = logger,
         config    = config,
+        format    = format,
         restart   = restart,
         prescomp  = prescomp,
         facade    = facade,

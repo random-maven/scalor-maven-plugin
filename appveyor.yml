@@ -5,7 +5,7 @@ clone_depth: 10
 branches:
   only:
     - master
-    - develop
+    - /develop/
 environment:
   global:
     HOME: C:/Users/appveyor

@@ -1,13 +1,20 @@
 package com.carrotgarden.maven.scalor.util
 
-import org.apache.maven.artifact.Artifact
-import java.net.URLClassLoader
+import java.io.File
 import java.net.URL
-import org.apache.maven.project.MavenProject
-import scala.collection.JavaConverters._
-import org.apache.maven.plugin.descriptor.PluginDescriptor
+import java.net.URLClassLoader
+
+import scala.collection.JavaConverters.asScalaBufferConverter
+import scala.collection.JavaConverters.asScalaSetConverter
+
+import org.apache.maven.artifact.Artifact
 import org.apache.maven.model.Dependency
 import org.apache.maven.model.Model
+import org.apache.maven.plugin.descriptor.PluginDescriptor
+import org.apache.maven.project.MavenProject
+import org.codehaus.plexus.configuration.PlexusConfiguration
+import org.codehaus.plexus.util.xml.Xpp3Dom
+import org.twdata.maven.mojoexecutor.PlexusConfigurationUtils
 
 /**
  * Maven support.
@@ -49,7 +56,6 @@ object Maven {
    * Verify that artifact jar contains named resource.
    */
   def hasResourceMatch( artifact : Artifact, resource : String ) : Boolean = {
-    import Folder._
     val url = artifact.getFile.getCanonicalFile.toURI.toURL
     val loader = new URLClassLoader( Array[ URL ]( url ) );
     val result = loader.getResources( resource ).hasMoreElements
@@ -110,6 +116,33 @@ object Maven {
       val identity = s"${getGroupId}:${getArtifactId}"
       matcher.reset( identity ).matches
     }
+  }
+
+  /**
+   * Find matching file in a project/parent hierarchy.
+   */
+  def locateHierarchyFile( project : MavenProject, path : String, enableParent : Boolean ) : Option[ File ] = {
+    if ( project == null ) {
+      None
+    } else {
+      val file = new File( project.getBasedir, path )
+      if ( file.exists ) {
+        Some( file )
+      } else if ( enableParent ) {
+        locateHierarchyFile( project.getParent, path, enableParent )
+      } else {
+        None
+      }
+    }
+  }
+
+  val emptyXpp3Dom = new Xpp3Dom( "configuration" )
+
+  def convertPlexusConfig( config : PlexusConfiguration ) : Xpp3Dom = {
+    if ( config == null ) {
+      return emptyXpp3Dom
+    }
+    PlexusConfigurationUtils.toXpp3Dom( config )
   }
 
 }

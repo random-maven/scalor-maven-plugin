@@ -20,7 +20,7 @@ object Init {
 
     // This module output is printed on JS-VM console (Node.js or Browser).
     println( s"Test initializer module: ${args( 0 )} ${args( 1 )}" )
-    
+
     // Provide some global value for verification by JUnit test in JS-VM.
     Global.initializerValue = "abrakadabra"
   }

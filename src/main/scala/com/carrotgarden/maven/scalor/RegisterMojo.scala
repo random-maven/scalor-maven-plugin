@@ -110,7 +110,7 @@ trait RegisterAnyMojo extends AbstractMojo
   def registerTarget : RegisterFun[ String ]
 
   def reportPathOld( path : Path ) = s"Already registered:   ${path}"
-  
+
   def reportPathNew( path : Path ) = s"Registering new root: ${path}"
 
   /**
@@ -181,10 +181,44 @@ trait RegisterAnyMojo extends AbstractMojo
 }
 
 @Description( """
-Register Java, Scala, resource root folders for compilation scope=macro.
+Register sources for all compilation scopes. 
+Invokes goals: register-*
 """ )
 @Mojo(
-  name                         = `register-macro`,
+  name                         = A.mojo.`register`,
+  defaultPhase                 = LifecyclePhase.INITIALIZE,
+  requiresDependencyResolution = ResolutionScope.NONE
+)
+class RegisterArkonMojo extends RegisterAnyMojo
+  with base.BuildMacroSources
+  with base.BuildMainSources
+  with base.BuildTestSources
+  with base.BuildMainTarget
+  with base.BuildTestTarget {
+
+  override def mojoName = A.mojo.`register`
+
+  override def registerResource = throwNotUsed
+  override def registerSource = throwNotUsed
+  override def registerTarget = throwNotUsed
+  override def resourceRootList = throwNotUsed
+  override def sourceRootList = throwNotUsed
+  override def targetRoot = throwNotUsed
+
+  override def perfromRegister() : Unit = {
+    executeSelfMojo( A.mojo.`register-macro` )
+    executeSelfMojo( A.mojo.`register-main` )
+    executeSelfMojo( A.mojo.`register-test` )
+  }
+
+}
+
+@Description( """
+Register Java, Scala, resource root folders for compilation scope=macro.
+A member of goal=register.
+""" )
+@Mojo(
+  name                         = A.mojo.`register-macro`,
   defaultPhase                 = LifecyclePhase.INITIALIZE,
   requiresDependencyResolution = ResolutionScope.NONE
 )
@@ -192,9 +226,9 @@ class RegisterMacroMojo extends RegisterAnyMojo
   with base.BuildMacroSources
   with base.BuildMainTarget {
 
-  import base.Build._
+  override def mojoName = A.mojo.`register-macro`
 
-  override def mojoName = `register-macro`
+  import base.Build._
 
   @Description( """
   Flag to skip goal execution: <code>register-macro</code>.
@@ -218,9 +252,10 @@ class RegisterMacroMojo extends RegisterAnyMojo
 
 @Description( """
 Register Java, Scala, resource root folders for compilation scope=main.
+A member of goal=register.
 """ )
 @Mojo(
-  name                         = `register-main`,
+  name                         = A.mojo.`register-main`,
   defaultPhase                 = LifecyclePhase.INITIALIZE,
   requiresDependencyResolution = ResolutionScope.NONE
 )
@@ -228,7 +263,7 @@ class RegisterMainMojo extends RegisterAnyMojo
   with base.BuildMainSources
   with base.BuildMainTarget {
 
-  override def mojoName = `register-main`
+  override def mojoName = A.mojo.`register-main`
 
   @Description( """
   Flag to skip goal execution: <code>register-main</code>.
@@ -251,9 +286,10 @@ class RegisterMainMojo extends RegisterAnyMojo
 
 @Description( """
 Register Java, Scala, resource root folders for compilation scope=test.
+A member of goal=register.
 """ )
 @Mojo(
-  name                         = `register-test`,
+  name                         = A.mojo.`register-test`,
   defaultPhase                 = LifecyclePhase.INITIALIZE,
   requiresDependencyResolution = ResolutionScope.NONE
 )
@@ -261,7 +297,7 @@ class RegisterTestMojo extends RegisterAnyMojo
   with base.BuildTestSources
   with base.BuildTestTarget {
 
-  override def mojoName = `register-test`
+  override def mojoName = A.mojo.`register-test`
 
   @Description( """
   Flag to skip goal execution: <code>register-test</code>.

@@ -93,8 +93,7 @@ trait Compiler {
    * Compilation scope input source files.
    */
   def zincBuildSources : Array[ File ] = {
-    val zincRegexAnySource = s"${zincRegexAnyJava}|${zincRegexAnyScala}"
-    Folder.fileListByRegex( buildSourceFolders, zincRegexAnySource )
+    zincBuildSourceList( buildSourceFolders )
   }
 
   /**

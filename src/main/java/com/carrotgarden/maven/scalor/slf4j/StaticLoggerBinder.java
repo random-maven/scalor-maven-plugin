@@ -45,7 +45,6 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
 	 */
 	protected final transient MavenLoggerFactory loggers = new MavenLoggerFactory();
 
-
 	/**
 	 * Return the singleton of this class.
 	 * 
