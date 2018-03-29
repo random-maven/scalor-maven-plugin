@@ -177,7 +177,7 @@
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>scalor-maven-plugin_2.12</artifactId>
-                <!-- <version>1.3.2.20180223214239</version> -->
+                <version>1.4.0.20180329174003</version>
 
                 <configuration>
 
