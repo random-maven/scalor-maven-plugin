@@ -1,18 +1,18 @@
 
 ### Scalor Maven Plugin
 
-Build integrator for Java, Scala, Scala.macro, Scala.js, Eclipse and Maven.
+Build integrator for Java, Scala, Scala.macro, Scala.js, Scala.native, Eclipse and Maven.
 
-[![Project License](https://img.shields.io/github/license/mojohaus/versions-maven-plugin.svg?label=License)](http://www.apache.org/licenses/)
-[![Travis Status](https://travis-ci.org/random-maven/scalor-maven-plugin.svg?branch=master)](https://travis-ci.org/random-maven/scalor-maven-plugin/builds)
-[![AppVey Status](https://ci.appveyor.com/api/projects/status/5ena8xeyujneqqog?svg=true)](https://ci.appveyor.com/project/random-maven/scalor-maven-plugin/history)
-[![Project Files](https://tokei.rs/b1/github/random-maven/scalor-maven-plugin?category=files)](https://github.com/random-maven/scalor-maven-plugin)
-[![Project Lines](https://tokei.rs/b1/github/random-maven/scalor-maven-plugin?category=lines)](https://github.com/random-maven/scalor-maven-plugin)
-[![Lines of Code](https://tokei.rs/b1/github/random-maven/scalor-maven-plugin)](https://github.com/random-maven/scalor-maven-plugin)
+[![Project License][licence_icon]][licence_link]
+[![Travis Status][travis_icon]][travis_link]
+[![Appvey Status][appvey_icon]][appvey_link]
+[![Project Files][tokei_files_icon]][tokei_basic_link]
+[![Project Lines][tokei_lines_icon]][tokei_basic_link]
+[![Lines of Code][tokei_basic_icon]][tokei_basic_link]
 
 | Install | Production Release | Development Release |
-| ----------------------------------- | ------------------ | ------------------- |
-| <h5> Scalor Plugin 1.X for Scala IDE 4.7 </h5> | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.carrotgarden.maven/scalor-maven-plugin_2.12/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/com.carrotgarden.maven/scalor-maven-plugin_2.12)  | [![Download](https://api.bintray.com/packages/random-maven/maven/scalor-maven-plugin_2.12/images/download.svg)](https://bintray.com/random-maven/maven/scalor-maven-plugin_2.12/_latestVersion) |
+|---------|--------------------|---------------------|
+| <h5>Scalor Plugin 1.X for Scala IDE 4.7</h5> | [![Central][central_212_icon]][central_212_link] | [![Bintray][bintray_212_icon]][bintray_212_link] | 
 
 Similar plugins
 * [scala-maven-plugin](https://github.com/davidB/scala-maven-plugin)
@@ -37,18 +37,24 @@ Scala.macro
 Scala.js
 * compiles and [links Scala.js JavaScrpt](https://github.com/scala-js/scala-js-cli)
 * supports [JavaScrpt module initializers](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-link-main-mojo.html#linkerMainInitializerList)
-* same-project JS-VM + JVM [JUnit testing](https://github.com/random-scalor/scala-js-junit-tools)
-* incremental cached linking in [Eclipse/M2E](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-link-main-mojo.html)
+* same-project JS-VM + JVM [JUnit testing](https://github.com/random-maven/scala-js-junit-tools)
+* incremental cached JS linking in [Eclipse/M2E](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-link-main-mojo.html)
 * [auto-provisions](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-env-prov-webjars-mojo.html) 
   Webjars [resources for testing](https://www.webjars.org/) 
 * [auto-provisions](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-env-prov-nodejs-mojo.html)
   JavaScript [JS-VM environments for testing](https://www.scala-js.org/doc/project/js-environments.html)
 
+Scala.native
+* compiles and links [scala-native](https://github.com/scala-native/scala-native) binary runtime
+* supports embedding of [objcopy resources](http://www.linuxjournal.com/content/embedding-file-executable-aka-hello-world-version-5967)
+* supports compiling of C/CPP user sources
+* incremental cached Native linking in [Eclipse/M2E](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-native-link-main-mojo.html)
+
 Eclipse and Maven
 * brings and installs companion [Eclipse plugin](https://github.com/random-maven/scalor-maven-plugin/blob/master/src/main/scala/com/carrotgarden/maven/scalor/EclipsePlugin.scala)
 * creates custom [Scala installations for Scala IDE](http://scala-ide.org/docs/4.0.x/advancedsetup/scala-installations.html)
 * exposes comprehensive [configuration and logging](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html)
-* provides [identical compiler settings](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html#zincCompileOptions)
+* provides [identical compiler settings](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html#zincOptionsScala)
 for Maven and Eclipse
 * provides [identical formatter settings](https://random-maven.github.io/scalor-maven-plugin/2.12/format-mojo.html)
 for Maven and Eclipse
@@ -61,6 +67,7 @@ Primary Maven goals
 * [register-main](https://random-maven.github.io/scalor-maven-plugin/2.12/register-main-mojo.html)
 * [compile-main](https://random-maven.github.io/scalor-maven-plugin/2.12/compile-main-mojo.html)
 * [scala-js-link-main](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-link-main-mojo.html)
+* [scala-native-link-main](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-native-link-main-mojo.html)
 
 Complete goals reference
 
@@ -131,7 +138,8 @@ Required version mapping is provided via `scalor-maven-plugin` configuration ent
 ### Usage example
 
 Project Examples:
-* basic [demonstration project](https://github.com/random-maven/scalor-maven-plugin/blob/master/demo)
+* basic [demo project](https://github.com/random-maven/scalor-maven-plugin/blob/master/demo)
+* test project for [Scala Native](https://github.com/random-maven/scalor-maven-plugin/tree/master/src/it/test-native)
 * test project for cross Scala [2.11, 2.12, 2.13](https://github.com/random-maven/scalor-maven-plugin/tree/master/src/it/test-cross)
 * `scalor-maven-plugin` project itself is a cross
 [master](https://github.com/random-maven/scalor-maven-plugin/blob/master/pom.xml)
@@ -256,3 +264,28 @@ git clone git@github.com:random-maven/scalor-maven-plugin.git
 cd scalor-maven-plugin
 ./mvnw.sh clean install -B -P skip-test
 ```
+
+
+
+[licence_icon]: https://img.shields.io/github/license/random-maven/scalor-maven-plugin.svg?label=License
+[licence_link]: http://www.apache.org/licenses/
+
+[travis_icon]: https://travis-ci.org/random-maven/scalor-maven-plugin.svg
+[travis_link]: https://travis-ci.org/random-maven/scalor-maven-plugin/builds
+
+[appvey_icon]: https://ci.appveyor.com/api/projects/status/5ena8xeyujneqqog?svg=true
+[appvey_link]: https://ci.appveyor.com/project/random-maven/scalor-maven-plugin/history 
+
+[tokei_files_icon]: https://tokei.rs/b1/github/random-maven/scalor-maven-plugin?category=files 
+[tokei_lines_icon]: https://tokei.rs/b1/github/random-maven/scalor-maven-plugin?category=lines 
+[tokei_basic_icon]: https://tokei.rs/b1/github/random-maven/scalor-maven-plugin
+[tokei_basic_link]: https://github.com/random-maven/scalor-maven-plugin 
+
+[central_212_icon]: https://img.shields.io/maven-central/v/com.carrotgarden.maven/scalor-maven-plugin_2.12.svg 
+[central_212_link]: http://search.maven.org/#search%7Cga%7C1%7Cscalor-maven-plugin
+
+[bintray_212_icon]: https://api.bintray.com/packages/random-maven/maven/scalor-maven-plugin_2.12/images/download.svg
+[bintray_212_link]: https://bintray.com/random-maven/maven/scalor-maven-plugin_2.12
+
+[gemnasium_icon]: https://gemnasium.com/random-maven/scalor-maven-plugin.svg
+[gemnasium_link]: https://gemnasium.com/random-maven/scalor-maven-plugin

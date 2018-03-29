@@ -89,6 +89,8 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
         registerExecution( CLEAN, `clean-main` )
         registerExecution( CLEAN, `clean-test` )
 
+        registerExecution( INITIALIZE, `setup-cross` )
+
         registerExecution( INITIALIZE, `eclipse-config` )
 
         registerExecution( INITIALIZE, `register-macro` )
@@ -106,10 +108,12 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
         registerExecution( PROCESS_TEST_RESOURCES, `scala-js-env-conf-phantomjs` )
 
         registerExecution( PROCESS_CLASSES, `scala-js-link-main` )
+        registerExecution( PROCESS_CLASSES, `scala-native-link-main` )
 
         registerExecution( TEST_COMPILE, `compile-test` )
 
         registerExecution( PROCESS_TEST_CLASSES, `scala-js-link-test` )
+        registerExecution( PROCESS_TEST_CLASSES, `scala-native-link-test` )
 
         registerExecution( TEST, `eclipse-restart` )
         registerExecution( TEST, `eclipse-prescomp` )
@@ -117,8 +121,12 @@ class Lifecycle extends AbstractMavenLifecycleParticipant {
         registerExecution( PACKAGE, `scaladoc-macro` )
         registerExecution( PACKAGE, `scaladoc-main` )
         registerExecution( PACKAGE, `scaladoc-test` )
+
         registerExecution( PACKAGE, `report-main` )
         registerExecution( PACKAGE, `report-test` )
+
+        registerExecution( PACKAGE, `scala-native-pack-main` )
+        registerExecution( PACKAGE, `scala-native-pack-test` )
 
       case None =>
         Throw( "Missing scalor plugin." )

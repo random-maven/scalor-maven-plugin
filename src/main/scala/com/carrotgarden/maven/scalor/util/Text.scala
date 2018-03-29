@@ -3,6 +3,7 @@ package com.carrotgarden.maven.scalor.util
 import java.io.File
 import java.nio.file.Files
 import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 
 /**
  * Text support.
@@ -32,7 +33,7 @@ object Text {
    */
   def textRead(
     file :    File,
-    charset : Charset = Charset.forName( "UTF-8" )
+    charset : Charset = StandardCharsets.UTF_8
   ) : String = {
     new String( Files.readAllBytes( file.toPath ), charset )
   }
@@ -43,7 +44,7 @@ object Text {
   def textWrite(
     text :    String,
     file :    File,
-    charset : Charset = Charset.forName( "UTF-8" )
+    charset : Charset = StandardCharsets.UTF_8
   ) : Unit = {
     Files.write( file.toPath, text.getBytes( charset ) )
   }

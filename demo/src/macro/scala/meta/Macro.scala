@@ -14,22 +14,10 @@ trait Macro extends API {
    */
   override def nameOf( member : Any ) : String = macro MacroBundle.nameOf
 
+  def systemProperty( name : String ) : String = macro MacroBundle.systemProperty
+
 }
 
 object Macro extends Macro {
-
-}
-
-class MacroBundle( val c : Context ) extends RichContext {
-
-  import c.universe._
-  import meta.API;
-
-  def nameOf( member : c.Expr[ Any ] ) : c.Expr[ String ] = {
-    val name = extractName( member.tree ).decodedName.toString
-    val result = q"$name"
-    info( s"${showCode( result )}" )
-    c.Expr[ String ]( result )
-  }
 
 }

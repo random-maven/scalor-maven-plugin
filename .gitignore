@@ -1,14 +1,20 @@
 
-# Eclipse
-bin/
-.project
-.settings/
-.classpath
-
 # Maven
 target/
 test-repo/
 test-tool/
 
+# Eclipse
+bin/
+.project
+.settings/
+.classpath
+.externalToolBuilders/
+
 # Scala IDE
-.cache-*
+.cache*
+.worksheet/
+
+# Scala.native
+*.o
+*.ll

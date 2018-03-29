@@ -7,7 +7,7 @@ Location:
 What to look for:
 * `scalor.install.title` as expected
 * `Xplugin` comes from `definePluginList`
-* plugin-provided `zincCompileOptions` are present
+* plugin-provided `zincOptionsScala` are present
 
 Note:
 * this file is a bag of options from different sources, ignore unfamiliar
@@ -28,7 +28,6 @@ apiDiff=false
 compileorder=Mixed
 deprecation=true
 eclipse.preferences.version=1
-encoding=UTF-8
 feature=true
 formatter.danglingCloseParenthesis=Force
 formatter.firstArgumentOnNewline=Force
@@ -36,7 +35,7 @@ formatter.firstParameterOnNewline=Force
 formatter.useProjectSpecificSettings=true
 recompileOnMacroDef=true
 relationsDebug=false
-scala.compiler.additionalParams=
+scala.compiler.additionalParams=-Dkp\:genAsciiNames\=true -Dscalor.artifact\=scalor-maven-plugin-demo -Xmaxerrs 10 -language\:higherKinds
 scala.compiler.installation=1162769519
 scala.compiler.sourceLevel=2.12
 scala.compiler.useProjectSettings=true

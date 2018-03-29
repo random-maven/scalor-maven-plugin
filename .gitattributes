@@ -1,0 +1,20 @@
+# keep first
+* text=auto
+
+# unix eol by default
+text eol=lf
+
+# normalize to unix (convert crlf => lf)
+*.js      eol=lf
+*.xml     eol=lf
+*.css     eol=lf
+*.html    eol=lf
+*.sh      eol=lf
+*.txt     eol=lf
+*.log     eol=lf
+*.java    eol=lf
+*.scala   eol=lf
+
+# normalize to windows (convert lf => crlf) 
+*.bat     eol=crlf
+*.cmd     eol=crlf

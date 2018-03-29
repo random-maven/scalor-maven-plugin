@@ -2,7 +2,7 @@ package com.carrotgarden.maven.scalor.eclipse
 
 import java.io.File
 
-import scala.collection.JavaConverters.asScalaBufferConverter
+import scala.collection.JavaConverters._
 import scala.reflect.ClassTag
 
 import org.apache.maven.RepositoryUtils
@@ -261,8 +261,13 @@ object Maven {
 
     val repoSystem = hackRepoSystem( request )
     val repoSession = context.getRepositorySession
-    val remoteRepoList = RepositoryUtils.toRepos( mavenFace.getArtifactRepositories )
     val stereotypes = repoSession.getArtifactTypeRegistry
+    val remoteRepoList = {
+      val projRepos = mavenFace.getArtifactRepositories
+      val pluginRepos = mavenFace.getPluginArtifactRepositories
+      val availableRepos = projRepos.asScala ++ pluginRepos.asScala
+      RepositoryUtils.toRepos( availableRepos.asJava )
+    }
 
     val aether = resolve.AetherUnit(
       repoSystem,

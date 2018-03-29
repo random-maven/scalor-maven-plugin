@@ -21,7 +21,7 @@
         <version.scala.epoch>2.11</version.scala.epoch>
         <version.scala.release>2.11.0</version.scala.release>
 
-        <version.scala.zinc>1.1.1</version.scala.zinc>
+        <version.scala.zinc>1.1.3</version.scala.zinc>
         <version.scala.plugin.macro>2.1.0</version.scala.plugin.macro>
 
         <version.sjs.epoch>0.6</version.sjs.epoch>

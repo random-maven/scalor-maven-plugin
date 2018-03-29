@@ -9,9 +9,61 @@ import java.io.File
 
 trait ParamsAny extends AnyRef
   with base.BuildAnySources
-  with zinc.ParamsRegex
+  with ParamsRegex
   with ParamsLogging
   with ParamsSettings {
+
+}
+
+trait ParamsRegex extends base.BuildAnyRegex {
+
+  @Description( """
+  Regular expression for Java source file discovery via inclusion by match against absolute path.
+  File match is defined as: <code>include.hasMatch && ! exclude.hasMatch</code>.
+  Matches files with <code>java</code> extension by default.
+<pre>
+  """ )
+  @Parameter(
+    property     = "scalor.formatRegexJavaInclude",
+    defaultValue = """.+[.]java"""
+  )
+  var formatRegexJavaInclude : String = _
+
+  @Description( """
+  Regular expression for Java source file discovery via exclusion by match against absolute path.
+  File match is defined as: <code>include.hasMatch && ! exclude.hasMatch</code>.
+  Matches no files when empty by default.
+  """ )
+  @Parameter(
+    property = "scalor.formatRegexJavaExclude"
+  )
+  var formatRegexJavaExclude : String = _
+
+  @Description( """
+  Regular expression for Scala source file discovery via inclusion by match against absolute path.
+  File match is defined as: <code>include.hasMatch && ! exclude.hasMatch</code>.
+  Matches files with <code>scala</code> extension by default.
+  """ )
+  @Parameter(
+    property     = "scalor.formatRegexScalaInclude",
+    defaultValue = """.+[.]scala"""
+  )
+  var formatRegexScalaInclude : String = _
+
+  @Description( """
+  Regular expression for Scala source file discovery via exclusion by match against absolute path.
+  File match is defined as: <code>include.hasMatch && ! exclude.hasMatch</code>.
+  Matches no files when empty by default.
+  """ )
+  @Parameter(
+    property = "scalor.formatRegexScalaExclude"
+  )
+  var formatRegexScalaExclude : String = _
+
+  override def buildRegexJavaInclude = formatRegexJavaInclude
+  override def buildRegexJavaExclude = formatRegexJavaExclude
+  override def buildRegexScalaInclude = formatRegexScalaInclude
+  override def buildRegexScalaExclude = formatRegexScalaExclude
 
 }
 
@@ -133,7 +185,7 @@ trait ParamsSettings {
   """ )
   @Parameter(
     property     = "scalor.formatSourceEncoding",
-    defaultValue = "${project.build.sourceEncoding}"
+    defaultValue = "UTF-8"
   )
   var formatSourceEncoding : String = _
 

@@ -21,6 +21,7 @@ trait CompileAnyMojo extends AbstractMojo
   with base.ParamsCompiler
   with resolve.Maven
   with zinc.Params
+  with zinc.ParamsRegex
   with zinc.Compiler
   with zinc.Resolve {
 

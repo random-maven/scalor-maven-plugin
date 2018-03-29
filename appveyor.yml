@@ -1,5 +1,5 @@
-version: '{build}'
 os: Windows Server 2012
+version: '{build}'
 skip_tags: true
 clone_depth: 10
 branches:
@@ -8,15 +8,17 @@ branches:
     - /develop/
 environment:
   global:
-    HOME: C:/Users/appveyor
+    HOME: C:\Users\appveyor
     APPVEYOR_SAVE_CACHE_ON_ERROR: true
   matrix:
-    - JAVA_HOME: C:/Program Files/Java/jdk1.8.0
-    - JAVA_HOME: C:/Program Files/Java/jdk9
+    - JAVA_HOME: C:\Program Files\Java\jdk1.8.0
+    - JAVA_HOME: C:\Program Files\Java\jdk9
 cache:
-  - "%HOME%/.m2 -> ./.mvn/ci/cache-appveyor.md" 
+  - C:\Users\appveyor\.m2 -> .\.mvn\ci\cache-appveyor.md
 install:
-  - set "PATH=C:/cygwin/bin;%JAVA_HOME%/bin;%PATH%"
+  - git config --global core.symlinks true
+  - git reset --hard
+  - set "PATH=C:\cygwin\bin;%JAVA_HOME%\bin;%PATH%"
   - echo %JAVA_HOME%
   - echo %PATH%
 build_script:
@@ -24,7 +26,6 @@ build_script:
   - bash -c "cp -f -r ./.mvn/ci/.scalaide $HOME/.scalaide"
   - bash -c "cp -f ./.mvn/ci/settings.xml $HOME/.m2/settings.xml"
   - bash -c "cp -f ./.mvn/ci/toolchains-appveyor.xml $HOME/.m2/toolchains.xml"
-  - ./.mvn/cross-links.cmd
-  - ./.mvn/verify.cmd
-  - ./.mvn/wipe-repo.cmd
+  - .\.mvn\verify.cmd
+  - .\.mvn\wipe-repo.cmd
 test: off

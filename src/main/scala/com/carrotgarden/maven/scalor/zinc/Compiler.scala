@@ -37,11 +37,10 @@ trait CompilerMacro extends Compiler
   with base.BuildMacro
   with ParamsMacro {
 
-  self : Resolve //
-  with base.Build with base.Logging with base.Params with base.ParamsDefine //
-  =>
+  self : Resolve with base.Logging =>
 
-  def zincBuildCache = zincCacheMacro
+  override def zincBuildCache = zincCacheMacro
+
 }
 
 /**
@@ -51,11 +50,10 @@ trait CompilerMain extends Compiler
   with base.BuildMain
   with ParamsMain {
 
-  self : Resolve //
-  with base.Build with base.Logging with base.Params with base.ParamsDefine //
-  =>
+  self : Resolve with base.Logging =>
 
-  def zincBuildCache = zincCacheMain
+  override def zincBuildCache = zincCacheMain
+
 }
 
 /**
@@ -65,21 +63,23 @@ trait CompilerTest extends Compiler
   with base.BuildTest
   with ParamsTest {
 
-  self : Resolve //
-  with base.Build with base.Logging with base.Params with base.ParamsDefine //
-  =>
+  self : Resolve with base.Logging =>
 
-  def zincBuildCache = zincCacheTest
+  override def zincBuildCache = zincCacheTest
+
 }
 
 /**
  * Shared compiler interface.
  */
-trait Compiler {
+trait Compiler extends AnyRef
+  with base.Build
+  with base.BuildAnyRegex
+  with base.Params
+  with base.ParamsDefine
+  with Params {
 
-  self : Params with Resolve //
-  with base.Build with base.Logging with base.Params with base.ParamsDefine //
-  =>
+  self : Resolve with base.Logging =>
 
   import Compiler._
 
@@ -93,7 +93,7 @@ trait Compiler {
    * Compilation scope input source files.
    */
   def zincBuildSources : Array[ File ] = {
-    zincBuildSourceList( buildSourceFolders )
+    buildSourceList( buildSourceFolders )
   }
 
   /**
@@ -210,7 +210,7 @@ trait Compiler {
 
     // Provide compiler options.
     val optionsConfig = Settings.extract(
-      compilerInstall.version, parseCompileOptions, logger.fail
+      compilerInstall.version, parseOptionsScala, logger.fail
     )
 
     // Provide user reporting.
@@ -229,8 +229,8 @@ trait Compiler {
     if ( zincLogCompilerPluginList ) {
       loggerReportFileList( "Compiler plugin list:", compilerPluginList )
     }
-    if ( zincLogCompileOptions ) {
-      val reportFile = zincCompileOptionsReport
+    if ( zincLogCompilerOptions ) {
+      val reportFile = zincCompilerOptionsReport
       val reportText = optionsConfig.reportFun()
       ensureParent( reportFile )
       persistString( reportFile, reportText )
@@ -245,7 +245,7 @@ trait Compiler {
     // Assemble compilation options.
     val pluginOptions = compilerPluginList.flatMap( pluginStanza( _ ) )
     val scalacOptions = optionsConfig.standard ++ pluginOptions
-    val javacOptions = Array.empty[ String ] // not used
+    val javacOptions = parseOptionsJava
     val compileOrder = CompileOrder.valueOf( optionsConfig.compileOrder )
     val maxErrors = optionsConfig.maxErrors
 
@@ -390,12 +390,21 @@ object Compiler {
   /**
    * Scala compiler argument: plugin stanza: activate plugin by jar path.
    */
-  def pluginStanza( file : File ) = Array[ String ]( "-Xplugin", file.getCanonicalPath )
+  def pluginStanza( file : File ) : Array[ String ] = {
+    Array[ String ]( "-Xplugin", file.getCanonicalPath )
+  }
+
+  def pluginStanza( module : Module ) : Array[ String ] = {
+    pluginStanza( Module.fileFrom( module ) )
+  }
 
   /**
    * Convert into Zinc scala compiler installation format.
    */
-  def instanceFrom( loader : ClassLoader, install : ScalaInstall ) : ScalaInstance = {
+  def instanceFrom(
+    loader :  ClassLoader,
+    install : ScalaInstall
+  ) : ScalaInstance = {
     import install._
     new ScalaInstance(
       version        = version.unparse,

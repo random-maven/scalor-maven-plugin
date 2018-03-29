@@ -33,7 +33,7 @@ trait ParamsRegex {
   """ )
   @Parameter(
     property     = "scalor.linkerClassRegex",
-    defaultValue = "^.+[.]sjsir$"
+    defaultValue = ".+[.]sjsir"
   )
   var linkerClassRegex : String = _
 
@@ -129,7 +129,7 @@ trait ParamsInitListTest extends ParamsInitListAny {
 trait ParamsLibrary {
 
   @Description( """
-  Regular expression used to detect when Scala.js library is present on class path.
+  Regular expression used to discover Scala.js core <code>sjsir</code> library from class path.
   This regular expression is matched against resolved project depenencies in given scope.
   Regular expression in the form: <code>${groupId}:${artifactId}</code>.
   Enablement parameter: <a href="#linkerLibraryDetect"><b>linkerLibraryDetect</b></a>.
@@ -141,8 +141,7 @@ trait ParamsLibrary {
   var linkerLibraryRegex : String = _
 
   @Description( """
-  Invoke Scala.js linker only when Scala.js library is detected
-  in project dependencies with given scope.
+  Invoke Scala.js linker only when Scala.js library is detected in project dependencies with given scope.
   Detection parameter: <a href="#linkerLibraryRegex"><b>linkerLibraryRegex</b></a>.
   """ )
   @Parameter(
@@ -160,7 +159,7 @@ trait ParamsLogging {
   Use to review actual Scala.js linker invocation configuration.
   """ )
   @Parameter(
-    property     = "scalor.linkerLogOptions", //
+    property     = "scalor.linkerLogOptions",
     defaultValue = "false"
   )
   var linkerLogOptions : Boolean = _
@@ -170,7 +169,7 @@ trait ParamsLogging {
   Use to review actual generated output <code>runtime.js</code> location.
   """ )
   @Parameter(
-    property     = "scalor.linkerLogRuntime", //
+    property     = "scalor.linkerLogRuntime",
     defaultValue = "true"
   )
   var linkerLogRuntime : Boolean = _
@@ -180,7 +179,7 @@ trait ParamsLogging {
   Use to review actual resources used for <code>*.sjsir</code> class discovery.
   """ )
   @Parameter(
-    property     = "scalor.linkerLogClassPath", //
+    property     = "scalor.linkerLogClassPath",
     defaultValue = "false"
   )
   var linkerLogClassPath : Boolean = _
@@ -190,7 +189,7 @@ trait ParamsLogging {
   Use to review linker performance profile.
   """ )
   @Parameter(
-    property     = "scalor.linkerLogBuildStats", //
+    property     = "scalor.linkerLogBuildStats",
     defaultValue = "false"
   )
   var linkerLogBuildStats : Boolean = _
@@ -200,7 +199,7 @@ trait ParamsLogging {
   Use to review actual <code>*.sjsir</code> classes which triggered Eclipse linker build.
   """ )
   @Parameter(
-    property     = "scalor.linkerLogUpdateResult", //
+    property     = "scalor.linkerLogUpdateResult",
     defaultValue = "false"
   )
   var linkerLogUpdateResult : Boolean = _

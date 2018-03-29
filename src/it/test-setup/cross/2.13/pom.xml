@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
@@ -5,18 +6,17 @@
 
     <parent>
         <groupId>com.carrotgarden.maven</groupId>
-        <artifactId>scalor-maven-plugin-test-cross</artifactId>
-        <version>${revision}</version>
-        <relativePath>./pom.xml</relativePath>
+        <artifactId>scalor-maven-plugin-test-setup</artifactId>
+        <version>0-SNAPSHOT</version>
+        <relativePath>../..</relativePath>
     </parent>
 
     <groupId>com.carrotgarden.maven</groupId>
-    <artifactId>scalor-maven-plugin-test-cross_2.12</artifactId>
-    <version>${revision}</version>
-    <packaging>jar</packaging>
+    <artifactId>scalor-maven-plugin-test-setup_2.13</artifactId>
+    <version>0-SNAPSHOT</version>
 
     <description>
-        Produce cross-scala version build for Scala 2.12.
+        Produce cross-scala version build for Scala 2.13.
     </description>
 
     <properties>

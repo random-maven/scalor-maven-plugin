@@ -11,12 +11,45 @@ import org.webjars.WebJarExtractor
 import com.carrotgarden.maven.scalor.base
 import com.carrotgarden.maven.scalor.util
 import com.carrotgarden.maven.tools.Description
+import org.apache.maven.project.MavenProject
 
 /**
  * Common Scala.js VM environment configuration.
  */
 trait EnvConfAny extends AnyRef
   with base.ParamsAny {
+
+  @Description( """
+  Enable to log provided JS-VM environment configuration.
+  Use to review actual settings used to create tesing JS-VM instance:
+<pre>
+  - full path to the executable
+  - process launch arguments
+  - process environment variables
+  - webjars scripts settings
+  - runtime.js module settings 
+  - etc.
+</pre>
+  """ )
+  @Parameter(
+    property     = "scalor.envconfLogConfig",
+    defaultValue = "false"
+  )
+  var envconfLogConfig : Boolean = _
+
+  @Description( """
+  System properties injected during environment configuration invocation.
+  Normally includes settings for <code>scala-js-junit-tools</code>.
+  Separator parameter: <a href="#commonSequenceSeparator"><b>commonSequenceSeparator</b></a>.
+  Mapping parameter: <a href="#commonMappingPattern"><b>commonMappingPattern</b></a>.
+  """ )
+  @Parameter(
+    property     = "scalor.envconfSystemProperties",
+    defaultValue = """
+    basedir = ${project.basedir}  ★
+    """
+  )
+  var envconfSystemProperties : String = _
 
   @Description( """
   Scala.js testing module script used to run tests inside JavaScript VM environment.
@@ -62,17 +95,21 @@ trait EnvConfAny extends AnyRef
   def paramVars : String
   def paramType : String
 
-  def configurationLocation : File = {
-    Context.configLocation
-  }
-
-  def renderConfig : String = {
-    val config = Context.configExtract()
-    util.Classer.prettyPrint( config )
+  def configurationFile : File = {
+    Context.configLocation.getCanonicalFile
   }
 
   /**
-   * Provide Scala.js JavaScript VM execution environment configuration.
+   * Report Scala.js JavaScript VM execution environment configuration.
+   */
+  def configurationReport : String = {
+    import com.carrotgarden.sjs.junit.Config._
+    val config = Context.configExtract()
+    Config.configUnparse( config )
+  }
+
+  /**
+   * Persist Scala.js JavaScript VM execution environment configuration.
    */
   def configureEnvironment() : Unit = {
 
@@ -113,6 +150,7 @@ trait EnvConfAny extends AnyRef
 
     // Publish to default location.
     Context.configPersist( config )
+
   }
 
 }

@@ -83,6 +83,65 @@ trait BuildAnyTarget {
 }
 
 /**
+ * Regular expression to select sources.
+ */
+trait BuildAnyRegex {
+
+  import com.carrotgarden.maven.scalor.util.Folder
+  import BuildAnyRegex._
+
+  /**
+   * Regular expression to include Java sources.
+   */
+  def buildRegexJavaInclude : String
+
+  /**
+   * Regular expression to exclude Java sources.
+   */
+  def buildRegexJavaExclude : String
+
+  /**
+   * Regular expression to include Scala sources.
+   */
+  def buildRegexScalaInclude : String
+
+  /**
+   * Regular expression to exclude Scala sources.
+   */
+  def buildRegexScalaExclude : String
+
+  def buildSourceList( buildSourceFolders : Array[ File ] ) : Array[ File ] = {
+    val include = Option( regexOR( buildRegexJavaInclude, buildRegexScalaInclude ) )
+    val exclude = Option( regexOR( buildRegexJavaExclude, buildRegexScalaExclude ) )
+    Folder.fileListByRegex( buildSourceFolders, include, exclude )
+  }
+
+  def buildSourceJavaList( buildSourceFolders : Array[ File ] ) : Array[ File ] = {
+    val include = Option( buildRegexJavaInclude )
+    val exclude = Option( buildRegexJavaExclude )
+    Folder.fileListByRegex( buildSourceFolders, include, exclude )
+  }
+
+  def buildSourceScalaList( buildSourceFolders : Array[ File ] ) : Array[ File ] = {
+    val include = Option( buildRegexScalaInclude )
+    val exclude = Option( buildRegexScalaExclude )
+    Folder.fileListByRegex( buildSourceFolders, include, exclude )
+  }
+
+}
+
+object BuildAnyRegex {
+
+  def regexOR( one : String, two : String ) = {
+    if ( one == null && two == null ) null
+    else if ( one != null && two == null ) one
+    else if ( one == null && two != null ) two
+    else s"${one}|${two}"
+  }
+
+}
+
+/**
  * Build definition for compilation scope=macro.
  */
 trait BuildMacro extends Build

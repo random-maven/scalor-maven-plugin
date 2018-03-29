@@ -7,7 +7,7 @@ import scala.reflect.macros.whitebox.Context
 /**
  * Provide rich macro context.
  */
-trait RichContext {
+trait MacroContext {
 
   val c : Context
   import c.universe._

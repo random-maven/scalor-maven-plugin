@@ -7,6 +7,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase
 import org.apache.maven.plugins.annotations.ResolutionScope
 import com.carrotgarden.maven.tools.Description
 import java.util.Arrays
+import org.apache.maven.project.MavenProject
+import java.io.File
 
 /**
  * Shared Scala.js JavaScript VM environment interface.
@@ -167,29 +169,33 @@ trait ScalaJsEnvConfAnyMojo extends ScalaJsEnvAnyMojo
   )
   var skipEnvConf : Boolean = _
 
-  @Description( """
-  Enable to log provided JS-VM environment configuration.
-  Use to review actual settings used to create tesing JS-VM instance:
-<pre>
-  - full path to the executable
-  - process launch arguments
-  - process environment variables
-  - webjars scripts settings
-  - runtime.js module settings 
-  - etc.
-</pre>
-  """ )
-  @Parameter(
-    property     = "scalor.envconfLogConfig",
-    defaultValue = "false"
-  )
-  var envconfLogConfig : Boolean = _
-
   def reportConfiguration() : Unit = {
     if ( envconfLogConfig ) {
-      logger.info( s"Configuration path: ${configurationLocation}" )
-      logger.info( s"Configuration data:\n${renderConfig}" )
+      logger.info( s"Configuration file: ${configurationFile}" )
+      logger.info( s"Configuration data:\n${configurationReport}" )
     }
+  }
+
+  /**
+   * Override scala-js-junit-tools settings.
+   */
+  def configurationOverride() : Unit = {
+    parseCommonMapping( envconfSystemProperties ).foreach {
+      case ( key, value ) => sys.props.put( key, value )
+    }
+  }
+
+  def environmentName : String
+
+  override def perform() : Unit = {
+    if ( skipEnvConf ) {
+      reportSkipReason( "Skipping disabled goal execution." )
+      return
+    }
+    logger.info( s"Configuring enironment: ${environmentName}" )
+    configurationOverride()
+    configureEnvironment()
+    reportConfiguration()
   }
 
 }
@@ -208,15 +214,7 @@ class ScalaJsEnvConfNodeJsMojo extends ScalaJsEnvConfAnyMojo
 
   override def mojoName = A.mojo.`scala-js-env-conf-nodejs`
 
-  override def perform() : Unit = {
-    if ( skipEnvConf ) {
-      reportSkipReason( "Skipping disabled goal execution." )
-      return
-    }
-    logger.info( "Configuring enironment: Node.js" )
-    configureEnvironment()
-    reportConfiguration()
-  }
+  override def environmentName : String = "Node.js"
 
 }
 
@@ -234,14 +232,6 @@ class ScalaJsEnvConfPhantomJsMojo extends ScalaJsEnvConfAnyMojo
 
   override def mojoName = A.mojo.`scala-js-env-conf-phantomjs`
 
-  override def perform() : Unit = {
-    if ( skipEnvConf ) {
-      reportSkipReason( "Skipping disabled goal execution." )
-      return
-    }
-    logger.info( "Configuring enironment: Phantom.js" )
-    configureEnvironment()
-    reportConfiguration()
-  }
+  override def environmentName : String = "Phantom.js"
 
 }

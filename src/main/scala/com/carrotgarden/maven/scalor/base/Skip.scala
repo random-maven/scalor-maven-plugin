@@ -19,7 +19,7 @@ trait Skip {
   """ )
   @Parameter(
     property     = "scalor.skipLogReason",
-    defaultValue = "false"
+    defaultValue = "true"
   )
   var skipLogReason : Boolean = _
 

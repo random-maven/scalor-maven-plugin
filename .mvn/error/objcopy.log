@@ -1,0 +1,129 @@
+BFD header file version (GNU Binutils) 2.29.1
+
+elf64-x86-64
+ (header little endian, data little endian)
+  i386
+elf32-i386
+ (header little endian, data little endian)
+  i386
+elf32-iamcu
+ (header little endian, data little endian)
+  iamcu
+elf32-x86-64
+ (header little endian, data little endian)
+  i386
+a.out-i386-linux
+ (header little endian, data little endian)
+  i386
+pei-i386
+ (header little endian, data little endian)
+  i386
+pei-x86-64
+ (header little endian, data little endian)
+  i386
+elf64-l1om
+ (header little endian, data little endian)
+  l1om
+elf64-k1om
+ (header little endian, data little endian)
+  k1om
+elf64-little
+ (header little endian, data little endian)
+  i386
+  l1om
+  k1om
+  iamcu
+  plugin
+elf64-big
+ (header big endian, data big endian)
+  i386
+  l1om
+  k1om
+  iamcu
+  plugin
+elf32-little
+ (header little endian, data little endian)
+  i386
+  l1om
+  k1om
+  iamcu
+  plugin
+elf32-big
+ (header big endian, data big endian)
+  i386
+  l1om
+  k1om
+  iamcu
+  plugin
+plugin
+ (header little endian, data little endian)
+srec
+ (header endianness unknown, data endianness unknown)
+  i386
+  l1om
+  k1om
+  iamcu
+  plugin
+symbolsrec
+ (header endianness unknown, data endianness unknown)
+  i386
+  l1om
+  k1om
+  iamcu
+  plugin
+verilog
+ (header endianness unknown, data endianness unknown)
+  i386
+  l1om
+  k1om
+  iamcu
+  plugin
+tekhex
+ (header endianness unknown, data endianness unknown)
+  i386
+  l1om
+  k1om
+  iamcu
+  plugin
+binary
+ (header endianness unknown, data endianness unknown)
+  i386
+  l1om
+  k1om
+  iamcu
+  plugin
+ihex
+ (header endianness unknown, data endianness unknown)
+  i386
+  l1om
+  k1om
+  iamcu
+  plugin
+
+         elf64-x86-64 elf32-i386 elf32-iamcu elf32-x86-64 a.out-i386-linux 
+    i386 elf64-x86-64 elf32-i386 ----------- elf32-x86-64 a.out-i386-linux
+    l1om ------------ ---------- ----------- ------------ ----------------
+    k1om ------------ ---------- ----------- ------------ ----------------
+   iamcu ------------ ---------- elf32-iamcu ------------ ----------------
+  plugin ------------ ---------- ----------- ------------ ----------------
+
+         pei-i386 pei-x86-64 elf64-l1om elf64-k1om elf64-little elf64-big 
+    i386 pei-i386 pei-x86-64 ---------- ---------- elf64-little elf64-big
+    l1om -------- ---------- elf64-l1om ---------- elf64-little elf64-big
+    k1om -------- ---------- ---------- elf64-k1om elf64-little elf64-big
+   iamcu -------- ---------- ---------- ---------- elf64-little elf64-big
+  plugin -------- ---------- ---------- ---------- elf64-little elf64-big
+
+         elf32-little elf32-big plugin srec symbolsrec verilog tekhex binary 
+    i386 elf32-little elf32-big ------ srec symbolsrec verilog tekhex binary
+    l1om elf32-little elf32-big ------ srec symbolsrec verilog tekhex binary
+    k1om elf32-little elf32-big ------ srec symbolsrec verilog tekhex binary
+   iamcu elf32-little elf32-big ------ srec symbolsrec verilog tekhex binary
+  plugin elf32-little elf32-big ------ srec symbolsrec verilog tekhex binary
+
+         ihex 
+    i386 ihex
+    l1om ihex
+    k1om ihex
+   iamcu ihex
+  plugin ihex

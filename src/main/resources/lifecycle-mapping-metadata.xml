@@ -66,6 +66,14 @@
                     <goal>scala-js-env-conf-nodejs</goal>
                     <goal>scala-js-env-conf-phantomjs</goal>
 
+                    <goal>scala-native-link</goal>
+                    <goal>scala-native-link-main</goal>
+                    <goal>scala-native-link-test</goal>
+
+                    <goal>scala-native-pack</goal>
+                    <goal>scala-native-pack-main</goal>
+                    <goal>scala-native-pack-test</goal>
+
                     <goal>report</goal>
                     <goal>report-main</goal>
                     <goal>report-test</goal>
@@ -73,6 +81,8 @@
                     <goal>scaladoc</goal>
                     <goal>scaladoc-main</goal>
                     <goal>scaladoc-test</goal>
+
+                    <goal>setup-cross</goal>
 
                 </goals>
             </pluginExecutionFilter>

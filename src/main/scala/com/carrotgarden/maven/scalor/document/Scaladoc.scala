@@ -1,29 +1,13 @@
 package com.carrotgarden.maven.scalor.document
 
 import java.io.File
-import java.util.ArrayList
-import java.util.Arrays
-import java.util.Collections
 
-import org.apache.maven.artifact.Artifact
-import org.apache.maven.execution.MavenSession
-import org.apache.maven.model.Dependency
-import org.apache.maven.plugin.MojoExecution
-import org.apache.maven.plugins.annotations.Component
 import org.apache.maven.plugins.annotations.Parameter
-import org.apache.maven.project.MavenProject
+
+import com.carrotgarden.maven.scalor.base
 import com.carrotgarden.maven.tools.Description
-import org.codehaus.plexus.archiver.Archiver
-import org.codehaus.plexus.archiver.jar.JarArchiver
-import org.apache.maven.archiver.MavenArchiveConfiguration
-import org.apache.maven.project.MavenProjectHelper
-import org.apache.maven.reporting.MavenReport
-import java.util.Locale
-import org.codehaus.doxia.sink.Sink
 
-import java.io.File
-
-trait ScaladocAny {
+trait ScaladocAny extends AnyRef {
 
   @Description( """
   Root name for the generated Scaladoc jar file.
@@ -40,6 +24,58 @@ trait ScaladocAny {
   def scaladocOutputFolder : File
 
   def scaladocArchiveName = s"${scaladocFinalName}-${scaladocClassifier}.jar"
+
+}
+
+trait ScaladocRegex extends base.BuildAnyRegex {
+
+  @Description( """
+  Regular expression for Java source file discovery via inclusion by match against absolute path.
+  File match is defined as: <code>include.hasMatch && ! exclude.hasMatch</code>.
+  Matches files with <code>java</code> extension by default.
+<pre>
+  """ )
+  @Parameter(
+    property     = "scalor.scaladocRegexJavaInclude",
+    defaultValue = """.+[.]java"""
+  )
+  var scaladocRegexJavaInclude : String = _
+
+  @Description( """
+  Regular expression for Java source file discovery via exclusion by match against absolute path.
+  File match is defined as: <code>include.hasMatch && ! exclude.hasMatch</code>.
+  Matches no files when empty by default.
+  """ )
+  @Parameter(
+    property = "scalor.scaladocRegexJavaExclude"
+  )
+  var scaladocRegexJavaExclude : String = _
+
+  @Description( """
+  Regular expression for Scala source file discovery via inclusion by match against absolute path.
+  File match is defined as: <code>include.hasMatch && ! exclude.hasMatch</code>.
+  Matches files with <code>scala</code> extension by default.
+  """ )
+  @Parameter(
+    property     = "scalor.scaladocRegexScalaInclude",
+    defaultValue = """.+[.]scala"""
+  )
+  var scaladocRegexScalaInclude : String = _
+
+  @Description( """
+  Regular expression for Scala source file discovery via exclusion by match against absolute path.
+  File match is defined as: <code>include.hasMatch && ! exclude.hasMatch</code>.
+  Matches no files when empty by default.
+  """ )
+  @Parameter(
+    property = "scalor.scaladocRegexScalaExclude"
+  )
+  var scaladocRegexScalaExclude : String = _
+
+  override def buildRegexJavaInclude = scaladocRegexJavaInclude
+  override def buildRegexJavaExclude = scaladocRegexJavaExclude
+  override def buildRegexScalaInclude = scaladocRegexScalaInclude
+  override def buildRegexScalaExclude = scaladocRegexScalaExclude
 
 }
 

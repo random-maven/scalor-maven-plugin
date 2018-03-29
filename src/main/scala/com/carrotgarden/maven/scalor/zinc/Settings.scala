@@ -39,8 +39,23 @@ object Settings {
   /**
    * Produce compiler options as arguments list.
    */
-  def unparse( settings : nsc.Settings ) : Array[ String ] = {
-    settings.userSetSettings.toList.sortBy( _.name ).flatMap( _.unparse ).toArray
+  def unparseArray( settings : nsc.Settings ) : Array[ String ] = {
+    userSettings( settings ).toList.sortBy( _.name ).flatMap( _.unparse ).toArray
+  }
+
+  /**
+   * Produce compiler options as arguments list.
+   */
+  def unparseString( settings : nsc.Settings ) : String = {
+    unparseArray( settings ).mkString( " " )
+  }
+
+  /**
+   * User-set settings with work around for missing entries.
+   */
+  def userSettings( settings : nsc.Settings ) : Set[ nsc.Settings#Setting ] = {
+    val result = settings.userSetSettings ++ settings.prefixSettings
+    result.toSet.asInstanceOf[ Set[ nsc.Settings#Setting ] ] // path-dependent type cast
   }
 
   /**
@@ -81,8 +96,8 @@ object Settings {
     extended.processArguments( list, true )
 
     Config(
-      standard     = unparse( standard ),
-      extended     = unparse( extended ),
+      standard     = unparseArray( standard ),
+      extended     = unparseArray( extended ),
       compileOrder = extended.zincCompileOrder,
       maxErrors    = extended.zincMaximumErrors,
       reportFun    = () => report( extended )

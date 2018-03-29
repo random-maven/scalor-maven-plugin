@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
@@ -42,14 +43,14 @@
         <version.jackson>2.9.4</version.jackson>
         <version.slf4j>1.7.25</version.slf4j>
         <version.tycho>1.1.0</version.tycho>
-        <version.groovy>2.4.13</version.groovy>
+        <version.groovy>2.4.14</version.groovy>
         <version.jmh>1.20</version.jmh>
-        <version.sbe>1.7.6</version.sbe>
-        <version.agrona>0.9.12</version.agrona>
+        <version.sbe>1.7.9</version.sbe>
+        <version.agrona>0.9.15</version.agrona>
         <version.protobuf>3.5.1</version.protobuf>
         <version.snappy>1.1.7.1</version.snappy>
         <version.lucene>7.2.1</version.lucene>
-        <version.amazon.sdk>1.11.278</version.amazon.sdk>
+        <version.amazon.sdk>1.11.301</version.amazon.sdk>
         <version.sigar>1.6.5.132</version.sigar>
         <version.aspectj>1.8.13</version.aspectj>
         <version.bouncy>1.59</version.bouncy>
@@ -58,23 +59,23 @@
         <version.scala.epoch>2.12</version.scala.epoch>
         <version.scala.release>2.12.4</version.scala.release>
         <version.scala.sbt>0.13.7</version.scala.sbt>
-        <version.scala.xml>1.0.6</version.scala.xml>
+        <version.scala.xml>1.1.0</version.scala.xml>
         <version.scala.protobuf>0.6.7</version.scala.protobuf>
-        <version.akka.main>2.5.9</version.akka.main>
-        <version.akka.http>10.0.11</version.akka.http>
+        <version.akka.main>2.5.11</version.akka.main>
+        <version.akka.http>10.1.0</version.akka.http>
         <version.eventuate>0.8.1</version.eventuate>
-        <version.play>2.6.11</version.play>
+        <version.play>2.6.12</version.play>
         <version.scala.buff>1.4.0</version.scala.buff>
         <version.scala.mock>3.6.0</version.scala.mock>
-        <version.specs2>4.0.2-291bdf5-20171123131811</version.specs2>
+        <version.specs2>4.0.3</version.specs2>
         <version.scalaz>7.3.0-M18</version.scalaz>
-        <version.kamon>1.0.1</version.kamon>
+        <version.kamon>1.1.0</version.kamon>
         <version.scalatest>3.0.5</version.scalatest>
         <version.scalacheck>1.13.5</version.scalacheck>
-        <version.scala.meta>3.2.0</version.scala.meta>
+        <version.scala.meta>3.6.0</version.scala.meta>
         <version.scala.plugin.meta>3.0.0-M11</version.scala.plugin.meta>
         <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
-        <version.scala.zinc>1.1.1</version.scala.zinc>
+        <version.scala.zinc>1.1.3</version.scala.zinc>
 
         <!-- Scala.js stack. -->
         <version.sjs.epoch>0.6</version.sjs.epoch>
@@ -86,23 +87,30 @@
         <version.sjs.prickle>1.1.14</version.sjs.prickle>
         <version.sjs.upickle>0.5.1</version.sjs.upickle>
         <version.sjs.scalarx>0.3.2</version.sjs.scalarx>
-        <version.sjs.utest>0.6.3</version.sjs.utest>
+        <version.sjs.utest>0.6.4</version.sjs.utest>
+        <version.scala.plugin.javascript>${version.sjs.release}</version.scala.plugin.javascript>
+
+        <!-- Scala.native stack. -->
+        <version.scanat.epoch>0.3</version.scanat.epoch>
+        <version.scanat.release>0.3.7</version.scanat.release>
+        <version.scanat.library>native${version.scanat.epoch}_${version.scala.epoch}</version.scanat.library>
+        <version.scala.plugin.native>${version.scanat.release}</version.scala.plugin.native>
 
         <!-- JUnit Testing -->
         <version.junit.legacy>4.12</version.junit.legacy>
-        <version.junit.platform>1.0.3</version.junit.platform>
-        <version.junit.jupiter>5.0.3</version.junit.jupiter>
-        <version.junit.vintage>4.12.3</version.junit.vintage>
+        <version.junit.platform>1.1.0</version.junit.platform>
+        <version.junit.jupiter>5.1.0</version.junit.jupiter>
+        <version.junit.vintage>5.1.0</version.junit.vintage>
 
         <!-- Maven plugins. -->
         <version.maven.scm>1.9.5</version.maven.scm>
-        <version.maven.testing>2.19.1</version.maven.testing><!-- JUnit5 -->
+        <version.maven.testing>2.21.0</version.maven.testing>
         <version.maven.javadoc>3.0.0</version.maven.javadoc>
 
         <!-- Database providers. -->
-        <version.slick>3.2.1</version.slick>
-        <version.hikari>2.7.7</version.hikari>
-        <version.postgres>42.2.1</version.postgres>
+        <version.slick>3.2.3</version.slick>
+        <version.hikari>2.7.8</version.hikari>
+        <version.postgres>42.2.2</version.postgres>
 
         <!-- Carrot Garden internal repository. -->
         <repo.amazon.public.host>public.maven.carrotgarden.com</repo.amazon.public.host>
@@ -155,7 +163,7 @@
             <dependency>
                 <groupId>org.scala-lang.modules</groupId>
                 <artifactId>scala-swing_${version.scala.epoch}</artifactId>
-                <version>2.0.1</version>
+                <version>2.0.2</version>
             </dependency>
             <dependency>
                 <groupId>org.scala-lang.modules</groupId>
@@ -258,7 +266,7 @@
             <dependency>
                 <groupId>com.typesafe.scala-logging</groupId>
                 <artifactId>scala-logging_${version.scala.epoch}</artifactId>
-                <version>3.7.2</version>
+                <version>3.8.0</version>
             </dependency>
 
             <!-- Scala testing. -->
@@ -335,13 +343,13 @@
             <dependency>
                 <groupId>org.scala-js</groupId>
                 <artifactId>scalajs-dom_${version.sjs.library}</artifactId>
-                <version>0.9.4</version>
+                <version>0.9.5</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>be.doeraene</groupId>
                 <artifactId>scalajs-jquery_${version.sjs.library}</artifactId>
-                <version>0.9.2</version>
+                <version>0.9.3</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -447,7 +455,7 @@
             <dependency>
                 <groupId>org.webjars.bower</groupId>
                 <artifactId>popper.js</artifactId>
-                <version>1.12.9</version>
+                <version>1.14.1</version>
             </dependency>
             <dependency>
                 <groupId>org.webjars.bower</groupId>
@@ -471,7 +479,7 @@
             <dependency>
                 <groupId>org.webjars.bower</groupId>
                 <artifactId>vue</artifactId>
-                <version>2.5.13</version>
+                <version>2.5.16</version>
             </dependency>
             <dependency>
                 <groupId>org.webjars.bower</groupId>
@@ -758,7 +766,7 @@
             <dependency>
                 <groupId>com.typesafe</groupId>
                 <artifactId>config</artifactId>
-                <version>1.3.2</version>
+                <version>1.3.3</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jgit</groupId>
@@ -792,7 +800,7 @@
             <dependency>
                 <groupId>org.joda</groupId>
                 <artifactId>joda-convert</artifactId>
-                <version>1.9.2</version>
+                <version>3.0</version>
             </dependency>
             <dependency>
                 <groupId>org.threeten</groupId>
@@ -1311,7 +1319,7 @@
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
-                <version>3.5.4</version>
+                <version>3.5.5</version>
             </dependency>
             <dependency>
                 <groupId>com.mattbertolini</groupId>
@@ -1410,7 +1418,7 @@
                         <dependency>
                             <groupId>com.vladsch.flexmark</groupId>
                             <artifactId>flexmark-all</artifactId>
-                            <version>0.32.4</version>
+                            <version>0.32.18</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -1466,7 +1474,7 @@
                         <dependency>
                             <groupId>net.sf.saxon</groupId>
                             <artifactId>Saxon-HE</artifactId>
-                            <version>9.8.0-8</version>
+                            <version>9.8.0-10</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -2185,8 +2193,8 @@ version=${revision}
                 -->
                 <dependency>
                     <groupId>com.carrotgarden.sjs</groupId>
-                    <artifactId>scala-js-junit-tools</artifactId>
-                    <version>1.0.1.20180129202557</version>
+                    <artifactId>scala-js-junit-tools_${version.scala.epoch}</artifactId>
+                    <version>1.1.2.20180226041527</version>
                     <scope>test</scope>
                 </dependency>
                 <!-- Enable logging of JS-VM output from scala-js-junit-tools. -->
@@ -2268,7 +2276,7 @@ version=${revision}
                 </file>
             </activation>
             <properties>
-                <version.maven.plugin.extra>1.0.20171214023519</version.maven.plugin.extra>
+                <version.maven.plugin.extra>1.1.20180226045720</version.maven.plugin.extra>
             </properties>
             <dependencies>
                 <!-- Provide custom annotations. -->
@@ -2502,12 +2510,24 @@ version=${revision}
                 <repository>
                     <id>random-scalor</id>
                     <url>http://dl.bintray.com/random-scalor/maven</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
                 </repository>
             </repositories>
             <pluginRepositories>
                 <pluginRepository>
                     <id>random-scalor</id>
                     <url>http://dl.bintray.com/random-scalor/maven</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
                 </pluginRepository>
             </pluginRepositories>
         </profile>
@@ -2524,12 +2544,24 @@ version=${revision}
                 <repository>
                     <id>random-maven</id>
                     <url>http://dl.bintray.com/random-maven/maven</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
                 </repository>
             </repositories>
             <pluginRepositories>
                 <pluginRepository>
                     <id>random-maven</id>
                     <url>http://dl.bintray.com/random-maven/maven</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
                 </pluginRepository>
             </pluginRepositories>
         </profile>

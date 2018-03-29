@@ -11,8 +11,8 @@ import org.scalajs.core.tools.linker.StandardLinker
 import org.scalajs.core.tools.logging.Logger
 
 import com.carrotgarden.maven.scalor.base
-import com.carrotgarden.maven.scalor.eclipse
 import com.carrotgarden.maven.scalor.base.Context.UpdateResult
+import com.carrotgarden.maven.scalor.eclipse
 import org.scalajs.core.tools.linker.ModuleInitializer
 
 /**
@@ -138,11 +138,11 @@ object Linker {
   }
 
   def linkerCacherId() : String = {
-    s"scalor-linker-cacher"
+    s"scala-js-linker-cacher"
   }
 
   def linkerEngineId( options : Options ) : String = {
-    s"scalor-linker-engine@${options.toString}"
+    s"scala-js-linker-engine@${options.toString}"
   }
 
   def newCacher() = {

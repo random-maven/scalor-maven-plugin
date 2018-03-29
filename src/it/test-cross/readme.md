@@ -4,11 +4,12 @@
 Integration test project for cross-scala-version build.
 
 Project layout:
+* using symlinks for `src`
 
 Master provides build definition
 * master [pom.xml](pom.xml) 
 
 Cross-version modules provide version overrides
-* module [pom-2.11.xml](pom-2.11.xml)
-* module [pom-2.12.xml](pom-2.12.xml)
-* module [pom-2.13.xml](pom-2.13.xml)  
+* module [cross/2.11/pom.xml](cross/2.11/pom.xml)
+* module [cross/2.12/pom.xml](cross/2.12/pom.xml)
+* module [cross/2.13/pom.xml](cross/2.13/pom.xml)  

@@ -39,23 +39,23 @@ trait Build extends AnyRef
   /**
    * Build mode for runtime JavaScript.
    */
-  def linkerBuildMode : Build.Mode = {
-    Build.buildMode( linkerModeBuild )
+  def linkerBuildMode : base.Mode.Type = {
+    base.Mode.buildMode( linkerModeBuild )
   }
 
   /**
    * Build mode for runtime JavaScript.
    */
-  def linkerBuildModeMin : Build.Mode = {
-    Build.buildMode( linkerModeBuildMin )
+  def linkerBuildModeMin : base.Mode.Type = {
+    base.Mode.buildMode( linkerModeBuildMin )
   }
 
   def linkerHasBuild( incremental : Boolean ) : Boolean = {
-    Build.hasBuildEnabled( linkerBuildMode, incremental )
+    base.Mode.hasBuildEnabled( linkerBuildMode, incremental )
   }
 
   def linkerHasBuildMin( incremental : Boolean ) : Boolean = {
-    Build.hasBuildEnabled( linkerBuildModeMin, incremental )
+    base.Mode.hasBuildEnabled( linkerBuildModeMin, incremental )
   }
 
   /**
@@ -74,45 +74,6 @@ trait Build extends AnyRef
     val file = new File( buildTargetFolder, linkerRuntimeMinJS ).getCanonicalFile
     Folder.ensureParent( file )
     file
-  }
-
-}
-
-object Build {
-
-  sealed trait Mode {
-    def name : String
-  }
-  case object BuildAlways extends Mode {
-    override val name = "always"
-  }
-  case object BuildNever extends Mode {
-    override val name = "never"
-  }
-  case object BuildFull extends Mode {
-    override val name = "full"
-  }
-  case object BuildIncr extends Mode {
-    override val name = "incr"
-  }
-
-  def buildMode( name : String ) : Mode = {
-    name match {
-      case BuildAlways.name => BuildAlways
-      case BuildNever.name  => BuildNever
-      case BuildFull.name   => BuildFull
-      case BuildIncr.name   => BuildIncr
-      case _                => Throw( s"Invalid build mode: ${name}" )
-    }
-  }
-
-  def hasBuildEnabled( mode : Mode, incremental : Boolean ) : Boolean = {
-    mode match {
-      case BuildAlways => true
-      case BuildNever  => false
-      case BuildFull   => !incremental
-      case BuildIncr   => incremental
-    }
   }
 
 }

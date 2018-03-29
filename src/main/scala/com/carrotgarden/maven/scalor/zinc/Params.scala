@@ -96,6 +96,21 @@ trait ParamsCompileOptions extends AnyRef
   with base.ParamsAny {
 
   @Description( """
+  Options for JavaC compiler used by Zinc invocation.
+  Separator parameter: <a href="#commonSequenceSeparator"><b>commonSequenceSeparator</b></a>.
+  """ )
+  @Parameter(
+    property     = "scalor.zincOptionsJava",
+    defaultValue = """
+    -deprecation ★  
+    -encoding ★ UTF-8 ★
+    -source ★ 1.8 ★
+    -target ★ 1.8 ★
+    """
+  )
+  var zincOptionsJava : String = _
+
+  @Description( """
   Combined options for ScalaC compiler, Scalor Plugin Zinc compiler, Scala IDE Plugin Zinc compiler.
 <ul>
   <li><b>ScalaC</b> compiler uses [ standard ] options in Maven/Eclipse.</li>
@@ -127,7 +142,7 @@ trait ParamsCompileOptions extends AnyRef
 <br/>
   For consistent Maven vs Eclipse builds, use non-interfering eclipse-builder options.
   Separator parameter: <a href="#commonSequenceSeparator"><b>commonSequenceSeparator</b></a>.
-  Examine available/effective options via <a href="#zincLogCompileOptions"><b>zincLogCompileOptions</b></a>.
+  Examine available/effective options via <a href="#zincLogCompilerOptions"><b>zincLogCompilerOptions</b></a>.
 <br/>
 <br/>
   Options processing steps:
@@ -139,20 +154,25 @@ trait ParamsCompileOptions extends AnyRef
 </ul>
   """ )
   @Parameter(
-    property     = "scalor.zincCompileOptions",
+    property     = "scalor.zincOptionsScala",
     defaultValue = """
     -feature ★ -unchecked ★ -deprecation ★  
-    -encoding ★ ${project.build.sourceEncoding} ★
-    -target:jvm-${maven.compiler.target} ★
+    -encoding ★ UTF-8 ★
+    -target:jvm-1.8 ★
     -Xmaxerrs ★ 10 ★ 
     -compileorder:Mixed ★
-    -useScopesCompiler ★
+    -useScopesCompiler:true ★
+    -withVersionClasspathValidator:true ★
     """
   )
-  var zincCompileOptions : String = _
+  var zincOptionsScala : String = _
 
-  def parseCompileOptions : Array[ String ] = {
-    parseCommonList( zincCompileOptions )
+  def parseOptionsJava : Array[ String ] = {
+    parseCommonList( zincOptionsJava )
+  }
+
+  def parseOptionsScala : Array[ String ] = {
+    parseCommonList( zincOptionsScala )
   }
 
 }
@@ -165,7 +185,7 @@ trait Params extends AnyRef
   with ParamsCompileOptions
   with ParamsLogging
   with ParamScalaInstall
-  with ParamsRegex
+  // with ParamsRegex
   with ParamsToolchain {
 
   @Description( """
@@ -197,41 +217,55 @@ trait Params extends AnyRef
 
 }
 
-trait ParamsRegex {
+trait ParamsRegex extends base.BuildAnyRegex {
 
   @Description( """
-  Regular expression for Java source file discovery.
+  Regular expression for Java source file discovery via inclusion by match against absolute path.
+  File match is defined as: <code>include.hasMatch && ! exclude.hasMatch</code>.
+  Matches files with <code>java</code> extension by default.
+<pre>
   """ )
   @Parameter(
-    property     = "scalor.zincRegexAnyJava",
-    defaultValue = """^.+[.]java$"""
+    property     = "scalor.compileRegexJavaInclude",
+    defaultValue = """.+[.]java"""
   )
-  var zincRegexAnyJava : String = _
+  var compileRegexJavaInclude : String = _
 
   @Description( """
-  Regular expression for Scala source file discovery.
+  Regular expression for Java source file discovery via exclusion by match against absolute path.
+  File match is defined as: <code>include.hasMatch && ! exclude.hasMatch</code>.
+  Matches no files when empty by default.
   """ )
   @Parameter(
-    property     = "scalor.zincRegexAnyScala",
-    defaultValue = """^.+[.]scala$"""
+    property = "scalor.compileRegexJavaExclude"
   )
-  var zincRegexAnyScala : String = _
+  var compileRegexJavaExclude : String = _
 
-  /**
-   * Compilation scope input source files.
-   */
-  def zincBuildSourceList( buildSourceFolders : Array[ File ] ) : Array[ File ] = {
-    val zincRegexAnySource = s"${zincRegexAnyJava}|${zincRegexAnyScala}"
-    Folder.fileListByRegex( buildSourceFolders, zincRegexAnySource )
-  }
+  @Description( """
+  Regular expression for Scala source file discovery via inclusion by match against absolute path.
+  File match is defined as: <code>include.hasMatch && ! exclude.hasMatch</code>.
+  Matches files with <code>scala</code> extension by default.
+  """ )
+  @Parameter(
+    property     = "scalor.compileRegexScalaInclude",
+    defaultValue = """.+[.]scala"""
+  )
+  var compileRegexScalaInclude : String = _
 
-  def zincBuildJavaList( buildSourceFolders : Array[ File ] ) : Array[ File ] = {
-    Folder.fileListByRegex( buildSourceFolders, zincRegexAnyJava )
-  }
+  @Description( """
+  Regular expression for Scala source file discovery via exclusion by match against absolute path.
+  File match is defined as: <code>include.hasMatch && ! exclude.hasMatch</code>.
+  Matches no files when empty by default.
+  """ )
+  @Parameter(
+    property = "scalor.compileRegexScalaExclude"
+  )
+  var compileRegexScalaExclude : String = _
 
-  def zincBuildScalaList( buildSourceFolders : Array[ File ] ) : Array[ File ] = {
-    Folder.fileListByRegex( buildSourceFolders, zincRegexAnyScala )
-  }
+  override def buildRegexJavaInclude = compileRegexJavaInclude
+  override def buildRegexJavaExclude = compileRegexJavaExclude
+  override def buildRegexScalaInclude = compileRegexScalaInclude
+  override def buildRegexScalaExclude = compileRegexScalaExclude
 
 }
 
@@ -362,23 +396,23 @@ trait ParamsLogging {
 
   @Description( """
   Enable logging of available/effective compiler options with help description.
-  Report output location: <a href="#zincCompileOptionsReport"><b>zincCompileOptionsReport</b></a>
+  Report output location: <a href="#zincCompilerOptionsReport"><b>zincCompilerOptionsReport</b></a>
   """ )
   @Parameter(
-    property     = "scalor.zincLogCompileOptions",
+    property     = "scalor.zincLogCompilerOptions",
     defaultValue = "false"
   )
-  var zincLogCompileOptions : Boolean = _
+  var zincLogCompilerOptions : Boolean = _
 
   @Description( """
   Report available/effective compiler options with help description to the report file.
-  Enable output: <a href="#zincLogCompileOptions"><b>zincLogCompileOptions</b></a>
+  Enablement parameter: <a href="#zincLogCompilerOptions"><b>zincLogCompilerOptions</b></a>
   """ )
   @Parameter(
-    property     = "scalor.zincCompileOptionsReport",
+    property     = "scalor.zincCompilerOptionsReport",
     defaultValue = "${project.build.directory}/scalor/scala-options-report.txt"
   )
-  var zincCompileOptionsReport : File = _
+  var zincCompilerOptionsReport : File = _
 
 }
 

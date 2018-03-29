@@ -83,7 +83,7 @@ trait FormatAnyMojo extends AbstractMojo
   def performFormat() : Unit = {
     if ( formatJavaEnable ) {
       logger.info( s"Formatting project Java sources." )
-      val fileList = zincBuildJavaList( buildSourceFolders ).sorted
+      val fileList = buildSourceJavaList( buildSourceFolders ).sorted
       val settingsFile = formatJavaSettingsFile( project, this )
       logger.info( s"Java formatter settings file: ${settingsFile}" )
       val formatContext = formatJavaContext( settingsFile )
@@ -92,7 +92,7 @@ trait FormatAnyMojo extends AbstractMojo
     }
     if ( formatScalaEnable ) {
       logger.info( s"Formatting project Scala sources." )
-      val fileList = zincBuildScalaList( buildSourceFolders ).sorted
+      val fileList = buildSourceScalaList( buildSourceFolders ).sorted
       val settingsFile = formatScalaSettingsFile( project, this )
       logger.info( s"Scala formatter settings file: ${settingsFile}" )
       val formatContext = formatScalaContext( settingsFile )

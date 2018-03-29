@@ -82,6 +82,14 @@ object A {
     final val `scala-js-env-conf-nodejs` = "scala-js-env-conf-nodejs"
     final val `scala-js-env-conf-phantomjs` = "scala-js-env-conf-phantomjs"
 
+    final val `scala-native-link` = "scala-native-link"
+    final val `scala-native-link-main` = "scala-native-link-main"
+    final val `scala-native-link-test` = "scala-native-link-test"
+
+    final val `scala-native-pack` = "scala-native-pack"
+    final val `scala-native-pack-main` = "scala-native-pack-main"
+    final val `scala-native-pack-test` = "scala-native-pack-test"
+
     final val `scaladoc` = "scaladoc"
     final val `scaladoc-macro` = "scaladoc-macro"
     final val `scaladoc-main` = "scaladoc-main"
@@ -90,6 +98,8 @@ object A {
     final val `report` = "report"
     final val `report-main` = "report-main"
     final val `report-test` = "report-test"
+
+    final val `setup-cross` = "setup-cross"
 
   }
 

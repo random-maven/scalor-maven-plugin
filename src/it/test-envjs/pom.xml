@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
@@ -21,7 +22,7 @@
         <version.scala.epoch>2.12</version.scala.epoch>
         <version.scala.release>2.12.4</version.scala.release>
 
-        <version.scala.zinc>1.1.1</version.scala.zinc>
+        <version.scala.zinc>1.1.3</version.scala.zinc>
         <version.scala.plugin.macro>2.1.0</version.scala.plugin.macro>
 
         <!-- Scala.js tool stack. -->

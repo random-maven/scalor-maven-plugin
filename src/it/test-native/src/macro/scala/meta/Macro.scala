@@ -1,0 +1,5 @@
+package meta
+
+trait Macro {
+  
+}

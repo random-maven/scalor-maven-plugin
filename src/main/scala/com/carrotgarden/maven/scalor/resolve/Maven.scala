@@ -40,7 +40,13 @@ trait Maven {
   Aether repository list.
   """ )
   @Parameter( defaultValue = "${project.remoteProjectRepositories}", readonly = true, required = true )
-  var remoteRepoList : java.util.List[ RemoteRepository ] = _
+  var remoteProjectRepositories : java.util.List[ RemoteRepository ] = _
+
+  @Description( """
+  Aether plugin repository list.
+  """ )
+  @Parameter( defaultValue = "${project.remotePluginRepositories}", readonly = true, required = true )
+  var remotePluginRepositories : java.util.List[ RemoteRepository ] = _
 
   def stereotypes = repoSession.getArtifactTypeRegistry
 
@@ -50,6 +56,13 @@ trait Maven {
     define : DefineRequest,
     scope :  String
   ) : DefineResponse = {
+
+    val remoteRepoList = {
+      val projRepos = remoteProjectRepositories.asScala
+      val pluginRepos = remotePluginRepositories.asScala
+      val availableRepos = projRepos ++ pluginRepos
+      availableRepos.asJava
+    }
 
     val aether = AetherUnit(
       repoSystem,

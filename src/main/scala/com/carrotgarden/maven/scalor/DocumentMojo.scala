@@ -138,6 +138,7 @@ trait ScaladocAnyMojo extends AbstractMojo
   //
   with document.Params
   with document.ScaladocAny
+  with document.ScaladocRegex
   //
   with base.Mojo
   with base.Params

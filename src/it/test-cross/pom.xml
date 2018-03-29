@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
@@ -5,7 +6,7 @@
 
     <groupId>com.carrotgarden.maven</groupId>
     <artifactId>scalor-maven-plugin-test-cross</artifactId>
-    <version>${revision}</version>
+    <version>0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <description>
@@ -13,9 +14,9 @@
     </description>
 
     <modules>
-        <module>./pom-2.11.xml</module>
-        <module>./pom-2.12.xml</module>
-        <!-- <module>./pom-2.13.xml</module> -->
+        <module>cross/2.11</module>
+        <module>cross/2.12</module>
+        <!-- <module>cross/2.13</module> -->
     </modules>
 
     <properties>
@@ -32,7 +33,7 @@
         <version.scala.epoch>2.11</version.scala.epoch>
         <version.scala.release>2.11.0</version.scala.release>
 
-        <version.scala.zinc>1.1.1</version.scala.zinc>
+        <version.scala.zinc>1.1.3</version.scala.zinc>
         <version.scala.plugin.macro>2.1.0</version.scala.plugin.macro>
 
         <!-- Scala.js tool stack. -->
@@ -40,11 +41,12 @@
         <version.sjs.release>0.6.22</version.sjs.release>
         <version.sjs.library>sjs${version.sjs.epoch}_${version.scala.epoch}</version.sjs.library>
 
+        <!-- Java epoch. -->
         <version.java>1.8</version.java>
+        <maven.compiler.source>${version.java}</maven.compiler.source><!-- Used by M2E. -->
+        <maven.compiler.target>${version.java}</maven.compiler.target><!-- Used by M2E. -->
 
-        <maven.compiler.source>${version.java}</maven.compiler.source>
-        <maven.compiler.target>${version.java}</maven.compiler.target>
-
+        <!-- File format. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     </properties>
@@ -72,13 +74,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- <dependency> -->
-        <!-- <groupId>org.scalatest</groupId> -->
-        <!-- <artifactId>scalatest_${version.scala.epoch}</artifactId> -->
-        <!-- <version>3.0.4</version> -->
-        <!-- <scope>test</scope> -->
-        <!-- </dependency> -->
-
     </dependencies>
 
     <build>
@@ -97,11 +92,23 @@
             </plugin>
 
             <plugin>
-                <groupId>@project.groupId@</groupId>
-                <artifactId>@project.artifactId@</artifactId>
-                <version>@project.version@</version>
+
+                <!-- <groupId>@project.groupId@</groupId> -->
+                <!-- <artifactId>@project.artifactId@</artifactId> -->
+                <!-- <version>@project.version@</version> -->
+
+                <groupId>com.carrotgarden.maven</groupId>
+                <artifactId>scalor-maven-plugin_2.12</artifactId>
+                <!-- <version>Provided by profile or resolved to latest.</version> -->
 
                 <configuration>
+
+                    <!-- Suppress Scala IDE version warnings. -->
+                    <zincOptionsScala>
+                        -Xsource:${version.scala.epoch}
+                        -withVersionClasspathValidator:false
+                        -compileorder:Mixed
+                    </zincOptionsScala>
 
                     <defineBridge>
                         <dependency>
@@ -131,6 +138,9 @@
                     <execution>
                         <goals>
 
+                            <goal>setup-cross</goal>
+                            <goal>eclipse-config</goal>
+
                             <goal>register-macro</goal>
                             <goal>register-main</goal>
                             <goal>register-test</goal>
@@ -153,7 +163,7 @@
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.2.20171206225205</version>
+                <version>1.3.20180210195103</version>
                 <configuration>
                     <memberRemoveList>
                         <member>parent</member>
@@ -175,5 +185,24 @@
 
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <activation>
+                <property>
+                    <name>scalor.maven.invoker</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.carrotgarden.maven</groupId>
+                        <artifactId>scalor-maven-plugin_2.12</artifactId>
+                        <version>@project.version@</version>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

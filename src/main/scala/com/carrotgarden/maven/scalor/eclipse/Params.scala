@@ -391,7 +391,7 @@ trait ParamsHackSymlinks {
   """ )
   @Parameter(
     property     = "scalor.eclipseHackSymbolicLinks",
-    defaultValue = "true"
+    defaultValue = "false"
   )
   var eclipseHackSymbolicLinks : Boolean = _
 

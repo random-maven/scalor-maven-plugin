@@ -1,7 +1,6 @@
 package com.carrotgarden.maven.scalor.eclipse
 
 import scala.collection.mutable.HashSet
-import scala.collection.JavaConverters._
 import scala.tools.nsc
 import scala.tools.nsc.settings.NoScalaVersion
 
@@ -29,14 +28,16 @@ import org.scalaide.core.internal.project.ScalaInstallationChoice
 import org.scalaide.core.internal.project.ScalaInstallationLabel
 import org.scalaide.core.internal.project.ScalaModule
 import org.scalaide.core.internal.project.ScalaProject
+import org.scalaide.ui.internal.preferences.CompilerSettings
 import org.scalaide.ui.internal.preferences.IDESettings
+import org.scalaide.ui.internal.preferences.ScopesSettings
 import org.scalaide.util.eclipse.EclipseUtils
 import org.scalaide.util.internal.SettingConverterUtil.SCALA_DESIRED_INSTALLATION
 import org.scalaide.util.internal.SettingConverterUtil.USE_PROJECT_SETTINGS_PREFERENCE
 import org.scalaide.util.internal.SettingConverterUtil.convertNameToProperty
 
-import com.carrotgarden.maven.scalor.base
 import com.carrotgarden.maven.scalor.util.Optioner.convert_Option_Value
+import com.carrotgarden.maven.scalor.zinc
 
 /**
  * Provide Scala IDE settings for a project.
@@ -111,20 +112,19 @@ trait ScalaIDE {
     context : Config.SetupContext,
     monitor : IProgressMonitor
   ) : ScalaInstall = {
-    import Maven._
-    import com.carrotgarden.maven.scalor.base.Params._
+    import com.carrotgarden.maven.scalor.base.Params
     import context._
     import config._
     logger.info( s"Resolving custom Scala installation." )
     val detector = moduleDetector( config, monitor )
     val facade = request.getMavenProjectFacade
     val project = facade.getMavenProject
-    val defineRequest = base.Params.DefineRequest(
+    val defineRequest = Params.DefineRequest(
       defineAutoBridge( project ),
       defineAutoCompiler( project ),
       defineAutoPluginList( project )
     )
-    val defineResponse = resolveDefine( request, defineRequest, "compile", monitor )
+    val defineResponse = Maven.resolveDefine( request, defineRequest, "compile", monitor )
     val install = ScalaInstall( zincScalaInstallTitle, detector, defineResponse ).withTitleDigest
     //    if ( eclipseLogInstallResolve ) {
     //      val scalaInstallation = installFrom( facade, install )
@@ -170,15 +170,15 @@ trait ScalaIDE {
   ) : nsc.Settings = {
     import context._
     logger.info( s"Providing configured settings." )
-    import com.carrotgarden.maven.scalor.zinc.Compiler._
+    import com.carrotgarden.maven.scalor.zinc.Compiler
     import config._
     val zincArgs =
-      parseCompileOptions.toList
+      parseOptionsScala.toList
     val pluginArgs = install.pluginDefineList
-      .flatMap( module => pluginStanza( module.binaryArtifact.getFile ).toList )
+      .flatMap( module => Compiler.pluginStanza( module ).toList )
     val argsList = zincArgs ++ pluginArgs
     val project = pluginProject( request.getProject )
-    val settings = Settings( logger.fail )
+    val settings = new Settings( logger.fail )
     settings.makeBuildMangerSettings()
     settings.makeCompilationScopeSettings( project )
     settings.makeScalorPluginSettings( install.title )
@@ -245,22 +245,39 @@ trait ScalaIDE {
     import config._
     logger.info( s"Persisting configured settings." )
     val skipList = List(
-      "d" // destination folder, injected by default
+      "d" // destination folder, present by default
     )
+    val userSettings = zinc.Settings.userSettings( settings )
+    val extraSettings = new Settings( logger.fail )
     for {
-      basic <- settings.userSetSettings.toList.sortBy( _.name )
+      basic <- userSettings.toList.sortBy( _.name )
       entry = basic.asInstanceOf[ nsc.Settings#Setting ]
-      key = convertNameToProperty( entry.name )
-      if ( !skipList.contains( key ) )
+      entryKey = convertNameToProperty( entry.name )
+      if ( !skipList.contains( entryKey ) )
     } yield {
-      val value = entry match {
-        case multi : nsc.Settings#MultiStringSetting => multi.value.mkString( "," )
-        case plain                                   => plain.value.toString
+      if ( Settings.hasCommandSetting( entry ) ) {
+        // settings in a box: "additional command line parameters"
+        extraSettings.configSet += entry // collect
+      } else {
+        // settings supported by full preference pages in eclipse ui
+        val entryValue = entry match {
+          case multi : nsc.Settings#MultiStringSetting => multi.value.mkString( "," )
+          case plain                                   => plain.value.toString
+        }
+        store.setValue( entryKey, entryValue ) // persist
+        if ( eclipseLogPersistSettings ) {
+          val storeValue = store.getString( entryKey )
+          logger.info( s"   ${entryKey}=${storeValue}" )
+        }
       }
-      if ( eclipseLogPersistSettings ) {
-        logger.info( s"   ${key}=${value}" )
-      }
-      store.setValue( key, value )
+    }
+    // persist "additional command line parameters"
+    val extraKey = CompilerSettings.ADDITIONAL_PARAMS
+    val extraValue = zinc.Settings.unparseString( extraSettings )
+    store.setValue( extraKey, extraValue )
+    if ( eclipseLogPersistSettings ) {
+      val storeValue = store.getString( extraKey )
+      logger.info( s"   ${extraKey}=${storeValue}" )
     }
   }
 
@@ -520,24 +537,22 @@ object ScalaIDE {
    * Support build manager options for Scala IDE.
    * Support compilation scope options for Scala IDE.
    */
-  case class Settings( errorFun : ErrorFun ) extends nsc.Settings( errorFun ) {
+  class Settings( errorFun : ErrorFun ) extends nsc.Settings( errorFun ) {
+
+    import Settings._
+
     val NamePrefix = "-" // Use as command line option.
     val EmptyString = "" // Common value.
 
     /**
-     * Path-dependent type cast.
+     * Path-dependent type cast to expose r/w set.
      */
     def configSet = allSettings.asInstanceOf[ HashSet[ nsc.Settings#Setting ] ]
 
     /**
-     * Available Scala IDE compilation scopes.
-     */
-    def choices = CompileScope.scopesInCompileOrder.map { _.name }.toList
-
-    /**
      * Extract custom class path entry attribute describing a scope.
      */
-    def scopeAttrib( entry : IClasspathEntry ) : Option[ IClasspathAttribute ] = {
+    def scopeScalorAttrib( entry : IClasspathEntry ) : Option[ IClasspathAttribute ] = {
       import com.carrotgarden.maven.scalor.base.Build._
       entry.getExtraAttributes.find( Param.attrib.scope == _.getName )
     }
@@ -545,7 +560,7 @@ object ScalaIDE {
     /**
      * Convert compilation scope name from this plugin to Scala IDE format.
      */
-    def scopeIDE( scope : String ) : Option[ String ] = {
+    def scopeScalaIDE( scope : String ) : Option[ String ] = {
       import com.carrotgarden.maven.scalor.base.Build._
       import org.scalaide.core.internal.project._
       scope match {
@@ -555,14 +570,6 @@ object ScalaIDE {
         case invalid             => errorFun( s"invalid scope: ${invalid}" ); None
       }
     }
-
-    /**
-     * Use Eclipse resources compatible format.
-     *
-     * Persisted option example entry:
-     * .settings/org.scala-ide.sdt.core.prefs!//src/macro/scala=macros
-     */
-    def makeName( path : IPath ) : String = NamePrefix + path.segments.mkString( "/" )
 
     /**
      * Configure compilation scope for Scala IDE.
@@ -575,25 +582,40 @@ object ScalaIDE {
     def makeCompilationScopeSettings( scalaProject : ScalaProject ) : Unit = {
       import org.scalaide.util.eclipse.EclipseUtils._
       val javaProject = scalaProject.javaProject
-      val projectRoot = scalaProject.underlying.getLocation
+      val projectRoot = scalaProject.underlying.getLocation // absolute
       val resolvedClasspath = javaProject.getResolvedClasspath( true ).toList
       val settingsList = for {
         entry <- resolvedClasspath
-        attrib <- scopeAttrib( entry )
-        scope <- scopeIDE( attrib.getValue )
+        attrib <- scopeScalorAttrib( entry )
+        scope <- scopeScalaIDE( attrib.getValue )
         resource <- Option( workspaceRoot.findMember( entry.getPath ) )
       } yield {
         val folderAbsolute = resource.getLocation
         val folderRelative = folderAbsolute.makeRelativeTo( projectRoot )
-        val name = makeName( folderRelative )
-        val setting = ChoiceSetting(
-          name    = name, choices = choices, default = EmptyString,
-          helpArg = EmptyString, descr = EmptyString
-        )
+        val name = ScopesSettings.makeKey( folderRelative )
+        val setting = settingScopeMapping( name )
         setting.value = scope
         allSettings += setting
         setting
       }
+    }
+
+    /**
+     * Available Scala IDE compilation scopes.
+     */
+    def scopeList : List[ String ] = CompileScope.scopesInCompileOrder.map { _.name }.toList
+
+    /**
+     * Setting which provides source root scope definition.
+     *
+     * Persisted option example entry:
+     * .settings/org.scala-ide.sdt.core.prefs!//src/macro/scala=macros
+     */
+    def settingScopeMapping( name : String ) : ChoiceSetting = {
+      ChoiceSetting(
+        name    = name, choices = scopeList, default = EmptyString,
+        helpArg = EmptyString, descr = scalorMarker
+      )
     }
 
     /**
@@ -602,14 +624,15 @@ object ScalaIDE {
      * Reuse settings from [[org.scalaide.ui.internal.preferences.ScalaPluginSettings]]
      */
     def makeBuildMangerSettings() : Unit = {
-      IDESettings.buildManagerSettings
-        .flatMap( _.userSettings )
-        .foreach { setting => configSet += setting }
+      settingsBuilderList.foreach { setting => configSet += setting }
     }
 
+    /**
+     * Setting which describes custom scala installation.
+     */
     def settingInstallTitle = StringSetting(
-      name    = NamePrefix + "scalor.install.title",
-      arg     = EmptyString, descr = EmptyString, default = EmptyString
+      name    = NamePrefix + "scalor.install.title", default = EmptyString,
+      arg     = EmptyString, descr = scalorMarker
     )
 
     /**
@@ -619,6 +642,57 @@ object ScalaIDE {
       val installTitle = settingInstallTitle
       installTitle.value = title
       allSettings += installTitle
+    }
+
+  }
+
+  object Settings {
+
+    /**
+     * Magic marker for scalor-plugin-injected settings.
+     */
+    final val scalorMarker = "scalor-setting"
+
+    /**
+     * Preference pages: "Standard" "Advanced" "Presentation Compiler".
+     */
+    lazy val settingsShownList = {
+      IDESettings.shownSettings( new nsc.Settings ).flatMap( box => box.userSettings )
+    }
+
+    /**
+     * Preference pages: "Build Manager".
+     */
+    lazy val settingsBuilderList = {
+      IDESettings.buildManagerSettings.flatMap( box => box.userSettings )
+    }
+
+    /**
+     * Preference pages: ALL but "Scopes Settings".
+     */
+    lazy val settingsEnhancedList = {
+      settingsShownList ++ settingsBuilderList
+    }
+
+    /**
+     * IDE settings which has UI preference editor page.
+     */
+    def hasEnhancedSetting( setting : nsc.Settings#Setting ) = {
+      settingsEnhancedList.find( _.name == setting.name ).isDefined
+    }
+
+    /**
+     * IDE settings which are injected by Scalor plugin.
+     */
+    def hasScalorSetting( setting : nsc.Settings#Setting ) = {
+      setting.helpDescription.contains( scalorMarker )
+    }
+
+    /**
+     * IDE settings which use "additional command line parameters" box.
+     */
+    def hasCommandSetting( setting : nsc.Settings#Setting ) = {
+      !hasEnhancedSetting( setting ) && !hasScalorSetting( setting )
     }
 
   }

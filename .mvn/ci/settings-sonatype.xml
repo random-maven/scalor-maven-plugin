@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <!-- CI setup. -->
+    <servers>
+
+        <!-- Bintray release. -->
+        <server>
+            <id>distro-bintray</id>
+            <username>${env.BINTRAY_USERNAME}</username>
+            <password>${env.BINTRAY_PASSWORD}</password>
+        </server>
+
+    </servers>
+
+    <activeProfiles>
+
+        <activeProfile>sonatype-staging</activeProfile>
+
+    </activeProfiles>
+
+    <profiles>
+
+        <profile>
+            <id>sonatype-staging</id>
+            <repositories>
+                <repository>
+                    <id>sonatype-staging</id>
+                    <url>https://oss.sonatype.org/content/repositories/staging/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>sonatype-staging</id>
+                    <url>https://oss.sonatype.org/content/repositories/staging/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+
+    </profiles>
+
+</settings>

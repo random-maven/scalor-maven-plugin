@@ -384,20 +384,19 @@ public class Scalor_01_Test extends AbstractMavenProjectTestCase {
 				"//src/macro/java", //
 				"//src/macro/scala", //
 				"//src/main/java", //
-				// "//src/main/resources", //
 				"//src/main/scala", //
 				"//src/test/java", //
-				// "//src/test/resources", //
 				"//src/test/scala", //
-				"Xmaxerrs", //
 				"compileorder", //
 				"deprecation", //
 				"encoding", //
 				"feature", //
 				"target", //
 				"unchecked", //
-				"scala.compiler.sourceLevel", //
 				"useScopesCompiler", //
+				"scala.compiler.sourceLevel", //
+				"scala.compiler.additionalParams", //
+				"scala.compiler.useProjectSettings", //
 		};
 		assertEqualsProps(testerSettings, targetSettings, nameList);
 

@@ -35,16 +35,31 @@ object Build {
       try {
         goal match {
 
+          // ensure cross layout, during configuration
+          case `setup-cross` if ( hasBuildConf( kind ) ) => true
+
           // add sources to project, during configuration
           case `register` if ( hasBuildConf( kind ) ) => true
           case `register-macro` if ( hasBuildConf( kind ) ) => true
           case `register-main` if ( hasBuildConf( kind ) ) => true
           case `register-test` if ( hasBuildConf( kind ) ) => true
 
+          // provision and configure js-env, during configuration
+          case `scala-js-env-prov-nodejs` if ( hasBuildConf( kind ) ) => true
+          case `scala-js-env-prov-phantomjs` if ( hasBuildConf( kind ) ) => true
+          case `scala-js-env-prov-webjars` if ( hasBuildConf( kind ) ) => true
+          case `scala-js-env-conf-nodejs` if ( hasBuildConf( kind ) ) => true
+          case `scala-js-env-conf-phantomjs` if ( hasBuildConf( kind ) ) => true
+
           // generate runtime.js, during both full and incremental
           case `scala-js-link` if ( hasBuildMake( kind ) ) => true
           case `scala-js-link-main` if ( hasBuildMake( kind ) ) => true
           case `scala-js-link-test` if ( hasBuildMake( kind ) ) => true
+
+          // generate native binary, during both full and incremental
+          case `scala-native-link` if ( hasBuildMake( kind ) ) => true
+          case `scala-native-link-main` if ( hasBuildMake( kind ) ) => true
+          case `scala-native-link-test` if ( hasBuildMake( kind ) ) => true
 
           // set format to project, during configuration
           case `eclipse-format` if ( hasBuildConf( kind ) ) => true

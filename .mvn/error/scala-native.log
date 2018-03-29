@@ -1,0 +1,32 @@
+
+###
+
+Description Resource    Location    Path    Type
+More than one scala library found in the build path (
+/home/user0/.m2/repository/org/scala-lang/scala-library/2.11.12/scala-library-2.11.12.jar, 
+/home/user0/.m2/repository/org/scala-native/scalalib_native0.3_2.11/0.3.6/scalalib_native0.3_2.11-0.3.6.jar
+).
+
+At least one has an incompatible version. 
+Please update the project build path so it contains only one compatible scala library.   
+scalor-maven-plugin-test-native_2.11    
+Unknown     
+Scala Classpath Problem
+
+###
+
+Description Resource    Location    Path    Type
+scalalib_native0.3_2.11-0.3.6.jar of scalor-maven-plugin-test-native_2.11 
+build path is cross-compiled with an incompatible version of Scala (2.11.0). 
+In case this report is mistaken, this check can be disabled in the compiler preference page. 
+scalor-maven-plugin-test-native_2.11    Unknown     Scala Version Problem
+
+###
+
+Description Resource    Location    Path    Type
+The version of scala library found in the build path of 
+scalor-maven-plugin-test-native_2.11 (2.11.12) 
+is prior to the one provided by 
+scala IDE (2.12.3). 
+Setting a Scala Installation Choice to match.    
+scalor-maven-plugin-test-native_2.11    Unknown     Scala Version Problem

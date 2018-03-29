@@ -24,7 +24,7 @@ trait ScalaJsLinkAnyMojo extends AbstractMojo
   with base.Params
   with base.Logging
   with base.SkipMojo
-  with com.carrotgarden.maven.scalor.base.Context
+  with base.Context
   with scalajs.Build
   with scalajs.Linker
   with scalajs.ParamsLinkAny {

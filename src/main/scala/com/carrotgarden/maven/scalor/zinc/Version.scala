@@ -1,7 +1,7 @@
 package com.carrotgarden.maven.scalor.zinc
 
-import com.carrotgarden.maven.scalor.util.Error._
-import com.carrotgarden.maven.scalor.util.Folder._
+import scala.tools.nsc.settings.ScalaVersion
+import scala.tools.nsc.settings.SpecificScalaVersion
 
 /**
  * Version verification support.
@@ -11,56 +11,7 @@ object Version {
   import Module._
 
   /**
-   * Fail on version mismatch error.
-   */
-  def assertVersionTree( item1 : FileItem, item2 : FileItem ) = {
-    if ( !versionTree( item1, item2 ) ) versionFailure( item1, item2 )
-  }
-
-  /**
-   * Fail on version mismatch error.
-   */
-  def assertVersionExact( item1 : FileItem, item2 : FileItem ) = {
-    if ( !versionExact( item1, item2 ) ) versionFailure( item1, item2 )
-  }
-
-  /**
-   * Report version mismatch error.
-   */
-  def versionFailure( file1 : FileItem, file2 : FileItem ) {
-    throw new RuntimeException( s"Version mismatch: ${file1} vs ${file2}" );
-  }
-
-  /**
-   * Verify version tree/branch match, i.e. 2.12 is-same-as 2.12.4
-   */
-  def versionTree( item_short : FileItem, item_long : FileItem ) = {
-    item_long.version.startsWith( item_short.version )
-  }
-
-  /**
-   * Verify exact version match.
-   */
-  def versionExact( item1 : FileItem, item2 : FileItem ) = {
-    item2.version.equals( item1.version )
-  }
-
-  /**
-   * Convert module to item.
-   */
-  def itemFrom( module : Module, useArtifactVersion : Boolean = false ) : FileItem = {
-    if ( useArtifactVersion ) {
-      val entry = artifactVersion( module ).getOrElse(
-        Throw( s"Can not extract verson from artifactId: ${module}" )
-      )
-      FileItem( fileFrom( module ), entry.versionTail )
-    } else {
-      FileItem( fileFrom( module ), versionFrom( module ) )
-    }
-  }
-
-  /**
-   * Scala convention:
+   * Scala artifact convention:
    * compiler-bridge_2.12
    * paradise_2.12.3
    */
@@ -69,11 +20,23 @@ object Version {
   }
 
   /**
-   * Scala convention:
-   * compiler-bridge_2.12
-   * paradise_2.12.3
+   * Scala convention: compiler-bridge_2.12, paradise_2.12.3, etc.
    */
   val atifactVersionRegex = """([^_]+)_([^_]+)""".r
+
+  /**
+   * Match epoch, i.e.: compiler-bridge_2.12
+   */
+  val scalaEpochRegex = s"""([^.]+)[.]([^.]+)""".r
+
+  /**
+   * Match release, i.e.: paradise_2.13.0-M2
+   */
+  val scalaReleaseRegex = """([^.]+)[.]([^.]+)[.]([^.]+)""".r
+
+  def hasScalaEpoch( version : String ) = scalaEpochRegex.pattern.matcher( version ).matches
+
+  def hasScalaRelease( version : String ) = scalaReleaseRegex.pattern.matcher( version ).matches
 
   /**
    * Extract version embedded in Maven artifactId.
@@ -87,44 +50,76 @@ object Version {
   }
 
   /**
-   * Extract version embedded in Maven artifactId.
+   * Extract Scala version embedded in Maven artifactId.
    */
   def artifactVersion( module : Module ) : Option[ ArtifactVersion ] = {
     artifactVersion( module.binaryArtifact.getArtifactId )
   }
 
   /**
+   * Match version between epoch or release.
+   */
+  def hasScalaMatch(
+    module : SpecificScalaVersion, library : SpecificScalaVersion,
+    hasRelease : Boolean
+  ) = {
+    val hasMajor = module.major == library.major
+    val hasMinor = module.minor == library.minor
+    val hasMicro = module.rev == library.rev
+    if ( hasRelease ) {
+      hasMajor && hasMinor && hasMicro
+    } else {
+      hasMajor && hasMinor
+    }
+  }
+
+  /**
+   * Verify module version against the library.
+   *
+   * Assumptions:
+   * - if version is present in artifactId use that
+   * - if not, use module Maven artifact version
+   */
+  def assertModule( module : Module, library : Module ) = {
+    val libraryVersion = scalaVersion( library )
+    val moduleOption = artifactVersion( module )
+    val moduleVersion = moduleOption
+      .map( meta => scalaVersion( meta ) )
+      .getOrElse( scalaVersion( module ) )
+    val hasModuleRelease = moduleOption
+      .map( meta => hasScalaRelease( meta.versionTail ) )
+      .getOrElse( hasScalaRelease( module.binaryArtifact.getVersion ) )
+    require(
+      hasScalaMatch( moduleVersion, libraryVersion, hasModuleRelease ),
+      s"Version mismatch: ${fileFrom( module )} vs ${fileFrom( library )}"
+    )
+  }
+
+  /**
    * Verify version consistency between modules in Scala installation.
    */
   def assertVersion( install : ScalaInstall ) = {
-
-    val bridge = itemFrom( install.bridge, true )
-
-    val compiler = itemFrom( install.compiler )
-    val library = itemFrom( install.library )
-    //    val reflect = itemFrom( install.reflect )
-
-    assertVersionTree( bridge, compiler )
-    assertVersionTree( bridge, library )
-    //    assertVersionTree( bridge, reflect )
-
-    assertVersionExact( compiler, library )
-    //    assertVersionExact( compiler, reflect )
-
-    install.pluginDefineList.foreach { module =>
-      val plugin = itemFrom( module, true )
-      assertVersionExact( compiler, plugin )
+    import install._
+    assertModule( bridge, library )
+    assertModule( compiler, library )
+    pluginDefineList.foreach { plugin =>
+      assertModule( plugin, library )
     }
-
   }
 
-  import scala.tools.nsc.settings.SpecificScalaVersion
+  def scalaVersion( artifactMeta : ArtifactVersion ) : SpecificScalaVersion = {
+    ScalaVersion( artifactMeta.versionTail ).asInstanceOf[ SpecificScalaVersion ]
+  }
 
-  def scalaVersionEpoch( scalaVersion : SpecificScalaVersion ) = {
+  def scalaVersion( module : Module ) : SpecificScalaVersion = {
+    ScalaVersion( module.binaryArtifact.getVersion ).asInstanceOf[ SpecificScalaVersion ]
+  }
+
+  def scalaVersionEpoch( scalaVersion : SpecificScalaVersion ) : String = {
     s"${scalaVersion.major}.${scalaVersion.minor}"
   }
 
-  def scalaVersionRelease( scalaVersion : SpecificScalaVersion ) = {
+  def scalaVersionRelease( scalaVersion : SpecificScalaVersion ) : String = {
     scalaVersion.unparse
   }
 
