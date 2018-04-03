@@ -9,7 +9,7 @@ Download and install tools in Windows OS
 * Git for windows https://git-scm.com/downloads
 * JDK-9 for windows http://www.oracle.com/technetwork/java/javase/downloads/index.html
 
-Change default Windows symlink policy
+Ensure default Windows symlink policy (already configured in VM)
 * https://blogs.windows.com/buildingapps/2016/12/02/symlinks-windows-10
 * https://superuser.com/questions/104845/permission-to-make-symbolic-links-in-windows-7
 

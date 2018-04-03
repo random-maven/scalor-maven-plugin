@@ -40,17 +40,17 @@
         <!-- Default versions. -->
         <version.java>1.8</version.java>
         <version.maven>3.5.0</version.maven>
-        <version.jackson>2.9.4</version.jackson>
+        <version.jackson>2.9.5</version.jackson>
         <version.slf4j>1.7.25</version.slf4j>
         <version.tycho>1.1.0</version.tycho>
-        <version.groovy>2.4.14</version.groovy>
+        <version.groovy>2.4.15</version.groovy>
         <version.jmh>1.20</version.jmh>
         <version.sbe>1.7.9</version.sbe>
         <version.agrona>0.9.15</version.agrona>
         <version.protobuf>3.5.1</version.protobuf>
         <version.snappy>1.1.7.1</version.snappy>
         <version.lucene>7.2.1</version.lucene>
-        <version.amazon.sdk>1.11.301</version.amazon.sdk>
+        <version.amazon.sdk>1.11.306</version.amazon.sdk>
         <version.sigar>1.6.5.132</version.sigar>
         <version.aspectj>1.8.13</version.aspectj>
         <version.bouncy>1.59</version.bouncy>
@@ -72,7 +72,7 @@
         <version.kamon>1.1.0</version.kamon>
         <version.scalatest>3.0.5</version.scalatest>
         <version.scalacheck>1.13.5</version.scalacheck>
-        <version.scala.meta>3.6.0</version.scala.meta>
+        <version.scala.meta>3.7.0</version.scala.meta>
         <version.scala.plugin.meta>3.0.0-M11</version.scala.plugin.meta>
         <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
         <version.scala.zinc>1.1.3</version.scala.zinc>
@@ -85,7 +85,7 @@
         <version.sjs.scalatags>0.6.7</version.sjs.scalatags>
         <version.sjs.autowire>0.2.6</version.sjs.autowire>
         <version.sjs.prickle>1.1.14</version.sjs.prickle>
-        <version.sjs.upickle>0.5.1</version.sjs.upickle>
+        <version.sjs.upickle>0.6.4</version.sjs.upickle>
         <version.sjs.scalarx>0.3.2</version.sjs.scalarx>
         <version.sjs.utest>0.6.4</version.sjs.utest>
         <version.scala.plugin.javascript>${version.sjs.release}</version.scala.plugin.javascript>
@@ -163,7 +163,7 @@
             <dependency>
                 <groupId>org.scala-lang.modules</groupId>
                 <artifactId>scala-swing_${version.scala.epoch}</artifactId>
-                <version>2.0.2</version>
+                <version>2.0.3</version>
             </dependency>
             <dependency>
                 <groupId>org.scala-lang.modules</groupId>
@@ -771,7 +771,7 @@
             <dependency>
                 <groupId>org.eclipse.jgit</groupId>
                 <artifactId>org.eclipse.jgit</artifactId>
-                <version>4.10.0.201712302008-r</version>
+                <version>4.11.0.201803080745-r</version>
             </dependency>
 
             <!-- Indexing and searching. -->
@@ -1047,7 +1047,7 @@
             <dependency>
                 <groupId>net.sourceforge.htmlunit</groupId>
                 <artifactId>htmlunit</artifactId>
-                <version>2.29</version>
+                <version>2.30</version>
             </dependency>
             <!-- Note: check AWS, JGIT, Play-WS, IB -->
             <dependency>
@@ -1383,7 +1383,7 @@
                 <plugin>
                     <groupId>com.carrotgarden.maven</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
-                    <version>1.3.20180210195103</version>
+                    <version>1.4.20180402132337</version>
                 </plugin>
 
                 <plugin>

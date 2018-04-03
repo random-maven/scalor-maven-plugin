@@ -35,7 +35,7 @@ Scala.macro
 * compiles in 3 scopes: [macro, main, test](http://scala-ide.org/docs/current-user-doc/features/scalacompiler/index.html)
 
 Scala.js
-* compiles and [links Scala.js JavaScrpt](https://github.com/scala-js/scala-js-cli)
+* compiles and [links scala-js](https://github.com/scala-js/scala-js) JavaScrpt
 * supports [JavaScrpt module initializers](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-link-main-mojo.html#linkerMainInitializerList)
 * same-project JS-VM + JVM [JUnit testing](https://github.com/random-maven/scala-js-junit-tools)
 * incremental cached JS linking in [Eclipse/M2E](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-link-main-mojo.html)
@@ -258,6 +258,7 @@ mvn clean install -P scalor
 
 ### Build yourself
 
+Linux
 ```bash
 cd /tmp
 git clone git@github.com:random-maven/scalor-maven-plugin.git
@@ -265,7 +266,8 @@ cd scalor-maven-plugin
 ./mvnw.sh clean install -B -P skip-test
 ```
 
-
+Windows
+* follow [windows build setup](https://github.com/random-maven/scalor-maven-plugin/blob/master/note/windows-setup.md)
 
 [licence_icon]: https://img.shields.io/github/license/random-maven/scalor-maven-plugin.svg?label=License
 [licence_link]: http://www.apache.org/licenses/

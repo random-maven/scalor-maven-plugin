@@ -202,9 +202,10 @@
         <!-- <version>0.8.0</version> -->
         <!-- </dependency> -->
 
-        <dependency>
+        <dependency><!-- FIXME 0.6.x broken -->
             <groupId>com.lihaoyi</groupId>
             <artifactId>upickle_${version.scala.epoch}</artifactId>
+            <version>0.5.1</version>
         </dependency>
 
         <!-- <dependency> -->
@@ -657,11 +658,10 @@
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-component-metadata</artifactId>
                 <dependencies>
-                    <!-- Java 9 support. -->
-                    <dependency>
+                    <dependency><!-- Java 9 support. -->
                         <groupId>org.ow2.asm</groupId>
                         <artifactId>asm</artifactId>
-                        <version>6.0</version>
+                        <version>6.1.1</version>
                     </dependency>
                 </dependencies>
                 <executions>

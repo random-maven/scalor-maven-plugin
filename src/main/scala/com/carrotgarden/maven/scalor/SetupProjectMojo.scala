@@ -94,9 +94,7 @@ Produce folders and symbolic links.
   defaultPhase                 = LifecyclePhase.INITIALIZE,
   requiresDependencyResolution = ResolutionScope.NONE
 )
-class SetupCrossArkonMojo extends SetupCrossAnyMojo
-  with scalanative.ParamsPackMain
-  with scalanative.ParamsPackTest {
+class SetupCrossArkonMojo extends SetupCrossAnyMojo {
 
   override def mojoName = A.mojo.`setup-cross`
 

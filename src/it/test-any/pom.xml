@@ -42,6 +42,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.lihaoyi</groupId>
+            <artifactId>scalatags_${version.scala.epoch}</artifactId>
+            <version>0.6.7</version>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>

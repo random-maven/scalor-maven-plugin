@@ -29,7 +29,15 @@ object Logging {
       log.info( s"[DONE] Success: ${message}" )
     }
 
-    val EOL = "\n"
+    //    val EOL = "\n"
+    //    if ( hasLog( Level.Error ) ) {
+    //      if ( message.contains( EOL ) ) { // suppress stack dump
+    //        val report = message.substring( 0, message.indexOf( EOL ) )
+    //        log.fail( s"[FAIL] ${report}" )
+    //      } else {
+    //        log.fail( s"[FAIL] ${message}" )
+    //      }
+    //    }
 
     override def log( level : Level.Value, message : => String ) : Unit = {
       level match {
@@ -40,14 +48,7 @@ object Logging {
         case Level.Warn =>
           if ( hasLog( Level.Warn ) ) log.info( s"[WARN] ${message}" )
         case Level.Error =>
-          if ( hasLog( Level.Error ) ) {
-            if ( message.contains( EOL ) ) { // suppress stack dump
-              val report = message.substring( 0, message.indexOf( EOL ) )
-              log.fail( s"[FAIL] ${report}" )
-            } else {
-              log.fail( s"[FAIL] ${message}" )
-            }
-          }
+          if ( hasLog( Level.Error ) ) log.fail( s"[FAIL] ${message}" )
       }
     }
 

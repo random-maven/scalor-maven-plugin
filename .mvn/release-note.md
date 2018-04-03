@@ -1,4 +1,16 @@
 
+--- 1.4.1 ---
+
+#### Improvements
+* document `buildMainSourceJavaFolders`, etc
+* document `scaladocRegexScalaExclude`, etc #13
+* update `flatten-maven-plugin` #16
+
+#### Bug fixes
+* fix zinc log truncate of multi-line
+* fix `setup-cross` properties
+* document windows build setup #18
+
 --- 1.4.0 ---
 
 #### New features

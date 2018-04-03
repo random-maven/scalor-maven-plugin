@@ -1,0 +1,2 @@
+
+[INFO] [compile-test] [WARN] Error reading API from class file : java.lang.ClassNotFoundException: com.carrotgarden.maven.design.AnyTest

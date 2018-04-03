@@ -30,7 +30,7 @@ trait ScaladocAny extends AnyRef {
 trait ScaladocRegex extends base.BuildAnyRegex {
 
   @Description( """
-  Regular expression for Java source file discovery via inclusion by match against absolute path.
+  Regular expression for Java source file discovery via inclusion by match against <b>full-path</b> (not just file name).
   File match is defined as: <code>include.hasMatch && ! exclude.hasMatch</code>.
   Matches files with <code>java</code> extension by default.
 <pre>
@@ -42,7 +42,7 @@ trait ScaladocRegex extends base.BuildAnyRegex {
   var scaladocRegexJavaInclude : String = _
 
   @Description( """
-  Regular expression for Java source file discovery via exclusion by match against absolute path.
+  Regular expression for Java source file discovery via exclusion by match against <b>full-path</b> (not just file name).
   File match is defined as: <code>include.hasMatch && ! exclude.hasMatch</code>.
   Matches no files when empty by default.
   """ )
@@ -52,7 +52,7 @@ trait ScaladocRegex extends base.BuildAnyRegex {
   var scaladocRegexJavaExclude : String = _
 
   @Description( """
-  Regular expression for Scala source file discovery via inclusion by match against absolute path.
+  Regular expression for Scala source file discovery via inclusion by match against <b>full-path</b> (not just file name).
   File match is defined as: <code>include.hasMatch && ! exclude.hasMatch</code>.
   Matches files with <code>scala</code> extension by default.
   """ )
@@ -63,7 +63,7 @@ trait ScaladocRegex extends base.BuildAnyRegex {
   var scaladocRegexScalaInclude : String = _
 
   @Description( """
-  Regular expression for Scala source file discovery via exclusion by match against absolute path.
+  Regular expression for Scala source file discovery via exclusion by match against <b>full-path</b> (not just file name).
   File match is defined as: <code>include.hasMatch && ! exclude.hasMatch</code>.
   Matches no files when empty by default.
   """ )

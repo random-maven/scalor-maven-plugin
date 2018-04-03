@@ -23,6 +23,6 @@ cd "${BASH_SOURCE%/*}/.."
 #./mvnw.sh clean verify -B -e -D invoker.test=test-tc-1.8
 #./mvnw.sh clean verify -B -e -D invoker.test=test-tc-1.9
 
-#./mvnw.sh clean verify -B -e -D invoker.test=test-setup
+./mvnw.sh clean verify -B -e -D invoker.test=test-setup
 
-./mvnw.sh clean verify -B -e -D invoker.test=test-native
+#./mvnw.sh clean verify -B -e -D invoker.test=test-native

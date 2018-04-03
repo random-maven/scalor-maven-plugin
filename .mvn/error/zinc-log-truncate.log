@@ -1,0 +1,5 @@
+
+
+[ERROR] [compile-main] [FAIL] [Error] /home/work/source/git/scala-hocon/src/main/scala/com/typesafe/config/Config.scala:67: object creation impossible, since:
+
+XXX missing multi lines XXX

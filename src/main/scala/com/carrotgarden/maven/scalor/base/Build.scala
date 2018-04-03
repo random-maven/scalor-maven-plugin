@@ -278,7 +278,15 @@ trait BuildMainSources extends BuildAnySources {
 
   @Description( """
   Java source root folders to be included in compilation scope=main.
+  Absolute path.
   Normally uses <code>src/main/java</code>.
+  Example custom entry in <code>pom.xml</code>:
+<pre>
+&lt;buildMainSourceJavaFolders&gt;
+  &lt;source&gt;${project.build.sourceDirectory}&lt;/source&gt;
+  &lt;source&gt;${project.basedir}/target/generated/main/java&lt;/source&gt;
+&lt;/buildMainSourceJavaFolders&gt;
+</pre>
   """ )
   @Parameter(
     property     = "scalor.buildMainSourceJavaFolders",
@@ -288,7 +296,15 @@ trait BuildMainSources extends BuildAnySources {
 
   @Description( """
   Scala source root folders to be included in compilation scope=main.
+  Absolute path.
   Normally uses <code>src/main/scala</code>.
+  Example custom entry in <code>pom.xml</code>:
+<pre>
+&lt;buildMainSourceScalaFolders&gt;
+  &lt;source&gt;${project.build.sourceDirectory}/../scala&lt;/source&gt;
+  &lt;source&gt;${project.basedir}/target/generated/main/scala&lt;/source&gt;
+&lt;/buildMainSourceScalaFolders&gt;
+</pre>
   """ )
   @Parameter(
     property     = "scalor.buildMainSourceScalaFolders",
@@ -299,15 +315,19 @@ trait BuildMainSources extends BuildAnySources {
   @Description( """
   Resource root folders to be included in compilation scope=main.
   Normally uses <code>src/main/resources</code>.
+  Absolute path.
   Component reference: 
 <a href="https://maven.apache.org/pom.html#Resources">
   Resource
 </a>.
-  Example entry in <code>pom.xml</code>:
+  Example custom entry in <code>pom.xml</code>:
 <pre>
 &lt;buildMainResourceFolders&gt;
   &lt;resource&gt;
     &lt;directory&gt;${project.basedir}/src/main/resources&lt;/directory&gt;
+  &lt;/resource&gt;  
+  &lt;resource&gt;
+    &lt;directory&gt;${project.basedir}/target/generated/main/resources&lt;/directory&gt;
   &lt;/resource&gt;  
 &lt;/buildMainResourceFolders&gt;
 </pre>
@@ -385,7 +405,15 @@ trait BuildTestSources extends BuildAnySources {
 
   @Description( """
   Java source root folders to be included in compilation scope=test.
+  Absolute path.
   Normally uses <code>src/test/java</code>.
+  Example custom entry in <code>pom.xml</code>:
+<pre>
+&lt;buildTestSourceJavaFolders&gt;
+  &lt;source&gt;${project.build.testSourceDirectory}&lt;/source&gt;
+  &lt;source&gt;${project.basedir}/target/generated/test/java&lt;/source&gt;
+&lt;/buildTestSourceJavaFolders&gt;
+</pre>
   """ )
   @Parameter(
     property     = "scalor.buildTestSourceJavaFolders",
@@ -395,7 +423,15 @@ trait BuildTestSources extends BuildAnySources {
 
   @Description( """
   Scala source root folders to be included in compilation scope=test.
+  Absolute path.
   Normally uses <code>src/test/scala</code>.
+  Example custom entry in <code>pom.xml</code>:
+<pre>
+&lt;buildTestSourceScalaFolders&gt;
+  &lt;source&gt;${project.build.testSourceDirectory}/../scala&lt;/source&gt;
+  &lt;source&gt;${project.basedir}/target/generated/test/scala&lt;/source&gt;
+&lt;/buildTestSourceScalaFolders&gt;
+</pre>
   """ )
   @Parameter(
     property     = "scalor.buildTestSourceScalaFolders",
@@ -405,16 +441,20 @@ trait BuildTestSources extends BuildAnySources {
 
   @Description( """
   Resource root folders to be included in compilation scope=test.
+  Absolute path.
   Normally uses <code>src/test/resources</code>.
   Component reference: 
 <a href="https://maven.apache.org/pom.html#Resources">
   Resource
 </a>.
-  Example entry in <code>pom.xml</code>:
+  Example custom entry in <code>pom.xml</code>:
 <pre>
 &lt;buildTestResourceFolders&gt;
   &lt;resource&gt;
     &lt;directory&gt;${project.basedir}/src/test/resources&lt;/directory&gt;
+  &lt;/resource&gt;  
+  &lt;resource&gt;
+    &lt;directory&gt;${project.basedir}/target/generated/test/resources&lt;/directory&gt;
   &lt;/resource&gt;  
 &lt;/buildTestResourceFolders&gt;
 </pre>
