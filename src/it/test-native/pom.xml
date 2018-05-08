@@ -29,14 +29,14 @@
         <version.scala.release>2.11.12</version.scala.release>
 
         <!-- Scala compiler tool stack. -->
-        <version.scala.zinc>1.1.3</version.scala.zinc>
+        <version.scala.zinc>1.1.7</version.scala.zinc>
         <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
 
         <!-- Scala.native tool stack. -->
-        <version.scanat.epoch>0.3</version.scanat.epoch>
-        <version.scanat.release>0.3.7</version.scanat.release>
-        <version.scanat.library>native${version.scanat.epoch}_${version.scala.epoch}</version.scanat.library>
-        <version.scala.plugin.native>${version.scanat.release}</version.scala.plugin.native>
+        <version.scalanat.epoch>0.3</version.scalanat.epoch>
+        <version.scalanat.release>0.3.7</version.scalanat.release>
+        <version.scalanat.library>native${version.scalanat.epoch}_${version.scala.epoch}</version.scalanat.library>
+        <version.scala.plugin.native>${version.scalanat.release}</version.scala.plugin.native>
 
         <!-- Java epoch. -->
         <version.java>1.8</version.java>
@@ -59,14 +59,14 @@
 
         <dependency>
             <groupId>org.scala-native</groupId>
-            <artifactId>scalalib_${version.scanat.library}</artifactId>
-            <version>${version.scanat.release}</version>
+            <artifactId>scalalib_${version.scalanat.library}</artifactId>
+            <version>${version.scalanat.release}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.lihaoyi</groupId>
-            <artifactId>sourcecode_${version.scanat.library}</artifactId>
+            <artifactId>sourcecode_${version.scalanat.library}</artifactId>
             <version>0.1.4</version>
             <scope>provided</scope>
         </dependency>

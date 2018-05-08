@@ -1,129 +1,166 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>com.carrotgarden.a</groupId>
-        <artifactId>carrot-a</artifactId>
-        <version>0-SNAPSHOT</version>
-        <relativePath>.mvn</relativePath>
-    </parent>
+	<parent>
+		<groupId>com.carrotgarden.a</groupId>
+		<artifactId>carrot-a</artifactId>
+		<version>0-SNAPSHOT</version>
+		<relativePath>.mvn</relativePath>
+	</parent>
 
-    <groupId>com.carrotgarden.maven</groupId>
-    <artifactId>scalor-maven-plugin-test-m2e-1.9</artifactId>
-    <version>0.0.0-SNAPSHOT</version>
-    <packaging>eclipse-test-plugin</packaging>
+	<groupId>com.carrotgarden.maven</groupId>
+	<artifactId>scalor-maven-plugin-test-m2e-1.9</artifactId>
+	<version>0.0.0-SNAPSHOT</version>
+	<packaging>eclipse-test-plugin</packaging>
 
-    <description>
+	<description>
         Verify Eclipse Maven M2E / Scala IDE operation of scalor-maven-plugin. 
     </description>
 
-    <properties>
+	<properties>
 
-        <m2e.repo.url>https://repository.takari.io/content/sites/m2e.extras/m2e/1.9.0/N/LATEST/</m2e.repo.url>
+		<m2e.repo.url>http://download.eclipse.org/technology/m2e/milestones/1.9/1.9.0.20180313-2237</m2e.repo.url>
 
-        <scala.ide.repo.url>http://download.scala-ide.org/sdk/lithium/e47/scala212/stable/site</scala.ide.repo.url>
+		<scala.ide.repo.url>http://download.scala-ide.org/sdk/lithium/e47/scala212/stable/site</scala.ide.repo.url>
 
-    </properties>
+        <!-- Use Java tool chain definition from MANIFEST.MF Make sure to provide 
+            jdk/id=JavaSE-1.8 in ${user.home}/.m2/toolchains.xml -->
+        <!-- <useJDK>BREE</useJDK> -->
+        
+        <useJDK>SYSTEM</useJDK>
 
-    <repositories>
-        <repository>
-            <id>m2e</id>
-            <url>${m2e.repo.url}</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
-            <id>scala-ide</id>
-            <url>${scala.ide.repo.url}</url>
-            <layout>p2</layout>
-        </repository>
-    </repositories>
+	</properties>
 
-    <dependencies>
-        <!-- Use META-INF/MANIFEST.MF -->
-    </dependencies>
+	<repositories>
+		<repository>
+			<id>m2e</id>
+			<url>${m2e.repo.url}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>scala-ide</id>
+			<url>${scala.ide.repo.url}</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories>
 
-    <build>
+	<dependencies>
+		<!-- Use META-INF/MANIFEST.MF -->
+	</dependencies>
 
-        <pluginManagement>
-            <plugins>
+    <profiles>
+        <profile>
+            <id>java-8</id>
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <properties>
+                <javaModuleProps>-Dmodule.props=none</javaModuleProps>
+            </properties>
+        </profile>
+        <profile>
+            <id>java-9</id>
+            <activation>
+                <jdk>9</jdk>
+            </activation>
+            <properties>
+                <javaModuleProps>--add-modules=ALL-SYSTEM</javaModuleProps>
+            </properties>
+        </profile>
+        <profile>
+            <id>java-10</id>
+            <activation>
+                <jdk>10</jdk>
+            </activation>
+            <properties>
+                <javaModuleProps>--add-modules=ALL-SYSTEM</javaModuleProps>
+            </properties>
+        </profile>
+    </profiles>
 
-                <plugin>
-                    <groupId>org.eclipse.tycho</groupId>
-                    <artifactId>tycho-compiler-plugin</artifactId>
-                    <configuration>
-                        <!--
-                            Use Java tool chain definition from MANIFEST.MF
-                            Make sure to provide jdk/id=JavaSE-1.8 in ${user.home}/.m2/toolchains.xml
-                        -->
-                        <useJDK>BREE</useJDK>
-                        <useProjectSettings>false</useProjectSettings>
-                    </configuration>
-                </plugin>
+	<build>
 
-                <plugin>
-                    <groupId>org.eclipse.tycho</groupId>
-                    <artifactId>tycho-surefire-plugin</artifactId>
-                    <configuration>
+		<pluginManagement>
+			<plugins>
 
-                        <!--
-                            Use Java tool chain definition from MANIFEST.MF
-                            Make sure to provide jdk/id=JavaSE-1.8 in ${user.home}/.m2/toolchains.xml
-                        -->
-                        <useJDK>BREE</useJDK>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-compiler-plugin</artifactId>
+					<configuration>
 
-                        <!-- Note: make sure CI has Xorg. -->
-                        <useUIHarness>true</useUIHarness>
-                        <useUIThread>false</useUIThread>
+                        <useJDK>${useJDK}</useJDK>
+                        
+						<useProjectSettings>false</useProjectSettings>
 
-                        <!-- Run tests with ordering by name. -->
-                        <runOrder>alphabetical</runOrder>
+					</configuration>
+				</plugin>
 
-                        <!-- Kill test if takes too long. -->
-                        <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-surefire-plugin</artifactId>
+					<configuration>
 
-                        <!-- Enough memory for Eclipse to start. -->
-                        <argLine>-Xmx1G</argLine>
-                        <!-- Configure alternative user home. -->
-                        <!-- <argLine>-Xmx1G -Duser.home=${project.basedir}/home</argLine> -->
+                        <useJDK>${useJDK}</useJDK>
 
-                        <!-- Expose platform console logger output. -->
-                        <showEclipseLog>true</showEclipseLog>
+						<!-- Note: make sure CI has Xorg. -->
+						<useUIHarness>true</useUIHarness>
+						<useUIThread>false</useUIThread>
 
-                        <!-- Test discovery pattern. -->
-                        <includes>
-                            <include>**/*Test.class</include>
-                        </includes>
+						<!-- Run tests with ordering by name. -->
+						<runOrder>alphabetical</runOrder>
 
-                        <!-- Enable Scala IDE weaving. -->
-                        <frameworkExtensions>
-                            <frameworkExtension>
-                                <groupId>org.eclipse.platform</groupId>
-                                <artifactId>org.eclipse.equinox.weaving.hook</artifactId>
-                                <version>1.2.0</version>
-                            </frameworkExtension>
-                        </frameworkExtensions>
-                        <bundleStartLevel>
-                            <bundle>
-                                <id>org.eclipse.equinox.weaving.aspectj</id>
-                                <level>2</level>
-                                <autoStart>true</autoStart>
-                            </bundle>
-                        </bundleStartLevel>
+						<!-- Kill test if takes too long. -->
+						<forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
 
-                        <!-- Suppress Scala IDE diagnostics dialog. -->
-                        <systemProperties>
-                            <sdtcore.headless>true</sdtcore.headless>
-                        </systemProperties>
+						<!-- Enough memory for Eclipse to start. -->
+                        <argLine>-Xmx1G ${javaModuleProps}</argLine>
+						
+						<!-- Configure alternative user home. -->
+						<!-- <argLine>-Xmx1G -Duser.home=${project.basedir}/home</argLine> -->
 
-                    </configuration>
-                </plugin>
+						<!-- Expose platform console logger output. -->
+						<showEclipseLog>true</showEclipseLog>
 
-            </plugins>
-        </pluginManagement>
+						<!-- Test discovery pattern. -->
+						<includes>
+							<include>**/*Test.class</include>
+						</includes>
 
-    </build>
+						<!-- Enable Scala IDE weaving. -->
+						<frameworkExtensions>
+							<frameworkExtension>
+								<groupId>org.eclipse.platform</groupId>
+								<artifactId>org.eclipse.equinox.weaving.hook</artifactId>
+								<version>1.2.0</version>
+							</frameworkExtension>
+						</frameworkExtensions>
+						<bundleStartLevel>
+							<bundle>
+								<id>org.eclipse.equinox.weaving.aspectj</id>
+								<level>2</level>
+								<autoStart>true</autoStart>
+							</bundle>
+						</bundleStartLevel>
+
+						<!-- Suppress Scala IDE diagnostics dialog. -->
+						<systemProperties>
+							<sdtcore.headless>true</sdtcore.headless>
+						</systemProperties>
+
+					</configuration>
+				</plugin>
+
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+
+		</plugins>
+
+	</build>
 
 </project>

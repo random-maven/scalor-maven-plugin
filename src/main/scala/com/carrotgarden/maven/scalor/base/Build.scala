@@ -249,7 +249,7 @@ trait BuildMainDependency extends BuildAnyDependency {
   @Description( """
   Project folders containing build classes
   which are dependency for compilation scope=main.
-  Normally includes folder scope=[macro] (<code>target/classes</code>).
+  Normally includes folder scope=[macro,main] (<code>target/classes</code>).
   """ )
   @Parameter(
     property     = "scalor.buildMainDependencyFolders",
@@ -376,11 +376,11 @@ trait BuildTestDependency extends BuildAnyDependency {
   @Description( """
   Project folders containing build classes
   which are dependency for compilation scope=test.
-  Normally includes folder scope=[macro,main] (<code>target/classes</code>).
+  Normally includes folder scope=[macro,main,test] (<code>target/classes</code>, <code>target/test-classes</code>).
   """ )
   @Parameter(
     property     = "scalor.buildTestDependencyFolders",
-    defaultValue = "${project.build.outputDirectory}"
+    defaultValue = "${project.build.outputDirectory},${project.build.testOutputDirectory}"
   )
   var buildTestDependencyFolders : Array[ File ] = Array.empty
 

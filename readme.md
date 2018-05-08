@@ -37,7 +37,7 @@ Scala.macro
 Scala.js
 * compiles and [links scala-js](https://github.com/scala-js/scala-js) JavaScrpt
 * supports [JavaScrpt module initializers](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-link-main-mojo.html#linkerMainInitializerList)
-* same-project JS-VM + JVM [JUnit testing](https://github.com/random-maven/scala-js-junit-tools)
+* same-project JS-VM + JVM [JUnit testing](https://github.com/random-scalor/scala-js-junit-tools)
 * incremental cached JS linking in [Eclipse/M2E](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-link-main-mojo.html)
 * [auto-provisions](https://random-maven.github.io/scalor-maven-plugin/2.12/scala-js-env-prov-webjars-mojo.html) 
   Webjars [resources for testing](https://www.webjars.org/) 
@@ -203,7 +203,7 @@ mvn clean install -P scalor
                                 <dependency>
                                     <groupId>org.scala-js</groupId>
                                     <artifactId>scalajs-compiler_${version.scala.release}</artifactId>
-                                    <version>${version.sjs.release}</version>
+                                    <version>${version.scalajs.release}</version>
                                 </dependency>
                             </definePluginList>
 

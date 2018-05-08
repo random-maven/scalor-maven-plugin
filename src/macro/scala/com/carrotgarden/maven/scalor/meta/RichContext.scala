@@ -10,7 +10,7 @@ trait RichContext {
   import c.universe._
 
   def prefix( message : String ) = s"Scalor macro: $message"
-  def info( message : String ) = c.info( c.enclosingPosition, prefix( message ), true )
+  def info( message : String ) = c.info( c.enclosingPosition, prefix( message ), true ) // FIXME broken by scala 12.6
   def warn( message : String ) = c.warning( c.enclosingPosition, prefix( message ) )
   def fail( message : String ) = c.abort( c.enclosingPosition, prefix( message ) )
 

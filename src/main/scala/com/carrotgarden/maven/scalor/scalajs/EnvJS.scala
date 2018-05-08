@@ -339,7 +339,7 @@ trait EnvProvNodejs extends EnvProvAny {
   """ )
   @Parameter(
     property     = "scalor.envprovNodejsVersion",
-    defaultValue = "9.5.0"
+    defaultValue = "10.0.0"
   )
   var envprovNodejsVersion : String = _
 
@@ -353,8 +353,8 @@ trait EnvProvNodejs extends EnvProvAny {
     property     = "scalor.envprovRnpmjsModules",
     defaultValue = """
     npm@5.6.0 ★ 
-    jsdom@11.6.0 ★ 
-    source-map-support@0.5.2 ★
+    jsdom@11.9.0 ★ 
+    source-map-support@0.5.5 ★
     """
   )
   var envprovRnpmjsModules : String = _

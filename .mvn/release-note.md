@@ -1,4 +1,18 @@
 
+--- 1.4.3 ---
+
+#### Improvements
+* dependencies update 
+* include `target/test-classes` in `compile-text`
+
+#### Bug fixes
+* use `Bundle-ActivationPolicy: lazy`
+
+--- 1.4.2 ---
+
+#### Improvements
+* dependency updates
+
 --- 1.4.1 ---
 
 #### Improvements
