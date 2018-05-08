@@ -1,4 +1,12 @@
 
+--- 1.4.4 ---
+
+#### Improvements
+* 
+
+#### Bug fixes
+*
+
 --- 1.4.3 ---
 
 #### Improvements

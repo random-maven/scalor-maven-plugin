@@ -76,12 +76,12 @@ Complete goals reference
 ### Eclipse setup
 
 Prerequisites:
-* [JDK-8 or JDK-9](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+* [JDK-8/9/10](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 * [Eclipse 4.7](http://www.eclipse.org/downloads/),
   [Maven M2E 1.8](http://www.eclipse.org/m2e/),
   [Scala IDE 4.7](http://scala-ide.org/).
 * better, use
-  [Maven M2E 1.9](https://repository.takari.io/content/sites/m2e.extras/m2e/1.9.0/N/LATEST/)
+  [Maven M2E 1.9](http://download.eclipse.org/technology/m2e/milestones/1.9/?d)
   and
   [Scala IDE 4.7 RC](http://scala-ide.org/download/milestone.html)
   .

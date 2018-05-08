@@ -42,7 +42,7 @@
 	<properties>
 
 		<!-- Scalor release series. -->
-		<release.epoch>1.4.2</release.epoch>
+		<release.epoch>1.4.3</release.epoch>
 
 		<!-- Compiler epoch. -->
 		<version.scala.zinc>1.1.7</version.scala.zinc>
