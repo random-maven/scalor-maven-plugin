@@ -45,7 +45,7 @@
 		<release.epoch>1.4.3</release.epoch>
 
 		<!-- Compiler epoch. -->
-		<version.scala.zinc>1.1.7</version.scala.zinc>
+		<version.scala.zinc>1.2.5</version.scala.zinc>
 		<version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
 
 		<!-- Maven epoch. -->
