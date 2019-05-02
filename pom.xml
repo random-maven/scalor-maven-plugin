@@ -41,7 +41,7 @@
     <properties>
 
         <!-- Scalor release series. -->
-        <release.epoch>1.5.0</release.epoch>
+        <release.epoch>1.5.1</release.epoch>
 
         <!-- Maven epoch. -->
         <version.maven>[3.5,3.6)</version.maven>
@@ -787,7 +787,7 @@
                             <groupId>com.carrotgarden.maven</groupId>
                             <artifactId>scalor-maven-plugin_2.12</artifactId>
                             <!-- Use locally built artifact. -->
-                            <version>1.5.0.20190502153115</version>
+                            <version>1.5.0.20190502185130</version>
                         </plugin>
                     </plugins>
                 </pluginManagement>
