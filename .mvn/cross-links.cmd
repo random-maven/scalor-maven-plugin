@@ -4,6 +4,8 @@
 @REM https://superuser.com/questions/104845/permission-to-make-symbolic-links-in-windows-7
 @REM
 
+cd "%~dp0\.."
+
 set "base=%cd%"
 set "cross212=%base%\cross\2.12"
 set "cross213=%base%\cross\2.13"

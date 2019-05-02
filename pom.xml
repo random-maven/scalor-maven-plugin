@@ -479,7 +479,7 @@
             <plugin>
                 <groupId>com.carrotgarden.maven</groupId>
                 <artifactId>scalor-maven-plugin_2.12</artifactId>
-                <!-- <version>configured elsewhere</version> -->
+                <version>1.5.0.20190502185130</version>
 
                 <configuration>
 
