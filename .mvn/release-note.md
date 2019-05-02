@@ -1,4 +1,24 @@
 
+--- 1.5.0 ---
+
+#### Improvements
+* java 11 support
+* provide Eclipse Scala IDE Setup
+* use eclipse 2019-03
+* use m2e 1.10
+* use scala 2.12.7
+* use zinc 1.2.5
+* use llvm 5.0 toolchain
+* use scala js 0.6.27
+* use scala native 0.3.9
+* use scala native gc=immix
+* use xenial on travis
+* support m2e .classpath/attribute name="test" value="true"
+
+#### Bug fixes
+* Better advanced usage link #25
+* Bump zinc version and some other plugins #23
+
 --- 1.4.4 ---
 
 #### Improvements

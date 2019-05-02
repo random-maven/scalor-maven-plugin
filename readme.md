@@ -6,8 +6,6 @@ Build integrator for Java, Scala, Scala.macro, Scala.js, Scala.native, Eclipse a
 [![Project License][licence_icon]][licence_link]
 [![Travis Status][travis_icon]][travis_link]
 [![Appvey Status][appvey_icon]][appvey_link]
-[![Project Files][tokei_files_icon]][tokei_basic_link]
-[![Project Lines][tokei_lines_icon]][tokei_basic_link]
 [![Lines of Code][tokei_basic_icon]][tokei_basic_link]
 
 | Install | Production Release | Development Release |
@@ -19,16 +17,17 @@ Similar plugins
 * [sbt-compiler-maven-plugin](https://github.com/sbt-compiler-maven-plugin/sbt-compiler-maven-plugin)
 
 Getting started
+* setup [Eclipse / Scala IDE][setup_link]
 * build and study [demo project](https://github.com/random-maven/scalor-maven-plugin/blob/master/demo)
 
 ### Plugin features
 
 Scala
 * new incremental [Zinc](https://github.com/sbt/zinc)
-* uses static [compiler-bridge](https://github.com/sbt/zinc/tree/1.x/internal/compiler-bridge)
+* uses static [compiler-bridge](https://github.com/sbt/zinc/tree/develop/internal/compiler-bridge)
 * auto-discovery of [Scala compiler plugins](https://random-maven.github.io/scalor-maven-plugin/2.12/eclipse-config-mojo.html#definePluginList)
 * cross-scala-version [build with simple setup](https://github.com/random-maven/scalor-maven-plugin/tree/master/src/it/test-cross)
-* limited Scala [Java 9 support](https://github.com/scala/scala-dev/issues/139) 
+* limited Scala [Java 11 support](https://github.com/scala/scala-dev/issues/139) 
 
 Scala.macro
 * [same-project](https://stackoverflow.com/questions/21994764/scala-macros-and-separate-compilation-units) Scala macro build
@@ -76,12 +75,12 @@ Complete goals reference
 ### Eclipse setup
 
 Prerequisites:
-* [JDK-8/9/10](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
-* [Eclipse 4.7](http://www.eclipse.org/downloads/),
-  [Maven M2E 1.8](http://www.eclipse.org/m2e/),
+* [JDK-8/11 LTS](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+* [Eclipse 2019-03](http://www.eclipse.org/downloads/),
+  [Maven M2E 1.10](http://www.eclipse.org/m2e/),
   [Scala IDE 4.7](http://scala-ide.org/).
 * better, use
-  [Maven M2E 1.9](http://download.eclipse.org/technology/m2e/milestones/1.9/?d)
+  [Maven M2E 1.12](http://download.eclipse.org/technology/m2e/milestones/1.12/)
   and
   [Scala IDE 4.7 RC](http://scala-ide.org/download/milestone.html)
   .
@@ -146,6 +145,8 @@ Project Examples:
 /
 [module](https://github.com/random-maven/scalor-maven-plugin/blob/master/cross/2.12/pom.xml)
 build
+* [Extensible Dimensional Analysis](https://github.com/hunterpayne/terra)
+* [Extensible Properties for Scala](https://github.com/hunterpayne/eprop)
 
 Command line invocation:
 
@@ -278,8 +279,6 @@ Windows
 [appvey_icon]: https://ci.appveyor.com/api/projects/status/5ena8xeyujneqqog?svg=true
 [appvey_link]: https://ci.appveyor.com/project/random-maven/scalor-maven-plugin/history 
 
-[tokei_files_icon]: https://tokei.rs/b1/github/random-maven/scalor-maven-plugin?category=files 
-[tokei_lines_icon]: https://tokei.rs/b1/github/random-maven/scalor-maven-plugin?category=lines 
 [tokei_basic_icon]: https://tokei.rs/b1/github/random-maven/scalor-maven-plugin
 [tokei_basic_link]: https://github.com/random-maven/scalor-maven-plugin 
 
@@ -291,3 +290,5 @@ Windows
 
 [gemnasium_icon]: https://gemnasium.com/random-maven/scalor-maven-plugin.svg
 [gemnasium_link]: https://gemnasium.com/random-maven/scalor-maven-plugin
+
+[setup_link]: https://github.com/random-maven/scalor-maven-plugin/tree/develop/setup

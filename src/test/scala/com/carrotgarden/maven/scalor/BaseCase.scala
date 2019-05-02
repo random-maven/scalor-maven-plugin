@@ -31,7 +31,7 @@ import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.impl.DefaultServiceLocator
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory
-import org.eclipse.aether.transport.wagon.WagonProvider
+//import org.eclipse.aether.transport.wagon.WagonProvider
 import org.eclipse.aether.impl.VersionResolver
 import org.eclipse.aether.impl.ArtifactDescriptorReader
 
@@ -45,8 +45,8 @@ import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.LocalRepositoryManager;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
-import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory
-import org.eclipse.aether.internal.transport.wagon.PlexusWagonProvider
+//import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory
+//import org.eclipse.aether.internal.transport.wagon.PlexusWagonProvider
 import org.apache.maven.repository.internal.DefaultVersionResolver
 import org.apache.maven.repository.internal.DefaultVersionRangeResolver
 import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader
@@ -100,8 +100,8 @@ object BaseCase {
     }
 
     def registerTransportServices( locator : DefaultServiceLocator ) = {
-      locator.addService( classOf[ RepositoryConnectorFactory ], classOf[ BasicRepositoryConnectorFactory ] )
-      locator.setServices( classOf[ WagonProvider ], new PlexusWagonProvider() )
+//      locator.addService( classOf[ RepositoryConnectorFactory ], classOf[ BasicRepositoryConnectorFactory ] )
+//      locator.setServices( classOf[ WagonProvider ], new PlexusWagonProvider() )
     }
 
     def newRepositorySystem() = {

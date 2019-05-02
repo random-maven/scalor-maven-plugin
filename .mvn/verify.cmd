@@ -7,4 +7,4 @@
 
 cd %~dp0\..
 
-./mvnw.cmd clean verify -B -V
+./mvnw.cmd clean verify -e -B -V

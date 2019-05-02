@@ -507,7 +507,7 @@ object Build {
   object Param {
 
     /**
-     * Define plugin scope names.
+     * Define plugin scope names. Mapped to attrib.scope
      */
     object scope {
       val `macro` = "macro"
@@ -516,7 +516,7 @@ object Build {
     }
 
     /**
-     * Define class path entry attributes.
+     * Define class path entry attributes used in ".classpath".
      */
     object attrib {
       /**
@@ -527,6 +527,10 @@ object Build {
        * Eclipse "optional" class path entry does not complain when folder is missing.
        */
       val optional = "optional"
+      /**
+       * Eclipse "test" class path entry is assigned to m2e dependency scope=test.
+       */
+      val test = "test"
     }
 
   }

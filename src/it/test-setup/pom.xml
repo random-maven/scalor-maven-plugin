@@ -24,7 +24,7 @@
 
         <!-- Scala epoch. -->
         <version.scala.epoch>2.12</version.scala.epoch>
-        <version.scala.release>2.12.4</version.scala.release>
+        <version.scala.release>2.12.7</version.scala.release>
 
         <!-- File format. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -47,7 +47,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.0</version>
                 <configuration>
                     <skip>true</skip>
                     <skipMain>true</skipMain>

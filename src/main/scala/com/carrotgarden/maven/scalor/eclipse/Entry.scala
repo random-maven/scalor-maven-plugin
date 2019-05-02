@@ -99,6 +99,8 @@ trait Entry {
    * Configure source/target folder class path entries.
    *
    * Note: register-* goals must be executed before this.
+   * 
+   * Note: M2E 4.10+ requires attrib.test. 
    */
   def ensureSourceRoots(
     context : Config.SetupContext,
@@ -111,7 +113,7 @@ trait Entry {
     )
     val attribMacro = attribAny + ( attrib.scope -> scope.`macro` )
     val attribMain = attribAny + ( attrib.scope -> scope.`main` )
-    val attribTest = attribAny + ( attrib.scope -> scope.`test` )
+    val attribTest = attribAny + ( attrib.scope -> scope.`test` ) + ( attrib.test -> "true" )  
     ensureSourceRoots( context, config.buildMacro, attribMacro, monitor )
     ensureSourceRoots( context, config.buildMain, attribMain, monitor )
     ensureSourceRoots( context, config.buildTest, attribTest, monitor )

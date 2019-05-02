@@ -37,10 +37,9 @@
     </distributionManagement>
 
     <!-- Module version override. -->
-    <!-- Keep 2.12.4 https://github.com/scala/bug/issues/10869 -->
     <properties>
         <version.scala.epoch>2.12</version.scala.epoch>
-        <version.scala.release>2.12.4</version.scala.release>
+        <version.scala.release>2.12.7</version.scala.release>
     </properties>
 
 </project>

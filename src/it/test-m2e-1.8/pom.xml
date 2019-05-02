@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
@@ -25,10 +24,10 @@
 
 		<scala.ide.repo.url>http://download.scala-ide.org/sdk/lithium/e47/scala212/stable/site</scala.ide.repo.url>
 
-		<!-- Use Java tool chain definition from MANIFEST.MF Make sure to provide 
-			jdk/id=JavaSE-1.8 in ${user.home}/.m2/toolchains.xml -->
+		<!-- Use Java tool chain definition from MANIFEST.MF Make sure to provide jdk/id=JavaSE-1.8 in ${user.home}/.m2/toolchains.xml -->
 		<!-- <useJDK>BREE</useJDK> -->
 
+		<!-- Use Java tool chain running this build. -->
 		<useJDK>SYSTEM</useJDK>
 
 	</properties>
@@ -46,28 +45,20 @@
 	</dependencies>
 
 	<profiles>
+		<!-- Configure java module system. -->
 		<profile>
 			<id>java-8</id>
 			<activation>
 				<jdk>1.8</jdk>
 			</activation>
-            <properties>
-                <javaModuleProps>-Dmodule.props=none</javaModuleProps>
-            </properties>
-		</profile>
-		<profile>
-			<id>java-9</id>
-			<activation>
-				<jdk>9</jdk>
-			</activation>
 			<properties>
-				<javaModuleProps>--add-modules=ALL-SYSTEM</javaModuleProps>
+				<javaModuleProps>-Dmodule.props=none</javaModuleProps>
 			</properties>
 		</profile>
 		<profile>
-			<id>java-10</id>
+			<id>java-11</id>
 			<activation>
-				<jdk>10</jdk>
+				<jdk>11</jdk>
 			</activation>
 			<properties>
 				<javaModuleProps>--add-modules=ALL-SYSTEM</javaModuleProps>
@@ -79,6 +70,15 @@
 
 		<pluginManagement>
 			<plugins>
+
+				<!-- Preserve injected scope=system. -->
+				<plugin>
+					<groupId>com.carrotgarden.maven</groupId>
+					<artifactId>flatten-maven-plugin</artifactId>
+					<configuration>
+						<skip>true</skip>
+					</configuration>
+				</plugin>
 
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
@@ -123,12 +123,12 @@
 							<include>**/*Test.class</include>
 						</includes>
 
-						<!-- Enable Scala IDE weaving. -->
+						<!-- Enable Scala IDE weaving on boot. -->
 						<frameworkExtensions>
 							<frameworkExtension>
 								<groupId>org.eclipse.platform</groupId>
 								<artifactId>org.eclipse.equinox.weaving.hook</artifactId>
-								<version>1.2.0</version>
+								<version>1.2.200</version>
 							</frameworkExtension>
 						</frameworkExtensions>
 						<bundleStartLevel>

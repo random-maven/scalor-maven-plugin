@@ -16,22 +16,22 @@
 
         <!-- Scala epoch. -->
         <version.scala.epoch>2.12</version.scala.epoch>
-        <version.scala.release>2.12.4</version.scala.release>
+        <version.scala.release>2.12.7</version.scala.release>
 
         <!-- Scala.js epoch. -->
         <version.scalajs.epoch>0.6</version.scalajs.epoch>
-        <version.scalajs.release>0.6.22</version.scalajs.release>
+        <version.scalajs.release>0.6.27</version.scalajs.release>
         <version.scalajs.library>sjs${version.scalajs.epoch}_${version.scala.epoch}</version.scalajs.library>
 
         <!-- Scala compiler. -->
-        <version.scala.zinc>1.1.7</version.scala.zinc>
+        <version.scala.zinc>1.2.5</version.scala.zinc>
         <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
 
         <!-- JUnit 4/5 Testing -->
-        <version.maven.testing>2.19.1</version.maven.testing><!-- JUnit 5 OK. -->
-        <version.junit.platform>1.1.0</version.junit.platform>
-        <version.junit.jupiter>5.1.0</version.junit.jupiter>
-        <version.junit.vintage>5.1.0</version.junit.vintage>
+        <version.maven.testing>2.22.1</version.maven.testing>
+        <version.junit.platform>1.4.2</version.junit.platform>
+        <version.junit.jupiter>5.4.2</version.junit.jupiter>
+        <version.junit.vintage>5.4.2</version.junit.vintage>
 
         <!-- File format. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -77,14 +77,14 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
-            <version>3.3.1</version>
+            <version>3.4.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>vue</artifactId>
-            <version>2.5.13</version>
+            <version>2.5.16</version>
             <scope>provided</scope>
         </dependency>
 
@@ -96,14 +96,14 @@
         <dependency>
             <groupId>org.scala-js</groupId>
             <artifactId>scalajs-dom_${version.scalajs.library}</artifactId>
-            <version>0.9.4</version>
+            <version>0.9.7</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>be.doeraene</groupId>
             <artifactId>scalajs-jquery_${version.scalajs.library}</artifactId>
-            <version>0.9.2</version>
+            <version>0.9.4</version>
             <scope>provided</scope>
         </dependency>
 
@@ -166,7 +166,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.0</version>
                 <configuration>
                     <skip>true</skip>
                     <skipMain>true</skipMain>
@@ -367,11 +367,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${version.maven.testing}</version>
                 <dependencies>
-                    <dependency>
-                        <groupId>org.junit.platform</groupId>
-                        <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>${version.junit.platform}</version>
-                    </dependency>
                     <dependency>
                         <groupId>org.junit.jupiter</groupId>
                         <artifactId>junit-jupiter-engine</artifactId>

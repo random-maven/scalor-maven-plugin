@@ -39,7 +39,7 @@
 
 		<!-- Default versions. -->
 		<version.java>1.8</version.java>
-		<version.maven>3.5.3</version.maven>
+		<version.maven>3.5.3</version.maven><!-- Sync to M2E. -->
 		<version.jackson>2.9.8</version.jackson>
 		<version.slf4j>1.7.26</version.slf4j>
 		<version.tycho>1.4.0</version.tycho>
@@ -59,7 +59,7 @@
 		<version.scala.epoch>2.12</version.scala.epoch>
 		<version.scala.release>2.12.8</version.scala.release>
 		<version.scala.sbt>0.13.7</version.scala.sbt>
-		<version.scala.xml>1.1.0</version.scala.xml>
+		<version.scala.xml>1.2.0</version.scala.xml>
 		<version.scala.protobuf>0.6.7</version.scala.protobuf>
 		<version.akka.main>2.5.22</version.akka.main>
 		<version.akka.http>10.1.8</version.akka.http>
@@ -75,19 +75,19 @@
 		<version.scala.meta>3.7.4</version.scala.meta>
 		<version.scala.plugin.meta>3.0.0-M11</version.scala.plugin.meta>
 		<version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
-		<version.scala.zinc>1.1.7</version.scala.zinc>
+		<version.scala.zinc>1.2.5</version.scala.zinc>
 
 		<!-- Scala.js stack. -->
 		<version.scalajs.epoch>0.6</version.scalajs.epoch>
-		<version.scalajs.release>0.6.23</version.scalajs.release>
+		<version.scalajs.release>0.6.27</version.scalajs.release>
 		<version.scalajs.library>sjs${version.scalajs.epoch}_${version.scala.epoch}</version.scalajs.library>
-		<version.scalajs.scalacss>0.5.5</version.scalajs.scalacss>
-		<version.scalajs.scalatags>0.6.7</version.scalajs.scalatags>
+		<version.scalajs.scalacss>0.5.6</version.scalajs.scalacss>
+		<version.scalajs.scalatags>0.6.8</version.scalajs.scalatags>
 		<version.scalajs.autowire>0.2.6</version.scalajs.autowire>
 		<version.scalajs.prickle>1.1.14</version.scalajs.prickle>
 		<version.scalajs.upickle>0.6.6</version.scalajs.upickle>
 		<version.scalajs.scalarx>0.4.0</version.scalajs.scalarx>
-		<version.scalajs.utest>0.6.4</version.scalajs.utest>
+		<version.scalajs.utest>0.6.7</version.scalajs.utest>
 		<version.scala.plugin.javascript>${version.scalajs.release}</version.scala.plugin.javascript>
 
 		<!-- Scala.native stack. -->
@@ -163,12 +163,12 @@
 			<dependency>
 				<groupId>org.scala-lang.modules</groupId>
 				<artifactId>scala-swing_${version.scala.epoch}</artifactId>
-				<version>2.0.3</version>
+				<version>2.1.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.scala-lang.modules</groupId>
 				<artifactId>scala-parser-combinators_${version.scala.epoch}</artifactId>
-				<version>1.1.1</version>
+				<version>1.1.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.scala-lang.modules</groupId>
@@ -178,7 +178,7 @@
 			<dependency>
 				<groupId>org.scala-lang.modules</groupId>
 				<artifactId>scala-async_${version.scala.epoch}</artifactId>
-				<version>0.9.7</version>
+				<version>0.10.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.scala-lang.modules</groupId>
@@ -246,7 +246,7 @@
 			<dependency><!-- runtime -->
 				<groupId>com.lihaoyi</groupId>
 				<artifactId>acyclic_${version.scala.epoch}</artifactId>
-				<version>0.1.7</version>
+				<version>0.1.8</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency><!-- runtime -->
@@ -343,13 +343,13 @@
 			<dependency>
 				<groupId>org.scala-js</groupId>
 				<artifactId>scalajs-dom_${version.scalajs.library}</artifactId>
-				<version>0.9.6</version>
+				<version>0.9.7</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>be.doeraene</groupId>
 				<artifactId>scalajs-jquery_${version.scalajs.library}</artifactId>
-				<version>0.9.3</version>
+				<version>0.9.4</version>
 				<scope>provided</scope>
 			</dependency>
 
@@ -443,43 +443,43 @@
 			<dependency>
 				<groupId>org.webjars</groupId>
 				<artifactId>webjars-locator-core</artifactId>
-				<version>0.35</version>
+				<version>0.37</version>
 			</dependency>
 
 			<!-- Scala JS/Webjar. Web resources. Non-scala. -->
 			<dependency>
 				<groupId>org.webjars.bower</groupId>
 				<artifactId>jquery</artifactId>
-				<version>3.3.1</version>
+				<version>3.4.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.webjars.bower</groupId>
 				<artifactId>popper.js</artifactId>
-				<version>1.14.3</version>
+				<version>1.14.6</version>
 			</dependency>
 			<dependency>
 				<groupId>org.webjars.bower</groupId>
 				<artifactId>bootstrap</artifactId>
-				<version>4.1.1</version>
+				<version>4.3.1</version>
 			</dependency>
 
 			<!-- Scala JS/Webjar React stack. Non-scala -->
 			<dependency>
 				<groupId>org.webjars.npm</groupId>
 				<artifactId>react</artifactId>
-				<version>16.4.0</version>
+				<version>16.8.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.webjars.npm</groupId>
 				<artifactId>react-dom</artifactId>
-				<version>16.4.0</version>
+				<version>16.8.5</version>
 			</dependency>
 
 			<!-- Scala JS/Webjar Vue stack. Non-scala. -->
 			<dependency>
 				<groupId>org.webjars.bower</groupId>
 				<artifactId>vue</artifactId>
-				<version>2.5.16</version>
+				<version>2.6.9</version>
 			</dependency>
 			<dependency>
 				<groupId>org.webjars.bower</groupId>
@@ -1270,7 +1270,7 @@
 			<dependency>
 				<groupId>net.java.dev.jna</groupId>
 				<artifactId>jna</artifactId>
-				<version>5.3.0</version>
+				<version>5.3.1</version>
 			</dependency>
 
 			<!-- Cryptography provider. -->
@@ -1389,7 +1389,7 @@
 				<plugin>
 					<groupId>com.carrotgarden.maven</groupId>
 					<artifactId>flatten-maven-plugin</artifactId>
-					<version>1.5.20190427220340</version>
+					<version>1.6.20190428102750</version>
 				</plugin>
 
 				<plugin>
@@ -4323,48 +4323,38 @@ version=${revision}
 
 		<!-- Eclipse plugin development. -->
 		<profile>
+			<id>eclipse-2019-03</id>
+			<activation>
+				<file>
+					<exists>.mvn/pom-eclipse-2019-03.md</exists>
+				</file>
+			</activation>
+			<properties>
+				<eclipse.release.repo.url>http://download.eclipse.org/releases/2019-03/201903201000</eclipse.release.repo.url>
+				<eclipse.tool.orbit.repo.url>http://download.eclipse.org/tools/orbit/downloads/drops/R20190226160451/repository/</eclipse.tool.orbit.repo.url>
+			</properties>
+		</profile>
+
+		<!-- Eclipse plugin development. -->
+		<profile>
 			<id>eclipse</id>
 			<activation>
 				<file>
 					<exists>.mvn/pom-eclipse.md</exists>
 				</file>
 			</activation>
-			<properties>
-				<!-- m2 -->
-				<!-- <eclipse-maven-repo.url>https://repo.eclipse.org/content/repositories/releases/</eclipse-maven-repo.url> -->
-				<!-- <sonatype-maven-repo.url>https://oss.sonatype.org/content/groups/public/</sonatype-maven-repo.url> -->
-				<!-- p2 -->
-				<eclipse-release-repo.url>http://download.eclipse.org/releases/oxygen</eclipse-release-repo.url>
-				<eclipse-updates-repo.url>http://download.eclipse.org/eclipse/updates/4.7</eclipse-updates-repo.url>
-				<eclipse-orbit-repo.url>http://download.eclipse.org/tools/orbit/downloads/drops/R20170919201930/repository</eclipse-orbit-repo.url>
-			</properties>
 			<repositories>
 				<repository>
+					<layout>p2</layout>
 					<id>eclipse-release</id>
-					<url>${eclipse-release-repo.url}</url>
-					<layout>p2</layout>
+					<url>${eclipse.release.repo.url}</url>
 				</repository>
 				<repository>
-					<id>eclipse-updates</id>
-					<url>${eclipse-updates-repo.url}</url>
 					<layout>p2</layout>
-				</repository>
-				<repository>
-					<id>eclipse-orbit</id>
-					<url>${eclipse-orbit-repo.url}</url>
-					<layout>p2</layout>
+					<id>eclipse-tool-orbit</id>
+					<url>${eclipse.tool.orbit.repo.url}</url>
 				</repository>
 			</repositories>
-			<pluginRepositories>
-				<!-- <pluginRepository> -->
-				<!-- <id>sonatype-maven</id> -->
-				<!-- <url>${sonatype-maven-repo.url}</url> -->
-				<!-- </pluginRepository> -->
-				<!-- <pluginRepository> -->
-				<!-- <id>eclipse-maven</id> -->
-				<!-- <url>${eclipse-maven-repo.url}</url> -->
-				<!-- </pluginRepository> -->
-			</pluginRepositories>
 			<build>
 				<pluginManagement>
 					<plugins>
@@ -4378,10 +4368,11 @@ version=${revision}
 							<artifactId>tycho-compiler-plugin</artifactId>
 							<version>${version.tycho}</version>
 							<configuration>
+								<showWarnings>true</showWarnings>
 								<compilerArguments>
 									<inlineJSR />
 									<enableJavadoc />
-									<encoding>ISO-8859-1</encoding>
+									<encoding>${project.build.sourceEncoding}</encoding>
 								</compilerArguments>
 							</configuration>
 						</plugin>
@@ -4400,7 +4391,7 @@ version=${revision}
 								<strictBinIncludes>false</strictBinIncludes>
 								<format>'v'yyyyMMdd-HHmm</format>
 								<timestampProvider>jgit</timestampProvider>
-								<!--jgit.ignore> pom.xml </jgit.ignore -->
+								<!--jgit.ignore>pom.xml</jgit.ignore -->
 								<jgit.dirtyWorkingTree>warning</jgit.dirtyWorkingTree>
 								<!-- <jgit.dirtyWorkingTree>warning|error|ignore</jgit.dirtyWorkingTree> -->
 							</configuration>
@@ -4494,11 +4485,11 @@ version=${revision}
 							</environments>
 							<filters>
 								<!-- work around Equinox bug 348045 -->
-								<filter>
-									<type>p2-installable-unit</type>
-									<id>org.eclipse.equinox.servletbridge.extensionbundle</id>
-									<removeAll />
-								</filter>
+								<!-- <filter> -->
+								<!-- <type>p2-installable-unit</type> -->
+								<!-- <id>org.eclipse.equinox.servletbridge.extensionbundle</id> -->
+								<!-- <removeAll /> -->
+								<!-- </filter> -->
 							</filters>
 						</configuration>
 					</plugin>

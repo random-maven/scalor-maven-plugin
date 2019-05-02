@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
+	<!-- Provision parent configuration. -->
 	<parent>
 		<groupId>com.carrotgarden.a</groupId>
 		<artifactId>carrot-a</artifactId>
@@ -13,7 +13,7 @@
 	</parent>
 
 	<groupId>com.carrotgarden.maven</groupId>
-	<artifactId>scalor-maven-plugin-test-m2e-1.9</artifactId>
+	<artifactId>scalor-maven-plugin-test-m2e-1.10</artifactId>
 	<version>0.0.0-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
 
@@ -23,15 +23,15 @@
 
 	<properties>
 
-		<m2e.repo.url>http://download.eclipse.org/technology/m2e/milestones/1.9/1.9.0.20180313-2237</m2e.repo.url>
+		<m2e.repo.url>https://download.eclipse.org/technology/m2e/releases/1.10/1.10.0.20181127-2120</m2e.repo.url>
 
 		<scala.ide.repo.url>http://download.scala-ide.org/sdk/lithium/e47/scala212/stable/site</scala.ide.repo.url>
 
-        <!-- Use Java tool chain definition from MANIFEST.MF Make sure to provide 
-            jdk/id=JavaSE-1.8 in ${user.home}/.m2/toolchains.xml -->
-        <!-- <useJDK>BREE</useJDK> -->
-        
-        <useJDK>SYSTEM</useJDK>
+		<!-- Use Java tool chain definition from MANIFEST.MF Make sure to provide jdk/id=JavaSE-1.8 in ${user.home}/.m2/toolchains.xml -->
+		<!-- <useJDK>BREE</useJDK> -->
+
+		<!-- Use Java tool chain running this build. -->
+		<useJDK>SYSTEM</useJDK>
 
 	</properties>
 
@@ -52,48 +52,49 @@
 		<!-- Use META-INF/MANIFEST.MF -->
 	</dependencies>
 
-    <profiles>
-        <profile>
-            <id>java-8</id>
-            <activation>
-                <jdk>1.8</jdk>
-            </activation>
-            <properties>
-                <javaModuleProps>-Dmodule.props=none</javaModuleProps>
-            </properties>
-        </profile>
-        <profile>
-            <id>java-9</id>
-            <activation>
-                <jdk>9</jdk>
-            </activation>
-            <properties>
-                <javaModuleProps>--add-modules=ALL-SYSTEM</javaModuleProps>
-            </properties>
-        </profile>
-        <profile>
-            <id>java-10</id>
-            <activation>
-                <jdk>10</jdk>
-            </activation>
-            <properties>
-                <javaModuleProps>--add-modules=ALL-SYSTEM</javaModuleProps>
-            </properties>
-        </profile>
-    </profiles>
+	<profiles>
+		<!-- Configure java module system. -->
+		<profile>
+			<id>java-8</id>
+			<activation>
+				<jdk>1.8</jdk>
+			</activation>
+			<properties>
+				<javaModuleProps>-Dmodule.props=none</javaModuleProps>
+			</properties>
+		</profile>
+		<profile>
+			<id>java-11</id>
+			<activation>
+				<jdk>11</jdk>
+			</activation>
+			<properties>
+				<javaModuleProps>--add-modules=ALL-SYSTEM</javaModuleProps>
+			</properties>
+		</profile>
+	</profiles>
 
 	<build>
 
 		<pluginManagement>
 			<plugins>
 
+				<!-- Preserve injected scope=system. -->
+				<plugin>
+					<groupId>com.carrotgarden.maven</groupId>
+					<artifactId>flatten-maven-plugin</artifactId>
+					<configuration>
+						<skip>true</skip>
+					</configuration>
+				</plugin>
+
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-compiler-plugin</artifactId>
 					<configuration>
 
-                        <useJDK>${useJDK}</useJDK>
-                        
+						<useJDK>${useJDK}</useJDK>
+
 						<useProjectSettings>false</useProjectSettings>
 
 					</configuration>
@@ -104,7 +105,7 @@
 					<artifactId>tycho-surefire-plugin</artifactId>
 					<configuration>
 
-                        <useJDK>${useJDK}</useJDK>
+						<useJDK>${useJDK}</useJDK>
 
 						<!-- Note: make sure CI has Xorg. -->
 						<useUIHarness>true</useUIHarness>
@@ -117,8 +118,8 @@
 						<forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
 
 						<!-- Enough memory for Eclipse to start. -->
-                        <argLine>-Xmx1G ${javaModuleProps}</argLine>
-						
+						<argLine>-Xmx1G ${javaModuleProps}</argLine>
+
 						<!-- Configure alternative user home. -->
 						<!-- <argLine>-Xmx1G -Duser.home=${project.basedir}/home</argLine> -->
 
@@ -130,12 +131,12 @@
 							<include>**/*Test.class</include>
 						</includes>
 
-						<!-- Enable Scala IDE weaving. -->
+						<!-- Enable Scala IDE weaving on boot. -->
 						<frameworkExtensions>
 							<frameworkExtension>
 								<groupId>org.eclipse.platform</groupId>
 								<artifactId>org.eclipse.equinox.weaving.hook</artifactId>
-								<version>1.2.0</version>
+								<version>1.2.200</version>
 							</frameworkExtension>
 						</frameworkExtensions>
 						<bundleStartLevel>

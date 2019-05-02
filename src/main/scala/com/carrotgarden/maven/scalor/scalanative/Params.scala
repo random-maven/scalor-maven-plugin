@@ -364,7 +364,7 @@ trait ParamsGarbageCollectorMain extends ParamsGarbageCollectorAny {
   """ )
   @Parameter(
     property     = "scalor.nativeMainGarbageCollector",
-    defaultValue = "boehm"
+    defaultValue = "immix"
   )
   var nativeMainGarbageCollector : String = _
 

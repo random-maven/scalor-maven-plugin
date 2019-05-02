@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<setup:Project
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:git="http://www.eclipse.org/oomph/setup/git/1.0"
+    xmlns:jdt="http://www.eclipse.org/oomph/setup/jdt/1.0"
+    xmlns:maven="http://www.eclipse.org/oomph/setup/maven/1.0"
+    xmlns:predicates="http://www.eclipse.org/oomph/predicates/1.0"
+    xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
+    xmlns:setup.workingsets="http://www.eclipse.org/oomph/setup/workingsets/1.0"
+    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/setup/maven/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Maven.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore"
+    name="scalor-project"
+    label="scalor-project">
+  <setupTask
+      xsi:type="setup:CompoundTask"
+      name="arkon">
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="github.user.id">
+      <description>GitHub user accout</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="github.author.name">
+      <description>GitHub user name used for commits</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="github.author.email">
+      <description>GitHub user email used for commits</description>
+    </setupTask>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:CompoundTask"
+      name="location">
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="github.remote.path"
+        label="">
+      <choice
+          value="random-maven/scalor-maven-plugin"/>
+      <description>The [user-id] and [project-id] of the github project</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        type="URI"
+        name="github.remote.uri"
+        label="">
+      <choice
+          value="https://github.com/${github.remote.path}.git"
+          label="https://github.com/${github.remote.path}.git [anonymous]"/>
+      <choice
+          value="git@github.com:${github.remote.path}.git"
+          label="git@github.com:${github.remote.path}.git [use ssh config]"/>
+      <description>Github repository access URI</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        type="FOLDER"
+        name="github.local.root">
+      <choice
+          value="/home/work/source/git"/>
+      <choice
+          value="C:\Git"/>
+      <choice
+          value="${user.home}/.git"/>
+      <choice
+          value="${user.home}/git"/>
+      <choice
+          value="${user.home}/Git"/>
+      <description>Local GitHub repository container</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        type="FOLDER"
+        name="github.local.folder">
+      <choice
+          value="${github.local.root}/scalor-maven-plugin"/>
+      <description>Local GitHub folder for the cloned project</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        type="URI"
+        name="github.content.uri"
+        value="https://raw.githubusercontent.com/${github.remote.path}/develop"/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="github.setup.path"
+        value="setup/scalor-project.setup"/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        type="URI"
+        name="github.setup.remote.uri"
+        value="${github.content.uri}/${github.setup.path}"/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        type="URI"
+        name="github.setup.local.uri"
+        value="file://${github.local.folder}/${github.setup.path}"/>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:CompoundTask"
+      name="resource">
+    <setupTask
+        xsi:type="setup:ResourceCreationTask"
+        content="MAX_RECENT_WORKSPACES=5&#xD;&#xA;RECENT_WORKSPACES=${workspace.location|property}&#xD;&#xA;RECENT_WORKSPACES_PROTOCOL=3&#xD;&#xA;SHOW_WORKSPACE_SELECTION_DIALOG=true&#xD;&#xA;eclipse.preferences.version=1"
+        targetURL="configuration:/.settings/org.eclipse.ui.ide.prefs"/>
+    <setupTask
+        xsi:type="setup:ResourceCreationTask"
+        excludedTriggers="STARTUP MANUAL"
+        content="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;section name=&quot;Workbench&quot;>&#xD;&#xA;&#x9;&lt;section name=&quot;org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart&quot;>&#xD;&#xA;&#x9;&#x9;&lt;item value=&quot;true&quot; key=&quot;group_libraries&quot;/>&#xD;&#xA;&#x9;&#x9;&lt;item value=&quot;false&quot; key=&quot;linkWithEditor&quot;/>&#xD;&#xA;&#x9;&#x9;&lt;item value=&quot;2&quot; key=&quot;layout&quot;/>&#xD;&#xA;&#x9;&#x9;&lt;item value=&quot;2&quot; key=&quot;rootMode&quot;/>&#xD;&#xA;&#x9;&#x9;&lt;item value=&quot;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;&amp;#x0D;&amp;#x0A;&amp;lt;packageExplorer configured=&amp;quot;true&amp;quot; group_libraries=&amp;quot;1&amp;quot; layout=&amp;quot;2&amp;quot; linkWithEditor=&amp;quot;0&amp;quot; rootMode=&amp;quot;2&amp;quot; sortWorkingSets=&amp;quot;false&amp;quot; workingSetName=&amp;quot;&amp;quot;&amp;gt;&amp;#x0D;&amp;#x0A;&amp;lt;localWorkingSetManager&amp;gt;&amp;#x0D;&amp;#x0A;&amp;lt;workingSet editPageId=&amp;quot;org.eclipse.jdt.internal.ui.OthersWorkingSet&amp;quot; factoryID=&amp;quot;org.eclipse.ui.internal.WorkingSetFactory&amp;quot; id=&amp;quot;1382792884467_1&amp;quot; label=&amp;quot;Other Projects&amp;quot; name=&amp;quot;Other Projects&amp;quot;/&amp;gt;&amp;#x0D;&amp;#x0A;&amp;lt;/localWorkingSetManager&amp;gt;&amp;#x0D;&amp;#x0A;&amp;lt;activeWorkingSet workingSetName=&amp;quot;Other Projects&amp;quot;/&amp;gt;&amp;#x0D;&amp;#x0A;&amp;lt;allWorkingSets workingSetName=&amp;quot;Other Projects&amp;quot;/&amp;gt;&amp;#x0D;&amp;#x0A;&amp;lt;/packageExplorer&amp;gt;&quot; key=&quot;memento&quot;/>&#xD;&#xA;&#x9;&lt;/section>&#xD;&#xA;&lt;/section>&#xD;&#xA;"
+        targetURL="${workspace.location|uri}/.metadata/.plugins/org.eclipse.jdt.ui/dialog_settings.xml"
+        encoding="UTF-8">
+      <description>Initialize JDT's package explorer to show working sets as its root objects</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:ResourceCreationTask"
+        excludedTriggers="STARTUP MANUAL"
+        content="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;state reopen=&quot;false&quot;/>"
+        targetURL="${workspace.location|uri}/.metadata/.plugins/org.eclipse.ui.intro/introstate"
+        encoding="UTF-8">
+      <description>Initialize JDT's package explorer to show working sets as its root objects</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:TextModifyTask"
+        url="configuration:/config.ini">
+      <modification
+          pattern="osgi.instance.area.default=(.*)">
+        <substitution>${workspace.location|path}</substitution>
+      </modification>
+    </setupTask>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:CompoundTask"
+      name="preference">
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="org.eclipse.core.runtime">
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.core.runtime/line.separator"
+          value="&#xA;"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="org.eclipse.ui.editors">
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.ui.editors/lineNumberRuler"
+          value="true"/>
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.ui.editors/overviewRuler_migration"
+          value="migrated_3.1"/>
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.ui.editors/printMargin"
+          value="true"/>
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.ui.editors/printMarginColumn"
+          value="120"/>
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.ui.editors/spacesForTabs"
+          value="true"/>
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.ui.editors/spellingEnabled"
+          value="true"/>
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.ui.editors/tabWidth"
+          value="4"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="org.eclipse.core.resources">
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.core.resources/refresh.enabled"
+          value="true"/>
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.core.resources/encoding"
+          value="UTF-8"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="org.eclipse.egit.core">
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.egit.core/core_autoIgnoreDerivedResources"
+          value="false"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="org.eclipse.pde.ui">
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.pde.ui/Preferences.MainPage.overwriteBuildFilesOnExport"
+          value="prompt"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="org.eclipse.ui.workbench">
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.ui.workbench/RUN_IN_BACKGROUND"
+          value="false"/>
+    </setupTask>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:CompoundTask"
+      name="java platform">
+    <setupTask
+        xsi:type="jdt:JRETask"
+        version="JavaSE-1.8"
+        location="${jre.location-1.8}">
+      <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
+    </setupTask>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:CompoundTask"
+      name="eclipse.ini">
+    <setupTask
+        xsi:type="setup:EclipseIniTask"
+        option="-Doomph.redirection.scalor-project"
+        value="[substitute]"
+        vm="true">
+      <annotation
+          source="http://www.eclipse.org/oomph/setup/FeatureSubstitution">
+        <detail
+            key="value">
+          <value>=${github.setup.remote.uri}->${github.setup.local.uri}</value>
+        </detail>
+      </annotation>
+      <description>Set an Oomph redirection system property to redirect the logical location of this setup to its physical location in the Git clone.</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:EclipseIniTask"
+        option="-Dscalor.github.remote.uri"
+        value="=${github.remote.uri}"
+        vm="true">
+      <description>
+        Set an Oomph redirection system property to redirect the logical location of this setup to its
+        physical location in the Git clone.
+      </description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:EclipseIniTask"
+        option="-Dscalor.github.local.folder"
+        value="=${github.local.folder}"
+        vm="true">
+      <description>
+        Set an Oomph redirection system property to redirect the logical location of this setup to its
+        physical location in the Git clone.
+      </description>
+    </setupTask>
+  </setupTask>
+  <setupTask
+      xsi:type="git:GitCloneTask"
+      id="github.clone"
+      location="[substitue]"
+      remoteURI="${github.remote.uri}">
+    <annotation
+        source="http://www.eclipse.org/oomph/setup/FeatureSubstitution">
+      <detail
+          key="location">
+        <value>${github.local.folder}</value>
+      </detail>
+    </annotation>
+    <description>github.clone</description>
+  </setupTask>
+  <setupTask
+      xsi:type="setup.workingsets:WorkingSetTask">
+    <workingSet
+        name="Maven Scalor">
+      <predicate
+          xsi:type="predicates:NamePredicate"
+          pattern="scalor-maven-plugin.*"/>
+    </workingSet>
+  </setupTask>
+  <project name="scalor-maven-plugin">
+    <setupTask
+        xsi:type="maven:MavenImportTask">
+      <sourceLocator
+          rootFolder="${github.local.folder}"/>
+    </setupTask>
+    <stream
+        name="master"/>
+  </project>
+  <project name="scalor-maven-plugin_2.12">
+    <setupTask
+        xsi:type="maven:MavenImportTask">
+      <sourceLocator
+          rootFolder="${github.local.folder}/cross/2.12"/>
+    </setupTask>
+    <stream
+        name="master"/>
+  </project>
+  <project name="scalor-maven-plugin-demo">
+    <setupTask
+        xsi:type="maven:MavenImportTask">
+      <sourceLocator
+          rootFolder="${github.local.folder}/demo"/>
+    </setupTask>
+    <stream
+        name="master"/>
+  </project>
+  <logicalProjectContainer
+      xsi:type="setup:Project"
+      href="index:/org.eclipse.setup#//@projectCatalogs[name='com.github']/@projects[name='user.project']"/>
+  <description>scalor-project</description>
+</setup:Project>

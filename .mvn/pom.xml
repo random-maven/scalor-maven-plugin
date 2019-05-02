@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<!-- Global remote parent pom.xml -->
@@ -40,55 +39,55 @@
 
 		<!-- Default versions. -->
 		<version.java>1.8</version.java>
-		<version.maven>3.5.0</version.maven>
-		<version.jackson>2.9.5</version.jackson>
-		<version.slf4j>1.7.25</version.slf4j>
-		<version.tycho>1.1.0</version.tycho>
-		<version.groovy>2.4.15</version.groovy>
+		<version.maven>3.5.3</version.maven><!-- Sync to M2E. -->
+		<version.jackson>2.9.8</version.jackson>
+		<version.slf4j>1.7.26</version.slf4j>
+		<version.tycho>1.4.0</version.tycho>
+		<version.groovy>2.6.0</version.groovy>
 		<version.jmh>1.21</version.jmh>
-		<version.sbe>1.8.1</version.sbe>
-		<version.agrona>0.9.18</version.agrona>
-		<version.protobuf>3.5.1</version.protobuf>
-		<version.snappy>1.1.7.1</version.snappy>
-		<version.lucene>7.3.0</version.lucene>
-		<version.amazon.sdk>1.11.324</version.amazon.sdk>
+		<version.sbe>1.12.4</version.sbe>
+		<version.agrona>0.9.35</version.agrona>
+		<version.protobuf>3.7.1</version.protobuf>
+		<version.snappy>1.1.7.3</version.snappy>
+		<version.lucene>8.0.0</version.lucene>
+		<version.amazon.sdk>1.11.544</version.amazon.sdk>
 		<version.sigar>1.6.5.132</version.sigar>
-		<version.aspectj>1.9.1</version.aspectj>
-		<version.bouncy>1.59</version.bouncy>
+		<version.aspectj>1.9.3</version.aspectj>
+		<version.bouncy>1.61</version.bouncy>
 
 		<!-- Scala stack. -->
 		<version.scala.epoch>2.12</version.scala.epoch>
-		<version.scala.release>2.12.6</version.scala.release>
+		<version.scala.release>2.12.8</version.scala.release>
 		<version.scala.sbt>0.13.7</version.scala.sbt>
-		<version.scala.xml>1.1.0</version.scala.xml>
+		<version.scala.xml>1.2.0</version.scala.xml>
 		<version.scala.protobuf>0.6.7</version.scala.protobuf>
-		<version.akka.main>2.5.12</version.akka.main>
-		<version.akka.http>10.1.1</version.akka.http>
+		<version.akka.main>2.5.22</version.akka.main>
+		<version.akka.http>10.1.8</version.akka.http>
 		<version.eventuate>0.8.1</version.eventuate>
-		<version.play>2.6.13</version.play>
+		<version.play>2.7.2</version.play>
 		<version.scala.buff>1.4.0</version.scala.buff>
 		<version.scala.mock>3.6.0</version.scala.mock>
-		<version.specs2>4.1.0</version.specs2>
+		<version.specs2>4.5.1</version.specs2>
 		<version.scalaz>7.3.0-M18</version.scalaz>
 		<version.kamon>1.2.0</version.kamon>
-		<version.scalatest>3.0.5</version.scalatest>
+		<version.scalatest>3.0.7</version.scalatest>
 		<version.scalacheck>1.14.0</version.scalacheck>
 		<version.scala.meta>3.7.4</version.scala.meta>
 		<version.scala.plugin.meta>3.0.0-M11</version.scala.plugin.meta>
 		<version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
-		<version.scala.zinc>1.1.7</version.scala.zinc>
+		<version.scala.zinc>1.2.5</version.scala.zinc>
 
 		<!-- Scala.js stack. -->
 		<version.scalajs.epoch>0.6</version.scalajs.epoch>
-		<version.scalajs.release>0.6.22</version.scalajs.release>
+		<version.scalajs.release>0.6.27</version.scalajs.release>
 		<version.scalajs.library>sjs${version.scalajs.epoch}_${version.scala.epoch}</version.scalajs.library>
-		<version.scalajs.scalacss>0.5.5</version.scalajs.scalacss>
-		<version.scalajs.scalatags>0.6.7</version.scalajs.scalatags>
+		<version.scalajs.scalacss>0.5.6</version.scalajs.scalacss>
+		<version.scalajs.scalatags>0.6.8</version.scalajs.scalatags>
 		<version.scalajs.autowire>0.2.6</version.scalajs.autowire>
 		<version.scalajs.prickle>1.1.14</version.scalajs.prickle>
-		<version.scalajs.upickle>0.6.5</version.scalajs.upickle>
+		<version.scalajs.upickle>0.6.6</version.scalajs.upickle>
 		<version.scalajs.scalarx>0.4.0</version.scalajs.scalarx>
-		<version.scalajs.utest>0.6.4</version.scalajs.utest>
+		<version.scalajs.utest>0.6.7</version.scalajs.utest>
 		<version.scala.plugin.javascript>${version.scalajs.release}</version.scala.plugin.javascript>
 
 		<!-- Scala.native stack. -->
@@ -99,19 +98,19 @@
 
 		<!-- JUnit Testing -->
 		<version.junit.legacy>4.12</version.junit.legacy>
-		<version.junit.platform>1.2.0</version.junit.platform>
-		<version.junit.jupiter>5.2.0</version.junit.jupiter>
-		<version.junit.vintage>5.2.0</version.junit.vintage>
+		<version.junit.platform>1.3.2</version.junit.platform>
+		<version.junit.jupiter>5.4.2</version.junit.jupiter>
+		<version.junit.vintage>5.4.2</version.junit.vintage>
 
 		<!-- Maven plugins. -->
-		<version.maven.scm>1.9.5</version.maven.scm>
-		<version.maven.testing>2.21.0</version.maven.testing>
-		<version.maven.javadoc>3.0.0</version.maven.javadoc>
+		<version.maven.scm>1.11.2</version.maven.scm>
+		<version.maven.javadoc>3.1.0</version.maven.javadoc>
+		<version.maven.testing>2.22.1</version.maven.testing>
 
 		<!-- Database providers. -->
-		<version.slick>3.2.3</version.slick>
-		<version.hikari>3.1.0</version.hikari>
-		<version.postgres>42.2.2</version.postgres>
+		<version.slick>3.3.0</version.slick>
+		<version.hikari>3.3.1</version.hikari>
+		<version.postgres>42.2.5</version.postgres>
 
 		<!-- Carrot Garden internal repository. -->
 		<repo.amazon.public.host>public.maven.carrotgarden.com</repo.amazon.public.host>
@@ -164,12 +163,12 @@
 			<dependency>
 				<groupId>org.scala-lang.modules</groupId>
 				<artifactId>scala-swing_${version.scala.epoch}</artifactId>
-				<version>2.0.3</version>
+				<version>2.1.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.scala-lang.modules</groupId>
 				<artifactId>scala-parser-combinators_${version.scala.epoch}</artifactId>
-				<version>1.1.0</version>
+				<version>1.1.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.scala-lang.modules</groupId>
@@ -179,7 +178,7 @@
 			<dependency>
 				<groupId>org.scala-lang.modules</groupId>
 				<artifactId>scala-async_${version.scala.epoch}</artifactId>
-				<version>0.9.7</version>
+				<version>0.10.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.scala-lang.modules</groupId>
@@ -201,12 +200,12 @@
 			<dependency>
 				<groupId>com.github.pathikrit</groupId>
 				<artifactId>better-files_${version.scala.epoch}</artifactId>
-				<version>3.4.0</version>
+				<version>3.7.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.github.pathikrit</groupId>
 				<artifactId>better-files-akka_${version.scala.epoch}</artifactId>
-				<version>3.4.0</version>
+				<version>3.6.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.beachape.filemanagement</groupId>
@@ -247,7 +246,7 @@
 			<dependency><!-- runtime -->
 				<groupId>com.lihaoyi</groupId>
 				<artifactId>acyclic_${version.scala.epoch}</artifactId>
-				<version>0.1.7</version>
+				<version>0.1.9</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency><!-- runtime -->
@@ -267,7 +266,7 @@
 			<dependency>
 				<groupId>com.typesafe.scala-logging</groupId>
 				<artifactId>scala-logging_${version.scala.epoch}</artifactId>
-				<version>3.9.0</version>
+				<version>3.9.2</version>
 			</dependency>
 
 			<!-- Scala testing. -->
@@ -344,13 +343,13 @@
 			<dependency>
 				<groupId>org.scala-js</groupId>
 				<artifactId>scalajs-dom_${version.scalajs.library}</artifactId>
-				<version>0.9.5</version>
+				<version>0.9.7</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>be.doeraene</groupId>
 				<artifactId>scalajs-jquery_${version.scalajs.library}</artifactId>
-				<version>0.9.3</version>
+				<version>0.9.4</version>
 				<scope>provided</scope>
 			</dependency>
 
@@ -444,43 +443,43 @@
 			<dependency>
 				<groupId>org.webjars</groupId>
 				<artifactId>webjars-locator-core</artifactId>
-				<version>0.35</version>
+				<version>0.37</version>
 			</dependency>
 
 			<!-- Scala JS/Webjar. Web resources. Non-scala. -->
 			<dependency>
 				<groupId>org.webjars.bower</groupId>
 				<artifactId>jquery</artifactId>
-				<version>3.3.1</version>
+				<version>3.4.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.webjars.bower</groupId>
 				<artifactId>popper.js</artifactId>
-				<version>1.14.1</version>
+				<version>1.14.6</version>
 			</dependency>
 			<dependency>
 				<groupId>org.webjars.bower</groupId>
 				<artifactId>bootstrap</artifactId>
-				<version>4.1.1</version>
+				<version>4.3.1</version>
 			</dependency>
 
 			<!-- Scala JS/Webjar React stack. Non-scala -->
 			<dependency>
 				<groupId>org.webjars.npm</groupId>
 				<artifactId>react</artifactId>
-				<version>16.3.2</version>
+				<version>16.8.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.webjars.npm</groupId>
 				<artifactId>react-dom</artifactId>
-				<version>16.3.2</version>
+				<version>16.8.5</version>
 			</dependency>
 
 			<!-- Scala JS/Webjar Vue stack. Non-scala. -->
 			<dependency>
 				<groupId>org.webjars.bower</groupId>
 				<artifactId>vue</artifactId>
-				<version>2.5.16</version>
+				<version>2.6.9</version>
 			</dependency>
 			<dependency>
 				<groupId>org.webjars.bower</groupId>
@@ -767,12 +766,12 @@
 			<dependency>
 				<groupId>com.typesafe</groupId>
 				<artifactId>config</artifactId>
-				<version>1.3.3</version>
+				<version>1.3.4</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jgit</groupId>
 				<artifactId>org.eclipse.jgit</artifactId>
-				<version>4.11.0.201803080745-r</version>
+				<version>5.3.1.201904271842-r</version>
 			</dependency>
 
 			<!-- Indexing and searching. -->
@@ -796,17 +795,17 @@
 			<dependency>
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>
-				<version>2.9.9</version>
+				<version>2.10.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.joda</groupId>
 				<artifactId>joda-convert</artifactId>
-				<version>2.0.1</version>
+				<version>2.2.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.threeten</groupId>
 				<artifactId>threetenbp</artifactId>
-				<version>1.3.6</version>
+				<version>1.3.8</version>
 			</dependency>
 
 			<!-- JSON serialization. -->
@@ -908,7 +907,7 @@
 			<dependency>
 				<groupId>org.codehaus.janino</groupId>
 				<artifactId>janino</artifactId>
-				<version>3.0.8</version>
+				<version>3.0.12</version>
 			</dependency>
 
 			<!-- Groovy. -->
@@ -1022,7 +1021,7 @@
 			<dependency>
 				<groupId>org.junit.platform</groupId>
 				<artifactId>junit-platform-runner</artifactId>
-				<version>${version.junit.platform}</version>
+				<version>1.4.2</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
@@ -1034,7 +1033,7 @@
 			<dependency>
 				<groupId>org.easymock</groupId>
 				<artifactId>easymock</artifactId>
-				<version>3.6</version>
+				<version>4.0.2</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
@@ -1048,13 +1047,13 @@
 			<dependency>
 				<groupId>net.sourceforge.htmlunit</groupId>
 				<artifactId>htmlunit</artifactId>
-				<version>2.30</version>
+				<version>2.35</version>
 			</dependency>
 			<!-- Note: check AWS, JGIT, Play-WS, IB -->
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpcore</artifactId>
-				<version>4.4.9</version>
+				<version>4.4.11</version>
 				<exclusions>
 					<!-- Requires logback bridge. -->
 					<exclusion>
@@ -1066,7 +1065,7 @@
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
-				<version>4.5.5</version>
+				<version>4.5.8</version>
 				<exclusions>
 					<!-- Requires logback bridge. -->
 					<exclusion>
@@ -1271,7 +1270,7 @@
 			<dependency>
 				<groupId>net.java.dev.jna</groupId>
 				<artifactId>jna</artifactId>
-				<version>4.5.1</version>
+				<version>5.3.1</version>
 			</dependency>
 
 			<!-- Cryptography provider. -->
@@ -1315,12 +1314,12 @@
 			<dependency>
 				<groupId>org.sql2o</groupId>
 				<artifactId>sql2o</artifactId>
-				<version>1.6.0-RC3</version>
+				<version>1.6.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.liquibase</groupId>
 				<artifactId>liquibase-core</artifactId>
-				<version>3.6.1</version>
+				<version>3.6.3</version>
 			</dependency>
 			<dependency>
 				<groupId>com.mattbertolini</groupId>
@@ -1384,31 +1383,39 @@
 				<plugin>
 					<groupId>com.carrotgarden.maven</groupId>
 					<artifactId>scalor-maven-plugin_2.12</artifactId>
-					<version>1.4.1.20180403213227</version>
+					<version>1.4.2.20180508161326</version>
 				</plugin>
 
 				<plugin>
 					<groupId>com.carrotgarden.maven</groupId>
 					<artifactId>flatten-maven-plugin</artifactId>
-					<version>1.4.20180402132337</version>
+					<version>1.6.20190428102750</version>
 				</plugin>
 
 				<plugin>
 					<groupId>com.carrotgarden.maven</groupId>
 					<artifactId>bintray-maven-plugin</artifactId>
-					<version>1.2.20180117184439</version>
+					<version>1.4.20190427204453</version>
 				</plugin>
 
 				<plugin>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-metadata</artifactId>
-					<version>1.7.1</version>
+					<version>2.0.0</version>
+					<dependencies>
+						<!-- Java 11 support. -->
+						<dependency>
+							<groupId>org.ow2.asm</groupId>
+							<artifactId>asm</artifactId>
+							<version>7.1</version>
+						</dependency>
+					</dependencies>
 				</plugin>
 
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>flatten-maven-plugin</artifactId>
-					<version>1.0.1</version>
+					<version>1.1.0</version>
 				</plugin>
 
 				<plugin>
@@ -1418,22 +1425,15 @@
 				</plugin>
 
 				<plugin>
-					<groupId>com.vladsch.flexmark</groupId>
+					<groupId>com.ruleoftech</groupId>
 					<artifactId>markdown-page-generator-plugin</artifactId>
-					<version>0.27.0</version>
-					<dependencies>
-						<dependency>
-							<groupId>com.vladsch.flexmark</groupId>
-							<artifactId>flexmark-all</artifactId>
-							<version>0.32.22</version>
-						</dependency>
-					</dependencies>
+					<version>2.1.0</version>
 				</plugin>
 
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>versions-maven-plugin</artifactId>
-					<version>2.5</version>
+					<version>2.7</version>
 					<configuration>
 						<rulesUri>https://raw.githubusercontent.com/random-maven/arkon/master/config/maven-version-rules.xml</rulesUri>
 					</configuration>
@@ -1442,7 +1442,7 @@
 				<plugin>
 					<groupId>io.takari.maven.plugins</groupId>
 					<artifactId>takari-lifecycle-plugin</artifactId>
-					<version>1.13.3</version>
+					<version>1.13.9</version>
 				</plugin>
 
 				<plugin>
@@ -1475,13 +1475,13 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>xml-maven-plugin</artifactId>
-					<version>1.0.1</version>
+					<version>1.0.2</version>
 					<dependencies>
 						<!-- Provide XSLT 2.0 processor. -->
 						<dependency>
 							<groupId>net.sf.saxon</groupId>
 							<artifactId>Saxon-HE</artifactId>
-							<version>9.8.0-11</version>
+							<version>9.9.1-2</version>
 						</dependency>
 					</dependencies>
 				</plugin>
@@ -1495,25 +1495,25 @@
 				<plugin>
 					<groupId>net.nicoulaj.maven.plugins</groupId>
 					<artifactId>checksum-maven-plugin</artifactId>
-					<version>1.6</version>
+					<version>1.8</version>
 				</plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jarsigner-plugin</artifactId>
-					<version>1.4</version>
+					<version>3.0.0</version>
 				</plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.1.0</version>
+					<version>3.2.1</version>
 				</plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-invoker-plugin</artifactId>
-					<version>3.0.1</version>
+					<version>3.2.0</version>
 					<configuration>
 						<debug>false</debug>
 						<showErrors>false</showErrors>
@@ -1552,7 +1552,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.0.2</version>
+					<version>3.1.1</version>
 				</plugin>
 
 				<plugin>
@@ -1570,13 +1570,13 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>3.5</version>
+					<version>3.6.0</version>
 				</plugin>
 
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>wagon-maven-plugin</artifactId>
-					<version>1.0</version>
+					<version>2.0.0</version>
 				</plugin>
 
 				<plugin>
@@ -1594,7 +1594,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-help-plugin</artifactId>
-					<version>2.2</version>
+					<version>3.2.0</version>
 				</plugin>
 
 				<plugin>
@@ -1618,13 +1618,13 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.0.2</version>
+					<version>3.1.1</version>
 				</plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.6</version>
+					<version>3.7.1</version>
 				</plugin>
 
 				<plugin>
@@ -1636,19 +1636,19 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>3.0.2</version>
-				</plugin>
-
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-assembly-plugin</artifactId>
 					<version>3.1.0</version>
 				</plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>3.1.1</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.0.0</version>
+					<version>3.1.0</version>
 				</plugin>
 
 				<plugin>
@@ -1660,7 +1660,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.7.0</version>
+					<version>3.8.0</version>
 				</plugin>
 
 				<plugin>
@@ -1709,7 +1709,7 @@
 				<plugin>
 					<groupId>org.codehaus.gmaven</groupId>
 					<artifactId>groovy-maven-plugin</artifactId>
-					<version>2.0</version>
+					<version>2.1</version>
 					<dependencies>
 						<dependency>
 							<groupId>org.codehaus.groovy</groupId>
@@ -1729,11 +1729,11 @@
 						<!-- <artifactId>surefire-junit4</artifactId> -->
 						<!-- <version>${version.maven.testing}</version> -->
 						<!-- </dependency> -->
-						<dependency>
-							<groupId>org.junit.platform</groupId>
-							<artifactId>junit-platform-surefire-provider</artifactId>
-							<version>${version.junit.platform}</version>
-						</dependency>
+						<!-- <dependency> -->
+						<!-- <groupId>org.junit.platform</groupId> -->
+						<!-- <artifactId>junit-platform-surefire-provider</artifactId> -->
+						<!-- <version>${version.junit.platform}</version> -->
+						<!-- </dependency> -->
 						<dependency>
 							<groupId>org.junit.jupiter</groupId>
 							<artifactId>junit-jupiter-engine</artifactId>
@@ -1764,11 +1764,11 @@
 						<!-- <artifactId>surefire-junit4</artifactId> -->
 						<!-- <version>${version.maven.testing}</version> -->
 						<!-- </dependency> -->
-						<dependency>
-							<groupId>org.junit.platform</groupId>
-							<artifactId>junit-platform-surefire-provider</artifactId>
-							<version>${version.junit.platform}</version>
-						</dependency>
+						<!-- <dependency> -->
+						<!-- <groupId>org.junit.platform</groupId> -->
+						<!-- <artifactId>junit-platform-surefire-provider</artifactId> -->
+						<!-- <version>${version.junit.platform}</version> -->
+						<!-- </dependency> -->
 						<dependency>
 							<groupId>org.junit.jupiter</groupId>
 							<artifactId>junit-jupiter-engine</artifactId>
@@ -1797,7 +1797,7 @@
 				<plugin>
 					<groupId>net.alchim31.maven</groupId>
 					<artifactId>scala-maven-plugin</artifactId>
-					<version>3.3.1</version>
+					<version>4.0.1</version>
 				</plugin>
 
 				<plugin>
@@ -1849,7 +1849,7 @@
 				<plugin>
 					<groupId>org.apache.felix</groupId>
 					<artifactId>maven-bundle-plugin</artifactId>
-					<version>3.5.0</version>
+					<version>4.2.0</version>
 				</plugin>
 
 				<plugin>
@@ -1881,33 +1881,6 @@
 	</pluginRepositories>
 
 	<profiles>
-
-		<!-- Activate Scalor Maven Plugin version for Eclipse. -->
-		<!-- Required for M2E 1.8 -->
-		<profile>
-			<id>scalor-version</id>
-			<activation>
-				<!-- Eclipse detection: user property set by M2E. -->
-				<property>
-					<name>m2e.version</name>
-				</property>
-				<!-- Explicit profile activation: user file is present. -->
-				<file>
-					<exists>.mvn/pom-scalor-version.md</exists>
-				</file>
-			</activation>
-			<build>
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<groupId>com.carrotgarden.maven</groupId>
-							<artifactId>scalor-maven-plugin_2.12</artifactId>
-							<version>LATEST</version>
-						</plugin>
-					</plugins>
-				</pluginManagement>
-			</build>
-		</profile>
 
 		<!-- Publish release revision. -->
 		<profile>
@@ -2202,9 +2175,8 @@ version=${revision}
 				</file>
 			</activation>
 			<dependencies>
-				<!-- Enable JUnit 4/5 testing. JS tests are using JUnit 4, and JVM tests 
-					are using JUnit 5. JS tests are invoked inside JS-VM, and JVM tests are invoked 
-					inside JVM. -->
+				<!-- Enable JUnit 4/5 testing. JS tests are using JUnit 4, and JVM tests are using JUnit 5. JS tests are invoked inside 
+					JS-VM, and JVM tests are invoked inside JVM. -->
 				<dependency>
 					<groupId>org.junit.jupiter</groupId>
 					<artifactId>junit-jupiter-api</artifactId>
@@ -2229,9 +2201,8 @@ version=${revision}
 					<version>${version.junit.vintage}</version>
 					<scope>test</scope>
 				</dependency>
-				<!-- Enable JUnit Scala.js testing. Provides custom JUnit runners, which 
-					run JUnit 4 tests inside JS-VM. Note: keep order: after org.junit.* dependencies 
-					(see scalajs-junit-test-runtime). -->
+				<!-- Enable JUnit Scala.js testing. Provides custom JUnit runners, which run JUnit 4 tests inside JS-VM. Note: keep order: 
+					after org.junit.* dependencies (see scalajs-junit-test-runtime). -->
 				<dependency>
 					<groupId>com.carrotgarden.sjs</groupId>
 					<artifactId>scala-js-junit-tools_${version.scala.epoch}</artifactId>
@@ -2259,8 +2230,7 @@ version=${revision}
 									<artifactId>scala-compiler</artifactId>
 									<version>${version.scala.release}</version>
 								</dependency>
-								<!-- Convert JUnit annotations to Scala.js JUnit meta data. This 
-									dependency provides replacement JUnit *.sjsir classes. -->
+								<!-- Convert JUnit annotations to Scala.js JUnit meta data. This dependency provides replacement JUnit *.sjsir classes. -->
 								<dependency>
 									<groupId>org.scala-js</groupId>
 									<artifactId>scalajs-junit-test-runtime_${version.scala.epoch}</artifactId>
@@ -2280,8 +2250,8 @@ version=${revision}
 									<artifactId>scalajs-compiler_${version.scala.release}</artifactId>
 									<version>${version.scalajs.release}</version>
 								</dependency>
-								<!-- Convert JUnit annotations to Scala.js JUnit meta data. This 
-									plugin does actual conversion of JUnit test classes for JS-VM. -->
+								<!-- Convert JUnit annotations to Scala.js JUnit meta data. This plugin does actual conversion of JUnit test classes 
+									for JS-VM. -->
 								<dependency>
 									<groupId>org.scala-js</groupId>
 									<artifactId>scalajs-junit-test-plugin_${version.scala.release}</artifactId>
@@ -2313,7 +2283,7 @@ version=${revision}
 				</file>
 			</activation>
 			<properties>
-				<version.maven.plugin.extra>1.1.20180226045720</version.maven.plugin.extra>
+				<version.maven.plugin.extra>1.2.20190427171248</version.maven.plugin.extra>
 			</properties>
 			<dependencies>
 				<!-- Provide custom annotations. -->
@@ -2435,7 +2405,7 @@ version=${revision}
 							<skipTests>true</skipTests>
 						</configuration>
 					</plugin>
-                    <!-- Provide -D skipTests -->
+					<!-- Provide -D skipTests -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-failsafe-plugin</artifactId>
@@ -2635,18 +2605,16 @@ version=${revision}
 					<plugin>
 						<groupId>com.carrotgarden.maven</groupId>
 						<artifactId>bintray-maven-plugin</artifactId>
-						<configuration>
-							<skip>false</skip>
-							<subject>${bintray.subject}</subject>
-							<repository>${bintray.repository}</repository>
-							<restReadTimeout>30</restReadTimeout>
-							<restWriteTimeout>30</restWriteTimeout>
-						</configuration>
 						<executions>
 							<execution>
+								<id>bintray-deploy</id>
 								<goals>
 									<goal>deploy</goal>
 								</goals>
+								<configuration>
+									<subject>${bintray.subject}</subject>
+									<repository>${bintray.repository}</repository>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>
@@ -2678,18 +2646,16 @@ version=${revision}
 					<plugin>
 						<groupId>com.carrotgarden.maven</groupId>
 						<artifactId>bintray-maven-plugin</artifactId>
-						<configuration>
-							<skip>false</skip>
-							<subject>${bintray.subject}</subject>
-							<repository>${bintray.repository}</repository>
-							<restReadTimeout>30</restReadTimeout>
-							<restWriteTimeout>30</restWriteTimeout>
-						</configuration>
 						<executions>
 							<execution>
+								<id>bintray-upload</id>
 								<goals>
 									<goal>upload</goal>
 								</goals>
+								<configuration>
+									<subject>${bintray.subject}</subject>
+									<repository>${bintray.repository}</repository>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>
@@ -3673,38 +3639,25 @@ version=${revision}
 									<!-- Invoke shade plugin only when no shading done yet. -->
 									<target>
 										<!-- ant fun: "if" -->
-										<taskdef resource="net/sf/antcontrib/antlib.xml"
-											classpathref="maven.plugin.classpath" />
+										<taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="maven.plugin.classpath" />
 
-										<property name="args"
-											value="${shade.maven.arguments}" />
-										<property name="target"
-											value="${project.build.directory}" />
+										<property name="args" value="${shade.maven.arguments}" />
+										<property name="target" value="${project.build.directory}" />
 
-										<property name="pathResultLibrary"
-											value="${shade.result.library.jar}" />
-										<property name="pathResultSources"
-											value="${shade.result.sources.jar}" />
+										<property name="pathResultLibrary" value="${shade.result.library.jar}" />
+										<property name="pathResultSources" value="${shade.result.sources.jar}" />
 
-										<property name="pathOriginLibrary"
-											value="${shade.origin.library.jar}" />
-										<property name="pathOriginSources"
-											value="${shade.origin.sources.jar}" />
+										<property name="pathOriginLibrary" value="${shade.origin.library.jar}" />
+										<property name="pathOriginSources" value="${shade.origin.sources.jar}" />
 
-										<property name="pathDeployLibrary"
-											value="${shade.deploy.library.jar}" />
-										<property name="pathDeploySources"
-											value="${shade.deploy.sources.jar}" />
+										<property name="pathDeployLibrary" value="${shade.deploy.library.jar}" />
+										<property name="pathDeploySources" value="${shade.deploy.sources.jar}" />
 
-										<available property="pathResultLibrary.is"
-											file="${pathResultLibrary}" />
-										<available property="pathResultSources.is"
-											file="${pathResultSources}" />
+										<available property="pathResultLibrary.is" file="${pathResultLibrary}" />
+										<available property="pathResultSources.is" file="${pathResultSources}" />
 
-										<echo
-											message="pathResultLibrary=${pathResultLibrary} present=${pathResultLibrary.is}" />
-										<echo
-											message="pathResultSources=${pathResultSources} present=${pathResultSources.is}" />
+										<echo message="pathResultLibrary=${pathResultLibrary} present=${pathResultLibrary.is}" />
+										<echo message="pathResultSources=${pathResultSources} present=${pathResultSources.is}" />
 
 										<if>
 											<and>
@@ -3712,8 +3665,7 @@ version=${revision}
 												<equals arg1="${pathResultSources.is}" arg2="true" />
 											</and>
 											<then>
-												<echo
-													message="skip maven shade invocation and re-use present shade jar" />
+												<echo message="skip maven shade invocation and re-use present shade jar" />
 											</then>
 											<else>
 												<echo message="cleanup target=${target}" />
@@ -3725,21 +3677,17 @@ version=${revision}
 													<arg line="${args}" />
 												</exec>
 												<echo message="copy build result to origin" />
-												<copy file="${pathDeployLibrary}"
-													tofile="${pathOriginLibrary}" verbose="true"
-													overwrite="true" force="true" />
-												<copy file="${pathDeploySources}"
-													tofile="${pathOriginSources}" verbose="true"
-													overwrite="true" force="true" />
+												<copy file="${pathDeployLibrary}" tofile="${pathOriginLibrary}" verbose="true" overwrite="true"
+													force="true" />
+												<copy file="${pathDeploySources}" tofile="${pathOriginSources}" verbose="true" overwrite="true"
+													force="true" />
 											</else>
 										</if>
 
 										<echo message="copy shade result to deploy" />
-										<copy file="${pathResultLibrary}"
-											tofile="${pathDeployLibrary}" verbose="true" overwrite="true"
+										<copy file="${pathResultLibrary}" tofile="${pathDeployLibrary}" verbose="true" overwrite="true"
 											force="true" />
-										<copy file="${pathResultSources}"
-											tofile="${pathDeploySources}" verbose="true" overwrite="true"
+										<copy file="${pathResultSources}" tofile="${pathDeploySources}" verbose="true" overwrite="true"
 											force="true" />
 
 									</target>
@@ -4342,8 +4290,7 @@ version=${revision}
 				<xformFile>pom.xml</xformFile><!-- Source file -->
 				<xformCode>pom.xsl</xformCode><!-- Transform definition -->
 				<xformSource>${basedir}</xformSource><!-- Folder of source file -->
-				<xformTarget>${basedir}/target</xformTarget><!-- Folder of transform 
-					result -->
+				<xformTarget>${basedir}/target</xformTarget><!-- Folder of transform result -->
 			</properties>
 			<build>
 				<plugins>
@@ -4376,48 +4323,38 @@ version=${revision}
 
 		<!-- Eclipse plugin development. -->
 		<profile>
+			<id>eclipse-2019-03</id>
+			<activation>
+				<file>
+					<exists>.mvn/pom-eclipse-2019-03.md</exists>
+				</file>
+			</activation>
+			<properties>
+				<eclipse.release.repo.url>http://download.eclipse.org/releases/2019-03/201903201000</eclipse.release.repo.url>
+				<eclipse.tool.orbit.repo.url>http://download.eclipse.org/tools/orbit/downloads/drops/R20190226160451/repository/</eclipse.tool.orbit.repo.url>
+			</properties>
+		</profile>
+
+		<!-- Eclipse plugin development. -->
+		<profile>
 			<id>eclipse</id>
 			<activation>
 				<file>
 					<exists>.mvn/pom-eclipse.md</exists>
 				</file>
 			</activation>
-			<properties>
-				<!-- m2 -->
-				<!-- <eclipse-maven-repo.url>https://repo.eclipse.org/content/repositories/releases/</eclipse-maven-repo.url> -->
-				<!-- <sonatype-maven-repo.url>https://oss.sonatype.org/content/groups/public/</sonatype-maven-repo.url> -->
-				<!-- p2 -->
-				<eclipse-release-repo.url>http://download.eclipse.org/releases/oxygen</eclipse-release-repo.url>
-				<eclipse-updates-repo.url>http://download.eclipse.org/eclipse/updates/4.7</eclipse-updates-repo.url>
-				<eclipse-orbit-repo.url>http://download.eclipse.org/tools/orbit/downloads/drops/R20170919201930/repository</eclipse-orbit-repo.url>
-			</properties>
 			<repositories>
 				<repository>
+					<layout>p2</layout>
 					<id>eclipse-release</id>
-					<url>${eclipse-release-repo.url}</url>
-					<layout>p2</layout>
+					<url>${eclipse.release.repo.url}</url>
 				</repository>
 				<repository>
-					<id>eclipse-updates</id>
-					<url>${eclipse-updates-repo.url}</url>
 					<layout>p2</layout>
-				</repository>
-				<repository>
-					<id>eclipse-orbit</id>
-					<url>${eclipse-orbit-repo.url}</url>
-					<layout>p2</layout>
+					<id>eclipse-tool-orbit</id>
+					<url>${eclipse.tool.orbit.repo.url}</url>
 				</repository>
 			</repositories>
-			<pluginRepositories>
-				<!-- <pluginRepository> -->
-				<!-- <id>sonatype-maven</id> -->
-				<!-- <url>${sonatype-maven-repo.url}</url> -->
-				<!-- </pluginRepository> -->
-				<!-- <pluginRepository> -->
-				<!-- <id>eclipse-maven</id> -->
-				<!-- <url>${eclipse-maven-repo.url}</url> -->
-				<!-- </pluginRepository> -->
-			</pluginRepositories>
 			<build>
 				<pluginManagement>
 					<plugins>
@@ -4431,10 +4368,11 @@ version=${revision}
 							<artifactId>tycho-compiler-plugin</artifactId>
 							<version>${version.tycho}</version>
 							<configuration>
+								<showWarnings>true</showWarnings>
 								<compilerArguments>
 									<inlineJSR />
 									<enableJavadoc />
-									<encoding>ISO-8859-1</encoding>
+									<encoding>${project.build.sourceEncoding}</encoding>
 								</compilerArguments>
 							</configuration>
 						</plugin>
@@ -4453,7 +4391,7 @@ version=${revision}
 								<strictBinIncludes>false</strictBinIncludes>
 								<format>'v'yyyyMMdd-HHmm</format>
 								<timestampProvider>jgit</timestampProvider>
-								<!--jgit.ignore> pom.xml </jgit.ignore -->
+								<!--jgit.ignore>pom.xml</jgit.ignore -->
 								<jgit.dirtyWorkingTree>warning</jgit.dirtyWorkingTree>
 								<!-- <jgit.dirtyWorkingTree>warning|error|ignore</jgit.dirtyWorkingTree> -->
 							</configuration>
@@ -4547,11 +4485,11 @@ version=${revision}
 							</environments>
 							<filters>
 								<!-- work around Equinox bug 348045 -->
-								<filter>
-									<type>p2-installable-unit</type>
-									<id>org.eclipse.equinox.servletbridge.extensionbundle</id>
-									<removeAll />
-								</filter>
+								<!-- <filter> -->
+								<!-- <type>p2-installable-unit</type> -->
+								<!-- <id>org.eclipse.equinox.servletbridge.extensionbundle</id> -->
+								<!-- <removeAll /> -->
+								<!-- </filter> -->
 							</filters>
 						</configuration>
 					</plugin>
@@ -5179,18 +5117,14 @@ version=${revision}
 								<configuration>
 									<target>
 										<mkdir dir="${scala.eclipse.settings}" />
-										<propertyfile file="${scala.eclipse.properties}"
-											comment="Maven Config: Scala" jdkproperties="true">
+										<propertyfile file="${scala.eclipse.properties}" comment="Maven Config: Scala"
+											jdkproperties="true">
 											<entry key="eclipse.preferences.version" value="1" />
 											<entry key="target" value="jvm-${version.java}" />
-											<entry key="scala.compiler.useProjectSettings"
-												value="true" />
-											<entry key="scala.compiler.sourceLevel"
-												value="${version.scala.epoch}" />
-											<!-- <entry key="scala.compiler.installation" value="${version.scala.eclipse}" 
-												/> -->
-											<entry key="scala.compiler.additionalParams"
-												value="${scala.compiler.additionalParams}" />
+											<entry key="scala.compiler.useProjectSettings" value="true" />
+											<entry key="scala.compiler.sourceLevel" value="${version.scala.epoch}" />
+											<!-- <entry key="scala.compiler.installation" value="${version.scala.eclipse}" /> -->
+											<entry key="scala.compiler.additionalParams" value="${scala.compiler.additionalParams}" />
 										</propertyfile>
 									</target>
 								</configuration>
@@ -5306,10 +5240,9 @@ version=${revision}
 								</goals>
 								<configuration>
 									<target>
-										<propertyfile file="${scala.eclipse.properties}"
-											comment="Maven Config: Scala JS" jdkproperties="true">
-											<entry key="Xpluginsdir"
-												value="${sjs.plugin.directory}" />
+										<propertyfile file="${scala.eclipse.properties}" comment="Maven Config: Scala JS"
+											jdkproperties="true">
+											<entry key="Xpluginsdir" value="${sjs.plugin.directory}" />
 											<entry key="Xplugin" value="" />
 											<entry key="Xplugin-disable" value="" />
 											<entry key="Xplugin-require" value="${sjs.plugin.name}" />
@@ -5341,18 +5274,13 @@ version=${revision}
 			</dependencies>
 			<properties>
 				<!-- -->
-				<sjs.basedir>META-INF/resources/script</sjs.basedir><!-- Runtime folder 
-					in the jar. -->
+				<sjs.basedir>META-INF/resources/script</sjs.basedir><!-- Runtime folder in the jar. -->
 				<sjs.runtime>runtime.js</sjs.runtime><!-- Generated runtime script name. -->
-				<sjs.rundeps>runtime.deps</sjs.rundeps><!-- Dependency report artifact 
-					list. -->
+				<sjs.rundeps>runtime.deps</sjs.rundeps><!-- Dependency report artifact list. -->
 				<!-- -->
-				<sjs.scope>provided</sjs.scope><!-- Scala.js sjsir jar dependency selection 
-					filter -->
-				<sjs.phase>prepare-package</sjs.phase><!-- Linker invocation lifecycle 
-					stage. -->
-				<sjs.target>${project.build.directory}/scala-js/${sjs.basedir}</sjs.target><!-- 
-					JS linker output folder. -->
+				<sjs.scope>provided</sjs.scope><!-- Scala.js sjsir jar dependency selection filter -->
+				<sjs.phase>prepare-package</sjs.phase><!-- Linker invocation lifecycle stage. -->
+				<sjs.target>${project.build.directory}/scala-js/${sjs.basedir}</sjs.target><!-- JS linker output folder. -->
 				<!-- -->
 				<sjs.main.classes>${project.build.directory}/classes</sjs.main.classes>
 				<sjs.test.classes>${project.build.directory}/test-classes</sjs.test.classes>
@@ -5596,17 +5524,13 @@ version=${revision}
 								</goals>
 								<configuration>
 									<target>
-										<propertyfile file="${meta.eclipse.properties}"
-											comment="Maven Config: Scala Meta">
+										<propertyfile file="${meta.eclipse.properties}" comment="Maven Config: Scala Meta">
 											<entry key="eclipse.preferences.version" value="1" />
-											<entry key="scala.compiler.useProjectSettings"
-												value="true" />
-											<entry key="Xpluginsdir"
-												value="${meta.plugin.directory}" />
+											<entry key="scala.compiler.useProjectSettings" value="true" />
+											<entry key="Xpluginsdir" value="${meta.plugin.directory}" />
 											<entry key="Xplugin" value="" />
 											<entry key="Xplugin-disable" value="" />
-											<entry key="Xplugin-require"
-												value="${meta.plugin.name}" />
+											<entry key="Xplugin-require" value="${meta.plugin.name}" />
 										</propertyfile>
 									</target>
 								</configuration>
@@ -6235,12 +6159,10 @@ version=${revision}
 		<!-- <linksource>true</linksource> -->
 		<!-- <windowtitle><![CDATA[${project.artifactId}-${project.version} / ${projectTimeISO}]]></windowtitle> -->
 		<!-- <doctitle><![CDATA[${project.artifactId}-${project.version} / ${projectTimeISO}]]></doctitle> -->
-		<!-- <header><![CDATA[<a href="${project.url}" target="_blank">${project.artifactId}</a><br>${project.version} 
-			/ ${projectTimeISO}]]></header> -->
-		<!-- <footer><![CDATA[<a href="${project.url}" target="_blank">${project.artifactId}</a><br>${project.version} 
-			/ ${projectTimeISO}]]></footer> -->
-		<!-- <bottom><![CDATA[Copyright © {inceptionYear}-{currentYear} <a href="${project.organization.url}" 
-			target="_blank">${project.organization.name}</a>. All Rights Reserved.]]></bottom> -->
+		<!-- <header><![CDATA[<a href="${project.url}" target="_blank">${project.artifactId}</a><br>${project.version} / ${projectTimeISO}]]></header> -->
+		<!-- <footer><![CDATA[<a href="${project.url}" target="_blank">${project.artifactId}</a><br>${project.version} / ${projectTimeISO}]]></footer> -->
+		<!-- <bottom><![CDATA[Copyright © {inceptionYear}-{currentYear} <a href="${project.organization.url}" target="_blank">${project.organization.name}</a>. 
+			All Rights Reserved.]]></bottom> -->
 		<!-- </configuration> -->
 		<!-- </plugin> -->
 

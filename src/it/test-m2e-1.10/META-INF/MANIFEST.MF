@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Scalor Maven Plugin / M2E Test
-Bundle-SymbolicName: scalor-maven-plugin-test-m2e-1.9
+Bundle-SymbolicName: scalor-maven-plugin-test-m2e-1.10
 Bundle-Version: 0.0.0.qualifier
 Bundle-Vendor: CarrotGarden
 Bundle-Localization: plugin

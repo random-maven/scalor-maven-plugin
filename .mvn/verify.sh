@@ -7,4 +7,4 @@ set -e -u
 
 cd "${BASH_SOURCE%/*}/.."
 
-./mvnw.sh clean verify -B -V
+./mvnw.sh clean verify -e -B -V

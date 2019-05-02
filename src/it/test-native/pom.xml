@@ -29,12 +29,12 @@
         <version.scala.release>2.11.12</version.scala.release>
 
         <!-- Scala compiler tool stack. -->
-        <version.scala.zinc>1.1.7</version.scala.zinc>
+        <version.scala.zinc>1.2.5</version.scala.zinc>
         <version.scala.plugin.macro>2.1.1</version.scala.plugin.macro>
 
         <!-- Scala.native tool stack. -->
         <version.scalanat.epoch>0.3</version.scalanat.epoch>
-        <version.scalanat.release>0.3.7</version.scalanat.release>
+        <version.scalanat.release>0.3.9</version.scalanat.release>
         <version.scalanat.library>native${version.scalanat.epoch}_${version.scala.epoch}</version.scalanat.library>
         <version.scala.plugin.native>${version.scalanat.release}</version.scala.plugin.native>
 
@@ -67,7 +67,7 @@
         <dependency>
             <groupId>com.lihaoyi</groupId>
             <artifactId>sourcecode_${version.scalanat.library}</artifactId>
-            <version>0.1.4</version>
+            <version>0.1.6</version>
             <scope>provided</scope>
         </dependency>
 
@@ -80,7 +80,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.0</version>
                 <configuration>
                     <skip>true</skip>
                     <skipMain>true</skipMain>

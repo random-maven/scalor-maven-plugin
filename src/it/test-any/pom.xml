@@ -18,9 +18,9 @@
     <properties>
 
         <version.scala.epoch>2.12</version.scala.epoch>
-        <version.scala.release>2.12.4</version.scala.release>
+        <version.scala.release>2.12.7</version.scala.release>
 
-        <version.supersafe>1.1.5</version.supersafe>
+        <version.artima.supersafe>1.1.7</version.artima.supersafe>
 
     </properties>
 
@@ -124,7 +124,7 @@
                         <dependency>
                             <groupId>com.artima.supersafe</groupId>
                             <artifactId>supersafe_${version.scala.release}</artifactId>
-                            <version>${version.supersafe}</version>
+                            <version>${version.artima.supersafe}</version>
                         </dependency>
                         <!-- Verify special artifact id pattern. -->
                         <dependency>

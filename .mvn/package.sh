@@ -7,4 +7,4 @@ set -e -u
 
 cd "${BASH_SOURCE%/*}/.."
 
-./mvnw.sh clean package -B -P skip-test
+./mvnw.sh clean package -e -B -P skip-test

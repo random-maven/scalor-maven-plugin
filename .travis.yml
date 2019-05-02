@@ -1,10 +1,12 @@
 os: linux
-dist: trusty
+dist: xenial
 sudo: required
+services:
+  - xvfb
 language: java
 jdk:
-- oraclejdk8
-- oraclejdk9
+- openjdk8
+- openjdk11
 cache:
   directories:
   - "$HOME/.m2"
@@ -19,8 +21,8 @@ env:
 install:
   - "/bin/true"
 before_script:
-  - "export DISPLAY=:99.0"
-  - "/bin/bash /etc/init.d/xvfb start"
+#  - "export DISPLAY=:99.0"
+#  - "/bin/bash /etc/init.d/xvfb start"
 script:
   - "/bin/cp -f -r ./.mvn/ci/.scalaide $HOME/.scalaide"
   - "/bin/cp -f ./.mvn/ci/settings.xml $HOME/.m2/settings.xml"

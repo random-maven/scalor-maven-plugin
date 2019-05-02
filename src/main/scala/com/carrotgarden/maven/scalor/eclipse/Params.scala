@@ -819,7 +819,7 @@ trait ParamsVersionMaven {
   """ )
   @Parameter(
     property     = "scalor.eclipseMavenPluginVersionRange",
-    defaultValue = "[1.8.0,1.10.0)"
+    defaultValue = "[1.8.0,1.12.0)"
   )
   var eclipseMavenPluginVersionRange : String = _
 
